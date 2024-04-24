@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+import Button from "./components/button/button.vue"; // Adjust the path based on your folder structure
+</script>
 
 <template>
   <div class="h-screen w-full">
@@ -94,6 +96,8 @@
               </tbody>
             </table>
           </div>
+
+          <Button buttonType="Ok"> </Button>
         </div>
       </div>
     </div>
