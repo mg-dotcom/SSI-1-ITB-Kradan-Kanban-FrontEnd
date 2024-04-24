@@ -1,7 +1,9 @@
-<script setup></script>
+<script setup>
+import StatusButton from './components/button/StatusButton.vue'
+</script>
 
 <template>
-  <div class="h-screen w-full">
+  <div class="h-screen w-full" >
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
       <img class="absolute right-0" src="/glass-overlay.png" alt="" />
       <div class="h-[90px] flex flex-col justify-center p-10">
@@ -87,7 +89,18 @@
                     Pang; Pong;
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500 break-all">
-                    No Status
+                    <StatusButton statusName="todo">
+                      To Do
+                    </StatusButton>
+                    <StatusButton statusName="doing">
+                      Doing
+                    </StatusButton>
+                    <StatusButton statusName="done">
+                      Done
+                    </StatusButton>
+                    <StatusButton statusName="nostatus">
+                      No Status
+                    </StatusButton>
                   </td>
                 </tr>
                 <tr class="divide-x divide-[#CACACA]"></tr>
