@@ -4,31 +4,32 @@ import StatusButton from './components/button/StatusButton.vue'
 import {getTasks} from './libs/FetchTask.js'
 import {TaskModal} from './libs/TaskModal.js'
 const tasks=ref(new TaskModal())
-const testTask=ref([
-  {
-    id:1,
-    title:'Bi',
-    assignees:'bisbat',
-    status:'Done'
-  },
-  {
-    id:1,
-    title:'Bi',
-    assignees:'bisbat',
-    status:'Doing'
-  },
-  {
-    id:1,
-    title:'Bi',
-    assignees:'bisbat',
-    status:'No Status'
-  }
-])
+// const testTask=ref([
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'Done'
+//   },
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'Doing'
+//   },
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'No Status'
+//   }
+// ])
 onMounted(async()=>{
-  const tasksData=await getTasks('http://localhost:8080/itb-kk/v1/tasks')
+  const tasksData=await getTasks(import.meta.env.VITE_BASE_URL)
   tasks.value.addAllTasks(tasksData)
 })
 console.log(tasks.value);
+console.log(tasks.value.tasks);
 
 </script>
 
@@ -106,11 +107,11 @@ console.log(tasks.value);
 
               <!-- if have data (loop) -->
               <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="divide-x divide-[#CACACA]" v-for="task in testTask">
+                <tr class="divide-x divide-[#CACACA]" v-for="task in tasks.tasks">
                   <td
                     class="text-center px-6 py-4 text-sm text-gray-500 break-all"
                   >
-                    {{ task.id }}
+                    {{task.id}}
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500 break-all">
                     {{task.title}}
