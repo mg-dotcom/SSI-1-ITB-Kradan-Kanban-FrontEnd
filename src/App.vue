@@ -1,10 +1,41 @@
 <script setup>
-import detail from "./components/Detail.vue";
+import { onMounted, ref } from 'vue';
+import StatusButton from './components/button/StatusButton.vue'
+import {getTasks} from './libs/FetchTask.js'
+import {TaskModal} from './libs/TaskModal.js'
+const tasks=ref(new TaskModal())
+// const testTask=ref([
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'Done'
+//   },
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'Doing'
+//   },
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'No Status'
+//   }
+// ])
+onMounted(async()=>{
+  const tasksData=await getTasks(import.meta.env.VITE_BASE_URL)
+  tasks.value.addAllTasks(tasksData)
+})
+console.log(tasks.value);
+console.log(tasks.value.tasks);
+
 </script>
 
 <template>
   <div class="h-screen w-full">
-    <div class="header w-full h-[85px] bg-gradient-to-r from-blue to-lightblue">
+    <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
       <img class="absolute right-0" src="/glass-overlay.png" alt="" />
       <div class="h-[90px] flex flex-col justify-center p-10">
         <h1 class="text-header text-white font-bold">
@@ -76,25 +107,19 @@ import detail from "./components/Detail.vue";
 
               <!-- if have data (loop) -->
               <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="itbkk-item divide-x divide-[#CACACA]">
+                <tr class="divide-x divide-[#CACACA]">
                   <td
                     class="text-center lg:px-6 lg:py-4 text-sm text-gray-500 break-all"
                   >
-                    1
+                    {{task.id}}
                   </td>
-                  <td
-                    class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all"
-                  >
+                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
                     Design Backend API for PBI 1,2
                   </td>
-                  <td
-                    class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all"
-                  >
+                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
                     Pang; Pong;
                   </td>
-                  <td
-                    class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all"
-                  >
+                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
                     No Status
                   </td>
                 </tr>
