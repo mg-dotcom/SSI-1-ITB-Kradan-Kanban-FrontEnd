@@ -1,8 +1,10 @@
-<script setup></script>
+<script setup>
+import detail from "./components/Detail.vue";
+</script>
 
 <template>
   <div class="h-screen w-full">
-    <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
+    <div class="header w-full h-[85px] bg-gradient-to-r from-blue to-lightblue">
       <img class="absolute right-0" src="/glass-overlay.png" alt="" />
       <div class="h-[90px] flex flex-col justify-center p-10">
         <h1 class="text-header text-white font-bold">
@@ -24,17 +26,17 @@
                     class="w-[6%] px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   ></th>
                   <th
-                    class="w-1/2 px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-1/2 px-6 py-3 bg-lightgray text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
                   >
                     Title
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
                   >
                     Assignees
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
                   >
                     Status
                   </th>
@@ -74,29 +76,57 @@
 
               <!-- if have data (loop) -->
               <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="divide-x divide-[#CACACA]">
+                <tr class="itbkk-item divide-x divide-[#CACACA]">
                   <td
                     class="text-center px-6 py-4 text-sm text-gray-500 break-all"
                   >
                     1
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                  <td
+                    class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all"
+                  >
                     Design Backend API for PBI 1,2
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                  <td
+                    class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all"
+                  >
                     Pang; Pong;
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                  <td
+                    class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all"
+                  >
                     No Status
                   </td>
                 </tr>
-                <tr class="divide-x divide-[#CACACA]"></tr>
+                <tr class="itbkk-item divide-x divide-[#CACACA]">
+                  <td
+                    class="text-center px-6 py-4 text-sm text-gray-500 break-all"
+                  >
+                    2
+                  </td>
+                  <td
+                    class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all"
+                  >
+                    Design UI for PBI 1,2
+                  </td>
+                  <td
+                    class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all"
+                  >
+                    Ping;
+                  </td>
+                  <td
+                    class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all"
+                  >
+                    To Do
+                  </td>
+                </tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
+    <!-- <detail> afsf </detail> -->
   </div>
 </template>
 

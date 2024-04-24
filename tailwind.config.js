@@ -23,7 +23,7 @@ module.exports = {
         "green-status": "#53CC7D",
       },
       fontSize: {
-        header: "36px",
+        header: "32px",
       },
 
       screens: {
