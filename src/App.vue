@@ -126,7 +126,7 @@ import detail from "./components/Detail.vue";
         </div>
       </div>
     </div>
-    <detail> </detail>
+    <!-- <detail> </detail> -->
   </div>
 </template>
 
