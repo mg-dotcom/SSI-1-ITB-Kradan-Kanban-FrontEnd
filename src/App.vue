@@ -97,7 +97,7 @@ import Button from "./components/button/button.vue"; // Adjust the path based on
             </table>
           </div>
 
-          <Button buttonType="Ok"> </Button>
+          <Button buttonType="Cancel"> </Button>
         </div>
       </div>
     </div>
