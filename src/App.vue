@@ -13,7 +13,7 @@ import detail from "./components/Detail.vue";
       </div>
     </div>
 
-    <div class="table px-32 py-14 overflow-hidden">
+    <div class="table lg:px-32 lg:py-14 sm:px-12 sm:py-10 overflow-hidden">
       <div class="-my-2 overflow-hidden sm:-mx-6">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
@@ -78,7 +78,7 @@ import detail from "./components/Detail.vue";
               <tbody class="bg-white divide-y divide-[#CACACA]">
                 <tr class="itbkk-item divide-x divide-[#CACACA]">
                   <td
-                    class="text-center px-6 py-4 text-sm text-gray-500 break-all"
+                    class="text-center lg:px-6 lg:py-4 text-sm text-gray-500 break-all"
                   >
                     1
                   </td>
@@ -100,7 +100,7 @@ import detail from "./components/Detail.vue";
                 </tr>
                 <tr class="itbkk-item divide-x divide-[#CACACA]">
                   <td
-                    class="text-center px-6 py-4 text-sm text-gray-500 break-all"
+                    class="text-center lg:px-6 lg:py-4 text-sm text-gray-500 break-all"
                   >
                     2
                   </td>
@@ -126,7 +126,7 @@ import detail from "./components/Detail.vue";
         </div>
       </div>
     </div>
-    <!-- <detail> afsf </detail> -->
+    <detail> </detail>
   </div>
 </template>
 
