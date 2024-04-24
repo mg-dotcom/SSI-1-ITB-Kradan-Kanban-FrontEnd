@@ -7,7 +7,7 @@ module.exports = {
     extend: {
       fontFamily: {
         nunito: ["Nunito", "sans-serif"],
-        "noto-serif": ["Noto Serif", "serif"],
+        "noto-serif": ["Noto Serif Thai", "serif"],
       },
       colors: {
         blue: "#2D7DF8",
@@ -22,6 +22,10 @@ module.exports = {
         "blue-status": "#0D9BFD",
         "green-status": "#53CC7D",
       },
+      fontSize: {
+        header: "36px",
+      },
+
       screens: {
         mobile: "320px",
         sm: "480px",
