@@ -72,31 +72,23 @@
                 <tr class="divide-x divide-[#CACACA]"></tr>
               </tbody> -->
 
-              <!-- if have data -->
+              <!-- if have data (loop) -->
               <tbody class="bg-white divide-y divide-[#CACACA]">
                 <tr class="divide-x divide-[#CACACA]">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <!-- <div class="flex items-center">
-                      <div class="flex-shrink-0 h-10 w-10">
-                        <img
-                          class="h-10 w-10 rounded-full"
-                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60"
-                          alt=""
-                        />
-                      </div>
-                      <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">
-                          Someone J
-                        </div>
-                        <div class="text-sm text-gray-500">
-                          someone@gmail.com
-                        </div>
-                      </div>
-                    </div> -->
+                  <td
+                    class="text-center px-6 py-4 text-sm text-gray-500 break-all"
+                  >
+                    1
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all"></td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all"></td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all"></td>
+                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                    Design Backend API for PBI 1,2
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                    Pang; Pong;
+                  </td>
+                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                    No Status
+                  </td>
                 </tr>
                 <tr class="divide-x divide-[#CACACA]"></tr>
               </tbody>
