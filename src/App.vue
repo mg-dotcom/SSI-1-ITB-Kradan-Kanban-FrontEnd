@@ -1,5 +1,35 @@
 <script setup>
+import { onMounted, ref } from 'vue';
 import StatusButton from './components/button/StatusButton.vue'
+import {getTasks} from './libs/FetchTask.js'
+import {TaskModal} from './libs/TaskModal.js'
+const tasks=ref(new TaskModal())
+const testTask=ref([
+  {
+    id:1,
+    title:'Bi',
+    assignees:'bisbat',
+    status:'Done'
+  },
+  {
+    id:1,
+    title:'Bi',
+    assignees:'bisbat',
+    status:'Doing'
+  },
+  {
+    id:1,
+    title:'Bi',
+    assignees:'bisbat',
+    status:'No Status'
+  }
+])
+onMounted(async()=>{
+  const tasksData=await getTasks('http://localhost:8080/itb-kk/v1/tasks')
+  tasks.value.addAllTasks(tasksData)
+})
+console.log(tasks.value);
+
 </script>
 
 <template>
@@ -76,30 +106,21 @@ import StatusButton from './components/button/StatusButton.vue'
 
               <!-- if have data (loop) -->
               <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="divide-x divide-[#CACACA]">
+                <tr class="divide-x divide-[#CACACA]" v-for="task in testTask">
                   <td
                     class="text-center px-6 py-4 text-sm text-gray-500 break-all"
                   >
-                    1
+                    {{ task.id }}
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500 break-all">
-                    Design Backend API for PBI 1,2
+                    {{task.title}}
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500 break-all">
-                    Pang; Pong;
+                    {{task.assignees}}
                   </td>
                   <td class="px-6 py-4 text-sm text-gray-500 break-all">
-                    <StatusButton statusName="todo">
-                      To Do
-                    </StatusButton>
-                    <StatusButton statusName="doing">
-                      Doing
-                    </StatusButton>
-                    <StatusButton statusName="done">
-                      Done
-                    </StatusButton>
-                    <StatusButton statusName="nostatus">
-                      No Status
+                    <StatusButton :statusName="task.status.toLowerCase().split('').filter(char => char !== ' ').join('')">
+                      {{ task.status }}
                     </StatusButton>
                   </td>
                 </tr>
