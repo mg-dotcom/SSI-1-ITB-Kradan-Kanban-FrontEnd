@@ -86,8 +86,16 @@ console.log(formattedDate);
                   <td class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all">
                     {{task.title}}
                   </td>
+<<<<<<< Updated upstream
                   <td class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all">
                     {{task.assignees}}
+=======
+
+                  <td
+                    class="itbkk-assignees px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all italic"
+                  >
+                    {{ task.assignees }}
+>>>>>>> Stashed changes
                   </td>
                   <td class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all">
                     <StatusButton :statusName="task.status.toLowerCase().split('').filter(char => char !== ' ').join('')">
