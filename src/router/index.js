@@ -5,7 +5,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect:'/tasks'
+      redirect:'/task'
     },
     // {
     //   path: '/about',
