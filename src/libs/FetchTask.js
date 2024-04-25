@@ -1,6 +1,11 @@
 async function fetchAllTasks(url){
     try{
         const data=await fetch(url)
+        if(!response.ok){
+          
+        }else {
+          throw new Error("The requested task does not exist");
+      }
         const res=await data.json()
         return res
     }catch(error){
@@ -11,7 +16,6 @@ async function fetchTaskDetails(url,id){
     try{
         const data=await fetch(`${url}/${id}`)
         const res=await data.json()
-        // console.log(res);
         return res
     }catch(error){
         console.log(`error: ${error}`);
