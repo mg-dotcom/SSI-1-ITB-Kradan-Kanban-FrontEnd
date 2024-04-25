@@ -2,7 +2,11 @@
 const plugin = require("tailwindcss/plugin");
 
 module.exports = {
-  content: ["./index.html", "./src/**/*.{vue,js,ts,jsx,tsx}"],
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+    "./node_modules/flowbite/**/*.js",
+  ],
   theme: {
     extend: {
       fontFamily: {
@@ -23,7 +27,7 @@ module.exports = {
         "green-status": "#53CC7D",
       },
       fontSize: {
-        header: "36px",
+        header: "32px",
       },
 
       screens: {
@@ -35,5 +39,5 @@ module.exports = {
       },
     },
   },
-  // plugins: [require('daisyui'), Filpping]
+  plugins: [require("daisyui"), require("flowbite/plugin")],
 };

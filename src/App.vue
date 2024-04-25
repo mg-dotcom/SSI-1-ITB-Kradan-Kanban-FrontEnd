@@ -1,9 +1,21 @@
 <script setup>
-import Button from "./components/button/button.vue"; // Adjust the path based on your folder structure
+import { onMounted, ref } from 'vue';
+import StatusButton from './components/button/StatusButton.vue'
+import {getTasks} from './libs/FetchTask.js'
+import {TaskModal} from './libs/TaskModal.js'
+const tasks=ref(new TaskModal())
+
+onMounted(async()=>{
+  const tasksData=await getTasks(import.meta.env.VITE_BASE_URL)
+  tasks.value.addAllTasks(tasksData)
+})
+console.log(tasks.value);
+console.log(tasks.value.tasks);
+
 </script>
 
 <template>
-  <div class="h-screen w-full">
+  <div class="h-screen w-full" >
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
       <img class="absolute right-0" src="/glass-overlay.png" alt="" />
       <div class="h-[90px] flex flex-col justify-center p-10">
@@ -45,59 +57,33 @@ import Button from "./components/button/button.vue"; // Adjust the path based on
                   </th> -->
                 </tr>
               </thead>
-              <!-- if no data 
-              <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="divide-x divide-[#CACACA]">
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <!-- <div class="flex items-center">
-                      <div class="flex-shrink-0 h-10 w-10">
-                        <img
-                          class="h-10 w-10 rounded-full"
-                          src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60"
-                          alt=""
-                        />
-                      </div>
-                      <div class="ml-4">
-                        <div class="text-sm font-medium text-gray-900">
-                          Someone J
-                        </div>
-                        <div class="text-sm text-gray-500">
-                          someone@gmail.com
-                        </div>
-                      </div>
-                    </div> 
+              <tbody class="bg-white divide-y divide-[#CACACA]" >
+                <tr v-if="tasks.tasks.length<=0">
+                  <td class="">
+                    No Task
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all"></td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all"></td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all"></td>
                 </tr>
-                <tr class="divide-x divide-[#CACACA]"></tr>
-              </tbody> -->
-
-              <!-- if have data (loop) -->
-              <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="divide-x divide-[#CACACA]">
+                <tr class="itbkk-item divide-x divide-[#CACACA]" v-for="task in tasks.tasks">
                   <td
                     class="text-center px-6 py-4 text-sm text-gray-500 break-all"
                   >
-                    1
+                    {{task.id}}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
-                    Design Backend API for PBI 1,2
+                  <td class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all">
+                    {{task.title}}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
-                    Pang; Pong;
+                  <td class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all">
+                    {{task.assignees}}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
-                    No Status
+                  <td class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all">
+                    <StatusButton :statusName="task.status.toLowerCase().split('').filter(char => char !== ' ').join('')">
+                      {{ task.status }}
+                    </StatusButton>
                   </td>
                 </tr>
-                <tr class="divide-x divide-[#CACACA]"></tr>
               </tbody>
             </table>
           </div>
-
-          <Button buttonType="Cancel"> </Button>
         </div>
       </div>
     </div>
