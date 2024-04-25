@@ -101,6 +101,7 @@ const closeDetail = () => {
                   >
                     {{ task.title }}
                   </td>
+
                   <td
                     class="itbkk-assignees px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
                   >
@@ -121,6 +122,11 @@ const closeDetail = () => {
                       {{ task.status }}
                     </StatusButton>
                   </td>
+                  <Detail
+                    v-show="popup.isEdit && selectedIndex === index"
+                    :task="task"
+                    @close="closeDetail"
+                  ></Detail>
                 </tr>
               </tbody>
             </table>

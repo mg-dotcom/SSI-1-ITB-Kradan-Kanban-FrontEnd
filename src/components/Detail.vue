@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, ref, defineEmits } from "vue";
+import { defineProps, ref, defineEmits, watch } from "vue";
 import buttonSubmit from "./icons/Button.vue";
 
 const props = defineProps({
@@ -12,6 +12,24 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 
 const timeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+const createdOn = props.task.createdOn;
+const updatedOn = props.task.updatedOn;
+const parsedUpdatedDate = new Date(updatedOn);
+const parsedDate = new Date(createdOn);
+const formatter = new Intl.DateTimeFormat("en-GB", {
+  day: "2-digit",
+  month: "2-digit",
+  year: "numeric",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+  hour12: false, // Ensure 24-hour format
+});
+const formattedDate = formatter.format(parsedDate).replace(",", "");
+const formattedUpdatedDate = formatter
+  .format(parsedUpdatedDate)
+  .replace(",", "");
 </script>
 
 <template>
@@ -34,17 +52,41 @@ const timeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
           <div class="flex flex-col">
             <p class="font-semibold">Description</p>
             <textarea
-              class="itbkk-description lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              v-if="
+                props.task.assignees !== '' &&
+                props.task.assignees !== undefined &&
+                props.task.assignees !== null
+              "
+              class="itbkk-description italic lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
               type="text"
               >{{ props.task.description }}</textarea
+            >
+            <textarea
+              v-else
+              class="itbkk-description italic lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              type="text"
+            >
+ No Description Provided</textarea
             >
           </div>
           <div class="flex flex-col">
             <p class="font-semibold">Assignees</p>
             <textarea
-              class="itbkk-assignees lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              v-if="
+                props.task.assignees !== '' &&
+                props.task.assignees !== undefined &&
+                props.task.assignees !== null
+              "
+              class="itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
               type="text"
               >{{ props.task.assignees }}</textarea
+            >
+            <textarea
+              v-else
+              class="itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              type="text"
+            >
+            Unassigned</textarea
             >
             <p class="pt-5 font-semibold">Status</p>
             <form class="lg:w-[230px] sm:w-[200px]">
@@ -66,10 +108,10 @@ const timeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
                 TimeZone : {{ timeZone }}
               </div>
               <div class="itbkk-created-on font-semibold">
-                Created On : {{ props.task.createdOn }}
+                Created On : {{ formattedDate }}
               </div>
               <div class="itbkk-updated-on font-semibold">
-                Updated On : {{ props.task.updatedOn }}
+                Updated On : {{ formattedUpdatedDate }}
               </div>
             </div>
           </div>
