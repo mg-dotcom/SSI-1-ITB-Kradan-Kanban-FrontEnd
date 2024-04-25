@@ -1,14 +1,38 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import StatusButton from "./components/button/StatusButton.vue";
-import { getTasks } from "./libs/FetchTask.js";
+import Detail from "./components/Detail.vue";
+import { fetchAllTasks, fetchTaskDetails } from "./libs/FetchTask.js";
 import { TaskModal } from "./libs/TaskModal.js";
 const tasks = ref(new TaskModal());
 
 onMounted(async () => {
-  const tasksData = await getTasks(import.meta.env.VITE_BASE_URL);
-  tasks.value.addAllTasks(tasksData);
+  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+  const taskDetailsPromises = allTasks.map((task) =>
+    fetchTaskDetails(import.meta.env.VITE_BASE_URL, task.id)
+  );
+  const taskDetails = await Promise.all(taskDetailsPromises);
+  tasks.value.addAllTasks(taskDetails.filter((detail) => detail !== null));
 });
+
+const page = reactive({
+  task: true,
+});
+
+const popup = reactive({
+  isEdit: false,
+});
+const selectedIndex = ref(null);
+
+const openDetail = (index) => {
+  popup.isEdit = true;
+  selectedIndex.value = index;
+};
+
+const closeDetail = () => {
+  popup.isEdit = false;
+  selectedIndex.value = null;
+};
 </script>
 
 <template>
@@ -22,7 +46,10 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="table  lg:px-24 sm:px-10 py-14 overflow-hidden">
+    <div
+      class="table lg:px-24 sm:px-10 py-14 overflow-hidden"
+      v-show="page.task"
+    >
       <div class="-my-2 overflow-hidden sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
@@ -32,7 +59,7 @@ onMounted(async () => {
               <thead class="bg-lightgray">
                 <tr class="">
                   <th
-                    class="w-[6%] px-6 py-3 bg-lightgray border-b border-r border-gray-300  text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-[6%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
                   ></th>
                   <th
                     class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
@@ -55,17 +82,22 @@ onMounted(async () => {
                 </tr>
               </thead>
               <tbody class="bg-white">
-                <tr v-if="tasks.tasks.length <= 0">
+                <tr v-if="tasks.getTasks().length <= 0">
                   <td class="">No Task</td>
                 </tr>
-                <tr class="itbkk-item" v-for="task in tasks.tasks">
+                <tr
+                  class="itbkk-item"
+                  v-for="(task, index) in tasks.getTasks()"
+                  :key="index"
+                >
                   <td
-                    class="text-center  py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
+                    class="text-center py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
                   >
                     {{ task.id }}
                   </td>
                   <td
                     class="itbkk-title px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
+                    @click="openDetail(index)"
                   >
                     {{ task.title }}
                   </td>
@@ -96,6 +128,8 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+
+    <!-- Open Detail Modal -->
   </div>
 </template>
 

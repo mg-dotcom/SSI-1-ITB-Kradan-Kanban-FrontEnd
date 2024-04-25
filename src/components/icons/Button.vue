@@ -14,8 +14,8 @@ const props = defineProps({
   <button
     :class="{
       'fancy-btn': true,
-      'bg-lightgreen': buttonType === 'Ok',
-      'bg-gray-400': buttonType === 'Cancel',
+      'bg-lightgreen hover:bg-green-500 transition-colors': buttonType === 'Ok',
+      'bg-gray-400 hover:bg-gray-500 transition-colors': buttonType === 'Cancel',
     }"
   >
     {{ buttonType === "Ok" ? "OK" : "Cancel" }}
