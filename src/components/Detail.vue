@@ -57,7 +57,7 @@ const formattedUpdatedDate = formatter
                 props.task.assignees !== undefined &&
                 props.task.assignees !== null
               "
-              class="itbkk-description italic lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              class="itbkk-description lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
               type="text"
               >{{ props.task.description }}</textarea
             >
@@ -65,8 +65,9 @@ const formattedUpdatedDate = formatter
               v-else
               class="itbkk-description italic lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
               type="text"
+              
             >
- No Description Provided</textarea
+No Description Provided</textarea
             >
           </div>
           <div class="flex flex-col">
@@ -77,7 +78,7 @@ const formattedUpdatedDate = formatter
                 props.task.assignees !== undefined &&
                 props.task.assignees !== null
               "
-              class="itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
+              class="itbkk-assignees lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
               type="text"
               >{{ props.task.assignees }}</textarea
             >
@@ -86,7 +87,7 @@ const formattedUpdatedDate = formatter
               class="itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
               type="text"
             >
-            Unassigned</textarea
+Unassigned</textarea
             >
             <p class="pt-5 font-semibold">Status</p>
             <form class="lg:w-[230px] sm:w-[200px]">
