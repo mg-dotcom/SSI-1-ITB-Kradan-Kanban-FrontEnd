@@ -33,8 +33,6 @@ const closeDetail = () => {
   popup.isEdit = false;
   selectedIndex.value = null;
 };
-
-
 </script>
 
 <template>
@@ -85,7 +83,7 @@ const closeDetail = () => {
               </thead>
               <tbody class="bg-white">
                 <tr v-if="tasks.getTasks().length <= 0">
-                  <td class="">No Task</td>
+                  <td class="border text-center" colspan="4">No Task</td>
                 </tr>
                 <tr
                   class="itbkk-item"
