@@ -86,7 +86,7 @@ const closeDetail = () => {
                   <td class="border text-center" colspan="4">No Task</td>
                 </tr>
                 <tr
-                  class="itbkk-item"
+                  class="itbkk-item hover:bg-gray-50"
                   v-for="(task, index) in tasks.getTasks()"
                   :key="index"
                 >
@@ -96,14 +96,13 @@ const closeDetail = () => {
                     {{ task.id }}
                   </td>
                   <td
-                    class="itbkk-title px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
+                    class="itbkk-title px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
                     @click="openDetail(index)"
                   >
                     {{ task.title }}
                   </td>
-
                   <td
-                    class="itbkk-assignees px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
+                    class="itbkk-assignees italic px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
                   >
                     {{ task.assignees }}
                   </td>
@@ -123,9 +122,9 @@ const closeDetail = () => {
                     </StatusButton>
                   </td>
                   <Detail
-                    v-show="popup.isEdit && selectedIndex === index"
+                    v-if="popup.isEdit && selectedIndex === index"
                     :task="task"
-                    @close="closeDetail"
+                    @closeDetail="closeDetail"
                   ></Detail>
                 </tr>
               </tbody>

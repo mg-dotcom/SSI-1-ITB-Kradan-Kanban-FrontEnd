@@ -4,12 +4,12 @@ import buttonSubmit from "../components/button/Button.vue";
 
 const props = defineProps({
   task: {
-    type: Object,
+    Object,
     required: true,
   },
 });
 
-const emit = defineEmits(["close"]);
+const emit = defineEmits(["closeDetail"]);
 
 const timeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -30,6 +30,12 @@ const formattedDate = formatter.format(parsedDate).replace(",", "");
 const formattedUpdatedDate = formatter
   .format(parsedUpdatedDate)
   .replace(",", "");
+
+const isEmpty = (value) => {
+  if (value === "") {
+    return "No Descriptiasdasdn Provided";
+  }
+};
 </script>
 
 <template>
@@ -51,43 +57,37 @@ const formattedUpdatedDate = formatter
         <div class="w-full h-full flex justify-between">
           <div class="flex flex-col">
             <p class="font-semibold">Description</p>
-            <textarea
-              v-if="
-                props.task.assignees !== '' &&
-                props.task.assignees !== undefined &&
+            <div
+              :class="[
+                props.task.assignees === null
+                  ? 'italic text-gray-300 px-4 py-2'
+                  : 'px-4 py-2',
+                'itbkk-description italic lg:w-[350px] sm:w-[260px] h-full break-all',
+              ]"
+            >
+              {{
                 props.task.assignees !== null
-              "
-              class="itbkk-description italic lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
-              type="text"
-              >{{ props.task.description }}</textarea
-            >
-            <textarea
-              v-else
-              class="itbkk-description italic lg:w-[350px] sm:w-[260px] h-full border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
-              type="text"
-            >
- No Description Provided</textarea
-            >
+                  ? props.task.description
+                  : "No Description Provided"
+              }}
+            </div>
           </div>
           <div class="flex flex-col">
             <p class="font-semibold">Assignees</p>
-            <textarea
-              v-if="
-                props.task.assignees !== '' &&
-                props.task.assignees !== undefined &&
+            <div
+              :class="[
+                props.task.assignees === null
+                  ? 'italic text-gray-300  px-4 py-2'
+                  : 'px-4 py-2',
+                'itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 ',
+              ]"
+            >
+              {{
                 props.task.assignees !== null
-              "
-              class="itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
-              type="text"
-              >{{ props.task.assignees }}</textarea
-            >
-            <textarea
-              v-else
-              class="itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-lg"
-              type="text"
-            >
-            Unassigned</textarea
-            >
+                  ? props.task.assignees
+                  : "Unassigned"
+              }}
+            </div>
             <p class="pt-5 font-semibold">Status</p>
             <form class="lg:w-[230px] sm:w-[200px]">
               <select
@@ -118,10 +118,10 @@ const formattedUpdatedDate = formatter
         </div>
       </div>
       <div class="absolute right-6 bottom-3">
-        <buttonSubmit buttonType="Ok" @click="$emit('close')"></buttonSubmit>
+        <buttonSubmit buttonType="Ok" @click="$emit('closeDetail')"></buttonSubmit>
         <buttonSubmit
           buttonType="Cancel"
-          @click="$emit('close')"
+          @click="$emit('closeDetail')"
         ></buttonSubmit>
       </div>
     </div>
