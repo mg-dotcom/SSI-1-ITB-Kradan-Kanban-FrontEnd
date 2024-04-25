@@ -1,10 +1,41 @@
 <script setup>
-import detail from "./components/Detail.vue";
+import { onMounted, ref } from 'vue';
+import StatusButton from './components/button/StatusButton.vue'
+import {getTasks} from './libs/FetchTask.js'
+import {TaskModal} from './libs/TaskModal.js'
+const tasks=ref(new TaskModal())
+// const testTask=ref([
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'Done'
+//   },
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'Doing'
+//   },
+//   {
+//     id:1,
+//     title:'Bi',
+//     assignees:'bisbat',
+//     status:'No Status'
+//   }
+// ])
+onMounted(async()=>{
+  const tasksData=await getTasks(import.meta.env.VITE_BASE_URL)
+  tasks.value.addAllTasks(tasksData)
+})
+console.log(tasks.value);
+console.log(tasks.value.tasks);
+
 </script>
 
 <template>
-  <div class="h-screen w-full">
-    <div class="header w-full h-[85px] bg-gradient-to-r from-blue to-lightblue">
+  <div class="h-screen w-full" >
+    <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
       <img class="absolute right-0" src="/glass-overlay.png" alt="" />
       <div class="h-[90px] flex flex-col justify-center p-10">
         <h1 class="text-header text-white font-bold">
@@ -13,7 +44,7 @@ import detail from "./components/Detail.vue";
       </div>
     </div>
 
-    <div class="table lg:px-32 lg:py-14 sm:px-12 sm:py-10 overflow-hidden">
+    <div class="table px-32 py-14 overflow-hidden">
       <div class="-my-2 overflow-hidden sm:-mx-6">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
@@ -26,17 +57,17 @@ import detail from "./components/Detail.vue";
                     class="w-[6%] px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   ></th>
                   <th
-                    class="w-1/2 px-6 py-3 bg-lightgray text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                    class="w-1/2 px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Title
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Assignees
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-bold text-gray-800 uppercase tracking-wider"
+                    class="w-1/5 px-6 py-3 bg-lightgray text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Status
                   </th>
@@ -75,58 +106,37 @@ import detail from "./components/Detail.vue";
               </tbody> -->
 
               <!-- if have data (loop) -->
-              <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="itbkk-item divide-x divide-[#CACACA]">
-                  <td
-                    class="text-center lg:px-6 lg:py-4 text-sm text-gray-500 break-all"
-                  >
-                    1
-                  </td>
-                  <td
-                    class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all"
-                  >
-                    Design Backend API for PBI 1,2
-                  </td>
-                  <td
-                    class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all"
-                  >
-                    Pang; Pong;
-                  </td>
-                  <td
-                    class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all"
-                  >
-                    No Status
+              <tbody class="bg-white divide-y divide-[#CACACA]" >
+                <tr v-if="tasks.tasks.length<=0">
+                  <td class="">
+                    No Task
                   </td>
                 </tr>
-                <tr class="itbkk-item divide-x divide-[#CACACA]">
+                <tr class="itbkk-item divide-x divide-[#CACACA]" v-for="task in tasks.tasks">
                   <td
-                    class="text-center lg:px-6 lg:py-4 text-sm text-gray-500 break-all"
+                    class="text-center px-6 py-4 text-sm text-gray-500 break-all"
                   >
-                    2
+                    {{task.id}}
                   </td>
-                  <td
-                    class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all"
-                  >
-                    Design UI for PBI 1,2
+                  <td class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all">
+                    {{task.title}}
                   </td>
-                  <td
-                    class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all"
-                  >
-                    Ping;
+                  <td class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all">
+                    {{task.assignees}}
                   </td>
-                  <td
-                    class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all"
-                  >
-                    To Do
+                  <td class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all">
+                    <StatusButton :statusName="task.status.toLowerCase().split('').filter(char => char !== ' ').join('')">
+                      {{ task.status }}
+                    </StatusButton>
                   </td>
                 </tr>
+                <tr class="divide-x divide-[#CACACA]"></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
-    <detail> </detail>
   </div>
 </template>
 
