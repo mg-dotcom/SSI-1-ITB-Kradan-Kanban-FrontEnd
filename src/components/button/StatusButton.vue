@@ -13,7 +13,7 @@ const props=defineProps({
     <div class="itbkk-status bg-gray-status text-white flex justify-center w-20 py-1 rounded-2xl"
     :class="[statusName==='todo'?'bg-yellow-status':statusName==='doing'?'bg-blue-status':statusName==='done'?'bg-green-status':'bg-gray-status']"
     >
-        <slot>No Status</slot>
+        <slot class="itbkk-status">No Status</slot>
     </div>
 </div>
 </template>

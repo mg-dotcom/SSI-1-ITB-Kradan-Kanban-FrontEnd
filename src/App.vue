@@ -106,20 +106,25 @@ console.log(tasks.value.tasks);
               </tbody> -->
 
               <!-- if have data (loop) -->
-              <tbody class="bg-white divide-y divide-[#CACACA]">
-                <tr class="divide-x divide-[#CACACA]" v-for="task in tasks.tasks">
+              <tbody class="bg-white divide-y divide-[#CACACA]" >
+                <tr v-if="tasks.tasks.length<=0">
+                  <td class="">
+                    No Task
+                  </td>
+                </tr>
+                <tr class="itbkk-item divide-x divide-[#CACACA]" v-for="task in tasks.tasks">
                   <td
                     class="text-center px-6 py-4 text-sm text-gray-500 break-all"
                   >
                     {{task.id}}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                  <td class="itbkk-title px-6 py-4 text-sm text-gray-500 break-all">
                     {{task.title}}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                  <td class="itbkk-assignees px-6 py-4 text-sm text-gray-500 break-all">
                     {{task.assignees}}
                   </td>
-                  <td class="px-6 py-4 text-sm text-gray-500 break-all">
+                  <td class="itbkk-status px-6 py-4 text-sm text-gray-500 break-all">
                     <StatusButton :statusName="task.status.toLowerCase().split('').filter(char => char !== ' ').join('')">
                       {{ task.status }}
                     </StatusButton>
