@@ -22,7 +22,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="table px-10 py-14 overflow-hidden">
+    <div class="table  lg:px-24 sm:px-10 py-14 overflow-hidden">
       <div class="-my-2 overflow-hidden sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
@@ -32,7 +32,7 @@ onMounted(async () => {
               <thead class="bg-lightgray">
                 <tr class="">
                   <th
-                    class="w-[6%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-[6%] px-6 py-3 bg-lightgray border-b border-r border-gray-300  text-xs font-medium text-gray-800 uppercase tracking-wider"
                   ></th>
                   <th
                     class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
@@ -60,7 +60,7 @@ onMounted(async () => {
                 </tr>
                 <tr class="itbkk-item" v-for="task in tasks.tasks">
                   <td
-                    class="text-center px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
+                    class="text-center  py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
                   >
                     {{ task.id }}
                   </td>
