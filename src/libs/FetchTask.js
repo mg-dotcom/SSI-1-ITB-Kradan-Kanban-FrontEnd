@@ -1,4 +1,4 @@
-async function getTasks(url){
+async function fetchAllTasks(url){
     try{
         const data=await fetch(url)
         const res=await data.json()
@@ -7,5 +7,16 @@ async function getTasks(url){
         console.log(`error: ${error}`);
     }
 }
+async function fetchTaskDetails(url,id){
+    try{
+        const data=await fetch(`${url}/${id}`)
+        const res=await data.json()
+        // console.log(res);
+        return res
+    }catch(error){
+        console.log(`error: ${error}`);
+    }
+}
 
-export {getTasks}
+
+export {fetchAllTasks,fetchTaskDetails}

@@ -1,16 +1,30 @@
 <script setup>
 import { onMounted, ref } from 'vue';
 import StatusButton from './components/button/StatusButton.vue'
-import {getTasks} from './libs/FetchTask.js'
+import {fetchAllTasks,fetchTaskDetails} from './libs/FetchTask.js'
 import {TaskModal} from './libs/TaskModal.js'
 const tasks=ref(new TaskModal())
-
 onMounted(async()=>{
-  const tasksData=await getTasks(import.meta.env.VITE_BASE_URL)
-  tasks.value.addAllTasks(tasksData)
+  const allTasks=await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+  const taskDetailsPromises = allTasks.map(task => fetchTaskDetails(import.meta.env.VITE_BASE_URL, task.id));
+  const taskDetails = await Promise.all(taskDetailsPromises);
+  tasks.value.addAllTasks(taskDetails.filter(detail => detail !== null))
 })
-console.log(tasks.value);
-console.log(tasks.value.tasks);
+// console.log(tasks.value.getTasks());
+const createdOn = "2024-04-22T16:00:00.000+07:00";
+const parsedDate = new Date(createdOn);
+const formatter = new Intl.DateTimeFormat('en-US', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  second: '2-digit',
+  hour12: false, // Ensure 24-hour format
+});
+const formattedDate = formatter.format(parsedDate).replace(',', ''); 
+console.log(formattedDate);
+
 
 </script>
 
@@ -58,12 +72,12 @@ console.log(tasks.value.tasks);
                 </tr>
               </thead>
               <tbody class="bg-white divide-y divide-[#CACACA]" >
-                <tr v-if="tasks.tasks.length<=0">
+                <tr v-if="tasks.getTasks().length<=0">
                   <td class="">
                     No Task
                   </td>
                 </tr>
-                <tr class="itbkk-item divide-x divide-[#CACACA]" v-for="task in tasks.tasks">
+                <tr class="itbkk-item divide-x divide-[#CACACA]" v-for="task in tasks.getTasks()">
                   <td
                     class="text-center px-6 py-4 text-sm text-gray-500 break-all"
                   >
