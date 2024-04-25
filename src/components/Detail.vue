@@ -1,6 +1,6 @@
 <script setup>
 import { defineProps, ref, defineEmits, watch } from "vue";
-import buttonSubmit from "./icons/Button.vue";
+import buttonSubmit from "../components/button/Button.vue";
 
 const props = defineProps({
   task: {

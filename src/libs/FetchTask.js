@@ -11,6 +11,7 @@ async function fetchTaskDetails(url, id) {
   try {
     const data = await fetch(`${url}/${id}`);
     const res = await data.json();
+
     console.log(res);
     return res;
   } catch (error) {
