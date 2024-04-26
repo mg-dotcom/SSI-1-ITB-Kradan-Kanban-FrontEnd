@@ -1,43 +1,60 @@
 <script setup>
-import { defineProps, ref, defineEmits, computed, watch } from "vue";
+import {
+  defineProps,
+  ref,
+  defineEmits,
+  computed,
+  reactive,
+  onMounted,
+} from "vue";
+import { fetchTaskDetails } from "../libs/FetchTask.js";
 import buttonSubmit from "../components/button/Button.vue";
+import { useRouter, useRoute } from "vue-router";
 
-const props = defineProps({
-  editingDetail: {
-    type: Object,
-  },
+const router = useRouter();
+const route = useRoute();
+
+const selectedTask = ref({
+  id: "0",
+  title: "",
+  description: "",
+  assignees: "",
+  status: "",
+  createdOn: "",
+  updatedOn: "",
 });
 
-const previousTask = computed(() => props.editingDetail);
-// Define emits using defineEmits
-const emit = defineEmits(["closeDetail"]);
+onMounted(async () => {
+  const taskDetails = await fetchTaskDetails(
+    import.meta.env.VITE_BASE_URL,
+    route.params.id
+  );
 
-// Initialize timeZone as a ref
-const timeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
-
-const parseAndFormatDate = (dateString) => {
-  const date = new Date(dateString);
-  const formattedDate = date
-    .toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    })
-    .replace(",", ""); // Remove the comma
-  return formattedDate;
-};
-
-const formattedCreatedOn = computed(() => {
-  return parseAndFormatDate(props.editingDetail.createdOn);
+  selectedTask.value = taskDetails;
+  // createdOn.value = formatDate(props.selectedTask.createdOn);
+  // updatedOn.value = formatDate(props.selectedTask.updatedOn);
 });
 
-const formattedUpdatedOn = computed(() => {
-  return parseAndFormatDate(props.editingDetail.updatedOn);
-});
+// const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+// const parseAndFormatDate = (dateString) => {
+//   const date = new Date(dateString);
+//   const formattedDate = date
+//     .toLocaleDateString("en-GB", {
+//       timeZone: localTimeZone,
+//     })
+//     .split(",")
+//     .join(""); // Remove the comma
+//   return formattedDate;
+// };
+
+// const formattedCreatedOn = computed(() => {
+//   return parseAndFormatDate(props.editingDetail.createdOn);
+// });
+
+// const formattedUpdatedOn = computed(() => {
+//   return parseAndFormatDate(props.editingDetail.updatedOn);
+// });
 </script>
 
 <template>
@@ -49,9 +66,9 @@ const formattedUpdatedOn = computed(() => {
     >
       <h1
         class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
-        :title="previousTask.title"
+        :title="selectedTask.title"
       >
-        {{ previousTask.title }}
+        {{ selectedTask.title }}
       </h1>
 
       <div
@@ -63,19 +80,19 @@ const formattedUpdatedOn = computed(() => {
             <div
               class="itbkk-description"
               :class="[
-                previousTask.description === null &&
-                previousTask.description === '' &&
-                previousTask.description === undefined
+                selectedTask.description === null &&
+                selectedTask.description === '' &&
+                selectedTask.description === undefined
                   ? 'italic text-gray-300 px-4 py-2'
                   : 'px-2 py-2',
                 'itbkk-description italic lg:w-[350px] sm:w-[260px] h-full break-all',
               ]"
             >
               {{
-                previousTask.description !== null &&
-                previousTask.description !== "" &&
-                previousTask.description !== undefined
-                  ? previousTask.description
+                selectedTask.description !== null &&
+                selectedTask.description !== "" &&
+                selectedTask.description !== undefined
+                  ? selectedTask.description
                   : "No Description Provided"
               }}
             </div>
@@ -85,19 +102,19 @@ const formattedUpdatedOn = computed(() => {
             <div
               class="itbkk-assignees"
               :class="[
-                previousTask.assignees === null &&
-                previousTask.assignees === '' &&
-                previousTask.assignees === undefined
+                selectedTask.assignees === null &&
+                selectedTask.assignees === '' &&
+                selectedTask.assignees === undefined
                   ? 'italic text-gray-300  px-4 py-2'
                   : 'pl-2 py-2',
                 'itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 break-all',
               ]"
             >
               {{
-                previousTask.assignees !== null &&
-                previousTask.assignees !== "" &&
-                previousTask.assignees !== undefined
-                  ? previousTask.assignees
+                selectedTask.assignees !== null &&
+                selectedTask.assignees !== "" &&
+                selectedTask.assignees !== undefined
+                  ? selectedTask.assignees
                   : "Unassigned"
               }}
             </div>
@@ -108,7 +125,7 @@ const formattedUpdatedOn = computed(() => {
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
                 <option selected class="itbkk-status">
-                  {{ previousTask.status }}
+                  {{ selectedTask.status }}
                 </option>
                 <option>No Status</option>
                 <option>To Do</option>

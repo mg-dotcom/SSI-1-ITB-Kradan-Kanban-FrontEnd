@@ -1,9 +1,14 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
+import Detail from "./Detail.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const tasks = ref(new TaskModal());
+import { useRouter, useRoute } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
 
 onMounted(async () => {
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
@@ -21,28 +26,18 @@ const page = reactive({
 const popup = reactive({
   isEdit: false,
 });
-const selectedIndex = ref(null);
 
-const editingDetail = ref({
-  id: "",
-  title: "",
-  description: "",
-  assignees: "",
-  status: "",
-  createdOn: "",
-  updatedOn: "",
-});
-
-const openDetail = (selectedTasked) => {
-  editingDetail.value = selectedTasked;
-
+const openDetail = (id) => {
   popup.isEdit = true;
+  router.push({ name: "task-detail", params: { id: id } });
 };
 
 const closeDetail = () => {
   popup.isEdit = false;
   selectedIndex.value = null;
 };
+
+console.log(popup.isEdit);
 </script>
 
 <template>
@@ -107,7 +102,7 @@ const closeDetail = () => {
                   </td>
                   <td
                     class="itbkk-title px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
-                    @click="openDetail(tasks.getTasks()[index])"
+                    @click="openDetail(task.id)"
                   >
                     {{ task.title }}
                   </td>
@@ -138,6 +133,7 @@ const closeDetail = () => {
         </div>
       </div>
     </div>
+    <Detail v-if="popup.isEdit"></Detail>
   </div>
 </template>
 
