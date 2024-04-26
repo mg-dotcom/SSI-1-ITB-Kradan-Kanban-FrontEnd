@@ -34,24 +34,41 @@ const popup = reactive({
   isEdit: false,
 });
 
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+function formatDate(date) {
+  const d = new Date(date);
+  return d
+    .toLocaleString("en-GB", { timeZone: localTimeZone.value })
+    .split(",")
+    .join(" ");
+}
+
 const openDetail = async (id) => {
   const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
   selectedTask.value = taskDetails;
-  console.log(selectedTask.value);
+  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
+  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.isEdit = true;
   router.push({ name: "task-detail", params: { id: id } });
 };
+
+const existingTask = tasks.value
+  .getTasks()
+  .findIndex((task) => task.id === taskId);
+
+console.log(existingTask);
+
+if (existingTask !== -1) {
+  openDetail(taskId);
+} else {
+  router.push({ name: "task" });
+}
 
 const closeDetail = () => {
   popup.isEdit = false;
   router.push({ name: "task" });
 };
-
-console.log(popup.isEdit);
-
-if (taskId) {
-  openDetail(taskId);
-}
 </script>
 
 <template>
@@ -151,6 +168,7 @@ if (taskId) {
       v-if="popup.isEdit"
       @closeDetail="closeDetail"
       :selectedTask="selectedTask"
+      :localTimeZone="localTimeZone"
     ></Detail>
   </div>
 </template>

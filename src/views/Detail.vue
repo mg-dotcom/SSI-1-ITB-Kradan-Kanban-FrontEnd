@@ -16,28 +16,8 @@ const emit = defineEmits(["closeDetail"]);
 
 const props = defineProps({
   selectedTask: Object,
+  localTimeZone: String,
 });
-
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
-
-// const parseAndFormatDate = (dateString) => {
-//   const date = new Date(dateString);
-//   const formattedDate = date
-//     .toLocaleDateString("en-GB", {
-//       timeZone: localTimeZone,
-//     })
-//     .split(",")
-//     .join(""); // Remove the comma
-//   return formattedDate;
-// };
-
-// const formattedCreatedOn = computed(() => {
-//   return parseAndFormatDate(props.editingDetail.createdOn);
-// });
-
-// const formattedUpdatedOn = computed(() => {
-//   return parseAndFormatDate(props.editingDetail.updatedOn);
-// });
 </script>
 
 <template>
@@ -72,9 +52,7 @@ const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
               ]"
             >
               {{
-                props.selectedTask.description !== null &&
-                props.selectedTask.description !== "" &&
-                props.selectedTask.description !== undefined
+                props.selectedTask.description !== null
                   ? props.selectedTask.description
                   : "No Description Provided"
               }}
@@ -122,11 +100,13 @@ const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
               </div>
               <div class="font-semibold">
                 Created On :
-                <span class="itbkk-created-on">{{ formattedCreatedOn }}</span>
+                <span class="itbkk-created-on">{{
+                  props.selectedTask.createdOn
+                }}</span>
               </div>
               <div class="font-semibold">
                 <span class="itbkk-updated-on"
-                  >Updated On : {{ formattedUpdatedOn }}</span
+                  >Updated On : {{ props.selectedTask.updatedOn }}</span
                 >
               </div>
             </div>
