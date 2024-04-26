@@ -1,7 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import StatusButton from "../components/button/StatusButton.vue";
-import Detail from "../components/Detail.vue";
 import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const tasks = ref(new TaskModal());
@@ -139,12 +138,6 @@ const closeDetail = () => {
         </div>
       </div>
     </div>
-
-    <Teleport to="#detailModal"
-      ><div v-show="popup.isEdit">
-        <Detail :editingDetail="editingDetail" @closeDetail="closeDetail" />
-      </div>
-    </Teleport>
   </div>
 </template>
 

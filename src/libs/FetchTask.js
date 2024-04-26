@@ -7,12 +7,11 @@ async function fetchAllTasks(url) {
     console.log(`error: ${error}`);
   }
 }
+
 async function fetchTaskDetails(url, id) {
   try {
     const data = await fetch(`${url}/${id}`);
     const res = await data.json();
-
-
     return res;
   } catch (error) {
     console.log(`error: ${error}`);
