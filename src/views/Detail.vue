@@ -12,6 +12,8 @@ import buttonSubmit from "../components/button/Button.vue";
 import { useRouter, useRoute } from "vue-router";
 import { TaskModal } from "@/libs/TaskModal";
 
+
+
 const emit = defineEmits(["closeDetail"]);
 
 const props = defineProps({
