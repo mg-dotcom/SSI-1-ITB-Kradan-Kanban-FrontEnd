@@ -53,16 +53,8 @@ const openDetail = async (id) => {
   router.push({ name: "task-detail", params: { id: id } });
 };
 
-const existingTask = tasks.value
-  .getTasks()
-  .findIndex((task) => task.id === taskId);
-
-console.log(existingTask);
-
-if (existingTask !== -1) {
+if (taskId) {
   openDetail(taskId);
-} else {
-  router.push({ name: "task" });
 }
 
 const closeDetail = () => {

@@ -41,42 +41,34 @@ const props = defineProps({
           <div class="flex flex-col">
             <p class="font-semibold">Description</p>
             <div
-              class="itbkk-description"
-              :class="[
-                props.selectedTask.description === null &&
-                props.selectedTask.description === '' &&
-                props.selectedTask.description === undefined
-                  ? 'italic text-gray-300 px-4 py-2'
-                  : 'px-2 py-2',
-                'itbkk-description italic lg:w-[350px] sm:w-[260px] h-full break-all',
-              ]"
+              class="itbkk-description lg:w-[350px] sm:w-[260px] h-full break-all"
+              :class="
+                props.selectedTask.description === null
+                  ? 'italic text-gray-500'
+                  : ''
+              "
             >
               {{
-                props.selectedTask.description !== null
-                  ? props.selectedTask.description
-                  : "No Description Provided"
+                props.selectedTask.description === null
+                  ? "No Description Provided"
+                  : props.selectedTask.description
               }}
             </div>
           </div>
           <div class="flex flex-col">
             <p class="font-semibold">Assignees</p>
             <div
-              class="itbkk-assignees"
-              :class="[
-                props.selectedTask.assignees === null &&
-                props.selectedTask.assignees === '' &&
-                props.selectedTask.assignees === undefined
-                  ? 'italic text-gray-300  px-4 py-2'
-                  : 'pl-2 py-2',
-                'itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 break-all',
-              ]"
+              class="itbkk-assignees lg:w-[230px] sm:w-[200px] h-1/3 break-all"
+              :class="
+                props.selectedTask.assignees === null
+                  ? 'italic text-gray-500'
+                  : ''
+              "
             >
               {{
-                props.selectedTask.assignees !== null &&
-                props.selectedTask.assignees !== "" &&
-                props.selectedTask.assignees !== undefined
-                  ? props.selectedTask.assignees
-                  : "Unassigned"
+                props.selectedTask.assignees === null
+                  ? "Unassigned"
+                  : props.selectedTask.assignees
               }}
             </div>
             <p class="pt-5 font-semibold">Status</p>
