@@ -6,9 +6,20 @@ import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const tasks = ref(new TaskModal());
 import { useRouter, useRoute } from "vue-router";
-
 const router = useRouter();
 const route = useRoute();
+
+const selectedTask = ref({
+  id: "0",
+  title: "",
+  description: "",
+  assignees: "",
+  status: "",
+  createdOn: "",
+  updatedOn: "",
+});
+
+const taskId = route.params.id;
 
 onMounted(async () => {
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
@@ -23,7 +34,10 @@ const popup = reactive({
   isEdit: false,
 });
 
-const openDetail = (id) => {
+const openDetail = async (id) => {
+  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+  selectedTask.value = taskDetails;
+  console.log(selectedTask.value);
   popup.isEdit = true;
   router.push({ name: "task-detail", params: { id: id } });
 };
@@ -34,6 +48,10 @@ const closeDetail = () => {
 };
 
 console.log(popup.isEdit);
+
+if (taskId) {
+  openDetail(taskId);
+}
 </script>
 
 <template>
@@ -129,7 +147,11 @@ console.log(popup.isEdit);
         </div>
       </div>
     </div>
-    <Detail v-if="popup.isEdit" @closeDetail="closeDetail"></Detail>
+    <Detail
+      v-if="popup.isEdit"
+      @closeDetail="closeDetail"
+      :selectedTask="selectedTask"
+    ></Detail>
   </div>
 </template>
 

@@ -10,31 +10,12 @@ import {
 import { fetchTaskDetails } from "../libs/FetchTask.js";
 import buttonSubmit from "../components/button/Button.vue";
 import { useRouter, useRoute } from "vue-router";
-
-const router = useRouter();
-const route = useRoute();
-
-const selectedTask = ref({
-  id: "0",
-  title: "",
-  description: "",
-  assignees: "",
-  status: "",
-  createdOn: "",
-  updatedOn: "",
-});
+import { TaskModal } from "@/libs/TaskModal";
 
 const emit = defineEmits(["closeDetail"]);
 
-onMounted(async () => {
-  const taskDetails = await fetchTaskDetails(
-    import.meta.env.VITE_BASE_URL,
-    route.params.id
-  );
-
-  selectedTask.value = taskDetails;
-  // createdOn.value = formatDate(props.selectedTask.createdOn);
-  // updatedOn.value = formatDate(props.selectedTask.updatedOn);
+const props = defineProps({
+  selectedTask: Object,
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -68,9 +49,9 @@ const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
     >
       <h1
         class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
-        :title="selectedTask.title"
+        :title="props.selectedTask.title"
       >
-        {{ selectedTask.title }}
+        {{ props.selectedTask.title }}
       </h1>
 
       <div
@@ -82,19 +63,19 @@ const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
             <div
               class="itbkk-description"
               :class="[
-                selectedTask.description === null &&
-                selectedTask.description === '' &&
-                selectedTask.description === undefined
+                props.selectedTask.description === null &&
+                props.selectedTask.description === '' &&
+                props.selectedTask.description === undefined
                   ? 'italic text-gray-300 px-4 py-2'
                   : 'px-2 py-2',
                 'itbkk-description italic lg:w-[350px] sm:w-[260px] h-full break-all',
               ]"
             >
               {{
-                selectedTask.description !== null &&
-                selectedTask.description !== "" &&
-                selectedTask.description !== undefined
-                  ? selectedTask.description
+                props.selectedTask.description !== null &&
+                props.selectedTask.description !== "" &&
+                props.selectedTask.description !== undefined
+                  ? props.selectedTask.description
                   : "No Description Provided"
               }}
             </div>
@@ -104,19 +85,19 @@ const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
             <div
               class="itbkk-assignees"
               :class="[
-                selectedTask.assignees === null &&
-                selectedTask.assignees === '' &&
-                selectedTask.assignees === undefined
+                props.selectedTask.assignees === null &&
+                props.selectedTask.assignees === '' &&
+                props.selectedTask.assignees === undefined
                   ? 'italic text-gray-300  px-4 py-2'
                   : 'pl-2 py-2',
                 'itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 break-all',
               ]"
             >
               {{
-                selectedTask.assignees !== null &&
-                selectedTask.assignees !== "" &&
-                selectedTask.assignees !== undefined
-                  ? selectedTask.assignees
+                props.selectedTask.assignees !== null &&
+                props.selectedTask.assignees !== "" &&
+                props.selectedTask.assignees !== undefined
+                  ? props.selectedTask.assignees
                   : "Unassigned"
               }}
             </div>
@@ -127,7 +108,7 @@ const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
                 <option selected class="itbkk-status">
-                  {{ selectedTask.status }}
+                  {{ props.selectedTask.status }}
                 </option>
                 <option>No Status</option>
                 <option>To Do</option>
