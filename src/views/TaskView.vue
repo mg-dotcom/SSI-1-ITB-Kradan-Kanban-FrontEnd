@@ -12,11 +12,7 @@ const route = useRoute();
 
 onMounted(async () => {
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
-  const taskDetailsPromises = allTasks.map((task) =>
-    fetchTaskDetails(import.meta.env.VITE_BASE_URL, task.id)
-  );
-  const taskDetails = await Promise.all(taskDetailsPromises);
-  tasks.value.addAllTasks(taskDetails.filter((detail) => detail !== null));
+  tasks.value.addAllTasks(allTasks);
 });
 
 const page = reactive({
@@ -34,7 +30,7 @@ const openDetail = (id) => {
 
 const closeDetail = () => {
   popup.isEdit = false;
-  selectedIndex.value = null;
+  router.push({ name: "task" });
 };
 
 console.log(popup.isEdit);
@@ -133,7 +129,7 @@ console.log(popup.isEdit);
         </div>
       </div>
     </div>
-    <Detail v-if="popup.isEdit"></Detail>
+    <Detail v-if="popup.isEdit" @closeDetail="closeDetail"></Detail>
   </div>
 </template>
 

@@ -24,6 +24,8 @@ const selectedTask = ref({
   updatedOn: "",
 });
 
+const emit = defineEmits(["closeDetail"]);
+
 onMounted(async () => {
   const taskDetails = await fetchTaskDetails(
     import.meta.env.VITE_BASE_URL,
@@ -35,7 +37,7 @@ onMounted(async () => {
   // updatedOn.value = formatDate(props.selectedTask.updatedOn);
 });
 
-// const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 // const parseAndFormatDate = (dateString) => {
 //   const date = new Date(dateString);
@@ -135,7 +137,7 @@ onMounted(async () => {
             </form>
             <div class="flex flex-col pt-28 lg:w-[230px] sm:w-[200px] text-sm">
               <div class="itbkk-timezone font-semibold">
-                TimeZone : {{ timeZone }}
+                TimeZone : {{ localTimeZone }}
               </div>
               <div class="font-semibold">
                 Created On :
