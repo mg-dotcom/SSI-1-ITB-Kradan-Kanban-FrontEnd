@@ -12,7 +12,7 @@ async function fetchTaskDetails(url, id) {
     const data = await fetch(`${url}/${id}`);
     const res = await data.json();
 
-    console.log(res);
+
     return res;
   } catch (error) {
     console.log(`error: ${error}`);

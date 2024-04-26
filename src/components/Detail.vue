@@ -1,41 +1,43 @@
 <script setup>
-import { defineProps, ref, defineEmits, watch } from "vue";
+import { defineProps, ref, defineEmits, computed, watch } from "vue";
 import buttonSubmit from "../components/button/Button.vue";
 
 const props = defineProps({
-  task: {
-    Object,
-    required: true,
+  editingDetail: {
+    type: Object,
   },
 });
 
+const previousTask = computed(() => props.editingDetail);
+// Define emits using defineEmits
 const emit = defineEmits(["closeDetail"]);
 
+// Initialize timeZone as a ref
 const timeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
-const createdOn = props.task.createdOn;
-const updatedOn = props.task.updatedOn;
-const parsedUpdatedDate = new Date(updatedOn);
-const parsedDate = new Date(createdOn);
-const formatter = new Intl.DateTimeFormat("en-GB", {
-  day: "2-digit",
-  month: "2-digit",
-  year: "numeric",
-  hour: "2-digit",
-  minute: "2-digit",
-  second: "2-digit",
-  hour12: false, // Ensure 24-hour format
-});
-const formattedDate = formatter.format(parsedDate).replace(",", "");
-const formattedUpdatedDate = formatter
-  .format(parsedUpdatedDate)
-  .replace(",", "");
-
-const isEmpty = (value) => {
-  if (value === "") {
-    return "No Descriptiasdasdn Provided";
-  }
+const parseAndFormatDate = (dateString) => {
+  const date = new Date(dateString);
+  const formattedDate = date
+    .toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
+    })
+    .replace(",", ""); // Remove the comma
+  return formattedDate;
 };
+
+const formattedCreatedOn = computed(() => {
+  return parseAndFormatDate(props.editingDetail.createdOn);
+});
+
+const formattedUpdatedOn = computed(() => {
+  return parseAndFormatDate(props.editingDetail.updatedOn);
+});
 </script>
 
 <template>
@@ -47,8 +49,9 @@ const isEmpty = (value) => {
     >
       <h1
         class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
+        :title="previousTask.title"
       >
-        {{ props.task.title }}
+        {{ previousTask.title }}
       </h1>
 
       <div
@@ -58,16 +61,21 @@ const isEmpty = (value) => {
           <div class="flex flex-col">
             <p class="font-semibold">Description</p>
             <div
+              class="itbkk-description"
               :class="[
-                props.task.assignees === null
+                previousTask.description === null &&
+                previousTask.description === '' &&
+                previousTask.description === undefined
                   ? 'italic text-gray-300 px-4 py-2'
-                  : 'px-4 py-2',
+                  : 'px-2 py-2',
                 'itbkk-description italic lg:w-[350px] sm:w-[260px] h-full break-all',
               ]"
             >
               {{
-                props.task.assignees !== null
-                  ? props.task.description
+                previousTask.description !== null &&
+                previousTask.description !== "" &&
+                previousTask.description !== undefined
+                  ? previousTask.description
                   : "No Description Provided"
               }}
             </div>
@@ -75,16 +83,21 @@ const isEmpty = (value) => {
           <div class="flex flex-col">
             <p class="font-semibold">Assignees</p>
             <div
+              class="itbkk-assignees"
               :class="[
-                props.task.assignees === null
+                previousTask.assignees === null &&
+                previousTask.assignees === '' &&
+                previousTask.assignees === undefined
                   ? 'italic text-gray-300  px-4 py-2'
-                  : 'px-4 py-2',
-                'itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 ',
+                  : 'pl-2 py-2',
+                'itbkk-assignees italic lg:w-[230px] sm:w-[200px] h-1/3 break-all',
               ]"
             >
               {{
-                props.task.assignees !== null
-                  ? props.task.assignees
+                previousTask.assignees !== null &&
+                previousTask.assignees !== "" &&
+                previousTask.assignees !== undefined
+                  ? previousTask.assignees
                   : "Unassigned"
               }}
             </div>
@@ -95,7 +108,7 @@ const isEmpty = (value) => {
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
                 <option selected class="itbkk-status">
-                  {{ props.task.status }}
+                  {{ previousTask.status }}
                 </option>
                 <option>No Status</option>
                 <option>To Do</option>
@@ -103,22 +116,28 @@ const isEmpty = (value) => {
                 <option>Done</option>
               </select>
             </form>
-            <div class="flex flex-col pt-28 lg:w-[230px] sm:w-[200px]">
+            <div class="flex flex-col pt-28 lg:w-[230px] sm:w-[200px] text-sm">
               <div class="itbkk-timezone font-semibold">
                 TimeZone : {{ timeZone }}
               </div>
-              <div class="itbkk-created-on font-semibold">
-                Created On : {{ formattedDate }}
+              <div class="font-semibold">
+                Created On :
+                <span class="itbkk-created-on">{{ formattedCreatedOn }}</span>
               </div>
-              <div class="itbkk-updated-on font-semibold">
-                Updated On : {{ formattedUpdatedDate }}
+              <div class="font-semibold">
+                <span class="itbkk-updated-on"
+                  >Updated On : {{ formattedUpdatedOn }}</span
+                >
               </div>
             </div>
           </div>
         </div>
       </div>
       <div class="absolute right-6 bottom-3">
-        <buttonSubmit buttonType="Ok" @click="$emit('closeDetail')"></buttonSubmit>
+        <buttonSubmit
+          buttonType="Ok"
+          @click="$emit('closeDetail')"
+        ></buttonSubmit>
         <buttonSubmit
           buttonType="Cancel"
           @click="$emit('closeDetail')"

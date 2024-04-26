@@ -24,9 +24,20 @@ const popup = reactive({
 });
 const selectedIndex = ref(null);
 
-const openDetail = (index) => {
+const editingDetail = ref({
+  id: "",
+  title: "",
+  description: "",
+  assignees: "",
+  status: "",
+  createdOn: "",
+  updatedOn: "",
+});
+
+const openDetail = (selectedTasked) => {
+  editingDetail.value = selectedTasked;
+
   popup.isEdit = true;
-  selectedIndex.value = index;
 };
 
 const closeDetail = () => {
@@ -97,7 +108,7 @@ const closeDetail = () => {
                   </td>
                   <td
                     class="itbkk-title px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
-                    @click="openDetail(index)"
+                    @click="openDetail(tasks.getTasks()[index])"
                   >
                     {{ task.title }}
                   </td>
@@ -121,11 +132,6 @@ const closeDetail = () => {
                       {{ task.status }}
                     </StatusButton>
                   </td>
-                  <Detail
-                    v-if="popup.isEdit && selectedIndex === index"
-                    :task="task"
-                    @closeDetail="closeDetail"
-                  ></Detail>
                 </tr>
               </tbody>
             </table>
@@ -133,6 +139,12 @@ const closeDetail = () => {
         </div>
       </div>
     </div>
+
+    <Teleport to="#detailModal"
+      ><div v-show="popup.isEdit">
+        <Detail :editingDetail="editingDetail" @closeDetail="closeDetail" />
+      </div>
+    </Teleport>
   </div>
 </template>
 
