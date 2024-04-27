@@ -15,7 +15,7 @@ async function fetchTaskDetails(url, id) {
     const router = useRouter();
     const data = await fetch(`${url}/${id}`);
     if (!data.ok) {
-      alert("The Requested task does not exist");
+      alert("The requested task does not exist");
       router.push("/");
       return;
     }
