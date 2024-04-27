@@ -1,7 +1,5 @@
-// import { useRoute } from "vue-router";
-// import { useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
-// const router = useRoute();
 async function fetchAllTasks(url) {
   try {
     const data = await fetch(url);
@@ -11,15 +9,15 @@ async function fetchAllTasks(url) {
     console.log(`error: ${error}`);
   }
 }
-const router = useRouter();
-
 
 async function fetchTaskDetails(url, id) {
   try {
+    const router = useRouter();
     const data = await fetch(`${url}/${id}`);
-    if (data.status === 404) {
-      router.push({ name: "task" });
-      throw new Error('Failed to fetch task details');
+    if (!data.ok) {
+      alert("The Requested task does not exist");
+      router.push("/");
+      return;
     }
     const res = await data.json();
     return res;

@@ -46,6 +46,9 @@ function formatDate(date) {
 
 const openDetail = async (id) => {
   const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+  if (taskDetails === undefined) {
+    return;
+  }
   selectedTask.value = taskDetails;
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);

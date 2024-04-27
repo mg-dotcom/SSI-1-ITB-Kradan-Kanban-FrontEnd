@@ -21,6 +21,10 @@ const router = createRouter({
         },
       ],
     },
+    {
+      path: "/:notfound(.*)",
+      redirect: "/task",
+    },
   ],
 });
 

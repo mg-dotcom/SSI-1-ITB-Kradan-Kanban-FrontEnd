@@ -12,8 +12,6 @@ import buttonSubmit from "../components/button/Button.vue";
 import { useRouter, useRoute } from "vue-router";
 import { TaskModal } from "@/libs/TaskModal";
 
-
-
 const emit = defineEmits(["closeDetail"]);
 
 const props = defineProps({
@@ -43,10 +41,10 @@ const props = defineProps({
           <div class="flex flex-col">
             <p class="font-semibold">Description</p>
             <div
-              class="itbkk-description lg:w-[350px] sm:w-[260px] h-full break-all"
+              class="itbkk-description lg:w-[350px] sm:w-[260px] h-full px-3 break-all"
               :class="
                 props.selectedTask.description === null
-                  ? 'italic text-gray-500'
+                  ? 'italic text-gray-400'
                   : ''
               "
             >
@@ -60,10 +58,10 @@ const props = defineProps({
           <div class="flex flex-col">
             <p class="font-semibold">Assignees</p>
             <div
-              class="itbkk-assignees lg:w-[230px] sm:w-[200px] h-1/3 break-all"
+              class="itbkk-assignees lg:w-[230px] sm:w-[200px] h-1/3 px-3 break-all"
               :class="
                 props.selectedTask.assignees === null
-                  ? 'italic text-gray-500'
+                  ? 'italic text-gray-400'
                   : ''
               "
             >
