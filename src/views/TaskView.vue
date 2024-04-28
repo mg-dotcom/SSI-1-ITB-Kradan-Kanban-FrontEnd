@@ -69,7 +69,11 @@ const closeDetail = () => {
 <template>
   <div class="h-screen w-full">
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
-      <img class="absolute right-0" src="/glass-overlay.png" alt="" />
+      <img
+        class="object-cover absolute right-0 max-w-max h-[90px]"
+        src="/glass-overlay.png"
+        alt=""
+      />
       <div class="h-[90px] flex flex-col justify-center p-10">
         <h1 class="text-header text-white font-bold">
           IT-Bangmod Kradan kanban
@@ -135,7 +139,7 @@ const closeDetail = () => {
                   <td
                     class="itbkk-assignees italic px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
                   >
-                    {{ task.assignees || "Unassigned"}}
+                    {{ task.assignees || "Unassigned" }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-500 border-b border-gray-300 break-all"
