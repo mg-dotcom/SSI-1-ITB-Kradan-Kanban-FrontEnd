@@ -1,9 +1,5 @@
 <script setup>
-import {
-  defineProps,
-  ref,
-  defineEmits,
-} from "vue";
+import { defineProps, ref, defineEmits } from "vue";
 import buttonSubmit from "../components/button/Button.vue";
 
 const emit = defineEmits(["closeDetail"]);
@@ -71,7 +67,7 @@ const props = defineProps({
                 id="countries"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
-                <option selected class="itbkk-status">
+                <option selected class="itbkk-status hidden">
                   {{ props.selectedTask.status }}
                 </option>
                 <option>No Status</option>
