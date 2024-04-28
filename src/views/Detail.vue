@@ -3,14 +3,8 @@ import {
   defineProps,
   ref,
   defineEmits,
-  computed,
-  reactive,
-  onMounted,
 } from "vue";
-import { fetchTaskDetails } from "../libs/FetchTask.js";
 import buttonSubmit from "../components/button/Button.vue";
-import { useRouter, useRoute } from "vue-router";
-import { TaskModal } from "@/libs/TaskModal";
 
 const emit = defineEmits(["closeDetail"]);
 

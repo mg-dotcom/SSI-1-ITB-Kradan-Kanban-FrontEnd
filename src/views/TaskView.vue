@@ -135,7 +135,7 @@ const closeDetail = () => {
                   <td
                     class="itbkk-assignees italic px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
                   >
-                    {{ task.assignees }}
+                    {{ task.assignees || "Unassigned"}}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-500 border-b border-gray-300 break-all"
