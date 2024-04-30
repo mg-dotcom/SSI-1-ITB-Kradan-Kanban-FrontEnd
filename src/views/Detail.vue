@@ -33,9 +33,7 @@ const props = defineProps({
             <div
               class="itbkk-description lg:w-[350px] sm:w-[260px] h-full px-3 break-all"
               :class="
-                !props.selectedTask.description
-                  ? 'italic text-gray-400'
-                  : ''
+                !props.selectedTask.description ? 'italic text-gray-400' : ''
               "
             >
               {{
@@ -50,9 +48,7 @@ const props = defineProps({
             <div
               class="itbkk-assignees lg:w-[230px] sm:w-[200px] h-1/3 px-3 break-all"
               :class="
-                !props.selectedTask.assignees
-                  ? 'italic text-gray-400'
-                  : ''
+                !props.selectedTask.assignees ? 'italic text-gray-400' : ''
               "
             >
               {{
