@@ -50,6 +50,7 @@ const openDetail = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
+  selectedTask.value.status = formatStauts(taskDetails.status);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.isEdit = true;
@@ -63,6 +64,18 @@ if (taskId) {
 const closeDetail = () => {
   popup.isEdit = false;
   router.push({ name: "task" });
+};
+
+var res = "Hello_World".replace(/_/g, " ").toLowerCase();
+console.log(res);
+
+const formatStauts = (status) => {
+  return status
+    .replace(/_/g, " ")
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
 };
 </script>
 
@@ -126,34 +139,35 @@ const closeDetail = () => {
                   :key="index"
                 >
                   <td
-                    class="text-center py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
+                    class="text-center py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                   >
                     {{ task.id }}
                   </td>
                   <td
-                    class="itbkk-title px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
+                    class="itbkk-title px-6 py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
                     @click="openDetail(task.id)"
                   >
                     {{ task.title }}
                   </td>
                   <td
-                    class="itbkk-assignees italic px-6 py-4 text-sm text-gray-500 border-b border-r border-gray-300 break-all"
+                    class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
+                    :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
                     {{ task.assignees || "Unassigned" }}
                   </td>
                   <td
-                    class="itbkk-status px-6 py-4 text-sm text-gray-500 border-b border-gray-300 break-all"
+                    class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <StatusButton
                       :statusName="
                         task.status
+                          .replace(/_/g, ' ')
                           .toLowerCase()
-                          .split('')
-                          .filter((char) => char !== ' ')
+                          .split(' ')
                           .join('')
                       "
                     >
-                      {{ task.status }}
+                      {{ formatStauts(task.status) }}
                     </StatusButton>
                   </td>
                 </tr>
