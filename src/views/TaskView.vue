@@ -1,82 +1,84 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
-import Detail from "./Detail.vue";
-import StatusButton from "../components/button/StatusButton.vue";
-import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
-import { TaskModal } from "../libs/TaskModal.js";
-const tasks = ref(new TaskModal());
-import { useRouter, useRoute } from "vue-router";
-const router = useRouter();
-const route = useRoute();
+import { onMounted, reactive, ref } from 'vue'
+import Detail from './Detail.vue'
+import StatusButton from '../components/button/StatusButton.vue'
+import { fetchAllTasks, fetchTaskDetails } from '../libs/FetchTask.js'
+import { TaskModal } from '../libs/TaskModal.js'
+const tasks = ref(new TaskModal())
+import { useRouter, useRoute } from 'vue-router'
+const router = useRouter()
+const route = useRoute()
 
 const selectedTask = ref({
-  id: "0",
-  title: "",
-  description: "",
-  assignees: "",
-  status: "",
-  createdOn: "",
-  updatedOn: "",
-});
+  id: '0',
+  title: '',
+  description: '',
+  assignees: '',
+  status: '',
+  createdOn: '',
+  updatedOn: ''
+})
 
-const taskId = route.params.id;
+const taskId = route.params.id
 
 onMounted(async () => {
-  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
-  tasks.value.addAllTasks(allTasks);
-});
+  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL)
+  tasks.value.addAllTasks(allTasks)
+})
 
 const page = reactive({
-  task: true,
-});
+  task: true
+})
 
 const popup = reactive({
-  isEdit: false,
-});
+  isEdit: false
+})
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
 function formatDate(date) {
-  const d = new Date(date);
+  const d = new Date(date)
   return d
-    .toLocaleString("en-GB", { timeZone: localTimeZone.value })
-    .split(",")
-    .join(" ");
+    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
+    .split(',')
+    .join(' ')
 }
 
 const openDetail = async (id) => {
-  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id)
   if (taskDetails === undefined) {
-    return;
+    return
   }
-  selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStauts(taskDetails.status);
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
-  popup.isEdit = true;
-  router.push({ name: "task-detail", params: { id: id } });
-};
+  selectedTask.value = taskDetails
+  selectedTask.value.status = formatStauts(taskDetails.status)
+  selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
+  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
+  popup.isEdit = true
+  router.push({ name: 'task-detail', params: { id: id } })
+}
 
 if (taskId) {
-  openDetail(taskId);
+  openDetail(taskId)
 }
 
 const closeDetail = () => {
-  popup.isEdit = false;
-  router.push({ name: "task" });
-};
-
-var res = "Hello_World".replace(/_/g, " ").toLowerCase();
-console.log(res);
+  popup.isEdit = false
+  router.push({ name: 'task' })
+}
 
 const formatStauts = (status) => {
   return status
-    .replace(/_/g, " ")
+    .replace(/_/g, ' ')
     .toLowerCase()
-    .split(" ")
+    .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
+    .join(' ')
+}
+
+const addtask=()=>{
+  popup.isEdit = true
+  
+}
 </script>
 
 <template>
@@ -98,6 +100,9 @@ const formatStauts = (status) => {
       class="table lg:px-24 sm:px-10 py-14 overflow-hidden"
       v-show="page.task"
     >
+      <div class="">
+        <button class="bg-green-500 text-black" @click="addtask">Add</button>
+      </div>
       <div class="-my-2 overflow-hidden sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
@@ -153,7 +158,7 @@ const formatStauts = (status) => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || "Unassigned" }}
+                    {{ task.assignees || 'Unassigned' }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
