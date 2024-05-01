@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import Detail from './Detail.vue'
+import AddEditModal from '../AddEditModal.vue'
 import StatusButton from '../components/button/StatusButton.vue'
 import { fetchAllTasks, fetchTaskDetails } from '../libs/FetchTask.js'
 import { TaskModal } from '../libs/TaskModal.js'
@@ -31,7 +32,8 @@ const page = reactive({
 })
 
 const popup = reactive({
-  isEdit: false
+  popupAddEdit:false,
+  popupDetail: false
 })
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
@@ -53,7 +55,7 @@ const openDetail = async (id) => {
   selectedTask.value.status = formatStauts(taskDetails.status)
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
-  popup.isEdit = true
+  popup.popupDetail = true
   router.push({ name: 'task-detail', params: { id: id } })
 }
 
@@ -62,7 +64,7 @@ if (taskId) {
 }
 
 const closeDetail = () => {
-  popup.isEdit = false
+  popup.popupDetail = false
   router.push({ name: 'task' })
 }
 
@@ -75,9 +77,8 @@ const formatStauts = (status) => {
     .join(' ')
 }
 
-const addtask=()=>{
-  popup.isEdit = true
-  
+const addtask = () => {
+  popup.popupAddEdit = true
 }
 </script>
 
@@ -101,7 +102,9 @@ const addtask=()=>{
       v-show="page.task"
     >
       <div class="">
-        <button class="bg-green-500 text-black" @click="addtask">Add</button>
+        <button class="bg-green-500 text-black" @click="addtask()">
+          Add
+        </button>
       </div>
       <div class="-my-2 overflow-hidden sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
@@ -183,12 +186,14 @@ const addtask=()=>{
       </div>
     </div>
     <Detail
-      v-if="popup.isEdit"
+      v-if="popup.popupDetail"
       @closeDetail="closeDetail"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></Detail>
+    <AddEditModal v-if="popup.popupAddEdit"></AddEditModal>
   </div>
+
 </template>
 
 <style scoped></style>

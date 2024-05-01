@@ -10,11 +10,9 @@ import StatusButton from './components/button/StatusButton.vue'
     <div
       class="bg-[#F2F2F2] sm:w-[75%] sm:h-[89%] md:w-[45%] md:h-[89%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg py-16 relative"
     >
-      <h1
-        class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
-      >
+      <div class="font-bold text-xl">
         <slot name="title">Title</slot>
-      </h1>
+      </div>
 
       <div
         class="bg-white w-full h-full border-b border-t border-[#CACACA] py-6 px-8"
