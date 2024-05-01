@@ -97,8 +97,24 @@ const addtask = () => {
   router.push({ name: "task-add" });
 };
 
+const editTask=async(id)=>{
+  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+  if (taskDetails === undefined) {
+    return;
+  }
+  selectedTask.value = taskDetails;
+  selectedTask.value.status = formatStatus(taskDetails.status);
+  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
+  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
+  // console.log(selectedTask.value);
+  popup.addEdit=true;
+
+}
+// console.log(selectedTask.value);
+
 const showOptionEditDelete = (taskId) => {
   selectedTask.value.id = taskId;
+  popup.detail=false;
   popup.optionEditDelete = !popup.optionEditDelete;
 };
 </script>
@@ -230,14 +246,14 @@ const showOptionEditDelete = (taskId) => {
                         <ul
                           class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
                         >
-                          <li>
+                          <li class="" @click="editTask(task.id)">
                             <p
                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                             >
                               Edit
                             </p>
                           </li>
-                          <li>
+                          <li class="" @click="">
                             <p
                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                             >
