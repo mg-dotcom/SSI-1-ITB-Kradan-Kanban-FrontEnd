@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import Detail from "./Detail.vue";
+import AddEditModal from "../AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
@@ -32,7 +33,8 @@ const page = reactive({
 });
 
 const popup = reactive({
-  isEdit: false,
+  addEdit: false,
+  detail: false,
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -54,7 +56,7 @@ const openDetail = async (id) => {
   selectedTask.value.status = formatStatus(taskDetails.status);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
-  popup.isEdit = true;
+  popup.detail = true;
   router.push({ name: "task-detail", params: { id: id } });
 };
 
@@ -63,7 +65,7 @@ if (taskId) {
 }
 
 const closeDetail = () => {
-  popup.isEdit = false;
+  popup.detail = false;
   selectedTask.value = {
     id: "0",
     title: "",
@@ -73,11 +75,9 @@ const closeDetail = () => {
     createdOn: "",
     updatedOn: "",
   };
+
   router.push({ name: "task" });
 };
-
-var res = "Hello_World".replace(/_/g, " ").toLowerCase();
-console.log(res);
 
 const formatStatus = (status) => {
   return status
@@ -86,6 +86,10 @@ const formatStatus = (status) => {
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+};
+
+const addtask = () => {
+  popup.addEdit = true;
 };
 </script>
 
@@ -196,11 +200,12 @@ const formatStatus = (status) => {
       </div>
     </div>
     <Detail
-      v-if="popup.isEdit"
+      v-if="popup.detail"
       @closeDetail="closeDetail"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></Detail>
+    <AddEditModal v-if="popup.addEdit"></AddEditModal>
   </div>
 </template>
 
