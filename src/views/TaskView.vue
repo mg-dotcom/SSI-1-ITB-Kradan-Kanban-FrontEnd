@@ -6,6 +6,7 @@ import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const tasks = ref(new TaskModal());
 import { useRouter, useRoute } from "vue-router";
+import buttonSubmit from "../components/button/Button.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -50,7 +51,7 @@ const openDetail = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStauts(taskDetails.status);
+  selectedTask.value.status = formatStatus(taskDetails.status);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.isEdit = true;
@@ -63,13 +64,22 @@ if (taskId) {
 
 const closeDetail = () => {
   popup.isEdit = false;
+  selectedTask.value = {
+    id: "0",
+    title: "",
+    description: "",
+    assignees: "",
+    status: "",
+    createdOn: "",
+    updatedOn: "",
+  };
   router.push({ name: "task" });
 };
 
 var res = "Hello_World".replace(/_/g, " ").toLowerCase();
 console.log(res);
 
-const formatStauts = (status) => {
+const formatStatus = (status) => {
   return status
     .replace(/_/g, " ")
     .toLowerCase()
@@ -94,10 +104,18 @@ const formatStauts = (status) => {
       </div>
     </div>
 
-    <div
-      class="table lg:px-24 sm:px-10 py-14 overflow-hidden"
-      v-show="page.task"
-    >
+    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-show="page.task">
+      <div class="itbkk-button-add flex justify-between py-6 px-8">
+        <div class="text-xl font-bold flex items-center text-blue">
+          Task Lists&nbsp;
+          <span v-if="selectedTask.title.length !== 0" class="break-all">
+            > {{ selectedTask.title }}
+          </span>
+        </div>
+        <buttonSubmit buttonType="Add" @closeDetail="closeDetail"
+          >+ Add Task</buttonSubmit
+        >
+      </div>
       <div class="-my-2 overflow-hidden sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
@@ -167,7 +185,7 @@ const formatStauts = (status) => {
                           .join('')
                       "
                     >
-                      {{ formatStauts(task.status) }}
+                      {{ formatStatus(task.status) }}
                     </StatusButton>
                   </td>
                 </tr>

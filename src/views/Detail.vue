@@ -1,6 +1,7 @@
 <script setup>
 import { defineProps, ref, defineEmits } from "vue";
 import buttonSubmit from "../components/button/Button.vue";
+import StatusButton from "../components/button/StatusButton.vue";
 
 const emit = defineEmits(["closeDetail"]);
 
@@ -57,8 +58,10 @@ const props = defineProps({
                   : props.selectedTask.assignees
               }}
             </div>
-            <p class="pt-5 font-semibold">Status</p>
-            <form class="lg:w-[230px] sm:w-[200px]">
+            <div class="">
+              <p class="pt-5 font-semibold">Status</p>
+
+              <!-- <form class="lg:w-[230px] sm:w-[200px]">
               <select
                 id="countries"
                 class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -71,7 +74,22 @@ const props = defineProps({
                 <option>Doing</option>
                 <option>Done</option>
               </select>
-            </form>
+            </form> -->
+              <div class="itbkk-status lg:w-[230px] sm:w-[200px] text-sm">
+                <StatusButton
+                  :statusName="
+                    props.selectedTask.status
+                      .replace(/_/g, ' ')
+                      .toLowerCase()
+                      .split(' ')
+                      .join('')
+                  "
+                >
+                  {{ props.selectedTask.status }}
+                </StatusButton>
+              </div>
+            </div>
+
             <div class="flex flex-col pt-28 lg:w-[230px] sm:w-[200px] text-sm">
               <div class="itbkk-timezone font-semibold">
                 TimeZone : {{ localTimeZone }}
@@ -92,14 +110,12 @@ const props = defineProps({
         </div>
       </div>
       <div class="absolute right-6 bottom-3">
-        <buttonSubmit
-          buttonType="Ok"
-          @click="$emit('closeDetail')"
-        ></buttonSubmit>
-        <buttonSubmit
-          buttonType="Cancel"
-          @click="$emit('closeDetail')"
-        ></buttonSubmit>
+        <buttonSubmit buttonType="Ok" @click="$emit('closeDetail')"
+          >Ok</buttonSubmit
+        >
+        <buttonSubmit buttonType="Cancel" @click="$emit('closeDetail')"
+          >Close</buttonSubmit
+        >
       </div>
     </div>
   </div>
