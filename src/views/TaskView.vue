@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
-import Detail from "./Detail.vue";
-import AddEditModal from "../AddEditModal.vue";
+import Detail from "../components/Detail.vue";
+import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
@@ -66,6 +66,7 @@ if (taskId) {
 
 const closeDetail = () => {
   popup.detail = false;
+  popup.addEdit = false;
   selectedTask.value = {
     id: "0",
     title: "",
@@ -75,7 +76,6 @@ const closeDetail = () => {
     createdOn: "",
     updatedOn: "",
   };
-
   router.push({ name: "task" });
 };
 
@@ -90,6 +90,7 @@ const formatStatus = (status) => {
 
 const addtask = () => {
   popup.addEdit = true;
+  router.push({ name: "task-add" });
 };
 </script>
 
@@ -116,7 +117,10 @@ const addtask = () => {
             > {{ selectedTask.title }}
           </span>
         </div>
-        <buttonSubmit buttonType="Add" @closeDetail="closeDetail"
+        <buttonSubmit
+          buttonType="Add"
+          @closeDetail="closeDetail"
+          @click="addtask"
           >+ Add Task</buttonSubmit
         >
       </div>
@@ -205,7 +209,11 @@ const addtask = () => {
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></Detail>
-    <AddEditModal v-if="popup.addEdit"></AddEditModal>
+    <AddEditModal
+      v-if="popup.addEdit"
+      @closeDetail="closeDetail"
+      :localTimeZone="localTimeZone"
+    ></AddEditModal>
   </div>
 </template>
 

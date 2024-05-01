@@ -1,7 +1,7 @@
 <script setup>
 import buttonSubmit from "../components/button/Button.vue";
 import StatusButton from "../components/button/StatusButton.vue";
-import ModalDetail from "../ModalDetail.vue";
+import ModalDetail from "./ModalDetail.vue";
 
 const emit = defineEmits(["closeDetail"]);
 
@@ -44,21 +44,19 @@ const props = defineProps({
       </StatusButton>
     </template>
     <template #Timezone>
-      {{ localTimeZone }}
+      TimeZone : {{ localTimeZone }}
     </template>
-    <template #createdOn>{{ props.selectedTask.createdOn }} </template>
-    <template #updatedOn> {{ props.selectedTask.updatedOn }}</template>
+    <template #createdOn> Created On : {{ props.selectedTask.createdOn }} </template>
+    <template #updatedOn>  Updated On : {{ props.selectedTask.updatedOn }}</template>
     <template #button-left>
-      <buttonSubmit
-        buttonType="Ok"
-        @click="$emit('closeDetail')"
-      ></buttonSubmit>
+      <buttonSubmit buttonType="Ok" @click="$emit('closeDetail')"
+        >Ok</buttonSubmit
+      >
     </template>
     <template #button-right>
-      <buttonSubmit
-        buttonType="Cancel"
-        @click="$emit('closeDetail')"
-      ></buttonSubmit>
+      <buttonSubmit buttonType="Cancel" @click="$emit('closeDetail')"
+        >Cancel</buttonSubmit
+      >
     </template>
   </ModalDetail>
 </template>
