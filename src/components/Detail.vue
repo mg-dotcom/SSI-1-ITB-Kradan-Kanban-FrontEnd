@@ -12,7 +12,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <ModalDetail>
+  <ModalDetail :selectedTask="selectedTask">
     <template #title>
       {{ props.selectedTask.title }}
     </template>
@@ -43,11 +43,13 @@ const props = defineProps({
         {{ props.selectedTask.status }}
       </StatusButton>
     </template>
-    <template #Timezone>
-      TimeZone : {{ localTimeZone }}
+    <template #Timezone> TimeZone : {{ localTimeZone }} </template>
+    <template #createdOn>
+      Created On : {{ props.selectedTask.createdOn }}
     </template>
-    <template #createdOn> Created On : {{ props.selectedTask.createdOn }} </template>
-    <template #updatedOn>  Updated On : {{ props.selectedTask.updatedOn }}</template>
+    <template #updatedOn>
+      Updated On : {{ props.selectedTask.updatedOn }}</template
+    >
     <template #button-left>
       <buttonSubmit buttonType="Ok" @click="$emit('closeDetail')"
         >Ok</buttonSubmit

@@ -5,13 +5,14 @@ import buttonSubmit from "./button/Button.vue";
 import { defineProps, defineEmits } from "vue";
 
 const props = defineProps({
+  selectedTask: Object,
   localTimeZone: String,
 });
 defineEmits(["closeDetail"]);
 </script>
 
 <template>
-  <ModalDetail>
+  <ModalDetail :selectedTask="selectedTask">
     <template #title> New Task </template>
     <div class="mb-4">
       <label

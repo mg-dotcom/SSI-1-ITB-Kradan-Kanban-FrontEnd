@@ -1,5 +1,6 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
+import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/Detail.vue";
 import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
@@ -24,6 +25,8 @@ const selectedTask = ref({
 const taskId = route.params.id;
 
 onMounted(async () => {
+  initFlowbite();
+  initDropdowns();
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
   tasks.value.addAllTasks(allTasks);
 });
@@ -35,6 +38,7 @@ const page = reactive({
 const popup = reactive({
   addEdit: false,
   detail: false,
+  optionEditDelete: false,
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -92,6 +96,11 @@ const addtask = () => {
   popup.addEdit = true;
   router.push({ name: "task-add" });
 };
+
+const showOptionEditDelete = (taskId) => {
+  selectedTask.value.id = taskId;
+  popup.optionEditDelete = !popup.optionEditDelete;
+};
 </script>
 
 <template>
@@ -124,10 +133,10 @@ const addtask = () => {
           >+ Add Task</buttonSubmit
         >
       </div>
-      <div class="-my-2 overflow-hidden sm:-mx">
+      <div class="-my-2 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
-            class="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg"
+            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
           >
             <table class="table-fixed w-full h-full">
               <thead class="bg-lightgray">
@@ -150,9 +159,6 @@ const addtask = () => {
                   >
                     Status
                   </th>
-                  <!-- <th scope="col" class="relative px-6 py-3 bg-gray-200">
-                    <span class="sr-only">Edit</span>
-                  </th> -->
                 </tr>
               </thead>
               <tbody class="bg-white">
@@ -160,7 +166,7 @@ const addtask = () => {
                   <td class="border text-center" colspan="4">No Task</td>
                 </tr>
                 <tr
-                  class="itbkk-item hover:bg-gray-50"
+                  class="itbkk-item"
                   v-for="(task, index) in tasks.getTasks()"
                   :key="index"
                 >
@@ -184,17 +190,63 @@ const addtask = () => {
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
-                    <StatusButton
-                      :statusName="
-                        task.status
-                          .replace(/_/g, ' ')
-                          .toLowerCase()
-                          .split(' ')
-                          .join('')
-                      "
-                    >
-                      {{ formatStatus(task.status) }}
-                    </StatusButton>
+                    <div class="flex gap-x-8 items-center">
+                      <StatusButton
+                        :statusName="
+                          task.status
+                            .replace(/_/g, ' ')
+                            .toLowerCase()
+                            .split(' ')
+                            .join('')
+                        "
+                      >
+                        {{ formatStatus(task.status) }}
+                      </StatusButton>
+                      <button
+                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        type="button"
+                        @click="showOptionEditDelete(task.id)"
+                      >
+                        <svg
+                          class="w-5 h-5"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="currentColor"
+                          viewBox="0 0 4 15"
+                        >
+                          <path
+                            d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"
+                          />
+                        </svg>
+                      </button>
+
+                      <!-- Dropdown menu -->
+                      <div
+                        class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[87px]"
+                        v-show="
+                          popup.optionEditDelete && selectedTask.id === task.id
+                        "
+                      >
+                        <ul
+                          class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
+                        >
+                          <li>
+                            <p
+                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                            >
+                              Edit
+                            </p>
+                          </li>
+                          <li>
+                            <p
+                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
+                            >
+                              Delete
+                            </p>
+                          </li>
+                        </ul>
+                      </div>
+                    </div>
                   </td>
                 </tr>
               </tbody>
@@ -211,7 +263,9 @@ const addtask = () => {
     ></Detail>
     <AddEditModal
       v-if="popup.addEdit"
+      class="z-50"
       @closeDetail="closeDetail"
+      :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></AddEditModal>
   </div>

@@ -30,6 +30,9 @@ const props = defineProps({
             <p class="font-semibold mb-2">Description</p>
             <div
               class="itbkk-description lg:w-[350px] sm:w-[260px] h-full px-3 break-all"
+              :class="
+                !props.selectedTask.description ? 'italic text-gray-400' : ''
+              "
             >
               <slot name="desc"></slot>
             </div>
@@ -38,6 +41,9 @@ const props = defineProps({
             <p class="font-semibold mb-2">Assignees</p>
             <div
               class="itbkk-assignees lg:w-[230px] sm:w-[200px] h-1/3 px-3 break-all"
+              :class="
+                !props.selectedTask.assignees ? 'italic text-gray-400' : ''
+              "
             >
               <slot name="assignees">Unassigned</slot>
             </div>
