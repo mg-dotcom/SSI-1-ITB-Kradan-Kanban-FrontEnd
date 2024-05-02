@@ -4,7 +4,7 @@ import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/Detail.vue";
 import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
-import { fetchAllTasks, fetchTaskDetails } from "../libs/FetchTask.js";
+import { fetchAllTasks, fetchTaskDetails,addTask } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const tasks = ref(new TaskModal());
 import { useRouter, useRoute } from "vue-router";
@@ -80,6 +80,25 @@ const closeDetail = () => {
     createdOn: "",
     updatedOn: "",
   };
+  router.push({ name: "task" });
+};
+
+const addNewTask = async(task) => {
+  // console.log(task);
+  popup.detail = false;
+  popup.addEdit = false;
+  selectedTask.value = {
+    id: "0",
+    title: "",
+    description: "",
+    assignees: "",
+    status: "",
+    createdOn: "",
+    updatedOn: "",
+  };
+  const addedTask= await addTask(import.meta.env.VITE_BASE_URL,task)
+  console.log(addedTask);
+
   router.push({ name: "task" });
 };
 
@@ -281,6 +300,7 @@ const showOptionEditDelete = (taskId) => {
       v-if="popup.addEdit"
       class="z-50"
       @closeDetail="closeDetail"
+      @addNewTask="addNewTask"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></AddEditModal>
