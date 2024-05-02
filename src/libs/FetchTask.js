@@ -27,26 +27,25 @@ async function fetchTaskDetails(url, id) {
   }
 }
 
-const addTask = async (url, newTask) => {
+async function addTask(url, newTask) {
   try {
-    const data = await fetch(url);
-    const res = await data.json();
-    res.push(newTask);
-    fetch(`${url}`, {
+    const res = await fetch(url, {
       method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
       body: JSON.stringify({
         title: newTask.title,
         description: newTask.description,
+        assignee: newTask.assignee,
         status: newTask.status,
       }),
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
-    return res;
+    const addedCollection = await res.json();
+    return addedCollection;
   } catch (error) {
     console.log(`error: ${error}`);
   }
-};
+}
 
 export { fetchAllTasks, fetchTaskDetails, addTask };

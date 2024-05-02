@@ -5,34 +5,26 @@ class TaskModal {
 
   addAllTasks(tasks) {
     tasks.forEach((task) => {
-      this.addTask(
-        task.id,
-        task.title,
-        task.description,
-        task.assignees,
-        task.status,
-        task.createdOn,
-        task.updatedOn
-      );
+      this.addTask(task);
     });
   }
 
-  addTask(id, title, description, assignees, status, createdOn, updatedOn) {
+  addTask(task) {
     this.tasks.push({
-      id: id,
-      title: title,
-      description: description,
-      assignees: assignees,
-      status: status,
-      createdOn: createdOn,
-      updatedOn: updatedOn,
+      id: task.id,
+      title: task.title,
+      description: task.description,
+      assignees: task.assignees,
+      status: task.status,
+      createdOn: task.createdOn,
+      updatedOn: task.updatedOn,
     });
   }
 
   getTasksById(id) {
     return this.tasks.find((task) => task.id === id);
   }
-  
+
   getTasks() {
     return this.tasks;
   }
