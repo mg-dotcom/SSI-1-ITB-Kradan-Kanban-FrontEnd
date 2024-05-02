@@ -1,3 +1,4 @@
+
 import { useRouter } from 'vue-router'
 
 async function fetchAllTasks(url) {
@@ -50,4 +51,16 @@ const addTask = async (url, newTask) => {
   }
 }
 
-export { fetchAllTasks, fetchTaskDetails, addTask }
+const deleteTask = async (url,id) => {
+  try{
+    const res = await fetch(`${url}/${id}`,{
+      method: 'DELETE'
+    })
+    return res.status
+  } catch (error) {
+    console.log(`error: ${error}`);
+  }
+
+}
+
+export { fetchAllTasks, fetchTaskDetails, addTask , deleteTask }

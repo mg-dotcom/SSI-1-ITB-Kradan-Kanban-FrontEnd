@@ -29,6 +29,11 @@ class TaskModal {
     });
   }
 
+  removeTask(index){
+    this.tasks.splice(index,1);
+    
+  }
+
   getTasksById(id) {
     return this.tasks.find((task) => task.id === id);
   }

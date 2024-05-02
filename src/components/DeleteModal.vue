@@ -1,7 +1,13 @@
 <script setup>
 import submitButton from "./button/Button.vue";
 import { defineEmits } from "vue";
-defineEmits (['closeDelete']);
+defineEmits (['closeDelete','deleteData']);
+const props = defineProps({
+    selectedTask: {
+    type: Object,
+  }
+});
+console.log(props.selectedTask);
 </script>
 
 <template>
@@ -12,11 +18,11 @@ defineEmits (['closeDelete']);
       </div>
       <div class="title-line w-full h-px bg-gray-300 mb-4"></div>
       <div class="message mb-6">
-        <p>Are you sure you want to delete this task?</p>
+        <p>Do you want to delete the task "{{ selectedTask.title }}"</p>
       </div>
       <div class="button-container flex justify-end">
         <div class="mr-2"><submitButton buttonType="Cancel" @click="$emit('closeDelete')">Cancel</submitButton></div>
-        <div><submitButton buttonType="Ok">Confirm</submitButton></div>
+        <div><submitButton buttonType="Ok" @click="$emit('deleteData',selectedTask.id)">Confirm</submitButton></div>
       </div>
     </div>
   </div>

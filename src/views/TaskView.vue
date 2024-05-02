@@ -4,7 +4,7 @@ import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/Detail.vue";
 import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
-import { fetchAllTasks, fetchTaskDetails,addTask } from "../libs/FetchTask.js";
+import { fetchAllTasks, fetchTaskDetails,addTask,deleteTask } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 import DeleteModal from "@/components/DeleteModal.vue";
 const tasks = ref(new TaskModal());
@@ -145,6 +145,25 @@ const closeDelete = () => {
   popup.optionEditDelete = false;
 };
 
+const openDelete = (id) => {
+  popup.delete = true;
+  const task = tasks.value.getTasksById(id);
+  selectedTask.value = task;
+  console.log(task);
+}
+
+const deleteData = async (id) => {
+  const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL,id)
+  const index = tasks.value.getTasks().findIndex((task) => task.id === id)  
+  if (statusCode === 200) {
+    tasks.value.removeTask(index);
+  }
+
+  closeDelete();
+
+}
+
+
 </script>
 
 <template>
@@ -281,7 +300,7 @@ const closeDelete = () => {
                               Edit
                             </p>
                           </li>
-                          <li class="" @click="popup.delete = true">
+                          <li class="" @click="openDelete(task.id)">
                             <p
                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                             >
@@ -316,6 +335,8 @@ const closeDelete = () => {
     <DeleteModal 
     v-if="popup.delete"
     @closeDelete="closeDelete"
+    :selectedTask="selectedTask"
+    @deleteData="deleteData"
     >
 
     </DeleteModal>

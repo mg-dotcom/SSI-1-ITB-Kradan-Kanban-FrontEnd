@@ -5,6 +5,8 @@ import { defineProps } from "vue";
 const props = defineProps({
   selectedTask: Object,
 });
+
+
 </script>
 
 <template>
