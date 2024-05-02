@@ -126,8 +126,8 @@ const editTask = async (id) => {
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.addEdit = true;
-  router.push({ name: "task-edit", params: { id: id } });
   popup.optionEditDelete = false;
+  router.push({ name: "task-edit", params: { id: id } });
 };
 
 const showOptionEditDelete = (taskId) => {
@@ -164,7 +164,6 @@ const deleteData = async (id) => {
   if (statusCode === 200) {
     tasks.value.removeTask(index);
   }
-
   closeDelete();
 };
 </script>
