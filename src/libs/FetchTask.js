@@ -32,6 +32,15 @@ const addTask = async (url, newTask) => {
     const data = await fetch(url)
     const res = await data.json()
     res.push(newTask)
+    fetch("http://localhost:8080/v1/tasks",{
+      method:"POST",
+      body:JSON.stringify({
+        newTask
+      }),
+      headers:{
+        'Content-Type': 'application/json'
+      }
+    })
     return res
   } catch (error) {
     console.log(`error: ${error}`)
