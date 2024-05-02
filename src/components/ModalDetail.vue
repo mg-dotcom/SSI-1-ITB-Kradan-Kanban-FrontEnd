@@ -51,20 +51,9 @@ const props = defineProps({
             <div class="itbkk-status lg:w-[230px] sm:w-[200px] text-sm">
               <slot name="status"> </slot>
             </div>
-
-            <div class="flex flex-col pt-28 lg:w-[230px] sm:w-[200px] text-sm">
+            <div class="flex flex-col lg:w-[230px] sm:w-[200px] text-sm">
               <div class="itbkk-timezone font-semibold">
-                <slot name="Timezone"></slot>
-              </div>
-              <div class="font-semibold">
-                <span class="itbkk-created-on">
-                  <slot name="createdOn"></slot>
-                </span>
-              </div>
-              <div class="font-semibold">
-                <span class="itbkk-updated-on">
-                  <slot name="updatedOn"></slot>
-                </span>
+                <slot name="Time"></slot>
               </div>
             </div>
           </div>

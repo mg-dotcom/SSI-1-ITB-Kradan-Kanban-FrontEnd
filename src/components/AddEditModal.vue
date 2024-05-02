@@ -9,10 +9,10 @@ const props = defineProps({
   localTimeZone: String,
 });
 const task = ref({
-  title: props.selectedTask.title,
-  description: props.selectedTask.description,
-  assignees: props.selectedTask.assignees,
-  status: props.selectedTask.status,
+  title: props.selectedTask.title.trim(),
+  description: props.selectedTask.description.trim(),
+  assignees: props.selectedTask.assignees.trim(),
+  status: props.selectedTask.status.trim(),
 });
 
 watch(
@@ -25,11 +25,21 @@ watch(
   }
 );
 
+const passNewTask = () => {
+  if (task.value.title === "") {
+    alert("Title is required");
+    return;
+  }
+  task.value.createdOn = new Date().toLocaleString();
+  task.value.updatedOn = new Date().toLocaleString();
+  emit("addNewTask", task.value);
+};
+
 // if (props.selectedTask.id == 0) {
 //   (task.value.title = ""), (task.value.description = "");
 // }
 
-defineEmits(["closeDetail", "addNewTask"]);
+const emit = defineEmits(["closeDetail", "addNewTask"]);
 </script>
 
 <template>
@@ -74,7 +84,7 @@ defineEmits(["closeDetail", "addNewTask"]);
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="task.status"
         >
-          <option selected class="itbkk-status ">
+          <option selected class="itbkk-status">
             {{ selectedTask.status }}
           </option>
           <option>To Do</option>
@@ -84,20 +94,24 @@ defineEmits(["closeDetail", "addNewTask"]);
       </form>
     </template>
 
-    <template #Timezone>
-      {{ task.id == 0 ? "" : "TimeZone : " + props.localTimeZone }}
+    <template #Time>
+      <div class="pt-7">
+        {{ selectedTask.id == "" ? "" : "TimeZone : " + localTimeZone }}
+        <br />
+
+        {{
+          selectedTask.id == "" ? "" : "Created On : " + selectedTask.createdOn
+        }}<br />
+
+        {{
+          selectedTask.id == "" ? "" : "Created On : " + selectedTask.createdOn
+        }}
+        <br />
+      </div>
     </template>
-    <template #createdOn>
-      {{ task.id == 0 ? "" : "Created On : " + task.createdOn }}
-    </template>
-    <template #updatedOn>
-      {{ task.id == 0 ? "" : "Updated On :" + task.updatedOn }}</template
-    >
 
     <template #button-left>
-      <buttonSubmit buttonType="Ok" @click="$emit('addNewTask', task)"
-        >Save</buttonSubmit
-      >
+      <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
     </template>
     <template #button-right>
       <buttonSubmit buttonType="Cancel" @click="$emit('closeDetail')"
