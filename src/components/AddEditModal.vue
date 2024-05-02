@@ -1,27 +1,27 @@
 <script setup>
-import ModalDetail from './ModalDetail.vue'
-import buttonSubmit from './button/Button.vue'
+import ModalDetail from "./ModalDetail.vue";
+import buttonSubmit from "./button/Button.vue";
 
-import { defineProps, defineEmits, computed, ref } from 'vue'
+import { defineProps, defineEmits, computed, ref } from "vue";
 
 const props = defineProps({
   selectedTask: Object,
-  localTimeZone: String
-})
+  localTimeZone: String,
+});
 const task = ref({
   title: props.selectedTask.title,
   description: props.selectedTask.description,
   assignees: props.selectedTask.assignees,
   status: props.selectedTask.status,
-})
+});
 if (props.selectedTask.id == 0) {
   task.value.title=''
   task.value.description=''
 }
 
-defineEmits(['closeDetail','addNewTask'])
-console.log(props.selectedTask)
-console.log(props.localTimeZone)
+defineEmits(["closeDetail", "addNewTask"]);
+console.log(props.selectedTask);
+console.log(props.localTimeZone);
 </script>
 
 <template>
@@ -66,8 +66,9 @@ console.log(props.localTimeZone)
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="task.status"
         >
-          <option selected class="itbkk-status">Choose Status</option>
-          <option>No Status</option>
+          <option selected class="itbkk-status hidden">
+            {{ selectedTask.status }}
+          </option>
           <option>To Do</option>
           <option>Doing</option>
           <option>Done</option>
@@ -76,23 +77,13 @@ console.log(props.localTimeZone)
     </template>
 
     <template #Timezone>
-      {{
-        task.id == 0 ? '' : 'TimeZone : ' + props.localTimeZone
-      }}
+      {{ task.id == 0 ? "" : "TimeZone : " + props.localTimeZone }}
     </template>
     <template #createdOn>
-      {{
-        task.id == 0
-          ? ''
-          : 'Created On : ' + task.createdOn
-      }}
+      {{ task.id == 0 ? "" : "Created On : " + task.createdOn }}
     </template>
     <template #updatedOn>
-      {{
-        task.id == 0
-          ? ''
-          : 'Updated On :' + task.updatedOn
-      }}</template
+      {{ task.id == 0 ? "" : "Updated On :" + task.updatedOn }}</template
     >
 
     <template #button-left>
