@@ -197,10 +197,10 @@ const deleteData = async (id) => {
     </div>
 
     <div class="table lg:px-24 sm:px-10 overflow-hidden" v-show="page.task">
-      <div class="itbkk-button-add flex justify-between py-6 px-8">
+      <div class="itbkk-button-add flex justify-between py-6 px-5">
         <div class="text-xl font-bold flex items-center text-blue">
           Task Lists&nbsp;
-          <span v-if="selectedTask.title === null" class="break-all">
+          <span v-if="selectedTask.title.length !== 0" class="break-all">
             > {{ selectedTask.title }}
           </span>
         </div>
