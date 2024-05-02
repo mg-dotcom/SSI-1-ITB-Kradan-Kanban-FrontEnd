@@ -1,8 +1,10 @@
 <script setup>
 import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "./button/Button.vue";
-
+import { useRouter } from "vue-router";
 import { defineProps, defineEmits, ref } from "vue";
+
+const router = useRouter();
 
 const props = defineProps({
   selectedTask: Object,
@@ -16,26 +18,23 @@ const task = ref({
   status: props.selectedTask.status,
 });
 
-
 const passNewTask = () => {
   console.log(props.selectedTask);
   if (task.value.title === "") {
     alert("Title is required");
     return;
   }
-  if(props.selectedTask.id!==''){
+  if (task.value.id !== "") {
     emit("editNewTask", task.value);
-    console.log('edit');
-  }else{
+    router.push({ name: "task" });
+    console.log("edit");
+  } else {
     emit("addNewTask", task.value);
-    console.log('Add');
+    console.log("Add");
   }
-  
 };
 
-
-
-const emit = defineEmits(["closeDetail", "addNewTask","editNewTask"]);
+const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 </script>
 
 <template>
@@ -108,7 +107,7 @@ const emit = defineEmits(["closeDetail", "addNewTask","editNewTask"]);
 
     <template #button-left>
       <!-- <div v-if> -->
-        <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
+      <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
       <!-- </div> -->
     </template>
     <template #button-right>
