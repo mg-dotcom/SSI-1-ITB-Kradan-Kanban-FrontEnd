@@ -19,7 +19,6 @@ const task = ref({
 });
 
 const passNewTask = () => {
-  // console.log(props.selectedTask);
   if (task.value.title === "") {
     alert("Title is required");
     return;

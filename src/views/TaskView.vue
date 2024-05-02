@@ -32,11 +32,13 @@ const tasks = ref(new TaskModal())
 
 const taskId = route.params.id
 
+
 onMounted(async () => {
   initFlowbite()
   initDropdowns()
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL)
   tasks.value.addAllTasks(allTasks)
+
 })
 
 const page = reactive({
@@ -107,19 +109,23 @@ const openAdd = () => {
 }
 
 const addNewTask = async (task) => {
-
-    task.status = task.status.toUpperCase().replace(/ /g, '_')
-    const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task)
-    console.log(addedTask)
-    tasks.value.addTask(addedTask)
-    popup.addEdit = false
-    popup.optionEditDelete = false
-  
+  task.status = task.status.toUpperCase().replace(/ /g, '_')
+  const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task)
+  console.log(addedTask)
+  tasks.value.addTask(addedTask)
+  popup.addEdit = false
+  popup.optionEditDelete = false
 }
 
 const editTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, '_')
-  const editedTask = await updatedTask(import.meta.env.VITE_BASE_URL, task,selectedTask.value.id)
+  const editedTask = await updatedTask(
+    import.meta.env.VITE_BASE_URL,
+    task,
+    selectedTask.value.id
+  )
+  tasks.value.editTask(editedTask.id,editedTask)
+
   popup.addEdit = false
   popup.optionEditDelete = false
 }
