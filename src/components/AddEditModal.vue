@@ -1,6 +1,6 @@
 <script setup>
 import ModalDetail from "./ModalDetail.vue";
-import buttonSubmit from "./button/button.vue";
+import buttonSubmit from "./button/Button.vue";
 
 import { defineProps, defineEmits, ref } from "vue";
 

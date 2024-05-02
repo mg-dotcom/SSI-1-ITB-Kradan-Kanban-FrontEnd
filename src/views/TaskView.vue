@@ -13,7 +13,7 @@ import {
 import { TaskModal } from "../libs/TaskModal.js";
 import DeleteModal from "../components/DeleteModal.vue";
 import { useRouter, useRoute } from "vue-router";
-import buttonSubmit from "../components/button/button.vue";
+import buttonSubmit from "../components/button/Button.vue";
 const router = useRouter();
 const route = useRoute();
 
