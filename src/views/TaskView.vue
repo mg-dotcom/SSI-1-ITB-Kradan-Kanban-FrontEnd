@@ -105,6 +105,7 @@ const addNewTask = async (task) => {
     console.log(addedTask);
     tasks.value.addTask(addedTask);
     popup.addEdit = false;
+    popup.optionEditDelete = false;
   }
 };
 
@@ -119,6 +120,7 @@ const editTask = async (id) => {
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   // console.log(selectedTask.value);
   popup.addEdit = true;
+
 };
 // console.log(selectedTask.value);
 

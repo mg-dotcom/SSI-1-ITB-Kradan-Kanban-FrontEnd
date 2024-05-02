@@ -94,17 +94,21 @@ const emit = defineEmits(["closeDetail", "addNewTask"]);
       </form>
     </template>
 
-    <template #Timezone>
-      {{ selectedTask.id == "" ? "" : "TimeZone : " + props.localTimeZone }}
+    <template #Time>
+      <div class="pt-7">
+        {{ selectedTask.id == "" ? "" : "TimeZone : " + localTimeZone }}
+        <br />
+
+        {{
+          selectedTask.id == "" ? "" : "Created On : " + selectedTask.createdOn
+        }}<br />
+
+        {{
+          selectedTask.id == "" ? "" : "Created On : " + selectedTask.createdOn
+        }}
+        <br />
+      </div>
     </template>
-    <template #createdOn>
-      {{ selectedTask.id == "" ? "" : "Created On : " + task.createdOn }}
-    </template>
-    <template #updatedOn>
-      {{
-        selectedTask.id == "" ? "" : "Updated On :" + task.updatedOn
-      }}</template
-    >
 
     <template #button-left>
       <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
