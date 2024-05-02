@@ -4,10 +4,16 @@ import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/Detail.vue";
 import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
-import { fetchAllTasks, fetchTaskDetails, addTask } from "../libs/FetchTask.js";
+import {
+  fetchAllTasks,
+  fetchTaskDetails,
+  addTask,
+  deleteTask,
+} from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
+import DeleteModal from "../components/DeleteModal.vue";
 import { useRouter, useRoute } from "vue-router";
-import buttonSubmit from "../components/button/Button.vue";
+import buttonSubmit from "../components/button/button.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -40,6 +46,7 @@ const popup = reactive({
   addEdit: false,
   detail: false,
   optionEditDelete: false,
+  delete: false,
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -93,7 +100,7 @@ const formatStatus = (status) => {
     .join(" ");
 };
 
-const openAddEdit = () => {
+const openAdd = () => {
   popup.addEdit = true;
   router.push({ name: "task-add" });
 };
@@ -118,16 +125,47 @@ const editTask = async (id) => {
   selectedTask.value.status = formatStatus(taskDetails.status);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
-  // console.log(selectedTask.value);
   popup.addEdit = true;
-
+  router.push({ name: "task-edit", params: { id: id } });
+  popup.optionEditDelete = false;
 };
-// console.log(selectedTask.value);
 
 const showOptionEditDelete = (taskId) => {
   selectedTask.value.id = taskId;
   popup.detail = false;
   popup.optionEditDelete = !popup.optionEditDelete;
+};
+
+const closeDelete = () => {
+  popup.delete = false;
+  popup.optionEditDelete = false;
+  selectedTask.value = {
+    id: "",
+    title: "",
+    description: "",
+    assignees: "",
+    status: "No Status",
+    createdOn: "",
+    updatedOn: "",
+  };
+  router.push({ name: "task" });
+};
+
+const openDelete = (id) => {
+  popup.delete = true;
+  const task = tasks.value.getTasksById(id);
+  selectedTask.value = task;
+  console.log(task);
+};
+
+const deleteData = async (id) => {
+  const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id);
+  const index = tasks.value.getTasks().findIndex((task) => task.id === id);
+  if (statusCode === 200) {
+    tasks.value.removeTask(index);
+  }
+
+  closeDelete();
 };
 </script>
 
@@ -157,7 +195,7 @@ const showOptionEditDelete = (taskId) => {
         <buttonSubmit
           buttonType="Add"
           @closeDetail="closeDetail"
-          @click="openAddEdit"
+          @click="openAdd"
           >+ Add Task</buttonSubmit
         >
       </div>
@@ -265,7 +303,7 @@ const showOptionEditDelete = (taskId) => {
                               Edit
                             </p>
                           </li>
-                          <li class="" @click="">
+                          <li class="" @click="openDelete(task.id)">
                             <p
                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                             >
@@ -297,6 +335,13 @@ const showOptionEditDelete = (taskId) => {
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></AddEditModal>
+    <DeleteModal
+      v-if="popup.delete"
+      @closeDelete="closeDelete"
+      :selectedTask="selectedTask"
+      @deleteData="deleteData"
+    >
+    </DeleteModal>
   </div>
 </template>
 
