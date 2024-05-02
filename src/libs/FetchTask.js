@@ -35,7 +35,10 @@ const addTask = async (url, newTask) => {
     fetch("http://localhost:8080/v1/tasks",{
       method:"POST",
       body:JSON.stringify({
-        newTask
+        title:newTask.title,
+        description:newTask.description,
+        assignees:newTask.assignees,
+        status:newTask.status
       }),
       headers:{
         'Content-Type': 'application/json'
