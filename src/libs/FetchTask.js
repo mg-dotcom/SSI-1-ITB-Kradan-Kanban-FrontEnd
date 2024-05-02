@@ -32,7 +32,7 @@ const addTask = async (url, newTask) => {
     const data = await fetch(url)
     const res = await data.json()
     res.push(newTask)
-    fetch("http://localhost:8080/v1/tasks",{
+    fetch(`${url}`,{
       method:"POST",
       body:JSON.stringify({
         title:newTask.title,

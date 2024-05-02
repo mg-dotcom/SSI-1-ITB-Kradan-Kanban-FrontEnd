@@ -15,14 +15,9 @@ const task = ref({
   status: props.selectedTask.status,
 })
 if (props.selectedTask.id == 0) {
-  task.value.title='',
+  task.value.title=''
   task.value.description=''
 }
-// const title=ref(props.selectedTask.title)
-// if(title.value.length<=0){
-//   title.value=''
-// }
-// console.log(title.value);
 
 defineEmits(['closeDetail','addNewTask'])
 console.log(props.selectedTask)
@@ -32,7 +27,7 @@ console.log(props.localTimeZone)
 <template>
   <ModalDetail :selectedTask="selectedTask">
     <template #title>
-      {{ props.selectedTask.id === 0 ? 'Edit Task' : 'New Task' }}</template
+      {{ props.selectedTask.id == 0 ? 'New Task' : 'Edit Task' }}</template
     >
     <div class="mb-4">
       <label
