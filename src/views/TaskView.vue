@@ -4,7 +4,7 @@ import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/Detail.vue";
 import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
-import { fetchAllTasks, fetchTaskDetails,addTask } from "../libs/FetchTask.js";
+import { fetchAllTasks, fetchTaskDetails, addTask } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const tasks = ref(new TaskModal());
 import { useRouter, useRoute } from "vue-router";
@@ -14,12 +14,12 @@ const route = useRoute();
 
 const selectedTask = ref({
   id: "0",
-  title: "",
-  description: "",
-  assignees: "",
-  status: "",
-  createdOn: "",
-  updatedOn: "",
+  title: null,
+  description: null,
+  assignees: null,
+  status: "No Status",
+  createdOn: null,
+  updatedOn: null,
 });
 
 const taskId = route.params.id;
@@ -73,30 +73,21 @@ const closeDetail = () => {
   popup.addEdit = false;
   selectedTask.value = {
     id: "0",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "",
-    createdOn: "",
-    updatedOn: "",
+    title: null,
+    description: null,
+    assignees: null,
+    status: "No Status",
+    createdOn: null,
+    updatedOn: null,
   };
   router.push({ name: "task" });
 };
 
-const addNewTask = async(task) => {
+const addNewTask = async (task) => {
   console.log(task);
   popup.detail = false;
   popup.addEdit = false;
-  selectedTask.value = {
-    id: "0",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "",
-    createdOn: "",
-    updatedOn: "",
-  };
-  const addedTask= await addTask(import.meta.env.VITE_BASE_URL,task)
+  const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task);
   console.log(addedTask);
 
   router.push({ name: "task" });
@@ -116,7 +107,7 @@ const addtask = () => {
   router.push({ name: "task-add" });
 };
 
-const editTask=async(id)=>{
+const editTask = async (id) => {
   const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
   if (taskDetails === undefined) {
     return;
@@ -126,14 +117,13 @@ const editTask=async(id)=>{
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   // console.log(selectedTask.value);
-  popup.addEdit=true;
-
-}
+  popup.addEdit = true;
+};
 // console.log(selectedTask.value);
 
 const showOptionEditDelete = (taskId) => {
   selectedTask.value.id = taskId;
-  popup.detail=false;
+  popup.detail = false;
   popup.optionEditDelete = !popup.optionEditDelete;
 };
 </script>
@@ -157,7 +147,7 @@ const showOptionEditDelete = (taskId) => {
       <div class="itbkk-button-add flex justify-between py-6 px-8">
         <div class="text-xl font-bold flex items-center text-blue">
           Task Lists&nbsp;
-          <span v-if="selectedTask.title.length !== 0" class="break-all">
+          <span v-if="selectedTask.title === null" class="break-all">
             > {{ selectedTask.title }}
           </span>
         </div>
