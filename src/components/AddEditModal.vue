@@ -9,10 +9,10 @@ const props = defineProps({
   localTimeZone: String,
 });
 const task = ref({
-  title: props.selectedTask.title,
-  description: props.selectedTask.description,
-  assignees: props.selectedTask.assignees,
-  status: props.selectedTask.status,
+  title: props.selectedTask.title.trim(),
+  description: props.selectedTask.description.trim(),
+  assignees: props.selectedTask.assignees.trim(),
+  status: props.selectedTask.status.trim(),
 });
 
 watch(
@@ -74,7 +74,7 @@ defineEmits(["closeDetail", "addNewTask"]);
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="task.status"
         >
-          <option selected class="itbkk-status ">
+          <option selected class="itbkk-status">
             {{ selectedTask.status }}
           </option>
           <option>To Do</option>
@@ -85,13 +85,15 @@ defineEmits(["closeDetail", "addNewTask"]);
     </template>
 
     <template #Timezone>
-      {{ task.id == 0 ? "" : "TimeZone : " + props.localTimeZone }}
+      {{ selectedTask.id == "" ? "" : "TimeZone : " + props.localTimeZone }}
     </template>
     <template #createdOn>
-      {{ task.id == 0 ? "" : "Created On : " + task.createdOn }}
+      {{ selectedTask.id == "" ? "" : "Created On : " + task.createdOn }}
     </template>
     <template #updatedOn>
-      {{ task.id == 0 ? "" : "Updated On :" + task.updatedOn }}</template
+      {{
+        selectedTask.id == "" ? "" : "Updated On :" + task.updatedOn
+      }}</template
     >
 
     <template #button-left>
