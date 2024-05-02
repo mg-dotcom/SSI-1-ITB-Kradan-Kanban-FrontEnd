@@ -120,8 +120,6 @@ const addNewTask = async (task) => {
 const editTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, '_')
   const editedTask = await updatedTask(import.meta.env.VITE_BASE_URL, task,selectedTask.value.id)
-  // console.log(editedTask)
-  tasks.value.addTask(editedTask)
   popup.addEdit = false
   popup.optionEditDelete = false
 }
