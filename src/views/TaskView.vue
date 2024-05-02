@@ -125,7 +125,6 @@ const editTask = async (task) => {
     selectedTask.value.id
   )
   tasks.value.editTask(editedTask.id,editedTask)
-
   popup.addEdit = false
   popup.optionEditDelete = false
 }

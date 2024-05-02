@@ -21,21 +21,17 @@ class TaskModal {
     });
   }
 
-  removeTask(index){
-    this.tasks.splice(index,1);
-    
+  removeTask(index) {
+    this.tasks.splice(index, 1);
   }
 
   editTask(id, updatedTask) {
     const index = this.tasks.findIndex((task) => task.id === id);
     if (index !== -1) {
-      this.tasks[index] = {
-        ...this.tasks[index],
-        ...updatedTask,
-      };
+      this.tasks[index] = updatedTask;
       return this.tasks[index];
     } else {
-      return null; // Task with the given id not found
+      return null; 
     }
   }
 
