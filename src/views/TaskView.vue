@@ -14,12 +14,12 @@ const route = useRoute();
 
 const selectedTask = ref({
   id: "0",
-  title: null,
-  description: null,
-  assignees: null,
+  title: "",
+  description: "",
+  assignees: "",
   status: "No Status",
-  createdOn: null,
-  updatedOn: null,
+  // createdOn: "",
+  // updatedOn: "",
 });
 
 const taskId = route.params.id;
@@ -73,12 +73,12 @@ const closeDetail = () => {
   popup.addEdit = false;
   selectedTask.value = {
     id: "0",
-    title: null,
-    description: null,
-    assignees: null,
+    title: "",
+    description: "",
+    assignees: "",
     status: "No Status",
-    createdOn: null,
-    updatedOn: null,
+    // createdOn: "",
+    // updatedOn: "",
   };
   router.push({ name: "task" });
 };
@@ -88,7 +88,9 @@ const addNewTask = async (task) => {
   popup.detail = false;
   popup.addEdit = false;
   const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task);
-  console.log(addedTask);
+  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+  tasks.value.addAllTasks(allTasks);
+
 
   router.push({ name: "task" });
 };

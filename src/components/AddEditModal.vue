@@ -8,16 +8,17 @@ const props = defineProps({
   selectedTask: Object,
   localTimeZone: String,
 });
+
 const task = ref({
   title: props.selectedTask.title,
   description: props.selectedTask.description,
   assignees: props.selectedTask.assignees,
   status: props.selectedTask.status,
 });
-if (props.selectedTask.id == 0) {
-  task.value.title=''
-  task.value.description=''
-}
+// if (props.selectedTask.id == 0) {
+//   task.value.title=''
+//   task.value.description=''
+// }
 
 defineEmits(["closeDetail", "addNewTask"]);
 console.log(props.selectedTask);
