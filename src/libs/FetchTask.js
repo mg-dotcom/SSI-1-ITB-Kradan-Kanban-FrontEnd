@@ -38,7 +38,7 @@ async function addTask(url, newTask) {
       body: JSON.stringify({
         title: newTask.title,
         description: newTask.description,
-        assignee: newTask.assignee,
+        assignees: newTask.assignees,
         status: newTask.status,
       }),
     });

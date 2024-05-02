@@ -2,7 +2,7 @@
 import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "./button/button.vue";
 
-import { defineProps, defineEmits, computed, ref, watch } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 
 const props = defineProps({
   selectedTask: Object,
@@ -15,23 +15,13 @@ const task = ref({
   status: props.selectedTask.status.trim(),
 });
 
-watch(
-  () => props.selectedTask,
-  () => {
-    task.value.title = props.selectedTask.title;
-    task.value.description = props.selectedTask.description;
-    task.value.assignees = props.selectedTask.assignees;
-    task.value.status = props.selectedTask.status;
-  }
-);
 
 const passNewTask = () => {
   if (task.value.title === "") {
     alert("Title is required");
     return;
   }
-  task.value.createdOn = new Date().toLocaleString();
-  task.value.updatedOn = new Date().toLocaleString();
+  console.log(task.value);
   emit("addNewTask", task.value);
 };
 
@@ -111,7 +101,9 @@ const emit = defineEmits(["closeDetail", "addNewTask"]);
     </template>
 
     <template #button-left>
-      <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
+      <!-- <div v-if> -->
+        <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
+      <!-- </div> -->
     </template>
     <template #button-right>
       <buttonSubmit buttonType="Cancel" @click="$emit('closeDetail')"

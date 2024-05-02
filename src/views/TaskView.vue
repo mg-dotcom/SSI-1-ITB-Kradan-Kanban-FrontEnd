@@ -109,7 +109,6 @@ const addNewTask = async (task) => {
   if (task.id === undefined) {
     task.status = task.status.toUpperCase().replace(/ /g, "_");
     const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task);
-    console.log(addedTask);
     tasks.value.addTask(addedTask);
     popup.addEdit = false;
     popup.optionEditDelete = false;
@@ -122,12 +121,11 @@ const editTask = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
+  
+
   popup.addEdit = true;
-  router.push({ name: "task-edit", params: { id: id } });
   popup.optionEditDelete = false;
+  console.log(selectedTask.value);
 };
 
 const showOptionEditDelete = (taskId) => {
@@ -164,7 +162,6 @@ const deleteData = async (id) => {
   if (statusCode === 200) {
     tasks.value.removeTask(index);
   }
-
   closeDelete();
 };
 </script>
