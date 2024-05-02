@@ -107,14 +107,14 @@ const openAdd = () => {
 }
 
 const addNewTask = async (task) => {
-  if (task.id === undefined) {
+
     task.status = task.status.toUpperCase().replace(/ /g, '_')
     const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task)
     console.log(addedTask)
     tasks.value.addTask(addedTask)
     popup.addEdit = false
     popup.optionEditDelete = false
-  }
+  
 }
 
 const editTask = async (task) => {

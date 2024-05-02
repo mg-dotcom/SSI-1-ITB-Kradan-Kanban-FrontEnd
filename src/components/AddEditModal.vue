@@ -19,12 +19,12 @@ const task = ref({
 });
 
 const passNewTask = () => {
-  console.log(props.selectedTask);
+  // console.log(props.selectedTask);
   if (task.value.title === "") {
     alert("Title is required");
     return;
   }
-  if (task.value.id !== "") {
+  if (props.selectedTask.id !== "") {
     emit("editNewTask", task.value);
     router.push({ name: "task" });
     console.log("edit");
