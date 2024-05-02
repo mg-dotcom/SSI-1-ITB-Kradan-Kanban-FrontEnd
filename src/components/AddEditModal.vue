@@ -25,11 +25,21 @@ watch(
   }
 );
 
+const passNewTask = () => {
+  if (task.value.title === "") {
+    alert("Title is required");
+    return;
+  }
+  task.value.createdOn = new Date().toLocaleString();
+  task.value.updatedOn = new Date().toLocaleString();
+  emit("addNewTask", task.value);
+};
+
 // if (props.selectedTask.id == 0) {
 //   (task.value.title = ""), (task.value.description = "");
 // }
 
-defineEmits(["closeDetail", "addNewTask"]);
+const emit = defineEmits(["closeDetail", "addNewTask"]);
 </script>
 
 <template>
@@ -97,9 +107,7 @@ defineEmits(["closeDetail", "addNewTask"]);
     >
 
     <template #button-left>
-      <buttonSubmit buttonType="Ok" @click="$emit('addNewTask', task)"
-        >Save</buttonSubmit
-      >
+      <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
     </template>
     <template #button-right>
       <buttonSubmit buttonType="Cancel" @click="$emit('closeDetail')"
