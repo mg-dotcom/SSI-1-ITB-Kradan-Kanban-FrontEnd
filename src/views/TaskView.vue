@@ -1,171 +1,181 @@
 <script setup>
-import { onMounted, reactive, ref } from "vue";
-import { initFlowbite, initDropdowns } from "flowbite";
-import Detail from "../components/Detail.vue";
-import AddEditModal from "../components/AddEditModal.vue";
-import StatusButton from "../components/button/StatusButton.vue";
+import { onMounted, reactive, ref } from 'vue'
+import { initFlowbite, initDropdowns } from 'flowbite'
+import Detail from '../components/Detail.vue'
+import AddEditModal from '../components/AddEditModal.vue'
+import StatusButton from '../components/button/StatusButton.vue'
 import {
   fetchAllTasks,
   fetchTaskDetails,
   addTask,
   deleteTask,
-} from "../libs/FetchTask.js";
-import { TaskModal } from "../libs/TaskModal.js";
-import DeleteModal from "../components/DeleteModal.vue";
-import { useRouter, useRoute } from "vue-router";
-import buttonSubmit from "../components/button/Button.vue";
-const router = useRouter();
-const route = useRoute();
+  updatedTask
+} from '../libs/FetchTask.js'
+import { TaskModal } from '../libs/TaskModal.js'
+import DeleteModal from '../components/DeleteModal.vue'
+import { useRouter, useRoute } from 'vue-router'
+import buttonSubmit from '../components/button/Button.vue'
+const router = useRouter()
+const route = useRoute()
 
 const selectedTask = ref({
-  id: "",
-  title: "",
-  description: "",
-  assignees: "",
-  status: "No Status",
-  createdOn: "",
-  updatedOn: "",
-});
+  id: '',
+  title: '',
+  description: '',
+  assignees: '',
+  status: 'No Status',
+  createdOn: '',
+  updatedOn: ''
+})
 
-const tasks = ref(new TaskModal());
+const tasks = ref(new TaskModal())
 
-const taskId = route.params.id;
+const taskId = route.params.id
 
 onMounted(async () => {
-  initFlowbite();
-  initDropdowns();
-  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
-  tasks.value.addAllTasks(allTasks);
-});
+  initFlowbite()
+  initDropdowns()
+  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL)
+  tasks.value.addAllTasks(allTasks)
+})
 
 const page = reactive({
-  task: true,
-});
+  task: true
+})
 
 const popup = reactive({
   addEdit: false,
   detail: false,
   optionEditDelete: false,
-  delete: false,
-});
+  delete: false
+})
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
 function formatDate(date) {
-  const d = new Date(date);
+  const d = new Date(date)
   return d
-    .toLocaleString("en-GB", { timeZone: localTimeZone.value })
-    .split(",")
-    .join(" ");
+    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
+    .split(',')
+    .join(' ')
 }
 
 const openDetail = async (id) => {
-  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id)
   if (taskDetails === undefined) {
-    return;
+    return
   }
-  selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
-  popup.detail = true;
-  router.push({ name: "task-detail", params: { id: id } });
-};
+  selectedTask.value = taskDetails
+  selectedTask.value.status = formatStatus(taskDetails.status)
+  selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
+  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
+  popup.detail = true
+  router.push({ name: 'task-detail', params: { id: id } })
+}
 
 if (taskId) {
-  openDetail(taskId);
+  openDetail(taskId)
 }
 
 const closeDetail = () => {
-  popup.detail = false;
-  popup.addEdit = false;
+  popup.detail = false
+  popup.addEdit = false
   selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
-  router.push({ name: "task" });
-};
+    id: '',
+    title: '',
+    description: '',
+    assignees: '',
+    status: 'No Status',
+    createdOn: '',
+    updatedOn: ''
+  }
+  router.push({ name: 'task' })
+}
 
 const formatStatus = (status) => {
   return status
-    .replace(/_/g, " ")
+    .replace(/_/g, ' ')
     .toLowerCase()
-    .split(" ")
+    .split(' ')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
+    .join(' ')
+}
 
 const openAdd = () => {
-  popup.addEdit = true;
-  router.push({ name: "task-add" });
-};
+  popup.addEdit = true
+  router.push({ name: 'task-add' })
+}
 
 const addNewTask = async (task) => {
   if (task.id === undefined) {
-    task.status = task.status.toUpperCase().replace(/ /g, "_");
-    const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task);
-    console.log(addedTask);
-    tasks.value.addTask(addedTask);
-    popup.addEdit = false;
-    popup.optionEditDelete = false;
+    task.status = task.status.toUpperCase().replace(/ /g, '_')
+    const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task)
+    console.log(addedTask)
+    tasks.value.addTask(addedTask)
+    popup.addEdit = false
+    popup.optionEditDelete = false
   }
-};
+}
 
-const editTask = async (id) => {
-  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+const editTask = async (task) => {
+  task.status = task.status.toUpperCase().replace(/ /g, '_')
+  const editedTask = await updatedTask(import.meta.env.VITE_BASE_URL, task,selectedTask.value.id)
+  // console.log(editedTask)
+  tasks.value.addTask(editedTask)
+  popup.addEdit = false
+  popup.optionEditDelete = false
+}
+
+const editTaskModal = async (id) => {
+  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id)
   if (taskDetails === undefined) {
-    return;
+    return
   }
-  selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
-  popup.addEdit = true;
-  popup.optionEditDelete = false;
-  router.push({ name: "task-edit", params: { id: id } });
-};
+  selectedTask.value = taskDetails
+  selectedTask.value.status = formatStatus(taskDetails.status)
+  selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
+  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
+  popup.addEdit = true
+  popup.optionEditDelete = false
+  router.push({ name: 'task-edit', params: { id: id } })
+}
 
 const showOptionEditDelete = (taskId) => {
-  selectedTask.value.id = taskId;
-  popup.detail = false;
-  popup.optionEditDelete = !popup.optionEditDelete;
-};
+  selectedTask.value.id = taskId
+  popup.detail = false
+  popup.optionEditDelete = !popup.optionEditDelete
+}
 
 const closeDelete = () => {
-  popup.delete = false;
-  popup.optionEditDelete = false;
+  popup.delete = false
+  popup.optionEditDelete = false
   selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
-  router.push({ name: "task" });
-};
+    id: '',
+    title: '',
+    description: '',
+    assignees: '',
+    status: 'No Status',
+    createdOn: '',
+    updatedOn: ''
+  }
+  router.push({ name: 'task' })
+}
 
 const openDelete = (id) => {
-  popup.delete = true;
-  const task = tasks.value.getTasksById(id);
-  selectedTask.value = task;
-  console.log(task);
-};
+  popup.delete = true
+  const task = tasks.value.getTasksById(id)
+  selectedTask.value = task
+  console.log(task)
+}
 
 const deleteData = async (id) => {
-  const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id);
-  const index = tasks.value.getTasks().findIndex((task) => task.id === id);
+  const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id)
+  const index = tasks.value.getTasks().findIndex((task) => task.id === id)
   if (statusCode === 200) {
-    tasks.value.removeTask(index);
+    tasks.value.removeTask(index)
   }
-  closeDelete();
-};
+  closeDelete()
+}
 </script>
 
 <template>
@@ -250,7 +260,7 @@ const deleteData = async (id) => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || "Unassigned" }}
+                    {{ task.assignees || 'Unassigned' }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
@@ -295,7 +305,7 @@ const deleteData = async (id) => {
                         <ul
                           class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
                         >
-                          <li class="" @click="editTask(task.id)">
+                          <li class="" @click="editTaskModal(task.id)">
                             <p
                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                             >
@@ -331,6 +341,7 @@ const deleteData = async (id) => {
       class="z-50"
       @closeDetail="closeDetail"
       @addNewTask="addNewTask"
+      @editNewTask="editTask"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></AddEditModal>
