@@ -84,7 +84,7 @@ const closeDetail = () => {
 };
 
 const addNewTask = async(task) => {
-  // console.log(task);
+  console.log(task);
   popup.detail = false;
   popup.addEdit = false;
   selectedTask.value = {
