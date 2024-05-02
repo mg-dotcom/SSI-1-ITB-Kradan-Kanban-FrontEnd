@@ -1,5 +1,5 @@
 <script setup>
-import buttonSubmit from "../components/button/Button.vue";
+import buttonSubmit from "./button/button.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import ModalDetail from "./ModalDetail.vue";
 

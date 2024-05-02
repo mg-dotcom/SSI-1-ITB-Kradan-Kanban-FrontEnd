@@ -94,7 +94,7 @@ const emit = defineEmits(["closeDetail", "addNewTask"]);
         }}<br />
 
         {{
-          selectedTask.id == "" ? "" : "Created On : " + selectedTask.createdOn
+          selectedTask.id == "" ? "" : "Updated On : " + selectedTask.updatedOn
         }}
         <br />
       </div>
