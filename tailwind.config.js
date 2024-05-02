@@ -29,7 +29,6 @@ module.exports = {
       fontSize: {
         header: "32px",
       },
-
       screens: {
         mobile: "320px",
         sm: "480px",
