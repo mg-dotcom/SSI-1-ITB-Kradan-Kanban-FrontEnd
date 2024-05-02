@@ -8,7 +8,7 @@ import { fetchAllTasks, fetchTaskDetails,addTask } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const tasks = ref(new TaskModal());
 import { useRouter, useRoute } from "vue-router";
-import buttonSubmit from "../components/button/Button.vue";
+import buttonSubmit from "../components/button/button.vue";
 const router = useRouter();
 const route = useRoute();
 
