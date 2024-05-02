@@ -6,21 +6,22 @@ import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { fetchAllTasks, fetchTaskDetails, addTask } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
-const tasks = ref(new TaskModal());
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 const router = useRouter();
 const route = useRoute();
 
 const selectedTask = ref({
-  id: "0",
+  id: "",
   title: "",
   description: "",
   assignees: "",
   status: "No Status",
-  // createdOn: "",
-  // updatedOn: "",
+  createdOn: "",
+  updatedOn: "",
 });
+
+const tasks = ref(new TaskModal());
 
 const taskId = route.params.id;
 
@@ -72,26 +73,14 @@ const closeDetail = () => {
   popup.detail = false;
   popup.addEdit = false;
   selectedTask.value = {
-    id: "0",
+    id: "",
     title: "",
     description: "",
     assignees: "",
     status: "No Status",
-    // createdOn: "",
-    // updatedOn: "",
+    createdOn: "",
+    updatedOn: "",
   };
-  router.push({ name: "task" });
-};
-
-const addNewTask = async (task) => {
-  console.log(task);
-  popup.detail = false;
-  popup.addEdit = false;
-  const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task);
-  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
-  tasks.value.addAllTasks(allTasks);
-
-
   router.push({ name: "task" });
 };
 
@@ -104,9 +93,19 @@ const formatStatus = (status) => {
     .join(" ");
 };
 
-const addtask = () => {
+const openAddEdit = () => {
   popup.addEdit = true;
   router.push({ name: "task-add" });
+};
+
+const addNewTask = async (task) => {
+  if (task.id === undefined) {
+    task.status = task.status.toUpperCase().replace(/ /g, "_");
+    const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task);
+    console.log(addedTask);
+    tasks.value.addTask(addedTask);
+    popup.addEdit = false;
+  }
 };
 
 const editTask = async (id) => {
@@ -156,7 +155,7 @@ const showOptionEditDelete = (taskId) => {
         <buttonSubmit
           buttonType="Add"
           @closeDetail="closeDetail"
-          @click="addtask"
+          @click="openAddEdit"
           >+ Add Task</buttonSubmit
         >
       </div>

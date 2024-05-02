@@ -2,33 +2,40 @@
 import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "./button/Button.vue";
 
-import { defineProps, defineEmits, computed, ref } from "vue";
+import { defineProps, defineEmits, computed, ref, watch } from "vue";
 
 const props = defineProps({
   selectedTask: Object,
   localTimeZone: String,
 });
-
 const task = ref({
   title: props.selectedTask.title,
   description: props.selectedTask.description,
   assignees: props.selectedTask.assignees,
   status: props.selectedTask.status,
 });
+
+watch(
+  () => props.selectedTask,
+  () => {
+    task.value.title = props.selectedTask.title;
+    task.value.description = props.selectedTask.description;
+    task.value.assignees = props.selectedTask.assignees;
+    task.value.status = props.selectedTask.status;
+  }
+);
+
 // if (props.selectedTask.id == 0) {
-//   task.value.title=''
-//   task.value.description=''
+//   (task.value.title = ""), (task.value.description = "");
 // }
 
 defineEmits(["closeDetail", "addNewTask"]);
-console.log(props.selectedTask);
-console.log(props.localTimeZone);
 </script>
 
 <template>
   <ModalDetail :selectedTask="selectedTask">
     <template #title>
-      {{ props.selectedTask.id == 0 ? 'New Task' : 'Edit Task' }}</template
+      {{ selectedTask.id === "" ? "New Task" : "Edit Task" }}</template
     >
     <div class="mb-4">
       <label
@@ -67,7 +74,7 @@ console.log(props.localTimeZone);
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="task.status"
         >
-          <option selected class="itbkk-status hidden">
+          <option selected class="itbkk-status ">
             {{ selectedTask.status }}
           </option>
           <option>To Do</option>
