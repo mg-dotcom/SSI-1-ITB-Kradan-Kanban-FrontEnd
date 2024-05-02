@@ -6,9 +6,10 @@ import AddEditModal from "../components/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { fetchAllTasks, fetchTaskDetails,addTask } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
+import DeleteModal from "@/components/DeleteModal.vue";
 const tasks = ref(new TaskModal());
 import { useRouter, useRoute } from "vue-router";
-import buttonSubmit from "../components/button/button.vue";
+import buttonSubmit from "../components/button/Button.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -39,6 +40,7 @@ const popup = reactive({
   addEdit: false,
   detail: false,
   optionEditDelete: false,
+  delete: false
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -96,6 +98,7 @@ const addNewTask = async(task) => {
     createdOn: "",
     updatedOn: "",
   };
+  
   const addedTask= await addTask(import.meta.env.VITE_BASE_URL,task)
   console.log(addedTask);
 
@@ -136,6 +139,12 @@ const showOptionEditDelete = (taskId) => {
   popup.detail=false;
   popup.optionEditDelete = !popup.optionEditDelete;
 };
+
+const closeDelete = () => {
+  popup.delete = false;
+  popup.optionEditDelete = false;
+};
+
 </script>
 
 <template>
@@ -272,7 +281,7 @@ const showOptionEditDelete = (taskId) => {
                               Edit
                             </p>
                           </li>
-                          <li class="" @click="">
+                          <li class="" @click="popup.delete = true">
                             <p
                               class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                             >
@@ -304,6 +313,12 @@ const showOptionEditDelete = (taskId) => {
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></AddEditModal>
+    <DeleteModal 
+    v-if="popup.delete"
+    @closeDelete="closeDelete"
+    >
+
+    </DeleteModal>
   </div>
 </template>
 

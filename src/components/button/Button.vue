@@ -4,7 +4,7 @@ const props = defineProps({
   buttonType: {
     type: String,
     validator: (value) => {
-      return ["Ok", "Cancel", "Add"].includes(value);
+      return ["Ok", "Cancel", "Add","Confirm"].includes(value);
     },
   },
 });
@@ -14,11 +14,12 @@ const props = defineProps({
   <button
     :class="{
       'fancy-btn': true,
-      'bg-lightgreen hover:bg-green-500 transition-colors': buttonType === 'Ok',
+      'bg-[#03CC0B] hover:bg-green-500 transition-colors': buttonType === 'Ok',
       'bg-gray-400 hover:bg-gray-500 transition-colors':
         buttonType === 'Cancel',
       'bg-[#03CC0B] hover:bg-green-500 transition-colors shadow-md scale-105 font-bold':
         buttonType === 'Add',
+      'bg-red-600 hover:bg-red-700 transition-colors': buttonType === 'Confirm',
     }"
   >
     <slot class="">No Status</slot>
