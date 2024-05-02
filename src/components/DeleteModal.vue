@@ -1,5 +1,5 @@
 <script setup>
-import submitButton from "./button/Button.vue";
+import submitButton from "./button/button.vue";
 import { defineEmits } from "vue";
 defineEmits (['closeDelete','deleteData']);
 const props = defineProps({
@@ -17,8 +17,8 @@ console.log(props.selectedTask);
         <p>Delete a Task!</p>
       </div>
       <div class="title-line w-full h-px bg-gray-300 mb-4"></div>
-      <div class="message mb-6">
-        <p>Do you want to delete the task "{{ selectedTask.title }}"</p>
+      <div class="message mb-6 break-all">
+        <p>Do you want to delete the task "{{ selectedTask.title }}" ?</p>
       </div>
       <div class="button-container flex justify-end">
         <div class="mr-2"><submitButton buttonType="Cancel" @click="$emit('closeDelete')">Cancel</submitButton></div>

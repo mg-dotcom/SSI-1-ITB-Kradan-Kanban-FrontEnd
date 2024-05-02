@@ -1,6 +1,5 @@
 <script setup>
-import buttonSubmit from "../components/button/Button.vue";
-import StatusButton from "../components/button/StatusButton.vue";
+import buttonSubmit from "./button/button.vue";
 import { defineProps } from "vue";
 const props = defineProps({
   selectedTask: Object,
