@@ -9,15 +9,12 @@ const props = defineProps({
   localTimeZone: String
 })
 const task = ref({
-  id: props.selectedTask.id,
   title: props.selectedTask.title,
   description: props.selectedTask.description,
   assignees: props.selectedTask.assignees,
   status: props.selectedTask.status,
-  createdOn: props.selectedTask.createdOn,
-  updatedOn: props.selectedTask.updatedOn
 })
-if (task.value.id == 0) {
+if (props.selectedTask.id == 0) {
   task.value.title='',
   task.value.description=''
 }
