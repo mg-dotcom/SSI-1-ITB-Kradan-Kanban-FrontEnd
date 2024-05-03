@@ -2,7 +2,7 @@
 import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "./button/Button.vue";
 import { useRouter } from "vue-router";
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, computed } from "vue";
 
 const router = useRouter();
 
@@ -18,14 +18,30 @@ const task = ref({
   status: props.selectedTask.status,
 });
 
+const oldtask = {
+  title: props.selectedTask.title,
+  description: props.selectedTask.description,
+  assignees: props.selectedTask.assignees,
+  status: props.selectedTask.status,
+};
+
+const isTaskEdited = computed(() => {
+  return (
+    task.value.title !== oldtask.title ||
+    task.value.description !== oldtask.description ||
+    task.value.assignees !== oldtask.assignees ||
+    task.value.status !== oldtask.status
+  );
+});
+
 const passNewTask = () => {
-  if (task.value.title === "") {
-    return;
-  }
-  if (props.selectedTask.id !== "") {
+  if (props.selectedTask.id !== "" && isTaskEdited.value === true) {
+    console.log("can edit");
     emit("editNewTask", task.value);
     router.push({ name: "task" });
     console.log("edit");
+  } else if (isTaskEdited.value === false) {
+    console.log("can not edit");
   } else {
     emit("addNewTask", task.value);
     console.log("Add");
