@@ -54,13 +54,13 @@ const props = defineProps({
     </template>
 
     <template #button-left>
-      <buttonSubmit buttonType="ok" @click="$emit('closeDetail')"
-        >Ok</buttonSubmit
+      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
+        >Cancel</buttonSubmit
       >
     </template>
     <template #button-right>
-      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
-        >Cancel</buttonSubmit
+      <buttonSubmit buttonType="ok" @click="$emit('closeDetail')"
+        >Ok</buttonSubmit
       >
     </template>
   </ModalDetail>

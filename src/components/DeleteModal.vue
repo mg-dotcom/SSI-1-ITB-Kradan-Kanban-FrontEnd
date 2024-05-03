@@ -22,7 +22,7 @@ const props = defineProps({
         <p>Do you want to delete the task "{{ selectedTask.title }}" ?</p>
       </div>
       <div class="button-container flex justify-end">
-        <div class="mr-2">
+        <div class="">
           <submitButton buttonType="cancel" @click="$emit('closeDelete')"
             >Cancel</submitButton
           >

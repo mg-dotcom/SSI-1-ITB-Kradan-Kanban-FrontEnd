@@ -112,23 +112,24 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 
     <template #button-left>
       <!-- <div v-if> -->
+      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
+        >Cancel</buttonSubmit
+      >
+      <!-- </div> -->
+    </template>
+    <template #button-right>
       <buttonSubmit
+        class="w-20"
         :buttonType="task.title === '' || isTaskEdited === false ? '' : 'ok'"
         :disabled="task.title === '' || isTaskEdited === false"
         @click="passNewTask"
         :class="
           task.title === '' || isTaskEdited === false
-            ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50'
+            ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors'
             : ''
         "
         :title="task.title"
         >Save</buttonSubmit
-      >
-      <!-- </div> -->
-    </template>
-    <template #button-right>
-      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
-        >Cancel</buttonSubmit
       >
     </template>
   </ModalDetail>

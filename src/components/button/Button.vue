@@ -19,10 +19,11 @@ const props = defineProps({
       'fancy-btn': true, // Always add 'fancy-btn' class
 
       // Conditional class bindings based on buttonType prop
-      'bg-[#03CC0B] hover:bg-green-500 transition-colors': buttonType === 'ok',
-      'bg-gray-400 hover:bg-gray-500 transition-colors':
+      'bg-[#03CC0B] hover:bg-green-500 transition-colors w-20':
+        buttonType === 'ok',
+      'bg-gray-400 hover:bg-gray-500 transition-colors w-20':
         buttonType === 'cancel',
-      'bg-[#03CC0B] hover:bg-green-500 transition-colors shadow-md scale-105 font-bold':
+      'bg-[#03CC0B] hover:bg-green-500 transition-colors shadow-md scale-105  font-bold':
         buttonType === 'add',
     }"
   >
