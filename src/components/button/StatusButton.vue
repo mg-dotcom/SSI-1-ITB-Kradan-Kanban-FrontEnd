@@ -2,10 +2,12 @@
 const props = defineProps({
   statusName: {
     validator(value) {
-      return ["todo", "doing", "done", "nostatus"].includes(value);
+      const lowerCaseValue = value.toLowerCase();
+      return ["todo", "doing", "done", "nostatus"].includes(lowerCaseValue);
     },
   },
 });
+
 </script>
 
 <template>

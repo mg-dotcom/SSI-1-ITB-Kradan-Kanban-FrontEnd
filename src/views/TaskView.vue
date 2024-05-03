@@ -15,6 +15,7 @@ import { TaskModal } from "../libs/TaskModal.js";
 import DeleteModal from "../components/DeleteModal.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
+import BasicAlert from "../components/BasicAlert.vue";
 const router = useRouter();
 const route = useRoute();
 
@@ -48,7 +49,8 @@ const popup = reactive({
   detail: false,
   optionEditDelete: false,
   delete: false,
-  alertSuccessDelete: false,
+  deletedAlertMassage: false,
+  errorAlertMassage: false,
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -175,10 +177,12 @@ const deleteData = async (id) => {
   const index = tasks.value.getTasks().findIndex((task) => task.id === id);
   if (statusCode === 200) {
     tasks.value.removeTask(index);
+    popup.deletedAlertMassage = true;
+  } else {
+    popup.errorAlertMassage = true;
   }
   closeDelete();
 };
-
 </script>
 
 <template>
@@ -355,6 +359,15 @@ const deleteData = async (id) => {
       @deleteData="deleteData"
     >
     </DeleteModal>
+    <BasicAlert
+      alertType="deletesuccess"
+      v-if="(popup.deletedAlertMassage = true)"
+      >Delete Success</BasicAlert
+    >
+
+    <BasicAlert alertType="error" v-if="(popup.errorAlertMassage = true)"
+      >Error</BasicAlert
+    >
   </div>
 </template>
 
