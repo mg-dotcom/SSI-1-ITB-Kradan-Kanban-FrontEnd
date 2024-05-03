@@ -4,8 +4,6 @@ import { defineProps } from "vue";
 const props = defineProps({
   selectedTask: Object,
 });
-
-
 </script>
 
 <template>
@@ -52,8 +50,8 @@ const props = defineProps({
             <div class="itbkk-status lg:w-[230px] sm:w-[200px] text-sm">
               <slot name="status"> </slot>
             </div>
-            <div class="flex flex-col lg:w-[230px] sm:w-[200px] text-sm">
-              <div class="itbkk-timezone font-semibold">
+            <div class="flex flex-col lg:w-[230px] sm:w-[200px] text-[13px]">
+              <div class="itbkk-timezone">
                 <slot name="Time"></slot>
               </div>
             </div>

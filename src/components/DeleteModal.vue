@@ -11,7 +11,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="delete-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 "
+    class="delete-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
   >
     <div class="bg-white max-w-md p-6 rounded-lg shadow-lg">
       <div class="font-bold mb-4">
@@ -23,13 +23,13 @@ const props = defineProps({
       </div>
       <div class="button-container flex justify-end">
         <div class="mr-2">
-          <submitButton buttonType="Cancel" @click="$emit('closeDelete')"
+          <submitButton buttonType="cancel" @click="$emit('closeDelete')"
             >Cancel</submitButton
           >
         </div>
         <div>
           <submitButton
-            buttonType="Ok"
+            buttonType="ok"
             @click="$emit('deleteData', selectedTask.id)"
             >Confirm</submitButton
           >

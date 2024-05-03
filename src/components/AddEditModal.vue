@@ -101,25 +101,20 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
     </template>
 
     <template #Time>
-      <div class="pt-7">
-        {{ selectedTask.id == "" ? "" : "TimeZone : " + localTimeZone }}
-        <br />
-
-        {{
-          selectedTask.id == "" ? "" : "Created On : " + selectedTask.createdOn
-        }}<br />
-
-        {{
-          selectedTask.id == "" ? "" : "Updated On : " + selectedTask.updatedOn
-        }}
-        <br />
+      <div class="pt-7" :class="selectedTask.id == '' ? 'hidden' : 'visible'">
+        <span class="font-semibold">TimeZone</span> : {{ localTimeZone }} <br />
+        <span class="font-semibold">Created On</span> :
+        {{ props.selectedTask.createdOn }} <br />
+        <span class="font-semibold">Updated On</span> :
+        {{ props.selectedTask.updatedOn }} <br />
       </div>
     </template>
 
     <template #button-left>
       <!-- <div v-if> -->
       <buttonSubmit
-        :buttonType="task.title === '' || isTaskEdited === false ? '' : 'Ok'"
+        :buttonType="task.title === '' || isTaskEdited === false ? '' : 'ok'"
+        :disabled="task.title === '' || isTaskEdited === false"
         @click="passNewTask"
         :class="
           task.title === '' || isTaskEdited === false
@@ -132,7 +127,7 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
       <!-- </div> -->
     </template>
     <template #button-right>
-      <buttonSubmit buttonType="Cancel" @click="$emit('closeDetail')"
+      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
         >Cancel</buttonSubmit
       >
     </template>

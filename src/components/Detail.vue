@@ -45,19 +45,21 @@ const props = defineProps({
     </template>
     <template #Time>
       <div class="pt-28">
-        TimeZone : {{ localTimeZone }} <br />
-        Created On : {{ props.selectedTask.createdOn }} <br />
-        Updated On : {{ props.selectedTask.updatedOn }} <br />
+        <span class="font-semibold">TimeZone</span> : {{ localTimeZone }} <br />
+        <span class="font-semibold">Created On</span> :
+        {{ props.selectedTask.createdOn }} <br />
+        <span class="font-semibold">Updated On</span> :
+        {{ props.selectedTask.updatedOn }} <br />
       </div>
     </template>
 
     <template #button-left>
-      <buttonSubmit buttonType="Ok" @click="$emit('closeDetail')"
+      <buttonSubmit buttonType="ok" @click="$emit('closeDetail')"
         >Ok</buttonSubmit
       >
     </template>
     <template #button-right>
-      <buttonSubmit buttonType="Cancel" @click="$emit('closeDetail')"
+      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
         >Cancel</buttonSubmit
       >
     </template>

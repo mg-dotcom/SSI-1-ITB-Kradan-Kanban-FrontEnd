@@ -17,28 +17,9 @@ import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 const router = useRouter();
 const route = useRoute();
-
 import { useToast } from "primevue/usetoast";
 import Toast from "primevue/toast";
 const toast = useToast();
-
-const showSuccess = () => {
-  toast.add({
-    severity: "success",
-    summary: "Success Message",
-    detail: "Message Content",
-    life: 3000,
-  });
-};
-
-const showError = () => {
-  toast.add({
-    severity: "error",
-    summary: "Error Message",
-    detail: "Message Content",
-    life: 3000,
-  });
-};
 
 const selectedTask = ref({
   id: "",
@@ -57,6 +38,7 @@ const taskId = route.params.id;
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
+
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
   tasks.value.addAllTasks(allTasks);
 });
@@ -131,13 +113,23 @@ const openAdd = () => {
 const addNewTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, "_");
   const res = await addTask(import.meta.env.VITE_BASE_URL, task);
+  const addedTask = await res.json();
+  tasks.value.addTask(addedTask);
   if (res.status === 200) {
-    const addedTask = await res.json();
-    tasks.value.addTask(addedTask);
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: `The task "${addedTask.title}" is added successfully`,
+      life: 3000,
+    });
     router.push({ name: "task" });
-    showSuccess();
   } else {
-    showError();
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: `An error occurred deleting the task "${addedTask.title}"`,
+      life: 3000,
+    });
   }
   popup.addEdit = false;
   popup.optionEditDelete = false;
@@ -209,24 +201,33 @@ const openDelete = (id) => {
 
 const deleteData = async (id) => {
   const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id);
+  const taskValue = tasks.value.getTasksById(id);
   const index = tasks.value.getTasks().findIndex((task) => task.id === id);
   if (statusCode === 200) {
     tasks.value.removeTask(index);
-    showSuccess();
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: `The task "${taskValue.title}" has been deleted`,
+      life: 3000,
+    });
   } else {
-    showError();
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: `An error occurred deleting the task "${taskValue.title}"`,
+      life: 3000,
+    });
   }
   closeDelete();
 };
 </script>
 
 <template>
+  <Toast />
+  {{}}
   <div class="h-screen w-full">
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
-      <div class="card flex justify-center">
-        <Toast />
-        <Button label="Show" @click="show()" />
-      </div>
       <img
         class="object-cover absolute right-0 max-w-max h-[90px]"
         src="/glass-overlay.png"
@@ -248,7 +249,7 @@ const deleteData = async (id) => {
           </span>
         </div>
         <buttonSubmit
-          buttonType="Add"
+          buttonType="add"
           @closeDetail="closeDetail"
           @click="openAdd"
           >+ Add Task</buttonSubmit
