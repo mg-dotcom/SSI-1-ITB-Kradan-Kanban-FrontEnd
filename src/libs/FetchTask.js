@@ -58,7 +58,28 @@ const deleteTask = async (url,id) => {
   } catch (error) {
     console.log(`error: ${error}`);
   }
-
 }
 
-export { fetchAllTasks, fetchTaskDetails, addTask , deleteTask }
+async function updatedTask(url, updatedTask,id) {
+  try {
+    const res = await fetch(`${url}/${id}`, {
+      method: 'PUT',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        title: updatedTask.title,
+        description: updatedTask.description,
+        assignees: updatedTask.assignees,
+        status: updatedTask.status
+      })
+    })
+    const updatedAllTask = await res.json()
+    console.log(updatedAllTask);
+    return updatedAllTask
+  } catch (error) {
+    console.log(`error: ${error}`)
+  }
+}
+
+export { fetchAllTasks, fetchTaskDetails, addTask , deleteTask ,updatedTask }

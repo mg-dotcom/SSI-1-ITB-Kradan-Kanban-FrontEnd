@@ -1,35 +1,39 @@
 <script setup>
 import ModalDetail from "./ModalDetail.vue";
-import buttonSubmit from "./button/button.vue";
-
+import buttonSubmit from "./button/Button.vue";
+import { useRouter } from "vue-router";
 import { defineProps, defineEmits, ref } from "vue";
+
+const router = useRouter();
 
 const props = defineProps({
   selectedTask: Object,
   localTimeZone: String,
 });
+// console.log(props.selectedTask);
 const task = ref({
-  title: props.selectedTask.title.trim(),
-  description: props.selectedTask.description.trim(),
-  assignees: props.selectedTask.assignees.trim(),
-  status: props.selectedTask.status.trim(),
+  title: props.selectedTask.title,
+  description: props.selectedTask.description,
+  assignees: props.selectedTask.assignees,
+  status: props.selectedTask.status,
 });
-
 
 const passNewTask = () => {
   if (task.value.title === "") {
     alert("Title is required");
     return;
   }
-  console.log(task.value);
-  emit("addNewTask", task.value);
+  if (props.selectedTask.id !== "") {
+    emit("editNewTask", task.value);
+    router.push({ name: "task" });
+    console.log("edit");
+  } else {
+    emit("addNewTask", task.value);
+    console.log("Add");
+  }
 };
 
-// if (props.selectedTask.id == 0) {
-//   (task.value.title = ""), (task.value.description = "");
-// }
-
-const emit = defineEmits(["closeDetail", "addNewTask"]);
+const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 </script>
 
 <template>
@@ -49,7 +53,7 @@ const emit = defineEmits(["closeDetail", "addNewTask"]);
           type="text"
           id="default-input"
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          v-model="task.title"
+          v-model.trim="task.title"
           required
         />
       </div>
@@ -58,25 +62,26 @@ const emit = defineEmits(["closeDetail", "addNewTask"]);
       <textarea
         maxlength="500"
         class="block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-3/4"
-        v-model="task.description"
+        v-model.trim="task.description"
       ></textarea>
     </template>
     <template #assignees>
       <textarea
         maxlength="30"
         class="block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-3/4"
-        v-model="task.assignees"
+        v-model.trim="task.assignees"
       ></textarea>
     </template>
     <template #status>
       <form class="px-3">
         <select
           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          v-model="task.status"
+          v-model.trim="task.status"
         >
-          <option selected class="itbkk-status">
+          <option selected class="itbkk-status hidden">
             {{ selectedTask.status }}
           </option>
+          <option>No Status</option>
           <option>To Do</option>
           <option>Doing</option>
           <option>Done</option>
@@ -102,7 +107,7 @@ const emit = defineEmits(["closeDetail", "addNewTask"]);
 
     <template #button-left>
       <!-- <div v-if> -->
-        <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
+      <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
       <!-- </div> -->
     </template>
     <template #button-right>
