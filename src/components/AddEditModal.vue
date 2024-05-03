@@ -2,7 +2,7 @@
 import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "./button/Button.vue";
 import { useRouter } from "vue-router";
-import { defineProps, defineEmits, ref } from "vue";
+import { defineProps, defineEmits, ref, watch } from "vue";
 
 const router = useRouter();
 
@@ -10,7 +10,7 @@ const props = defineProps({
   selectedTask: Object,
   localTimeZone: String,
 });
-// console.log(props.selectedTask);
+
 const task = ref({
   title: props.selectedTask.title,
   description: props.selectedTask.description,
