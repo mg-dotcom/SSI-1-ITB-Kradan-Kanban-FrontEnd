@@ -32,13 +32,11 @@ const tasks = ref(new TaskModal())
 
 const taskId = route.params.id
 
-
 onMounted(async () => {
   initFlowbite()
   initDropdowns()
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL)
   tasks.value.addAllTasks(allTasks)
-
 })
 
 const page = reactive({
@@ -119,12 +117,17 @@ const addNewTask = async (task) => {
 
 const editTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, '_')
-  const editedTask = await updatedTask(
+  const res = await updatedTask(
     import.meta.env.VITE_BASE_URL,
     task,
     selectedTask.value.id
   )
-  tasks.value.editTask(editedTask.id,editedTask)
+  if(res.status===200){
+    console.log('successful edited');
+  }
+  const editedTask = await res.json()
+
+  tasks.value.editTask(editedTask.id, editedTask)
   popup.addEdit = false
   popup.optionEditDelete = false
 }

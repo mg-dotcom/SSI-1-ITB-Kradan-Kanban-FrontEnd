@@ -1,45 +1,64 @@
 <script setup>
-import ModalDetail from "./ModalDetail.vue";
-import buttonSubmit from "./button/Button.vue";
-import { useRouter } from "vue-router";
-import { defineProps, defineEmits, ref } from "vue";
+import ModalDetail from './ModalDetail.vue'
+import buttonSubmit from './button/Button.vue'
+import { useRouter } from 'vue-router'
+import { defineProps, defineEmits, ref, computed } from 'vue'
 
-const router = useRouter();
+const router = useRouter()
 
 const props = defineProps({
   selectedTask: Object,
-  localTimeZone: String,
-});
+  localTimeZone: String
+})
 // console.log(props.selectedTask);
 const task = ref({
   title: props.selectedTask.title,
   description: props.selectedTask.description,
   assignees: props.selectedTask.assignees,
-  status: props.selectedTask.status,
-});
+  status: props.selectedTask.status
+})
+
+const oldtask = {
+  title: props.selectedTask.title,
+  description: props.selectedTask.description,
+  assignees: props.selectedTask.assignees,
+  status: props.selectedTask.status
+}
+
+const isTaskEdited = computed(() => {
+  return (
+    task.value.title !== oldtask.title ||
+    task.value.description !== oldtask.description ||
+    task.value.assignees !== oldtask.assignees ||
+    task.value.status !== oldtask.status
+  )
+})
 
 const passNewTask = () => {
-  if (task.value.title === "") {
-    alert("Title is required");
-    return;
+  if (task.value.title === '') {
+    alert('Title is required')
+    return
   }
-  if (props.selectedTask.id !== "") {
-    emit("editNewTask", task.value);
-    router.push({ name: "task" });
-    console.log("edit");
+  if (props.selectedTask.id !== '' && isTaskEdited.value === true) {
+    console.log('can edit')
+    emit('editNewTask', task.value)
+    router.push({ name: 'task' })
+    console.log('edit')
+  } else if (isTaskEdited.value === false) {
+    console.log('can not edit')
   } else {
-    emit("addNewTask", task.value);
-    console.log("Add");
+    emit('addNewTask', task.value)
+    console.log('Add')
   }
-};
+}
 
-const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
+const emit = defineEmits(['closeDetail', 'addNewTask', 'editNewTask'])
 </script>
 
 <template>
   <ModalDetail :selectedTask="selectedTask">
     <template #title>
-      {{ selectedTask.id === "" ? "New Task" : "Edit Task" }}</template
+      {{ selectedTask.id === '' ? 'New Task' : 'Edit Task' }}</template
     >
     <div class="mb-4">
       <label
@@ -91,15 +110,15 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 
     <template #Time>
       <div class="pt-7">
-        {{ selectedTask.id == "" ? "" : "TimeZone : " + localTimeZone }}
+        {{ selectedTask.id == '' ? '' : 'TimeZone : ' + localTimeZone }}
         <br />
 
         {{
-          selectedTask.id == "" ? "" : "Created On : " + selectedTask.createdOn
+          selectedTask.id == '' ? '' : 'Created On : ' + selectedTask.createdOn
         }}<br />
 
         {{
-          selectedTask.id == "" ? "" : "Updated On : " + selectedTask.updatedOn
+          selectedTask.id == '' ? '' : 'Updated On : ' + selectedTask.updatedOn
         }}
         <br />
       </div>
