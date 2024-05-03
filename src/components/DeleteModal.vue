@@ -1,16 +1,18 @@
 <script setup>
 import submitButton from "./button/Button.vue";
 import { defineEmits } from "vue";
-defineEmits (['closeDelete','deleteData']);
+defineEmits(["closeDelete", "deleteData"]);
 const props = defineProps({
-    selectedTask: {
+  selectedTask: {
     type: Object,
-  }
+  },
 });
 </script>
 
 <template>
-    <div class="delete-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+  <div
+    class="delete-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 "
+  >
     <div class="bg-white max-w-md p-6 rounded-lg shadow-lg">
       <div class="font-bold mb-4">
         <p>Delete a Task!</p>
@@ -20,12 +22,21 @@ const props = defineProps({
         <p>Do you want to delete the task "{{ selectedTask.title }}" ?</p>
       </div>
       <div class="button-container flex justify-end">
-        <div class="mr-2"><submitButton buttonType="Cancel" @click="$emit('closeDelete')">Cancel</submitButton></div>
-        <div><submitButton buttonType="Ok" @click="$emit('deleteData',selectedTask.id)">Confirm</submitButton></div>
+        <div class="mr-2">
+          <submitButton buttonType="Cancel" @click="$emit('closeDelete')"
+            >Cancel</submitButton
+          >
+        </div>
+        <div>
+          <submitButton
+            buttonType="Ok"
+            @click="$emit('deleteData', selectedTask.id)"
+            >Confirm</submitButton
+          >
+        </div>
       </div>
     </div>
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

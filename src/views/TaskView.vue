@@ -51,6 +51,7 @@ const popup = reactive({
   delete: false,
   deletedAlertMassage: false,
   errorAlertMassage: false,
+  addAlertMassage: false,
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -111,9 +112,33 @@ const openAdd = () => {
 
 const addNewTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, "_");
-  const addedTask = await addTask(import.meta.env.VITE_BASE_URL, task);
-  console.log(addedTask);
-  tasks.value.addTask(addedTask);
+  const res = await addTask(import.meta.env.VITE_BASE_URL, task);
+  if (res.status === 200) {
+    const addedTask = await res.json();
+    tasks.value.addTask(addedTask);
+    console.log(res.status);
+    popup.addAlertMassage = true;
+    setTimeout(() => {
+      const alertToast = document.querySelector(".alert-toast");
+      if (alertToast) {
+        alertToast.classList.add("alert-toast-close");
+      }
+    }, 4000);
+    setTimeout(() => {
+      popup.addAlertMassage = false;
+    }, 5000);
+  } else {
+    popup.errorAlertMassage = true;
+    setTimeout(() => {
+      const alertToast = document.querySelector(".alert-toast");
+      if (alertToast) {
+        alertToast.classList.add("alert-toast-close");
+      }
+    }, 4000);
+    setTimeout(() => {
+      popup.errorAlertMassage = false;
+    }, 5000);
+  }
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
@@ -178,8 +203,26 @@ const deleteData = async (id) => {
   if (statusCode === 200) {
     tasks.value.removeTask(index);
     popup.deletedAlertMassage = true;
+    setTimeout(() => {
+      const alertToast = document.querySelector(".alert-toast");
+      if (alertToast) {
+        alertToast.classList.add("alert-toast-close");
+      }
+    }, 4000);
+    setTimeout(() => {
+      popup.deletedAlertMassage = false;
+    }, 5000);
   } else {
     popup.errorAlertMassage = true;
+    setTimeout(() => {
+      const alertToast = document.querySelector(".alert-toast");
+      if (alertToast) {
+        alertToast.classList.add("alert-toast-close");
+      }
+    }, 4000);
+    setTimeout(() => {
+      popup.errorAlertMassage = false;
+    }, 5000);
   }
   closeDelete();
 };
@@ -255,7 +298,7 @@ const deleteData = async (id) => {
                   <td
                     class="text-center py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                   >
-                    {{ task.id }}
+                    {{ index + 1 }}
                   </td>
                   <td
                     class="itbkk-title px-6 py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
@@ -361,12 +404,21 @@ const deleteData = async (id) => {
     </DeleteModal>
     <BasicAlert
       alertType="deletesuccess"
-      v-if="(popup.deletedAlertMassage = true)"
+      v-if="popup.deletedAlertMassage"
+      class="alert-toast"
       >Delete Success</BasicAlert
     >
-
-    <BasicAlert alertType="error" v-if="(popup.errorAlertMassage = true)"
+    <BasicAlert
+      alertType="error"
+      v-if="popup.errorAlertMassage"
+      class="alert-toast"
       >Error</BasicAlert
+    >
+    <BasicAlert
+      alertType="savedsuccess"
+      v-if="popup.addAlertMassage"
+      class="alert-toast"
+      >Add Success</BasicAlert
     >
   </div>
 </template>
