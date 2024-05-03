@@ -20,7 +20,6 @@ const task = ref({
 
 const passNewTask = () => {
   if (task.value.title === "") {
-    alert("Title is required");
     return;
   }
   if (props.selectedTask.id !== "") {
@@ -81,6 +80,7 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
           <option selected class="itbkk-status hidden">
             {{ selectedTask.status }}
           </option>
+          <option disabled value="">Choose Status</option>
           <option>No Status</option>
           <option>To Do</option>
           <option>Doing</option>
@@ -107,7 +107,17 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 
     <template #button-left>
       <!-- <div v-if> -->
-      <buttonSubmit buttonType="Ok" @click="passNewTask">Save</buttonSubmit>
+      <buttonSubmit
+        :buttonType="task.title === '' ? '' : 'Ok'"
+        @click="passNewTask"
+        :class="
+          task.title === ''
+            ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50'
+            : ''
+        "
+        :title="task.title"
+        >Save</buttonSubmit
+      >
       <!-- </div> -->
     </template>
     <template #button-right>
