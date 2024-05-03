@@ -15,9 +15,30 @@ import { TaskModal } from "../libs/TaskModal.js";
 import DeleteModal from "../components/DeleteModal.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
-import BasicAlert from "../components/BasicAlert.vue";
 const router = useRouter();
 const route = useRoute();
+
+import { useToast } from "primevue/usetoast";
+import Toast from "primevue/toast";
+const toast = useToast();
+
+const showSuccess = () => {
+  toast.add({
+    severity: "success",
+    summary: "Success Message",
+    detail: "Message Content",
+    life: 3000,
+  });
+};
+
+const showError = () => {
+  toast.add({
+    severity: "error",
+    summary: "Error Message",
+    detail: "Message Content",
+    life: 3000,
+  });
+};
 
 const selectedTask = ref({
   id: "",
@@ -49,9 +70,6 @@ const popup = reactive({
   detail: false,
   optionEditDelete: false,
   delete: false,
-  deletedAlertMassage: false,
-  errorAlertMassage: false,
-  addAlertMassage: false,
 });
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -116,28 +134,10 @@ const addNewTask = async (task) => {
   if (res.status === 200) {
     const addedTask = await res.json();
     tasks.value.addTask(addedTask);
-    console.log(res.status);
-    popup.addAlertMassage = true;
-    setTimeout(() => {
-      const alertToast = document.querySelector(".alert-toast");
-      if (alertToast) {
-        alertToast.classList.add("alert-toast-close");
-      }
-    }, 4000);
-    setTimeout(() => {
-      popup.addAlertMassage = false;
-    }, 5000);
+    router.push({ name: "task" });
+    showSuccess();
   } else {
-    popup.errorAlertMassage = true;
-    setTimeout(() => {
-      const alertToast = document.querySelector(".alert-toast");
-      if (alertToast) {
-        alertToast.classList.add("alert-toast-close");
-      }
-    }, 4000);
-    setTimeout(() => {
-      popup.errorAlertMassage = false;
-    }, 5000);
+    showError();
   }
   popup.addEdit = false;
   popup.optionEditDelete = false;
@@ -150,7 +150,17 @@ const editTask = async (task) => {
     task,
     selectedTask.value.id
   );
+
   tasks.value.editTask(editedTask.id, editedTask);
+  selectedTask.value = {
+    id: "",
+    title: "",
+    description: "",
+    assignees: "",
+    status: "No Status",
+    createdOn: "",
+    updatedOn: "",
+  };
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
@@ -202,27 +212,9 @@ const deleteData = async (id) => {
   const index = tasks.value.getTasks().findIndex((task) => task.id === id);
   if (statusCode === 200) {
     tasks.value.removeTask(index);
-    popup.deletedAlertMassage = true;
-    setTimeout(() => {
-      const alertToast = document.querySelector(".alert-toast");
-      if (alertToast) {
-        alertToast.classList.add("alert-toast-close");
-      }
-    }, 4000);
-    setTimeout(() => {
-      popup.deletedAlertMassage = false;
-    }, 5000);
+    showSuccess();
   } else {
-    popup.errorAlertMassage = true;
-    setTimeout(() => {
-      const alertToast = document.querySelector(".alert-toast");
-      if (alertToast) {
-        alertToast.classList.add("alert-toast-close");
-      }
-    }, 4000);
-    setTimeout(() => {
-      popup.errorAlertMassage = false;
-    }, 5000);
+    showError();
   }
   closeDelete();
 };
@@ -231,6 +223,10 @@ const deleteData = async (id) => {
 <template>
   <div class="h-screen w-full">
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
+      <div class="card flex justify-center">
+        <Toast />
+        <Button label="Show" @click="show()" />
+      </div>
       <img
         class="object-cover absolute right-0 max-w-max h-[90px]"
         src="/glass-overlay.png"
@@ -315,7 +311,7 @@ const deleteData = async (id) => {
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
-                    <div class="flex gap-x-8 items-center">
+                    <div class="flex gap-x-8 items-center text-center">
                       <StatusButton
                         :statusName="
                           task.status
@@ -400,9 +396,8 @@ const deleteData = async (id) => {
       @closeDelete="closeDelete"
       :selectedTask="selectedTask"
       @deleteData="deleteData"
-    >
-    </DeleteModal>
-    <BasicAlert
+    ></DeleteModal>
+    <!-- <BasicAlert
       alertType="deletesuccess"
       v-if="popup.deletedAlertMassage"
       class="alert-toast"
@@ -419,7 +414,7 @@ const deleteData = async (id) => {
       v-if="popup.addAlertMassage"
       class="alert-toast"
       >Add Success</BasicAlert
-    >
+    > -->
   </div>
 </template>
 

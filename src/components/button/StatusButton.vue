@@ -2,26 +2,26 @@
 const props = defineProps({
   statusName: {
     validator(value) {
-      const lowerCaseValue = value.toLowerCase();
-      return ["todo", "doing", "done", "nostatus"].includes(lowerCaseValue);
+      return ["todo", "doing", "done", "nostatus"].includes(
+        value.toLowerCase()
+      );
     },
   },
 });
-
 </script>
 
 <template>
   <div>
     <div
-      class="itbkk-status bg-gray-status text-white flex justify-start py-1 rounded-2xl"
+      class="itbkk-status bg-gray-status text-white flex justify-center py-1 text-[13px] rounded-full"
       :class="[
         statusName === 'todo'
-          ? 'bg-yellow-status w-20 pl-4'
+          ? 'bg-yellow-status w-20 '
           : statusName === 'doing'
-          ? 'bg-blue-status w-20 pl-4'
+          ? 'bg-blue-status w-20 '
           : statusName === 'done'
-          ? 'bg-green-status w-20 pl-4'
-          : 'bg-gray-status w-20 px-2',
+          ? 'bg-green-status w-20 '
+          : 'bg-gray-status w-20  ',
       ]"
     >
       <span
@@ -33,6 +33,7 @@ const props = defineProps({
         ></span>
         <span class="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
       </span>
+
       <slot class="">No Status</slot>
     </div>
   </div>

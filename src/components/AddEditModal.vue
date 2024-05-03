@@ -36,15 +36,10 @@ const isTaskEdited = computed(() => {
 
 const passNewTask = () => {
   if (props.selectedTask.id !== "" && isTaskEdited.value === true) {
-    console.log("can edit");
     emit("editNewTask", task.value);
     router.push({ name: "task" });
-    console.log("edit");
-  } else if (isTaskEdited.value === false) {
-    console.log("can not edit");
   } else {
     emit("addNewTask", task.value);
-    console.log("Add");
   }
 };
 
@@ -124,10 +119,10 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
     <template #button-left>
       <!-- <div v-if> -->
       <buttonSubmit
-        :buttonType="task.title === '' ? '' : 'Ok'"
+        :buttonType="task.title === '' || isTaskEdited === false ? '' : 'Ok'"
         @click="passNewTask"
         :class="
-          task.title === ''
+          task.title === '' || isTaskEdited === false
             ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50'
             : ''
         "
