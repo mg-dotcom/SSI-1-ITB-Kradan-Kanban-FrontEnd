@@ -8,7 +8,6 @@ import PrimeVue from "primevue/config";
 import App from "./App.vue";
 import router from "./router";
 import Detail from "./components/Detail.vue";
-import { root } from "postcss";
 
 const app = createApp(App);
 app.component("Toast", Toast);
@@ -16,7 +15,10 @@ app.use(PrimeVue, {
   pt: {
     toast: {
       detail: {
-        class: "itbkk-message",
+        class: "itbkk-message ",
+      },
+      container: {
+        class: "shadow-md",
       },
     },
   },
