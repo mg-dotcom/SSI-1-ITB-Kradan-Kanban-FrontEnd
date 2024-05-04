@@ -73,9 +73,9 @@ async function updatedTask(url, updatedTask, id) {
         status: updatedTask.status,
       }),
     });
-    const updatedAllTask = await res.json();
-    console.log(updatedAllTask);
-    return updatedAllTask;
+    // const updatedAllTask = await res.json();
+    // console.log(updatedAllTask);
+    return res;
   } catch (error) {
     console.log(`error: ${error}`);
   }

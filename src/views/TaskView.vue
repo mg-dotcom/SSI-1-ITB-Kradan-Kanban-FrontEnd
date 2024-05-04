@@ -137,12 +137,28 @@ const addNewTask = async (task) => {
 
 const editTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, "_");
-  const editedTask = await updatedTask(
+  const res = await updatedTask(
     import.meta.env.VITE_BASE_URL,
     task,
     selectedTask.value.id
   );
-
+  const editedTask = await res.json();
+  if (res.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: `The task "${editedTask.title}" is added successfully`,
+      life: 3000,
+    });
+    router.push({ name: "task" });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: `An error occurred deleting the task "${editedTask.title}"`,
+      life: 3000,
+    });
+  }
   tasks.value.editTask(editedTask.id, editedTask);
   selectedTask.value = {
     id: "",
@@ -258,7 +274,7 @@ const deleteData = async (id) => {
         </div>
         
       </div>
-      <div class="-my-2 sm:-mx">
+      <div class="-my-2 mb-8 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
             class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
@@ -267,7 +283,7 @@ const deleteData = async (id) => {
               <thead class="bg-lightgray">
                 <tr class="">
                   <th
-                    class="w-[6%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-[5%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
                   ></th>
                   <th
                     class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
@@ -275,12 +291,12 @@ const deleteData = async (id) => {
                     Title
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-2/6 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Assignees
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-1/6 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Status
                   </th>
@@ -347,7 +363,7 @@ const deleteData = async (id) => {
 
                       <!-- Dropdown menu -->
                       <div
-                        class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[87px]"
+                        class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[20px]"
                         v-show="
                           popup.optionEditDelete && selectedTask.id === task.id
                         "
