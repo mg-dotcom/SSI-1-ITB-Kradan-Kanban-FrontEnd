@@ -417,24 +417,6 @@ const deleteData = async (id) => {
       :selectedTask="selectedTask"
       @deleteData="deleteData"
     ></DeleteModal>
-    <!-- <BasicAlert
-      alertType="deletesuccess"
-      v-if="popup.deletedAlertMassage"
-      class="alert-toast"
-      >Delete Success</BasicAlert
-    >
-    <BasicAlert
-      alertType="error"
-      v-if="popup.errorAlertMassage"
-      class="alert-toast"
-      >Error</BasicAlert
-    >
-    <BasicAlert
-      alertType="savedsuccess"
-      v-if="popup.addAlertMassage"
-      class="alert-toast"
-      >Add Success</BasicAlert
-    > -->
   </div>
 </template>
 
