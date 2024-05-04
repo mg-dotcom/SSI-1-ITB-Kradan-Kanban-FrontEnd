@@ -142,8 +142,19 @@ const editTask = async (task) => {
     task,
     selectedTask.value.id
   );
-  const editedTask = await res.json();
+
   if (res.status === 200) {
+    const editedTask = await res.json();
+    tasks.value.editTask(editedTask.id, editedTask);
+    selectedTask.value = {
+      id: "",
+      title: "",
+      description: "",
+      assignees: "",
+      status: "No Status",
+      createdOn: "",
+      updatedOn: "",
+    };
     toast.add({
       severity: "success",
       summary: "Success",
@@ -159,16 +170,7 @@ const editTask = async (task) => {
       life: 3000,
     });
   }
-  tasks.value.editTask(editedTask.id, editedTask);
-  selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
+
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
@@ -241,7 +243,6 @@ const deleteData = async (id) => {
 
 <template>
   <Toast />
-  {{}}
   <div class="h-screen w-full">
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
       <img
@@ -266,13 +267,12 @@ const deleteData = async (id) => {
         </div>
         <div class="itbkk-button-add">
           <buttonSubmit
-          buttonType="add"
-          @closeDetail="closeDetail"
-          @click="openAdd"
-          >+ Add Task</buttonSubmit
-        >
+            buttonType="add"
+            @closeDetail="closeDetail"
+            @click="openAdd"
+            >+ Add Task</buttonSubmit
+          >
         </div>
-        
       </div>
       <div class="-my-2 mb-8 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
