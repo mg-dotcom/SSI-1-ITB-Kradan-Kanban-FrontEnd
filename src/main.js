@@ -15,7 +15,7 @@ app.use(PrimeVue, {
   pt: {
     toast: {
       detail: {
-        class: "itbkk-message ",
+        class: "itbkk-message",
       },
       container: {
         class: "shadow-md",

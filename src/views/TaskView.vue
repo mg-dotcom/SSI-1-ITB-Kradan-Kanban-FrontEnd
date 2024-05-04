@@ -119,7 +119,7 @@ const addNewTask = async (task) => {
     toast.add({
       severity: "success",
       summary: "Success",
-      detail: `The task "${addedTask.title}" is added successfully`,
+      detail: `The task "${addedTask.title}" is added successfully.`,
       life: 3000,
     });
     router.push({ name: "task" });
@@ -127,7 +127,7 @@ const addNewTask = async (task) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `An error occurred deleting the task "${addedTask.title}"`,
+      detail: `An error occurred deleting the task "${addedTask.title}".`,
       life: 3000,
     });
   }
@@ -137,22 +137,42 @@ const addNewTask = async (task) => {
 
 const editTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, "_");
-  const editedTask = await updatedTask(
+  const editedRes = await updatedTask(
     import.meta.env.VITE_BASE_URL,
     task,
     selectedTask.value.id
   );
 
-  tasks.value.editTask(editedTask.id, editedTask);
-  selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
+  if (editedRes.status === 200) {
+    const editedTask = await editedRes.json();
+    tasks.value.editTask(editedTask.id, editedTask);
+    selectedTask.value = {
+      id: "",
+      title: "",
+      description: "",
+      assignees: "",
+      status: "No Status",
+      createdOn: "",
+      updatedOn: "",
+    };
+
+    toast.add({
+      severity: "success",
+      summary: "Edit Successful",
+      detail: `The task "${editedTask.title}" has been edited. `,
+      life: 3000,
+    });
+    router.push({ name: "task" });
+  }
+  else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: `An error occurred editing the task "${addedTask.title}".`,
+      life: 3000,
+    });
+  }
+
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
