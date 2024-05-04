@@ -38,7 +38,7 @@ const passNewTask = () => {
   if (props.selectedTask.id !== "" && isTaskEdited.value === true) {
     emit("editNewTask", task.value);
     router.push({ name: "task" });
-  } else {
+  } else if (props.selectedTask.id === "") {
     emit("addNewTask", task.value);
   }
 };
@@ -102,7 +102,8 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 
     <template #Time>
       <div class="pt-7" :class="selectedTask.id == '' ? 'hidden' : 'visible'">
-        <span class="itbkk-timezone font-semibold">TimeZone</span> : {{ localTimeZone }} <br />
+        <span class="itbkk-timezone font-semibold">TimeZone</span> :
+        {{ localTimeZone }} <br />
         <span class="itbkk-created-on font-semibold">Created On</span> :
         {{ props.selectedTask.createdOn }} <br />
         <span class="itbkk-updated-on font-semibold">Updated On</span> :
@@ -112,7 +113,10 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 
     <template #button-left>
       <!-- <div v-if> -->
-      <buttonSubmit buttonType="itbkk-button-cancel" @click="$emit('closeDetail')"
+      <buttonSubmit
+        buttonType="cancel"
+        class="itbkk-button-cancel"
+        @click="$emit('closeDetail')"
         >Cancel</buttonSubmit
       >
       <!-- </div> -->
@@ -120,7 +124,9 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
     <template #button-right>
       <buttonSubmit
         class="itbkk-button-confirm w-20"
-        :buttonType="task.title === '' || isTaskEdited === false ? '' : 'ok'"
+        :buttonType="
+          task.title === '' || isTaskEdited === false ? 'cancel' : 'ok'
+        "
         :disabled="task.title === '' || isTaskEdited === false"
         @click="passNewTask"
         :class="
