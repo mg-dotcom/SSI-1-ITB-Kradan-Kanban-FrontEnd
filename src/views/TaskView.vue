@@ -248,12 +248,15 @@ const deleteData = async (id) => {
             > {{ selectedTask.title }}
           </span>
         </div>
-        <buttonSubmit
+        <div class="itbkk-button-add">
+          <buttonSubmit
           buttonType="add"
           @closeDetail="closeDetail"
           @click="openAdd"
           >+ Add Task</buttonSubmit
         >
+        </div>
+        
       </div>
       <div class="-my-2 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
@@ -325,7 +328,7 @@ const deleteData = async (id) => {
                         {{ formatStatus(task.status) }}
                       </StatusButton>
                       <button
-                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        class="itbkk-button-action inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                         type="button"
                         @click="showOptionEditDelete(task.id)"
                       >
@@ -354,14 +357,14 @@ const deleteData = async (id) => {
                         >
                           <li class="" @click="editTaskModal(task.id)">
                             <p
-                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                              class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                             >
                               Edit
                             </p>
                           </li>
                           <li class="" @click="openDelete(task.id)">
                             <p
-                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
+                              class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                             >
                               Delete
                             </p>

@@ -102,24 +102,24 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
 
     <template #Time>
       <div class="pt-7" :class="selectedTask.id == '' ? 'hidden' : 'visible'">
-        <span class="font-semibold">TimeZone</span> : {{ localTimeZone }} <br />
-        <span class="font-semibold">Created On</span> :
+        <span class="itbkk-timezone font-semibold">TimeZone</span> : {{ localTimeZone }} <br />
+        <span class="itbkk-created-on font-semibold">Created On</span> :
         {{ props.selectedTask.createdOn }} <br />
-        <span class="font-semibold">Updated On</span> :
+        <span class="itbkk-updated-on font-semibold">Updated On</span> :
         {{ props.selectedTask.updatedOn }} <br />
       </div>
     </template>
 
     <template #button-left>
       <!-- <div v-if> -->
-      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
+      <buttonSubmit buttonType="itbkk-button-cancel" @click="$emit('closeDetail')"
         >Cancel</buttonSubmit
       >
       <!-- </div> -->
     </template>
     <template #button-right>
       <buttonSubmit
-        class="w-20"
+        class="itbkk-button-confirm w-20"
         :buttonType="task.title === '' || isTaskEdited === false ? '' : 'ok'"
         :disabled="task.title === '' || isTaskEdited === false"
         @click="passNewTask"
