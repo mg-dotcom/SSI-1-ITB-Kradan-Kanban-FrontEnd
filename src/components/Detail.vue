@@ -45,11 +45,17 @@ const props = defineProps({
     </template>
     <template #Time>
       <div class="pt-28">
-        <span class="font-semibold">TimeZone</span> : {{ localTimeZone }} <br />
-        <span class="font-semibold">Created On</span> :
-        {{ props.selectedTask.createdOn }} <br />
-        <span class="font-semibold">Updated On</span> :
-        {{ props.selectedTask.updatedOn }} <br />
+        <div class="itbkk-timezone">
+          <span class="font-semibold">TimeZone</span> : {{ localTimeZone }}
+        </div>
+        <div class="itbkk-created-on">
+          <span class="font-semibold">Created On</span> :
+          {{ props.selectedTask.createdOn }}
+        </div>
+        <div class="itbkk-updated-on">
+          <span class="font-semibold">Updated On</span> :
+        {{ props.selectedTask.updatedOn }} 
+        </div>
       </div>
     </template>
 
