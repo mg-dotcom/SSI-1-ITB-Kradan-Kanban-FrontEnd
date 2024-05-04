@@ -115,7 +115,7 @@ const addNewTask = async (task) => {
   const res = await addTask(import.meta.env.VITE_BASE_URL, task);
   const addedTask = await res.json();
   tasks.value.addTask(addedTask);
-  if (res.status === 200) {
+  if (res.status === 201) {
     toast.add({
       severity: "success",
       summary: "Success",
