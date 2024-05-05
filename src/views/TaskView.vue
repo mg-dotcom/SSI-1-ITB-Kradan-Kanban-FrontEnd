@@ -54,6 +54,18 @@ const popup = reactive({
   delete: false,
 });
 
+const clearValue = () => {
+  selectedTask.value = {
+    id: "",
+    title: "",
+    description: "",
+    assignees: "",
+    status: "No Status",
+    createdOn: "",
+    updatedOn: "",
+  };
+};
+
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 function formatDate(date) {
@@ -74,6 +86,7 @@ const openDetail = async (id) => {
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.detail = true;
+  popup.optionEditDelete = false;
   router.push({ name: "task-detail", params: { id: id } });
 };
 
@@ -84,15 +97,7 @@ if (taskId) {
 const closeDetail = () => {
   popup.detail = false;
   popup.addEdit = false;
-  selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
+  clearValue();
   router.push({ name: "task" });
 };
 
@@ -106,7 +111,9 @@ const formatStatus = (status) => {
 };
 
 const openAdd = () => {
+  clearValue();
   popup.addEdit = true;
+  popup.optionEditDelete = false;
   router.push({ name: "task-add" });
 };
 
@@ -122,6 +129,7 @@ const addNewTask = async (task) => {
       detail: `The task "${addedTask.title}" is added successfully`,
       life: 3000,
     });
+    clearValue();
     router.push({ name: "task" });
   } else {
     toast.add({
@@ -130,7 +138,9 @@ const addNewTask = async (task) => {
       detail: `An error occurred deleting the task "${addedTask.title}"`,
       life: 3000,
     });
+    clearValue();
   }
+  popup.addEdit = false;
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
@@ -146,19 +156,11 @@ const editTask = async (task) => {
   if (res.status === 200) {
     const editedTask = await res.json();
     tasks.value.editTask(editedTask.id, editedTask);
-    selectedTask.value = {
-      id: "",
-      title: "",
-      description: "",
-      assignees: "",
-      status: "No Status",
-      createdOn: "",
-      updatedOn: "",
-    };
+    clearValue();
     toast.add({
       severity: "success",
       summary: "Success",
-      detail: `The task "${editedTask.title}" is added successfully`,
+      detail: `The task has been updated`,
       life: 3000,
     });
     router.push({ name: "task" });
@@ -166,7 +168,7 @@ const editTask = async (task) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `An error occurred deleting the task "${editedTask.title}"`,
+      detail: `The update was unsuccessful"`,
       life: 3000,
     });
   }
@@ -198,15 +200,7 @@ const showOptionEditDelete = (taskId) => {
 const closeDelete = () => {
   popup.delete = false;
   popup.optionEditDelete = false;
-  selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
+  clearValue();
   router.push({ name: "task" });
 };
 
@@ -214,7 +208,6 @@ const openDelete = (id) => {
   popup.delete = true;
   const task = tasks.value.getTasksById(id);
   selectedTask.value = task;
-  console.log(task);
 };
 
 const deleteData = async (id) => {
@@ -229,6 +222,7 @@ const deleteData = async (id) => {
       detail: `The task "${taskValue.title}" has been deleted`,
       life: 3000,
     });
+    clearValue();
   } else {
     toast.add({
       severity: "error",
@@ -242,7 +236,7 @@ const deleteData = async (id) => {
 </script>
 
 <template>
-  <Toast />
+  <Toast class="itbkk-message" />
   <div class="h-screen w-full">
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
       <img
