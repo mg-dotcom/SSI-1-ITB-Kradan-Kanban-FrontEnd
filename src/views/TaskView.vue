@@ -252,21 +252,21 @@ const deleteData = async (id) => {
     </div>
 
     <div class="table lg:px-24 sm:px-10 overflow-hidden" v-show="page.task">
-      <div class="itbkk-button-add flex justify-between py-6 px-5">
+      <div class="flex justify-between py-6 px-5">
         <div class="text-xl font-bold flex items-center text-blue">
           Task Lists&nbsp;
           <span v-if="selectedTask.title.length !== 0" class="break-all">
             > {{ selectedTask.title }}
           </span>
         </div>
-        <div class="itbkk-button-add">
-          <buttonSubmit
-            buttonType="add"
-            @closeDetail="closeDetail"
-            @click="openAdd"
-            >+ Add Task</buttonSubmit
-          >
-        </div>
+
+        <buttonSubmit
+          class="itbkk-button-add"
+          buttonType="add"
+          @closeDetail="closeDetail"
+          v-on:click="openAdd"
+          >+ Add Task</buttonSubmit
+        >
       </div>
       <div class="-my-2 mb-8 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">

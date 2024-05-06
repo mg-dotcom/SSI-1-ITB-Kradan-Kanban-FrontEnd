@@ -123,7 +123,7 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
     </template>
     <template #button-right>
       <buttonSubmit
-        class="itbkk-button-confirm w-20"
+        class="itbkk-button-confirm w-20 disabled"
         :buttonType="
           task.title === '' || isTaskEdited === false ? 'cancel' : 'ok'
         "
