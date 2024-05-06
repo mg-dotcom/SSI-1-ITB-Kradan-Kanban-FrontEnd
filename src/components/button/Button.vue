@@ -6,8 +6,9 @@ const props = defineProps({
   buttonType: {
     type: String,
     validator: (value) => {
-      return ["ok", "cancel", "add"].includes(value.toLowerCase());
-    }
+
+      return ["ok", "cancel", "add"].includes(value.toLowerCase().trim());
+    },
   },
 });
 </script>

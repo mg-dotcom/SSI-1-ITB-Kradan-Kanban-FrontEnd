@@ -54,6 +54,18 @@ const popup = reactive({
   delete: false,
 });
 
+const clearValue = () => {
+  selectedTask.value = {
+    id: "",
+    title: "",
+    description: "",
+    assignees: "",
+    status: "No Status",
+    createdOn: "",
+    updatedOn: "",
+  };
+};
+
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 function formatDate(date) {
@@ -74,6 +86,7 @@ const openDetail = async (id) => {
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.detail = true;
+  popup.optionEditDelete = false;
   router.push({ name: "task-detail", params: { id: id } });
 };
 
@@ -84,15 +97,7 @@ if (taskId) {
 const closeDetail = () => {
   popup.detail = false;
   popup.addEdit = false;
-  selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
+  clearValue();
   router.push({ name: "task" });
 };
 
@@ -106,7 +111,9 @@ const formatStatus = (status) => {
 };
 
 const openAdd = () => {
+  clearValue();
   popup.addEdit = true;
+  popup.optionEditDelete = false;
   router.push({ name: "task-add" });
 };
 
@@ -115,13 +122,14 @@ const addNewTask = async (task) => {
   const res = await addTask(import.meta.env.VITE_BASE_URL, task);
   const addedTask = await res.json();
   tasks.value.addTask(addedTask);
-  if (res.status === 200) {
+  if (res.status === 201) {
     toast.add({
       severity: "success",
       summary: "Success",
       detail: `The task "${addedTask.title}" is added successfully.`,
       life: 3000,
     });
+    clearValue();
     router.push({ name: "task" });
   } else {
     toast.add({
@@ -130,45 +138,41 @@ const addNewTask = async (task) => {
       detail: `An error occurred deleting the task "${addedTask.title}".`,
       life: 3000,
     });
+    clearValue();
   }
+  popup.addEdit = false;
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
 
 const editTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, "_");
-  const editedRes = await updatedTask(
+
+  const res = await updatedTask(
+
     import.meta.env.VITE_BASE_URL,
     task,
     selectedTask.value.id
   );
 
-  if (editedRes.status === 200) {
-    const editedTask = await editedRes.json();
-    tasks.value.editTask(editedTask.id, editedTask);
-    selectedTask.value = {
-      id: "",
-      title: "",
-      description: "",
-      assignees: "",
-      status: "No Status",
-      createdOn: "",
-      updatedOn: "",
-    };
 
+  if (res.status === 200) {
+    const editedTask = await res.json();
+    tasks.value.editTask(editedTask.id, editedTask);
+    clearValue();
     toast.add({
       severity: "success",
-      summary: "Edit Successful",
-      detail: `The task "${editedTask.title}" has been edited. `,
+      summary: "Success",
+      detail: `The task has been updated`,
       life: 3000,
     });
     router.push({ name: "task" });
-  }
-  else {
+  } else {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `An error occurred editing the task "${addedTask.title}".`,
+      detail: `The update was unsuccessful"`,
+
       life: 3000,
     });
   }
@@ -200,15 +204,7 @@ const showOptionEditDelete = (taskId) => {
 const closeDelete = () => {
   popup.delete = false;
   popup.optionEditDelete = false;
-  selectedTask.value = {
-    id: "",
-    title: "",
-    description: "",
-    assignees: "",
-    status: "No Status",
-    createdOn: "",
-    updatedOn: "",
-  };
+  clearValue();
   router.push({ name: "task" });
 };
 
@@ -216,7 +212,6 @@ const openDelete = (id) => {
   popup.delete = true;
   const task = tasks.value.getTasksById(id);
   selectedTask.value = task;
-  console.log(task);
 };
 
 const deleteData = async (id) => {
@@ -231,6 +226,7 @@ const deleteData = async (id) => {
       detail: `The task "${taskValue.title}" has been deleted`,
       life: 3000,
     });
+    clearValue();
   } else {
     toast.add({
       severity: "error",
@@ -244,8 +240,7 @@ const deleteData = async (id) => {
 </script>
 
 <template>
-  <Toast />
-  {{}}
+  <Toast class="itbkk-message" />
   <div class="h-screen w-full">
     <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
       <img
@@ -268,14 +263,16 @@ const deleteData = async (id) => {
             > {{ selectedTask.title }}
           </span>
         </div>
-        <buttonSubmit
-          buttonType="add"
-          @closeDetail="closeDetail"
-          @click="openAdd"
-          >+ Add Task</buttonSubmit
-        >
+        <div class="itbkk-button-add">
+          <buttonSubmit
+            buttonType="add"
+            @closeDetail="closeDetail"
+            @click="openAdd"
+            >+ Add Task</buttonSubmit
+          >
+        </div>
       </div>
-      <div class="-my-2 sm:-mx">
+      <div class="-my-2 mb-8 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
             class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
@@ -284,7 +281,7 @@ const deleteData = async (id) => {
               <thead class="bg-lightgray">
                 <tr class="">
                   <th
-                    class="w-[6%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-[5%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
                   ></th>
                   <th
                     class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
@@ -292,12 +289,12 @@ const deleteData = async (id) => {
                     Title
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-2/6 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Assignees
                   </th>
                   <th
-                    class="w-1/5 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-1/6 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Status
                   </th>
@@ -345,7 +342,7 @@ const deleteData = async (id) => {
                         {{ formatStatus(task.status) }}
                       </StatusButton>
                       <button
-                        class="inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        class="itbkk-button-action inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                         type="button"
                         @click="showOptionEditDelete(task.id)"
                       >
@@ -364,7 +361,7 @@ const deleteData = async (id) => {
 
                       <!-- Dropdown menu -->
                       <div
-                        class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[87px]"
+                        class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[20px]"
                         v-show="
                           popup.optionEditDelete && selectedTask.id === task.id
                         "
@@ -374,14 +371,14 @@ const deleteData = async (id) => {
                         >
                           <li class="" @click="editTaskModal(task.id)">
                             <p
-                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                              class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                             >
                               Edit
                             </p>
                           </li>
                           <li class="" @click="openDelete(task.id)">
                             <p
-                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
+                              class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                             >
                               Delete
                             </p>
@@ -418,24 +415,6 @@ const deleteData = async (id) => {
       :selectedTask="selectedTask"
       @deleteData="deleteData"
     ></DeleteModal>
-    <!-- <BasicAlert
-      alertType="deletesuccess"
-      v-if="popup.deletedAlertMassage"
-      class="alert-toast"
-      >Delete Success</BasicAlert
-    >
-    <BasicAlert
-      alertType="error"
-      v-if="popup.errorAlertMassage"
-      class="alert-toast"
-      >Error</BasicAlert
-    >
-    <BasicAlert
-      alertType="savedsuccess"
-      v-if="popup.addAlertMassage"
-      class="alert-toast"
-      >Add Success</BasicAlert
-    > -->
   </div>
 </template>
 

@@ -3,7 +3,7 @@ const props = defineProps({
   statusName: {
     validator(value) {
       return ["todo", "doing", "done", "nostatus"].includes(
-        value.toLowerCase()
+        value.toLowerCase().trim()
       );
     },
   },

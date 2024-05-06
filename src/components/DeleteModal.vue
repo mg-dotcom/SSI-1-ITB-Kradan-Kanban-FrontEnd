@@ -18,16 +18,16 @@ const props = defineProps({
         <p>Delete a Task!</p>
       </div>
       <div class="title-line w-full h-px bg-gray-300 mb-4"></div>
-      <div class="message mb-6 break-all">
+      <div class="itbkk-message mb-6 break-all">
         <p>Do you want to delete the task "{{ selectedTask.title }}" ?</p>
       </div>
       <div class="button-container flex justify-end">
-        <div class="">
+        <div class="itbkk-button-cancel">
           <submitButton buttonType="cancel" @click="$emit('closeDelete')"
             >Cancel</submitButton
           >
         </div>
-        <div>
+        <div class="itbkk-button-confirm">
           <submitButton
             buttonType="ok"
             @click="$emit('deleteData', selectedTask.id)"
