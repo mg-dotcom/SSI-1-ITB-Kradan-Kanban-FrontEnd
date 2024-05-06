@@ -217,7 +217,7 @@ const deleteData = async (id) => {
     toast.add({
       severity: "success",
       summary: "Success",
-      detail: `The task "${taskValue.title}" has been deleted`,
+      detail: `The task has been deleted`,
       life: 3000,
     });
     clearValue();
