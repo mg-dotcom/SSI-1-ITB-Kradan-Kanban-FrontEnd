@@ -129,8 +129,8 @@ const addNewTask = async (task) => {
       detail: `The task "${addedTask.title}" is added successfully`,
       life: 3000,
     });
-    clearValue();
     router.push({ name: "task" });
+    clearValue();
   } else {
     toast.add({
       severity: "error",
@@ -251,7 +251,7 @@ const deleteData = async (id) => {
       </div>
     </div>
 
-    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-show="page.task">
+    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="!popup.addEdit">
       <div class="flex justify-between py-6 px-5">
         <div class="text-xl font-bold flex items-center text-blue">
           Task Lists&nbsp;
@@ -372,6 +372,7 @@ const deleteData = async (id) => {
                               Edit
                             </p>
                           </li>
+
                           <li class="" @click="openDelete(task.id)">
                             <p
                               class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"

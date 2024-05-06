@@ -17,31 +17,37 @@ const props = defineProps({
       {{ props.selectedTask.title }}
     </template>
     <template #desc>
-      {{
-        !props.selectedTask.description
-          ? "No Description Provided"
-          : props.selectedTask.description
-      }}
+      <div class="itbkk-description">
+        {{
+          !props.selectedTask.description
+            ? "No Description Provided"
+            : props.selectedTask.description
+        }}
+      </div>
     </template>
     <template #assignees>
-      {{
-        !props.selectedTask.assignees
-          ? "Unassigned"
-          : props.selectedTask.assignees
-      }}
+      <div class="itbkk-assignees">
+        {{
+          !props.selectedTask.assignees
+            ? "Unassigned"
+            : props.selectedTask.assignees
+        }}
+      </div>
     </template>
     <template #status>
-      <StatusButton
-        :statusName="
-          props.selectedTask.status
-            .replace(/_/g, ' ')
-            .toLowerCase()
-            .split(' ')
-            .join('')
-        "
-      >
-        {{ props.selectedTask.status }}
-      </StatusButton>
+      <div class="itbkk-status">
+        <StatusButton
+          :statusName="
+            props.selectedTask.status
+              .replace(/_/g, ' ')
+              .toLowerCase()
+              .split(' ')
+              .join('')
+          "
+        >
+          {{ props.selectedTask.status }}
+        </StatusButton>
+      </div>
     </template>
     <template #Time>
       <div class="pt-28">
@@ -54,7 +60,7 @@ const props = defineProps({
         </div>
         <div class="itbkk-updated-on">
           <span class="font-semibold">Updated On</span> :
-        {{ props.selectedTask.updatedOn }} 
+          {{ props.selectedTask.updatedOn }}
         </div>
       </div>
     </template>
