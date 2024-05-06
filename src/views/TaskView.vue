@@ -130,7 +130,6 @@ const addNewTask = async (task) => {
       life: 3000,
     });
     router.push({ name: "task" });
-    clearValue();
   } else {
     toast.add({
       severity: "error",
@@ -138,7 +137,6 @@ const addNewTask = async (task) => {
       detail: `An error occurred deleting the task "${addedTask.title}"`,
       life: 3000,
     });
-    clearValue();
   }
   popup.addEdit = false;
   popup.addEdit = false;
@@ -259,14 +257,14 @@ const deleteData = async (id) => {
             > {{ selectedTask.title }}
           </span>
         </div>
-
-        <buttonSubmit
-          class="itbkk-button-add"
-          buttonType="add"
-          @closeDetail="closeDetail"
-          v-on:click="openAdd"
-          >+ Add Task</buttonSubmit
-        >
+        <div class="itbkk-button-add">
+          <buttonSubmit
+            buttonType="add"
+            @closeDetail="closeDetail"
+            @click="openAdd"
+            >+ Add Task</buttonSubmit
+          >
+        </div>
       </div>
       <div class="-my-2 mb-8 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
