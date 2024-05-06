@@ -14,7 +14,7 @@ const props = defineProps({
 
 <template>
   <div
-    class="delete-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+    class="delete-modal fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
     <div class="bg-white max-w-md p-6 rounded-lg shadow-lg">
       <div class="font-bold mb-4">
