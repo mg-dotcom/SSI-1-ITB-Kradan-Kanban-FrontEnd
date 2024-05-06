@@ -107,14 +107,12 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
     </template>
 
     <template #button-left>
-      <!-- <div v-if> -->
       <buttonSubmit
         buttonType="cancel"
         class="itbkk-button-cancel"
         @click="$emit('closeDetail')"
         >Cancel</buttonSubmit
       >
-      <!-- </div> -->
     </template>
     <template #button-right>
       <buttonSubmit
