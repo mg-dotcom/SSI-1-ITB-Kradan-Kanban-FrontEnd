@@ -364,9 +364,7 @@ const deleteData = async (id) => {
                             <ul
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
                             >
-                              <li
-                                class="itbkk-button-edit"
-                                @click="editTaskModal(task.id)"
+                              <li @click="editTaskModal(task.id)"
                               >
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
