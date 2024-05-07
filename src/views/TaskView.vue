@@ -204,9 +204,12 @@ const closeDelete = () => {
   router.push({ name: "task" });
 };
 
-const openDelete = (id) => {
+const selectedIndex = ref(0);
+
+const openDelete = (id,index) => {
   popup.delete = true;
   const task = tasks.value.getTasksById(id);
+  selectedIndex.value = index
   selectedTask.value = task;
 };
 
@@ -372,7 +375,7 @@ const deleteData = async (id) => {
                                 </p>
                               </li>
 
-                              <li @click="openDelete(task.id)">
+                              <li @click="openDelete(task.id,index)">
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                 >
@@ -385,13 +388,6 @@ const deleteData = async (id) => {
                       </div>
                     </div>
                   </td>
-                  <DeleteModal
-                    v-if="popup.delete && selectedTask.id === task.id"
-                    @closeDelete="closeDelete"
-                    :selectedTask="selectedTask"
-                    :index="index"
-                    @deleteData="deleteData"
-                  ></DeleteModal>
                 </tr>
               </tbody>
             </table>
@@ -399,6 +395,13 @@ const deleteData = async (id) => {
         </div>
       </div>
     </div>
+    <DeleteModal
+      v-if="popup.delete"
+      @closeDelete="closeDelete"
+      :selectedTask="selectedTask"
+      :selectedIndex="selectedIndex"
+      @deleteData="deleteData"
+    ></DeleteModal>
     <Detail
       v-if="popup.detail"
       @closeDetail="closeDetail"

@@ -6,10 +6,12 @@ const props = defineProps({
   selectedTask: {
     type: Object,
   },
-  index:{
-    type:Number,
-  }
+  selectedIndex: {
+    type: Number,
+  },
 });
+
+console.log(props.selectedIndex);
 </script>
 
 <template>
@@ -22,7 +24,10 @@ const props = defineProps({
       </div>
       <div class="title-line w-full h-px bg-gray-300 mb-4"></div>
       <div class="itbkk-message mb-6 break-all">
-        <p>Do you want to delete the task number {{ props.index+1 }} - {{ selectedTask.title }} ?</p>
+        <p>
+          Do you want to delete the task number {{ props.selectedIndex + 1 }} -
+          {{ selectedTask.title }} ?
+        </p>
       </div>
       <div class="button-container flex justify-end">
         <div class="itbkk-button-cancel">
