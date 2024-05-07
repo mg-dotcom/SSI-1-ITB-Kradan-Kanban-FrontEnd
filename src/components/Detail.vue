@@ -14,7 +14,9 @@ const props = defineProps({
 <template>
   <ModalDetail :selectedTask="selectedTask">
     <template #title>
-      {{ props.selectedTask.title }}
+      <div :title="props.selectedTask.title">
+        {{ props.selectedTask.title }}
+      </div>
     </template>
     <template #desc>
       <div class="itbkk-description">

@@ -165,6 +165,7 @@ const editTask = async (task) => {
     });
     router.push({ name: "task" });
   } else {
+    console.log(res.status);
     toast.add({
       severity: "error",
       summary: "Error",
