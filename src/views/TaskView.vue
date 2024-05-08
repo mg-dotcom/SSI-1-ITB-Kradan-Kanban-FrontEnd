@@ -15,12 +15,11 @@ import { TaskModal } from "../libs/TaskModal.js";
 import DeleteModal from "../components/DeleteModal.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
-const router = useRouter();
-const route = useRoute();
 import { useToast } from "primevue/usetoast";
 import Toast from "primevue/toast";
 const toast = useToast();
-
+const router = useRouter();
+const route = useRoute();
 const selectedTask = ref({
   id: "",
   title: "",
@@ -40,6 +39,7 @@ onMounted(async () => {
   initDropdowns();
 
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+
   tasks.value.addAllTasks(allTasks);
 });
 
@@ -65,6 +65,10 @@ const clearValue = () => {
     updatedOn: "",
   };
 };
+import { useTaskStore } from "../stores/TaskStore.js";
+
+const taskStore = useTaskStore();
+taskStore.actions.testTask();
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -207,10 +211,10 @@ const closeDelete = () => {
 
 const selectedIndex = ref(0);
 
-const openDelete = (id,index) => {
+const openDelete = (id, index) => {
   popup.delete = true;
   const task = tasks.value.getTasksById(id);
-  selectedIndex.value = index
+  selectedIndex.value = index;
   selectedTask.value = task;
 };
 
@@ -255,7 +259,7 @@ const deleteData = async (id) => {
       </div>
     </div>
 
-    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="!popup.addEdit">
+    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="page.task">
       <div class="flex justify-between py-6 px-5">
         <div class="text-xl font-bold flex items-center text-blue">
           Task Lists&nbsp;
@@ -376,7 +380,7 @@ const deleteData = async (id) => {
                                 </p>
                               </li>
 
-                              <li @click="openDelete(task.id,index)">
+                              <li @click="openDelete(task.id, index)">
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                 >
