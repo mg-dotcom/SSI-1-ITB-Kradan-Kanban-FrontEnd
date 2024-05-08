@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import TaskView from "../views/TaskView.vue";
-import Detail from "../components/Detail.vue";
-import AddEditModal from "@/components/AddEditModal.vue";
+import Detail from "../components/taskModal/Detail.vue";
+import AddEditModal from "../components/taskModal/AddEditModal.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
