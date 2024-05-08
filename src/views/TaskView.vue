@@ -17,6 +17,9 @@ import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useToast } from "primevue/usetoast";
 import Toast from "primevue/toast";
+
+import Button from "primevue/button";
+
 const toast = useToast();
 const router = useRouter();
 const route = useRoute();
@@ -89,6 +92,7 @@ const openDetail = async (id) => {
   selectedTask.value.status = formatStatus(taskDetails.status.name);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
+  visible.value = true;
   popup.detail = true;
   popup.optionEditDelete = false;
   router.push({ name: "task-detail", params: { id: id } });
@@ -188,7 +192,7 @@ const editTaskModal = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
+  selectedTask.value.status = formatStatus(taskDetails.status.name);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.addEdit = true;
@@ -241,6 +245,8 @@ const deleteData = async (id) => {
   }
   closeDelete();
 };
+
+const visible = ref(false);
 </script>
 
 <template>
@@ -262,10 +268,10 @@ const deleteData = async (id) => {
     <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="page.task">
       <div class="flex justify-between py-6 px-5">
         <div class="text-xl font-bold flex items-center text-blue">
-          Task Lists&nbsp;
-          <span v-if="selectedTask.title.length !== 0" class="break-all">
+          Home&nbsp;
+          <!-- <span v-if="selectedTask.title.length !== 0" class="break-all">
             > {{ selectedTask.title }}
-          </span>
+          </span> -->
         </div>
 
         <buttonSubmit
@@ -407,12 +413,14 @@ const deleteData = async (id) => {
       :selectedIndex="selectedIndex"
       @deleteData="deleteData"
     ></DeleteModal>
+
     <Detail
       v-if="popup.detail"
       @closeDetail="closeDetail"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></Detail>
+
     <AddEditModal
       v-if="popup.addEdit"
       class="z-50"

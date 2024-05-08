@@ -1,13 +1,16 @@
 import "./assets/main.css";
+import PrimeVue from "primevue/config";
 import "primevue/resources/themes/aura-light-green/theme.css";
+import "primevue/resources/primevue.min.css";
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
-import PrimeVue from "primevue/config";
+import ToggleButton from "primevue/togglebutton";
 import App from "./App.vue";
 import router from "./router";
-import Detail from "./components/Detail.vue";
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 
 const app = createApp(App);
 app.component("Toast", Toast);
@@ -23,8 +26,10 @@ app.use(PrimeVue, {
     },
   },
 });
+app.component("ToggleButton", ToggleButton);
+app.component("Button", Button);
 app.use(ToastService);
-
+app.component("Dialog", Dialog);
 app.use(createPinia());
 
 app.use(router);
