@@ -1,7 +1,7 @@
 <script setup>
-import buttonSubmit from "./button/Button.vue";
-import StatusButton from "../components/button/StatusButton.vue";
 import ModalDetail from "./ModalDetail.vue";
+import buttonSubmit from "../button/Button.vue";
+import StatusButton from "../button/StatusButton.vue";
 
 const emit = defineEmits(["closeDetail"]);
 

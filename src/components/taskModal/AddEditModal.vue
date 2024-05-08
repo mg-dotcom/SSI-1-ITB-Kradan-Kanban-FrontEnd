@@ -1,6 +1,6 @@
 <script setup>
 import ModalDetail from "./ModalDetail.vue";
-import buttonSubmit from "./button/Button.vue";
+import buttonSubmit from "../button/Button.vue";
 import { useRouter } from "vue-router";
 import { defineProps, defineEmits, ref, computed } from "vue";
 

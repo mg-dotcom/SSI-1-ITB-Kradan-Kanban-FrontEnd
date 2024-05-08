@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { initFlowbite, initDropdowns } from "flowbite";
-import Detail from "../components/Detail.vue";
-import AddEditModal from "../components/AddEditModal.vue";
+import Detail from "../components/taskModal/Detail.vue";
+import AddEditModal from "../components/taskModal/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import {
   fetchAllTasks,
@@ -12,7 +12,7 @@ import {
   updatedTask,
 } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
-import DeleteModal from "../components/DeleteModal.vue";
+import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 const router = useRouter();

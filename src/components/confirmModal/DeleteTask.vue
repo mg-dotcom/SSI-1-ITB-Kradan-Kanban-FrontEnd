@@ -1,5 +1,5 @@
 <script setup>
-import submitButton from "./button/Button.vue";
+import submitButton from '../button/Button.vue'
 import { defineEmits } from "vue";
 defineEmits(["closeDelete", "deleteData"]);
 const props = defineProps({
