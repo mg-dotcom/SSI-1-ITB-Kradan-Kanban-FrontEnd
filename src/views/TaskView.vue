@@ -86,7 +86,7 @@ const openDetail = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
+  selectedTask.value.status = formatStatus(taskDetails.status.name);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.detail = true;
