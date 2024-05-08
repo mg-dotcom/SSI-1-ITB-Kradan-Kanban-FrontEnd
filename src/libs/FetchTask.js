@@ -38,7 +38,7 @@ async function addTask(url, newTask) {
         title: newTask.title,
         description: newTask.description,
         assignees: newTask.assignees,
-        status: newTask.status,
+        statusName: newTask.status,
       }),
     });
 
@@ -70,7 +70,7 @@ async function updatedTask(url, updatedTask, id) {
         title: updatedTask.title,
         description: updatedTask.description,
         assignees: updatedTask.assignees,
-        status: updatedTask.status,
+        statusName: updatedTask.status,
       }),
     });
     // const updatedAllTask = await res.json();

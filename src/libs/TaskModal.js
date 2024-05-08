@@ -15,7 +15,7 @@ class TaskModal {
       title: task.title,
       description: task.description,
       assignees: task.assignees,
-      status: task.status,
+      status: task.statusName,
       createdOn: task.createdOn,
       updatedOn: task.updatedOn,
     });
