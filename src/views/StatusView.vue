@@ -72,24 +72,29 @@ onMounted(async () => {
                 :key="index"
               >
                 <td
-                  class="text-center py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                  class="text-center p-5 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
                   {{ index + 1 }}
                 </td>
                 <td
-                  class="itbkk-title px-6 py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
+                  class="itbkk-title text-sm text-gray-600 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
                 >
                   {{ status.name }}
                 </td>
                 <td
-                  class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
+                  class="itbkk-assignees text-sm border-b border-r border-gray-300 break-all"
                 >
                   {{ status.description }}
                 </td>
                 <td
-                  class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
+                  class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all"
                 >
-                  <div>
+                  <div
+                    :class="{
+                      hidden: status.name === 'NO_STATUS',
+                      visible: status.name !== 'NO_STATUS',
+                    }"
+                  >
                     <buttonSubmit
                       class="itbkk-button-edit"
                       buttonType="edit"
