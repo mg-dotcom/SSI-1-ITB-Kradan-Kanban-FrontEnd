@@ -49,6 +49,9 @@ onMounted(async () => {
       `${import.meta.env.VITE_BASE_URL}/tasks`
     );
     taskStore.addAllTasks(allTasks);
+  }
+
+  if (statusStore.getStatuses.length === 0) {
     const allStatus = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}/statuses`
     );
