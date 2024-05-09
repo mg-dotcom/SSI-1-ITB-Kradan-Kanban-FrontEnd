@@ -9,7 +9,7 @@ import submitButton from '../button/Button.vue'
       <p>Delete a Status!</p>
     </template>
     <template #question>
-      <p>Do you want to delete the Doing Status?</p>
+      <p>Do you want to delete the <span class="font-bold">Doing</span>  Status?</p>
     </template>
     <template #button-left>
       <submitButton buttonType="cancel">Cancel</submitButton>
