@@ -16,6 +16,7 @@ import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useToast } from "primevue/usetoast";
+import { useTaskStore } from "../stores/TaskStore.js";
 import Toast from "primevue/toast";
 import HomeText from "../components/HomeText.vue";
 
@@ -32,8 +33,7 @@ const selectedTask = ref({
   updatedOn: "",
 });
 
-const tasks = ref(new TaskModal());
-
+const taskStore = useTaskStore();
 const taskId = route.params.id;
 
 onMounted(async () => {
@@ -41,8 +41,7 @@ onMounted(async () => {
   initDropdowns();
 
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
-
-  tasks.value.addAllTasks(allTasks);
+  taskStore.addAllTasks(allTasks);
 });
 
 const page = reactive({
@@ -67,10 +66,6 @@ const clearValue = () => {
     updatedOn: "",
   };
 };
-import { useTaskStore } from "../stores/TaskStore.js";
-
-const taskStore = useTaskStore();
-taskStore.actions.testTask();
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -92,7 +87,6 @@ const openDetail = async (id) => {
   selectedTask.value.status = taskDetails.status.name;
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
-  visible.value = true;
   popup.detail = true;
   popup.optionEditDelete = false;
   router.push({ name: "task-detail", params: { id: id } });
@@ -119,7 +113,8 @@ const openAdd = () => {
 const addNewTask = async (task) => {
   const res = await addTask(import.meta.env.VITE_BASE_URL, task);
   const addedTask = await res.json();
-  tasks.value.addTask(addedTask);
+  taskStore.addTask(addedTask);
+  // tasks.value.addTask(addedTask);
   if (res.status === 201) {
     toast.add({
       severity: "success",
@@ -152,7 +147,7 @@ const editTask = async (task) => {
   );
   if (res.status === 200) {
     const editedTask = await res.json();
-    tasks.value.editTask(editedTask.id, editedTask);
+    taskStore.editTask(editedTask.id, editedTask);
     toast.add({
       severity: "success",
       summary: "Success",
@@ -203,17 +198,20 @@ const selectedIndex = ref(0);
 
 const openDelete = (id, index) => {
   popup.delete = true;
-  const task = tasks.value.getTasksById(id);
+  console.log(id,index);
+  const task = taskStore.getTasksById(id);
+  console.log(task);
   selectedIndex.value = index;
   selectedTask.value = task;
 };
 
 const deleteData = async (id) => {
   const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id);
-  const taskValue = tasks.value.getTasksById(id);
-  const index = tasks.value.getTasks().findIndex((task) => task.id === id);
+  const taskValue = taskStore.getTasksById(id);
+  console.log(taskValue);
+  const index = taskStore.getTasks.findIndex((task) => task.id === id);
   if (statusCode === 200) {
-    tasks.value.removeTask(index);
+    taskStore.removeTask(index);
     toast.add({
       severity: "success",
       summary: "Success",
@@ -231,8 +229,6 @@ const deleteData = async (id) => {
   }
   closeDelete();
 };
-
-const visible = ref(false);
 </script>
 
 <template>
@@ -245,9 +241,6 @@ const visible = ref(false);
           @click="router.push({ name: 'task' })"
         >
           <HomeText />
-          <!-- <span v-if="selectedTask.title.length !== 0" class="break-all">
-            > {{ selectedTask.title }}
-          </span> -->
         </div>
         <div class="flex">
           <buttonSubmit
@@ -297,12 +290,12 @@ const visible = ref(false);
                 </tr>
               </thead>
               <tbody class="bg-white">
-                <tr v-if="tasks.getTasks().length <= 0">
+                <tr v-if="taskStore.getTasks.length <= 0">
                   <td class="border text-center" colspan="4">No Task</td>
                 </tr>
                 <tr
                   class="itbkk-item"
-                  v-for="(task, index) in tasks.getTasks()"
+                  v-for="(task, index) in taskStore.getTasks"
                   :key="index"
                 >
                   <td

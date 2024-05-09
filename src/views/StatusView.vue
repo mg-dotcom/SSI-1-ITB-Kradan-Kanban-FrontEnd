@@ -4,13 +4,14 @@ import StatusButton from "../components/button/StatusButton.vue";
 import HomeText from "../components/HomeText.vue";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { useTaskStore } from "../stores/TaskStore.js";
 import { TaskModal } from "../libs/TaskModal.js";
 const router = useRouter();
-
-const tasks = ref(new TaskModal());
+const taskStore = useTaskStore();
 </script>
 
 <template>
+  {{ taskStore.getTasks }}
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
       <div
