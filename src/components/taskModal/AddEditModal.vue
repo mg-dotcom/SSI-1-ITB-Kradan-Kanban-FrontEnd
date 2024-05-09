@@ -18,6 +18,7 @@ const task = ref({
   status: props.selectedTask.status,
 });
 
+console.log(task.value.status);
 const oldtask = {
   title: props.selectedTask.title,
   description: props.selectedTask.description,
@@ -87,10 +88,10 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
           class="itbkk-status bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="task.status"
         >
-          <option value="No Status">No Status</option>
-          <option value="To Do">To Do</option>
-          <option value="Doing">Doing</option>
-          <option value="Done">Done</option>
+          <option value="NO_STATUS">NO_STATUS</option>
+          <option value="TO_DO">TO_DO</option>
+          <option value="DOING">DOING</option>
+          <option value="DONE">DONE</option>
         </select>
       </form>
     </template>

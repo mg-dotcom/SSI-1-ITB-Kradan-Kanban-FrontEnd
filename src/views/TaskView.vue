@@ -27,7 +27,7 @@ const selectedTask = ref({
   title: "",
   description: "",
   assignees: "",
-  status: "No Status",
+  status: "NO_STATUS",
   createdOn: "",
   updatedOn: "",
 });
@@ -62,7 +62,7 @@ const clearValue = () => {
     title: "",
     description: "",
     assignees: "",
-    status: "No Status",
+    status: "NO_STATUS",
     createdOn: "",
     updatedOn: "",
   };
@@ -88,7 +88,6 @@ const openDetail = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status.name);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   visible.value = true;
@@ -105,16 +104,7 @@ const closeDetail = () => {
   popup.detail = false;
   popup.addEdit = false;
   clearValue();
-  router.back();
-};
-
-const formatStatus = (status) => {
-  return status
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
+  router.push({ name: "task" });
 };
 
 const openAdd = () => {
@@ -125,7 +115,6 @@ const openAdd = () => {
 };
 
 const addNewTask = async (task) => {
-  task.status = task.status.toUpperCase().replace(/ /g, "_");
   const res = await addTask(import.meta.env.VITE_BASE_URL, task);
   const addedTask = await res.json();
   tasks.value.addTask(addedTask);
@@ -138,12 +127,11 @@ const addNewTask = async (task) => {
     });
 
     clearValue();
-    router.back();
   } else {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `An error occurred deleting the task "${addedTask.title}"`,
+      detail: `An error occurred adding the task "${addedTask.title}"`,
       life: 3000,
     });
     clearValue();
@@ -154,7 +142,6 @@ const addNewTask = async (task) => {
 };
 
 const editTask = async (task) => {
-  task.status = task.status.toUpperCase().replace(/ /g, "_");
   const res = await updatedTask(
     import.meta.env.VITE_BASE_URL,
     task,
@@ -163,6 +150,7 @@ const editTask = async (task) => {
 
   if (res.status === 200) {
     const editedTask = await res.json();
+    console.log(editedTask);
     tasks.value.editTask(editedTask.id, editedTask);
     clearValue();
     toast.add({
@@ -180,7 +168,6 @@ const editTask = async (task) => {
       life: 3000,
     });
   }
-
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
@@ -191,7 +178,7 @@ const editTaskModal = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status.name);
+  selectedTask.value.status = taskDetails.status.name;
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.addEdit = true;
@@ -338,16 +325,8 @@ const visible = ref(false);
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <div class="flex gap-x-8 items-center text-center">
-                      <StatusButton
-                        :statusName="
-                          task.status
-                            .replace(/_/g, ' ')
-                            .toLowerCase()
-                            .split(' ')
-                            .join('')
-                        "
-                      >
-                        {{ formatStatus(task.status) }}
+                      <StatusButton>
+                        {{ task.status }}
                       </StatusButton>
                       <div>
                         <div

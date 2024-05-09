@@ -38,16 +38,8 @@ const props = defineProps({
     </template>
     <template #status>
       <div class="itbkk-status">
-        <StatusButton
-          :statusName="
-            props.selectedTask.status
-              .replace(/_/g, ' ')
-              .toLowerCase()
-              .split(' ')
-              .join('')
-          "
-        >
-          {{ props.selectedTask.status }}
+        <StatusButton>
+          {{ props.selectedTask.status.name }}
         </StatusButton>
       </div>
     </template>
