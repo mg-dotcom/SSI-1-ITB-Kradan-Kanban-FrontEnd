@@ -5,6 +5,7 @@ import { useRouter } from "vue-router";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { onMounted } from "vue";
 import { fetchAllStatus } from "../libs/FetchStatus.js";
+import AddEditStatus from "@/components/statusModal/AddEditStatus.vue";
 const router = useRouter();
 const statusStore = useStatusStore();
 
@@ -128,6 +129,7 @@ onMounted(async () => {
       </div>
     </div>
   </div>
+  <AddEditStatus />
 </template>
 
 <style scoped></style>

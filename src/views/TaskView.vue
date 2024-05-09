@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/taskModal/Detail.vue";
-import AddEditModal from "../components/taskModal/AddEditModal.vue";
+import AddEditTask from "../components/taskModal/AddEditTask.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import {
   fetchAllTasks,
@@ -415,7 +415,7 @@ const deleteData = async (id) => {
       :localTimeZone="localTimeZone"
     ></Detail>
 
-    <AddEditModal
+    <AddEditTask
       v-if="popup.addEdit"
       class="z-50"
       @closeDetail="closeDetail"
@@ -423,28 +423,10 @@ const deleteData = async (id) => {
       @editNewTask="editTask"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
-    ></AddEditModal>
+    ></AddEditTask>
   </div>
 </template>
 
 <style scoped>
-.link-underline {
-  border-bottom-width: 0;
-  background-image: linear-gradient(transparent, transparent),
-    linear-gradient(#fff, #fff);
-  background-size: 0 3px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.5s ease-in-out;
-}
 
-.link-underline-black {
-  background-image: linear-gradient(transparent, transparent),
-    linear-gradient(#f2c, #f2c);
-}
-
-.link-underline:hover {
-  background-size: 100% 3px;
-  background-position: 0 100%;
-}
 </style>

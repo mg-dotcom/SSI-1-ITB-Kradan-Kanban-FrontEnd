@@ -1,10 +1,11 @@
 <script setup>
-import buttonSubmit from '../button/Button.vue'
+import buttonSubmit from "../button/Button.vue";
+import AddEditStatus from "./AddEditStatus.vue";
 </script>
 
 <template>
   <div
-    class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 itbkk-item"
+    class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 itbkk-item z-50"
   >
     <div
       class="bg-[#F2F2F2] sm:w-[70%] sm:h-[70%] md:w-[35%] md:h-[70%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg py-16 relative"
