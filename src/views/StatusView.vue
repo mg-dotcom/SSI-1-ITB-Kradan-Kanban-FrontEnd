@@ -1,14 +1,27 @@
 <script setup>
 import buttonSubmit from "../components/button/Button.vue";
 import HomeText from "../components/HomeText.vue";
+import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
+import Transfer from "../components/confirmModal/Transfer.vue";
+import {fetchAllStatus,deleteStatus} from '../libs/FetchStatus.js'
+import {fetchAllTasks} from '../libs/FetchTask'
 import { useRouter } from "vue-router";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { onMounted } from "vue";
-import { fetchAllStatus } from "../libs/FetchStatus.js";
+import { reactive } from "vue";
+import { ref } from "vue";
+import { useTaskStore } from "../stores/TaskStore";
 const router = useRouter();
 const statusStore = useStatusStore();
-
+const taskStore=useTaskStore();
 onMounted(async () => {
+  if (taskStore.getTasks.length === 0) {
+    const allTasks = await fetchAllTasks(
+      `${import.meta.env.VITE_BASE_URL}/tasks`
+    );
+    taskStore.addAllTasks(allTasks);
+  }
+    
   if (statusStore.getStatuses.length === 0) {
     const allStatus = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}/statuses`
@@ -16,6 +29,32 @@ onMounted(async () => {
     statusStore.addAllStatuses(allStatus);
   }
 });
+
+
+const popup=reactive({
+  deleteConfirm:false,
+  transferConfirm:false
+})
+
+const selectedStatus=ref({})
+
+const openConfirmDelete=async(id)=>{
+  console.log(id);
+  console.log(taskStore.getTasks);
+  selectedStatus.value = await fetchAllStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`);
+  const statusCode=await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
+  console.log(selectedStatus.value);
+  if(statusCode===200){
+    popup.deleteConfirm=true
+  }else{
+    popup.transferConfirm=true
+  }
+}
+
+const removeStatus=async()=>{
+  const statusCode=await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
+}
+
 </script>
 
 <template>
@@ -105,12 +144,7 @@ onMounted(async () => {
                     <buttonSubmit
                       class="itbkk-button-delete"
                       buttonType="delete"
-                      @click="
-                        router.push({
-                          name: 'delete-status',
-                          params: { id: status.id },
-                        })
-                      "
+                      @click="openConfirmDelete(status.id)"
                     >
                       Delete
                     </buttonSubmit>
@@ -122,6 +156,15 @@ onMounted(async () => {
         </div>
       </div>
     </div>
+    <DeleteStatus
+      v-if="popup.deleteConfirm"
+      :selectedStatus="selectedStatus"
+      @deleteStatus="removeStatus"
+      @closeDelete="closeConfirmDelete"
+    ></DeleteStatus>
+    <Transfer
+      v-if="popup.transferConfirm"
+    ></Transfer>
   </div>
 </template>
 
