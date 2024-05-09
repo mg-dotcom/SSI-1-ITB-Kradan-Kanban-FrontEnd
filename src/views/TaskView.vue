@@ -40,8 +40,10 @@ onMounted(async () => {
   initFlowbite();
   initDropdowns();
 
-  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
-  taskStore.addAllTasks(allTasks);
+  if (taskStore.getTasks.length === 0) {
+    const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+    taskStore.addAllTasks(allTasks);
+  }
 });
 
 const page = reactive({
@@ -198,7 +200,7 @@ const selectedIndex = ref(0);
 
 const openDelete = (id, index) => {
   popup.delete = true;
-  console.log(id,index);
+  console.log(id, index);
   const task = taskStore.getTasksById(id);
   console.log(task);
   selectedIndex.value = index;
@@ -208,7 +210,6 @@ const openDelete = (id, index) => {
 const deleteData = async (id) => {
   const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id);
   const taskValue = taskStore.getTasksById(id);
-  console.log(taskValue);
   const index = taskStore.getTasks.findIndex((task) => task.id === id);
   if (statusCode === 200) {
     taskStore.removeTask(index);

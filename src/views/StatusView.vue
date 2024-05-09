@@ -1,11 +1,9 @@
 <script setup>
 import buttonSubmit from "../components/button/Button.vue";
-import StatusButton from "../components/button/StatusButton.vue";
 import HomeText from "../components/HomeText.vue";
-import { ref, onMounted } from "vue";
+
 import { useRouter } from "vue-router";
 import { useTaskStore } from "../stores/TaskStore.js";
-import { TaskModal } from "../libs/TaskModal.js";
 const router = useRouter();
 const taskStore = useTaskStore();
 </script>
