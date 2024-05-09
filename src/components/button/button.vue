@@ -24,7 +24,6 @@ const props = defineProps({
   <button
     :class="{
       'fancy-btn': true, // Always add 'fancy-btn' class
-
       // Conditional class bindings based on buttonType prop
       'bg-[#03CC0B] hover:bg-[#20ae27] transition-colors w-20 active:scale-[93%] active:transition-transform text-white':
         buttonType === 'ok',

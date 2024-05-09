@@ -3,9 +3,9 @@ import buttonSubmit from "../components/button/Button.vue";
 import HomeText from "../components/HomeText.vue";
 import { useRouter } from "vue-router";
 import { useStatusStore } from "../stores/StatusStore.js";
-import { onMounted } from "vue";
+import { onMounted,reactive } from "vue";
 import { fetchAllStatus } from "../libs/FetchStatus.js";
-import AddEditStatus from "@/components/statusModal/AddEditStatus.vue";
+import AddEditStatus from "../components/statusModal/AddEditStatus.vue"
 const router = useRouter();
 const statusStore = useStatusStore();
 
@@ -17,6 +17,14 @@ onMounted(async () => {
     statusStore.addAllStatuses(allStatus);
   }
 });
+
+const popup = reactive({
+  addEditStatus: false
+});
+
+const openAddNewStatus = () => {
+  popup.addEditStatus = true;
+}
 </script>
 
 <template>
@@ -29,7 +37,7 @@ onMounted(async () => {
         <HomeText />
       </div>
       <div class="flex">
-        <buttonSubmit class="itbkk-button-add" buttonType="add"
+        <buttonSubmit class="itbkk-button-add" buttonType="add" @click="openAddNewStatus" 
           >+ Add Status</buttonSubmit
         >
       </div>
@@ -129,7 +137,7 @@ onMounted(async () => {
       </div>
     </div>
   </div>
-  <AddEditStatus />
+  <AddEditStatus v-if="popup.addEditStatus" @closeAddEdit="popup.addEditStatus = false"></AddEditStatus>
 </template>
 
 <style scoped></style>

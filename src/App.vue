@@ -1,6 +1,6 @@
 <script setup>
 import { RouterView } from "vue-router";
-// import ConfirmModal from './components/confirmModal/ConfirmModal.vue'
+
 </script>
 
 <template>

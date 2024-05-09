@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/taskModal/Detail.vue";
-import AddEditTask from "../components/taskModal/AddEditTask.vue";
+import AddEditModal from "../components/taskModal/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import {
   fetchAllTasks,
@@ -137,7 +137,7 @@ const addNewTask = async (task) => {
     toast.add({
       severity: "success",
       summary: "Success",
-      detail: `The task "${addedTask.title}" is added successfully`,
+      detail: `The task "${addedTask.title}" is added successfully.`,
       life: 3000,
     });
     router.back();
@@ -158,6 +158,7 @@ const addNewTask = async (task) => {
 };
 
 const editTask = async (task) => {
+  task.status = task.status.toUpperCase().replace(/ /g, "_");
   const res = await updatedTask(
     `${import.meta.env.VITE_BASE_URL}/tasks`,
     task,
@@ -178,6 +179,7 @@ const editTask = async (task) => {
       severity: "error",
       summary: "Error",
       detail: `The update was unsuccessful"`,
+
       life: 3000,
     });
     router.push({ name: "task" });
@@ -415,7 +417,7 @@ const deleteData = async (id) => {
       :localTimeZone="localTimeZone"
     ></Detail>
 
-    <AddEditTask
+    <AddEditModal
       v-if="popup.addEdit"
       class="z-50"
       @closeDetail="closeDetail"
@@ -423,10 +425,30 @@ const deleteData = async (id) => {
       @editNewTask="editTask"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
-    ></AddEditTask>
+    ></AddEditModal>
+
+    
   </div>
 </template>
 
 <style scoped>
+.link-underline {
+  border-bottom-width: 0;
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(#fff, #fff);
+  background-size: 0 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s ease-in-out;
+}
 
+.link-underline-black {
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(#f2c, #f2c);
+}
+
+.link-underline:hover {
+  background-size: 100% 3px;
+  background-position: 0 100%;
+}
 </style>
