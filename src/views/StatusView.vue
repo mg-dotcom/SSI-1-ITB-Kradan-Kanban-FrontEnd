@@ -1,15 +1,24 @@
 <script setup>
 import buttonSubmit from "../components/button/Button.vue";
 import HomeText from "../components/HomeText.vue";
-
 import { useRouter } from "vue-router";
-import { useTaskStore } from "../stores/TaskStore.js";
+import { useStatusStore } from "../stores/StatusStore.js";
+import { onMounted } from "vue";
+import { fetchAllStatus } from "../libs/FetchStatus.js";
 const router = useRouter();
-const taskStore = useTaskStore();
+const statusStore = useStatusStore();
+
+onMounted(async () => {
+  if (statusStore.getStatuses.length === 0) {
+    const allStatus = await fetchAllStatus(
+      `${import.meta.env.VITE_BASE_URL}/statuses`
+    );
+    statusStore.addAllStatuses(allStatus);
+  }
+});
 </script>
 
 <template>
-  {{ taskStore.getTasks }}
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
       <div
@@ -36,46 +45,76 @@ const taskStore = useTaskStore();
                   class="w-[5%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
                 ></th>
                 <th
-                  class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                  class="w-[20%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                 >
-                  Title
+                  Name
                 </th>
                 <th
-                  class="w-2/6 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                  class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                 >
-                  Assignees
+                  Description
                 </th>
                 <th
                   class="w-1/6 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                 >
-                  Status
+                  Action
                 </th>
               </tr>
             </thead>
             <tbody class="bg-white">
-              <!-- <tr v-if="tasks.getTasks().length <= 0">
-                <td class="border text-center" colspan="4">No Task</td>
-              </tr> -->
-              <tr class="itbkk-item">
+              <tr v-if="statusStore.getStatuses.length <= 0">
+                <td class="border text-center" colspan="4">No Status</td>
+              </tr>
+              <tr
+                class="itbkk-item"
+                v-if="statusStore.getStatuses.length > 0"
+                v-for="(status, index) in statusStore.getStatuses"
+                :key="index"
+              >
                 <td
                   class="text-center py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
-                  asd
+                  {{ index + 1 }}
                 </td>
                 <td
                   class="itbkk-title px-6 py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
                 >
-                  asd
+                  {{ status.name }}
                 </td>
                 <td
                   class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                 >
-                  asd
+                  {{ status.description }}
                 </td>
                 <td
                   class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                 >
-                  asd
+                  <div>
+                    <buttonSubmit
+                      class="itbkk-button-edit"
+                      buttonType="edit"
+                      @click="
+                        router.push({
+                          name: 'edit-status',
+                          params: { id: status.id },
+                        })
+                      "
+                    >
+                      Edit
+                    </buttonSubmit>
+                    <buttonSubmit
+                      class="itbkk-button-delete"
+                      buttonType="delete"
+                      @click="
+                        router.push({
+                          name: 'delete-status',
+                          params: { id: status.id },
+                        })
+                      "
+                    >
+                      Delete
+                    </buttonSubmit>
+                  </div>
                 </td>
               </tr>
             </tbody>

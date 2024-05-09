@@ -11,7 +11,6 @@ import {
   deleteTask,
   updatedTask,
 } from "../libs/FetchTask.js";
-import { TaskModal } from "../libs/TaskModal.js";
 import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
@@ -41,7 +40,9 @@ onMounted(async () => {
   initDropdowns();
 
   if (taskStore.getTasks.length === 0) {
-    const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+    const allTasks = await fetchAllTasks(
+      `${import.meta.env.VITE_BASE_URL}/tasks`
+    );
     taskStore.addAllTasks(allTasks);
   }
 });
@@ -80,7 +81,10 @@ function formatDate(date) {
 }
 
 const openDetail = async (id) => {
-  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+  const taskDetails = await fetchTaskDetails(
+    `${import.meta.env.VITE_BASE_URL}/tasks`,
+    id
+  );
   if (taskDetails === undefined) {
     return;
   }
@@ -113,7 +117,7 @@ const openAdd = () => {
 };
 
 const addNewTask = async (task) => {
-  const res = await addTask(import.meta.env.VITE_BASE_URL, task);
+  const res = await addTask(`${import.meta.env.VITE_BASE_URL}/tasks`, task);
   const addedTask = await res.json();
   taskStore.addTask(addedTask);
   // tasks.value.addTask(addedTask);
@@ -143,7 +147,7 @@ const addNewTask = async (task) => {
 
 const editTask = async (task) => {
   const res = await updatedTask(
-    import.meta.env.VITE_BASE_URL,
+    `${import.meta.env.VITE_BASE_URL}/tasks`,
     task,
     selectedTask.value.id
   );
@@ -171,7 +175,10 @@ const editTask = async (task) => {
 };
 
 const editTaskModal = async (id) => {
-  const taskDetails = await fetchTaskDetails(import.meta.env.VITE_BASE_URL, id);
+  const taskDetails = await fetchTaskDetails(
+    `${import.meta.env.VITE_BASE_URL}/tasks`,
+    id
+  );
   if (taskDetails === undefined) {
     return;
   }
@@ -208,7 +215,10 @@ const openDelete = (id, index) => {
 };
 
 const deleteData = async (id) => {
-  const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id);
+  const statusCode = await deleteTask(
+    `${import.meta.env.VITE_BASE_URL}/tasks`,
+    id
+  );
   const taskValue = taskStore.getTasksById(id);
   const index = taskStore.getTasks.findIndex((task) => task.id === id);
   if (statusCode === 200) {
@@ -253,7 +263,7 @@ const deleteData = async (id) => {
           >
 
           <buttonSubmit
-            buttonType="white-green"
+            buttonType="manage-status"
             class="flex gap-x-2"
             @click="router.push({ name: 'status-manage' })"
           >

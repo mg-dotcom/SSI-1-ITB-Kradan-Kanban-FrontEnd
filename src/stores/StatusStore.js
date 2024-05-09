@@ -1,11 +1,17 @@
-import EditStatus from "@/components/statusModal/EditStatus.vue";
-import { addTask } from "@/libs/FetchTask";
 import { defineStore } from "pinia";
 
 export const useStatusStore = defineStore("StatusStore", {
   state: () => ({
     statuses: [],
   }),
+  getters: {
+    getStatuses(state) {
+      return state.statuses;
+    },
+    getStatusById: (state) => (id) => {
+      return state.statuses.find((status) => status.id === id);
+    },
+  },
   actions: {
     addAllStatuses(newStatuses) {
       newStatuses.forEach((status) => {

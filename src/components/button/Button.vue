@@ -6,9 +6,14 @@ const props = defineProps({
   buttonType: {
     type: String,
     validator: (value) => {
-      return ["ok", "cancel", "add", "white-green"].includes(
-        value.toLowerCase().trim()
-      );
+      return [
+        "ok",
+        "cancel",
+        "add",
+        "manage-status",
+        "edit",
+        "delete",
+      ].includes(value.toLowerCase().trim());
     },
   },
 });
@@ -28,7 +33,11 @@ const props = defineProps({
       ' group bg-[#03CC0B]  hover:shadow-md   font-bold duration-300 cursor-pointer active:scale-[93%] active:transition-transform text-white ':
         buttonType === 'add',
       'bg-white text-green-500 border border-green-500 font-bold hover:shadow-md duration-300 cursor-pointer active:scale-[93%] active:transition-transform ':
-        buttonType === 'white-green',
+        buttonType === 'manage-status',
+      'bg-blue hover:bg-[#4054ec] transition-colors w-20 font-bold active:scale-[93%] active:transition-transform text-white':
+        buttonType === 'edit',
+      'bg-red-500 hover:bg-red-600 transition-colors w-20 font-bold active:scale-[93%] active:transition-transform text-white':
+        buttonType === 'delete',
     }"
   >
     <!-- Default content if slot is not provided -->
