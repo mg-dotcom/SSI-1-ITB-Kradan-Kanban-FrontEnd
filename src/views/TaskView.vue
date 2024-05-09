@@ -15,12 +15,13 @@ import { TaskModal } from "../libs/TaskModal.js";
 import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
-const router = useRouter();
-const route = useRoute();
 import { useToast } from "primevue/usetoast";
 import Toast from "primevue/toast";
-const toast = useToast();
+import HomeText from "../components/HomeText.vue";
 
+const toast = useToast();
+const router = useRouter();
+const route = useRoute();
 const selectedTask = ref({
   id: "",
   title: "",
@@ -40,6 +41,7 @@ onMounted(async () => {
   initDropdowns();
 
   const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+
   tasks.value.addAllTasks(allTasks);
 });
 
@@ -65,6 +67,10 @@ const clearValue = () => {
     updatedOn: "",
   };
 };
+import { useTaskStore } from "../stores/TaskStore.js";
+
+const taskStore = useTaskStore();
+taskStore.actions.testTask();
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -82,9 +88,10 @@ const openDetail = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
+  selectedTask.value.status = formatStatus(taskDetails.status.name);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
+  visible.value = true;
   popup.detail = true;
   popup.optionEditDelete = false;
   router.push({ name: "task-detail", params: { id: id } });
@@ -98,7 +105,7 @@ const closeDetail = () => {
   popup.detail = false;
   popup.addEdit = false;
   clearValue();
-  router.push({ name: "task" });
+  router.back();
 };
 
 const formatStatus = (status) => {
@@ -129,8 +136,9 @@ const addNewTask = async (task) => {
       detail: `The task "${addedTask.title}" is added successfully`,
       life: 3000,
     });
-    router.push({ name: "task" });
+
     clearValue();
+    router.back();
   } else {
     toast.add({
       severity: "error",
@@ -163,9 +171,8 @@ const editTask = async (task) => {
       detail: `The task has been updated`,
       life: 3000,
     });
-    router.push({ name: "task" });
+    router.back();
   } else {
-    console.log(res.status);
     toast.add({
       severity: "error",
       summary: "Error",
@@ -184,7 +191,7 @@ const editTaskModal = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
+  selectedTask.value.status = formatStatus(taskDetails.status.name);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.addEdit = true;
@@ -202,15 +209,14 @@ const closeDelete = () => {
   popup.delete = false;
   popup.optionEditDelete = false;
   clearValue();
-  router.push({ name: "task" });
 };
 
 const selectedIndex = ref(0);
 
-const openDelete = (id,index) => {
+const openDelete = (id, index) => {
   popup.delete = true;
   const task = tasks.value.getTasksById(id);
-  selectedIndex.value = index
+  selectedIndex.value = index;
   selectedTask.value = task;
 };
 
@@ -237,40 +243,42 @@ const deleteData = async (id) => {
   }
   closeDelete();
 };
+
+const visible = ref(false);
 </script>
 
 <template>
   <Toast class="itbkk-message" />
   <div class="h-screen w-full">
-    <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
-      <img
-        class="object-cover absolute right-0 max-w-max h-[90px]"
-        src="/glass-overlay.png"
-        alt=""
-      />
-      <div class="h-[90px] flex flex-col justify-center p-10">
-        <h1 class="text-header text-white font-bold">
-          IT-Bangmod Kradan kanban
-        </h1>
-      </div>
-    </div>
-
-    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="!popup.addEdit">
+    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="page.task">
       <div class="flex justify-between py-6 px-5">
-        <div class="text-xl font-bold flex items-center text-blue">
-          Task Lists&nbsp;
-          <span v-if="selectedTask.title.length !== 0" class="break-all">
-            > {{ selectedTask.title }}
-          </span>
-        </div>
-
-        <buttonSubmit
-          class="itbkk-button-add"
-          buttonType="add"
-          @closeDetail="closeDetail"
-          v-on:click="openAdd"
-          >+ Add Task</buttonSubmit
+        <div
+          class="text-xl font-bold flex items-center text-blue"
+          @click="router.push({ name: 'task' })"
         >
+          <HomeText />
+          <!-- <span v-if="selectedTask.title.length !== 0" class="break-all">
+            > {{ selectedTask.title }}
+          </span> -->
+        </div>
+        <div class="flex">
+          <buttonSubmit
+            class="itbkk-button-add"
+            buttonType="add"
+            @closeDetail="closeDetail"
+            v-on:click="openAdd"
+            >+ Add Task</buttonSubmit
+          >
+
+          <buttonSubmit
+            buttonType="white-green"
+            class="flex gap-x-2"
+            @click="router.push({ name: 'status-manage' })"
+          >
+            <img src="../assets/status-list.svg" alt="" class="w-5" /> Manage
+            Status</buttonSubmit
+          >
+        </div>
       </div>
       <div class="-my-2 mb-8 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
@@ -376,7 +384,7 @@ const deleteData = async (id) => {
                                 </p>
                               </li>
 
-                              <li @click="openDelete(task.id,index)">
+                              <li @click="openDelete(task.id, index)">
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                 >
@@ -403,12 +411,14 @@ const deleteData = async (id) => {
       :selectedIndex="selectedIndex"
       @deleteData="deleteData"
     ></DeleteModal>
+
     <Detail
       v-if="popup.detail"
       @closeDetail="closeDetail"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></Detail>
+
     <AddEditModal
       v-if="popup.addEdit"
       class="z-50"
@@ -421,4 +431,24 @@ const deleteData = async (id) => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.link-underline {
+  border-bottom-width: 0;
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(#fff, #fff);
+  background-size: 0 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s ease-in-out;
+}
+
+.link-underline-black {
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(#f2c, #f2c);
+}
+
+.link-underline:hover {
+  background-size: 100% 3px;
+  background-position: 0 100%;
+}
+</style>
