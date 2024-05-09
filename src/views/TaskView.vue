@@ -87,7 +87,9 @@ const openDetail = async (id) => {
   if (taskDetails === undefined) {
     return;
   }
+
   selectedTask.value = taskDetails;
+  selectedTask.value.status = taskDetails.status.name;
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   visible.value = true;
@@ -125,7 +127,7 @@ const addNewTask = async (task) => {
       detail: `The task "${addedTask.title}" is added successfully`,
       life: 3000,
     });
-
+    router.back();
     clearValue();
   } else {
     toast.add({
@@ -134,6 +136,7 @@ const addNewTask = async (task) => {
       detail: `An error occurred adding the task "${addedTask.title}"`,
       life: 3000,
     });
+    router.back();
     clearValue();
   }
   popup.addEdit = false;
@@ -147,19 +150,16 @@ const editTask = async (task) => {
     task,
     selectedTask.value.id
   );
-
   if (res.status === 200) {
     const editedTask = await res.json();
-    console.log(editedTask);
     tasks.value.editTask(editedTask.id, editedTask);
-    clearValue();
     toast.add({
       severity: "success",
       summary: "Success",
       detail: `The task has been updated`,
       life: 3000,
     });
-    router.back();
+    router.push({ name: "task" });
   } else {
     toast.add({
       severity: "error",
@@ -167,6 +167,7 @@ const editTask = async (task) => {
       detail: `The update was unsuccessful"`,
       life: 3000,
     });
+    router.push({ name: "task" });
   }
   popup.addEdit = false;
   popup.optionEditDelete = false;

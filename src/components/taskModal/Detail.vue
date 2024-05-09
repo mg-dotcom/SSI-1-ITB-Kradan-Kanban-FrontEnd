@@ -39,7 +39,7 @@ const props = defineProps({
     <template #status>
       <div class="itbkk-status">
         <StatusButton>
-          {{ props.selectedTask.status.name }}
+          {{ props.selectedTask.status }}
         </StatusButton>
       </div>
     </template>
