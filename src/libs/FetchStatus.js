@@ -10,4 +10,28 @@ async function fetchAllStatus(url) {
   }
 }
 
-export { fetchAllStatus };
+async function addStatus(url, newStatus) {
+  try {
+    const res = await fetch(`${url}`, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        name: newStatus.name,
+        description: newStatus.description,
+        statusColor: newStatus.color,
+      }),
+    });
+    return res;
+  } catch (error) {
+    console.log(`error: ${error}`);
+  }
+}
+
+// if (!data.ok) {
+//   alert("The requested task does not exist");
+//   router.push("/");
+//   return;
+// }
+export { fetchAllStatus, addStatus };

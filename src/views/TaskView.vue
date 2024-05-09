@@ -29,7 +29,7 @@ const selectedTask = ref({
   title: "",
   description: "",
   assignees: "",
-  status: "NO_STATUS",
+  status: "No Status",
   createdOn: "",
   updatedOn: "",
 });
@@ -76,7 +76,7 @@ const clearValue = () => {
     title: "",
     description: "",
     assignees: "",
-    status: "NO_STATUS",
+    status: "No Status",
     createdOn: "",
     updatedOn: "",
   };
@@ -152,7 +152,6 @@ const addNewTask = async (task) => {
     router.back();
     clearValue();
   }
-  popup.addEdit = false;
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };

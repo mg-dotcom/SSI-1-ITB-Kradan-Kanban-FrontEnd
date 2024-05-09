@@ -25,6 +25,8 @@ export const useStatusStore = defineStore("StatusStore", {
         name: newStatus.name,
         description: newStatus.description,
         statusColor: newStatus.color,
+        createdOn: newStatus.createdOn,
+        updatedOn: newStatus.updatedOn,
       });
     },
 

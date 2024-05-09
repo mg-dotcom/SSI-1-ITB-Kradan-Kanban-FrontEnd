@@ -4,10 +4,13 @@ import HomeText from "../components/HomeText.vue";
 import { useRouter } from "vue-router";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { onMounted, reactive, ref } from "vue";
-import { fetchAllStatus } from "../libs/FetchStatus.js";
+import { fetchAllStatus, addStatus } from "../libs/FetchStatus.js";
 import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
+import { useToast } from "primevue/usetoast";
+
 const router = useRouter();
 const statusStore = useStatusStore();
+const toast = useToast();
 
 onMounted(async () => {
   if (statusStore.getStatuses.length === 0) {
@@ -27,6 +30,15 @@ const selectedStatus = reactive({
   updatedOn: "",
 });
 
+const clearValue = () => {
+  selectedStatus.id = "";
+  selectedStatus.name = "";
+  selectedStatus.description = "";
+  selectedStatus.color = "#CCCCCC";
+  selectedStatus.createdOn = "";
+  selectedStatus.updatedOn = "";
+};
+
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 const popup = reactive({
@@ -37,7 +49,32 @@ const openAddNewStatus = () => {
   popup.addEditStatus = true;
   router.push({ name: "status-add" });
 };
-
+const addNewStatus = async (status) => {
+  const res = await addStatus(
+    `${import.meta.env.VITE_BASE_URL}/statuses`,
+    status
+  );
+  const addedStatus = await res.json();
+  if (res.status === 201) {
+    statusStore.addStatus(addedStatus);
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Status added successfully",
+      life: 3000,
+    });
+    router.push({ name: "status" });
+    popup.addEditStatus = false;
+    clearValue();
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "Failed to add status",
+      life: 3000,
+    });
+  }
+};
 const closeAddEdit = () => {
   popup.addEditStatus = false;
   router.push({ name: "status" });
@@ -45,6 +82,7 @@ const closeAddEdit = () => {
 </script>
 
 <template>
+  <Toast class="itbkk-message" />
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
       <div
@@ -118,20 +156,15 @@ const closeAddEdit = () => {
                 <td
                   class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all"
                 >
-                  <div
-                    :class="{
-                      hidden: status.name === 'No Status',
-                    }"
-                  >
-                    <buttonSubmit class="itbkk-button-edit" buttonType="edit">
-                      Edit
-                    </buttonSubmit>
+                  <div v-if="status.name !== 'No Status'">
+                    <buttonSubmit class="itbkk-button-edit" buttonType="edit"
+                      >Edit</buttonSubmit
+                    >
                     <buttonSubmit
                       class="itbkk-button-delete"
                       buttonType="delete"
+                      >Delete</buttonSubmit
                     >
-                      Delete
-                    </buttonSubmit>
                   </div>
                 </td>
               </tr>
@@ -146,6 +179,7 @@ const closeAddEdit = () => {
     :selectedStatus="selectedStatus"
     :localTimeZone="localTimeZone"
     @closeAddEdit="closeAddEdit"
+    @addNewStatus="addNewStatus"
   ></AddEditStatus>
 </template>
 

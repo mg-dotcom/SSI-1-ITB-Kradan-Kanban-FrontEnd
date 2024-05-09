@@ -1,6 +1,5 @@
 <script setup>
 import buttonSubmit from "../button/Button.vue";
-import AddEditStatus from "./AddEditStatus.vue";
 </script>
 
 <template>
