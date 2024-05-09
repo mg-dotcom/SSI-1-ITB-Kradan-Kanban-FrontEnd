@@ -15,7 +15,7 @@ class TaskModal {
       title: task.title,
       description: task.description,
       assignees: task.assignees,
-      status: task.status,
+      status: task.statusName,
       createdOn: task.createdOn,
       updatedOn: task.updatedOn,
     });
@@ -27,11 +27,18 @@ class TaskModal {
 
   editTask(id, updatedTask) {
     const index = this.tasks.findIndex((task) => task.id === id);
-    if (index !== -1) {
-      this.tasks[index] = updatedTask;
-      return this.tasks[index];
+    if (index === -1) {
+      return;
     } else {
-      return null; 
+      this.tasks[index] = {
+        id: id,
+        title: updatedTask.title,
+        description: updatedTask.description,
+        assignees: updatedTask.assignees,
+        status: updatedTask.statusName,
+        createdOn: updatedTask.createdOn,
+        updatedOn: updatedTask.updatedOn,
+      };
     }
   }
 

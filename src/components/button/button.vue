@@ -7,7 +7,10 @@ const props = defineProps({
     type: String,
     validator: (value) => {
 
-      return ["ok", "cancel", "add"].includes(value.toLowerCase().trim());
+      return ["ok", "cancel", "add", "white-green"].includes(
+        value.toLowerCase().trim()
+      );
+
     },
   },
 });
@@ -20,12 +23,14 @@ const props = defineProps({
       'fancy-btn': true, // Always add 'fancy-btn' class
 
       // Conditional class bindings based on buttonType prop
-      'bg-[#03CC0B] hover:bg-green-500 transition-colors w-20':
+      'bg-[#03CC0B] hover:bg-[#20ae27] transition-colors w-20 active:scale-[93%] active:transition-transform text-white':
         buttonType === 'ok',
-      'bg-gray-400 hover:bg-gray-500 transition-colors w-20':
+      'bg-gray-400 hover:bg-gray-500 transition-colors w-20 active:scale-[93%] active:transition-transform text-white':
         buttonType === 'cancel',
-      'bg-[#03CC0B] hover:bg-green-500 transition-colors shadow-md scale-105  font-bold':
+      ' group bg-[#03CC0B]  hover:shadow-md   font-bold duration-300 cursor-pointer active:scale-[93%] active:transition-transform text-white ':
         buttonType === 'add',
+      'bg-white text-green-500 border border-green-500 font-bold hover:shadow-md duration-300 cursor-pointer active:scale-[93%] active:transition-transform ':
+        buttonType === 'white-green',
     }"
   >
     <!-- Default content if slot is not provided -->
@@ -35,8 +40,6 @@ const props = defineProps({
 
 <style>
 .fancy-btn {
-  color: #fff;
-  border: none;
   padding: 5px 10px;
   margin: 5px;
   border-radius: 8px; /* Adding border-radius */

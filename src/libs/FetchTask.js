@@ -4,7 +4,6 @@ async function fetchAllTasks(url) {
   try {
     const data = await fetch(url);
     const res = await data.json();
-    console.log(res);
     return res;
   } catch (error) {
     console.log(`error: ${error}`);
@@ -38,7 +37,7 @@ async function addTask(url, newTask) {
         title: newTask.title,
         description: newTask.description,
         assignees: newTask.assignees,
-        status: newTask.status,
+        statusName: newTask.status,
       }),
     });
 
@@ -70,7 +69,7 @@ async function updatedTask(url, updatedTask, id) {
         title: updatedTask.title,
         description: updatedTask.description,
         assignees: updatedTask.assignees,
-        status: updatedTask.status,
+        statusName: updatedTask.status,
       }),
     });
     return res;

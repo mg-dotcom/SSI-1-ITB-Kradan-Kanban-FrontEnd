@@ -1,7 +1,7 @@
 <script setup>
-import buttonSubmit from "./button/Button.vue";
-import StatusButton from "../components/button/StatusButton.vue";
 import ModalDetail from "./ModalDetail.vue";
+import buttonSubmit from "../button/Button.vue";
+import StatusButton from "../button/StatusButton.vue";
 
 const emit = defineEmits(["closeDetail"]);
 
@@ -14,7 +14,9 @@ const props = defineProps({
 <template>
   <ModalDetail :selectedTask="selectedTask">
     <template #title>
-      {{ props.selectedTask.title }}
+      <div :title="props.selectedTask.title" class="itbkk-title truncate">
+        {{ props.selectedTask.title }}
+      </div>
     </template>
     <template #desc>
       <div class="itbkk-description">
@@ -36,15 +38,7 @@ const props = defineProps({
     </template>
     <template #status>
       <div class="itbkk-status">
-        <StatusButton
-          :statusName="
-            props.selectedTask.status
-              .replace(/_/g, ' ')
-              .toLowerCase()
-              .split(' ')
-              .join('')
-          "
-        >
+        <StatusButton>
           {{ props.selectedTask.status }}
         </StatusButton>
       </div>

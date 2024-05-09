@@ -1,5 +1,5 @@
 <script setup>
-import buttonSubmit from "./button/Button.vue";
+import buttonSubmit from "../button/Button.vue";
 import { defineProps } from "vue";
 const props = defineProps({
   selectedTask: Object,
@@ -14,7 +14,7 @@ const props = defineProps({
       class="bg-[#F2F2F2] sm:w-[75%] sm:h-[89%] md:w-[45%] md:h-[89%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg py-16 relative"
     >
       <div
-        class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
+        class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3 "
       >
         <slot name="title"></slot>
       </div>

@@ -1,8 +1,8 @@
 <script setup>
 import { onMounted, reactive, ref } from "vue";
 import { initFlowbite, initDropdowns } from "flowbite";
-import Detail from "../components/Detail.vue";
-import AddEditModal from "../components/AddEditModal.vue";
+import Detail from "../components/taskModal/Detail.vue";
+import AddEditModal from "../components/taskModal/AddEditModal.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import {
   fetchAllTasks,
@@ -12,35 +12,38 @@ import {
   updatedTask,
 } from "../libs/FetchTask.js";
 import { TaskModal } from "../libs/TaskModal.js";
-import DeleteModal from "../components/DeleteModal.vue";
+import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
+import { useToast } from "primevue/usetoast";
+import { useTaskStore } from "../stores/TaskStore.js";
+import Toast from "primevue/toast";
+import HomeText from "../components/HomeText.vue";
+
+const toast = useToast();
 const router = useRouter();
 const route = useRoute();
-import { useToast } from "primevue/usetoast";
-import Toast from "primevue/toast";
-const toast = useToast();
-
 const selectedTask = ref({
   id: "",
   title: "",
   description: "",
   assignees: "",
-  status: "No Status",
+  status: "NO_STATUS",
   createdOn: "",
   updatedOn: "",
 });
 
-const tasks = ref(new TaskModal());
-
+const taskStore = useTaskStore();
 const taskId = route.params.id;
 
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
 
-  const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
-  tasks.value.addAllTasks(allTasks);
+  if (taskStore.getTasks.length === 0) {
+    const allTasks = await fetchAllTasks(import.meta.env.VITE_BASE_URL);
+    taskStore.addAllTasks(allTasks);
+  }
 });
 
 const page = reactive({
@@ -60,7 +63,7 @@ const clearValue = () => {
     title: "",
     description: "",
     assignees: "",
-    status: "No Status",
+    status: "NO_STATUS",
     createdOn: "",
     updatedOn: "",
   };
@@ -81,8 +84,9 @@ const openDetail = async (id) => {
   if (taskDetails === undefined) {
     return;
   }
+
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
+  selectedTask.value.status = taskDetails.status.name;
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.detail = true;
@@ -101,15 +105,6 @@ const closeDetail = () => {
   router.push({ name: "task" });
 };
 
-const formatStatus = (status) => {
-  return status
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-};
-
 const openAdd = () => {
   clearValue();
   popup.addEdit = true;
@@ -118,10 +113,10 @@ const openAdd = () => {
 };
 
 const addNewTask = async (task) => {
-  task.status = task.status.toUpperCase().replace(/ /g, "_");
   const res = await addTask(import.meta.env.VITE_BASE_URL, task);
   const addedTask = await res.json();
-  tasks.value.addTask(addedTask);
+  taskStore.addTask(addedTask);
+  // tasks.value.addTask(addedTask);
   if (res.status === 201) {
     toast.add({
       severity: "success",
@@ -129,15 +124,16 @@ const addNewTask = async (task) => {
       detail: `The task "${addedTask.title}" is added successfully.`,
       life: 3000,
     });
-    router.push({ name: "task" });
+    router.back();
     clearValue();
   } else {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `An error occurred deleting the task "${addedTask.title}".`,
+      detail: `An error occurred adding the task "${addedTask.title}"`,
       life: 3000,
     });
+    router.back();
     clearValue();
   }
   popup.addEdit = false;
@@ -147,19 +143,15 @@ const addNewTask = async (task) => {
 
 const editTask = async (task) => {
   task.status = task.status.toUpperCase().replace(/ /g, "_");
-
   const res = await updatedTask(
 
     import.meta.env.VITE_BASE_URL,
     task,
     selectedTask.value.id
   );
-
-
   if (res.status === 200) {
     const editedTask = await res.json();
-    tasks.value.editTask(editedTask.id, editedTask);
-    clearValue();
+    taskStore.editTask(editedTask.id, editedTask);
     toast.add({
       severity: "success",
       summary: "Success",
@@ -175,8 +167,8 @@ const editTask = async (task) => {
 
       life: 3000,
     });
+    router.push({ name: "task" });
   }
-
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
@@ -187,7 +179,7 @@ const editTaskModal = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
-  selectedTask.value.status = formatStatus(taskDetails.status);
+  selectedTask.value.status = taskDetails.status.name;
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.addEdit = true;
@@ -205,21 +197,25 @@ const closeDelete = () => {
   popup.delete = false;
   popup.optionEditDelete = false;
   clearValue();
-  router.push({ name: "task" });
 };
 
-const openDelete = (id) => {
+const selectedIndex = ref(0);
+
+const openDelete = (id, index) => {
   popup.delete = true;
-  const task = tasks.value.getTasksById(id);
+  console.log(id, index);
+  const task = taskStore.getTasksById(id);
+  console.log(task);
+  selectedIndex.value = index;
   selectedTask.value = task;
 };
 
 const deleteData = async (id) => {
   const statusCode = await deleteTask(import.meta.env.VITE_BASE_URL, id);
-  const taskValue = tasks.value.getTasksById(id);
-  const index = tasks.value.getTasks().findIndex((task) => task.id === id);
+  const taskValue = taskStore.getTasksById(id);
+  const index = taskStore.getTasks.findIndex((task) => task.id === id);
   if (statusCode === 200) {
-    tasks.value.removeTask(index);
+    taskStore.removeTask(index);
     toast.add({
       severity: "success",
       summary: "Success",
@@ -242,35 +238,32 @@ const deleteData = async (id) => {
 <template>
   <Toast class="itbkk-message" />
   <div class="h-screen w-full">
-    <div class="header w-full h-[90px] bg-gradient-to-r from-blue to-lightblue">
-      <img
-        class="object-cover absolute right-0 max-w-max h-[90px]"
-        src="/glass-overlay.png"
-        alt=""
-      />
-      <div class="h-[90px] flex flex-col justify-center p-10">
-        <h1 class="text-header text-white font-bold">
-          IT-Bangmod Kradan kanban
-        </h1>
-      </div>
-    </div>
-
-    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="!popup.addEdit">
+    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="page.task">
       <div class="flex justify-between py-6 px-5">
-        <div class="text-xl font-bold flex items-center text-blue">
-          Task Lists&nbsp;
-          <span v-if="selectedTask.title.length !== 0" class="break-all">
-            > {{ selectedTask.title }}
-          </span>
-        </div>
-
-        <buttonSubmit
-          class="itbkk-button-add"
-          buttonType="add"
-          @closeDetail="closeDetail"
-          v-on:click="openAdd"
-          >+ Add Task</buttonSubmit
+        <div
+          class="text-xl font-bold flex items-center text-blue"
+          @click="router.push({ name: 'task' })"
         >
+          <HomeText />
+        </div>
+        <div class="flex">
+          <buttonSubmit
+            class="itbkk-button-add"
+            buttonType="add"
+            @closeDetail="closeDetail"
+            v-on:click="openAdd"
+            >+ Add Task</buttonSubmit
+          >
+
+          <buttonSubmit
+            buttonType="white-green"
+            class="flex gap-x-2"
+            @click="router.push({ name: 'status-manage' })"
+          >
+            <img src="../assets/status-list.svg" alt="" class="w-5" /> Manage
+            Status</buttonSubmit
+          >
+        </div>
       </div>
       <div class="-my-2 mb-8 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
@@ -301,12 +294,12 @@ const deleteData = async (id) => {
                 </tr>
               </thead>
               <tbody class="bg-white">
-                <tr v-if="tasks.getTasks().length <= 0">
+                <tr v-if="taskStore.getTasks.length <= 0">
                   <td class="border text-center" colspan="4">No Task</td>
                 </tr>
                 <tr
                   class="itbkk-item"
-                  v-for="(task, index) in tasks.getTasks()"
+                  v-for="(task, index) in taskStore.getTasks"
                   :key="index"
                 >
                   <td
@@ -330,16 +323,8 @@ const deleteData = async (id) => {
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <div class="flex gap-x-8 items-center text-center">
-                      <StatusButton
-                        :statusName="
-                          task.status
-                            .replace(/_/g, ' ')
-                            .toLowerCase()
-                            .split(' ')
-                            .join('')
-                        "
-                      >
-                        {{ formatStatus(task.status) }}
+                      <StatusButton>
+                        {{ task.status }}
                       </StatusButton>
                       <div>
                         <div
@@ -368,10 +353,7 @@ const deleteData = async (id) => {
                             <ul
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
                             >
-                              <li
-                                class="itbkk-button-edit"
-                                @click="editTaskModal(task.id)"
-                              >
+                              <li @click="editTaskModal(task.id)">
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
@@ -379,7 +361,7 @@ const deleteData = async (id) => {
                                 </p>
                               </li>
 
-                              <li @click="openDelete(task.id)">
+                              <li @click="openDelete(task.id, index)">
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                 >
@@ -389,8 +371,6 @@ const deleteData = async (id) => {
                             </ul>
                           </div>
                         </div>
-
-                        <!-- Dropdown menu -->
                       </div>
                     </div>
                   </td>
@@ -401,12 +381,21 @@ const deleteData = async (id) => {
         </div>
       </div>
     </div>
+    <DeleteModal
+      v-if="popup.delete"
+      @closeDelete="closeDelete"
+      :selectedTask="selectedTask"
+      :selectedIndex="selectedIndex"
+      @deleteData="deleteData"
+    ></DeleteModal>
+
     <Detail
       v-if="popup.detail"
       @closeDetail="closeDetail"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></Detail>
+
     <AddEditModal
       v-if="popup.addEdit"
       class="z-50"
@@ -416,13 +405,27 @@ const deleteData = async (id) => {
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></AddEditModal>
-    <DeleteModal
-      v-if="popup.delete"
-      @closeDelete="closeDelete"
-      :selectedTask="selectedTask"
-      @deleteData="deleteData"
-    ></DeleteModal>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.link-underline {
+  border-bottom-width: 0;
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(#fff, #fff);
+  background-size: 0 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s ease-in-out;
+}
+
+.link-underline-black {
+  background-image: linear-gradient(transparent, transparent),
+    linear-gradient(#f2c, #f2c);
+}
+
+.link-underline:hover {
+  background-size: 100% 3px;
+  background-position: 0 100%;
+}
+</style>
