@@ -426,6 +426,8 @@ const deleteData = async (id) => {
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
     ></AddEditModal>
+
+    
   </div>
 </template>
 
