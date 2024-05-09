@@ -3,9 +3,9 @@ import buttonSubmit from "../components/button/Button.vue";
 import HomeText from "../components/HomeText.vue";
 import { useRouter } from "vue-router";
 import { useStatusStore } from "../stores/StatusStore.js";
-import { onMounted,reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { fetchAllStatus } from "../libs/FetchStatus.js";
-import AddEditStatus from "../components/statusModal/AddEditStatus.vue"
+import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
 const router = useRouter();
 const statusStore = useStatusStore();
 
@@ -18,13 +18,30 @@ onMounted(async () => {
   }
 });
 
+const selectedStatus = reactive({
+  id: "",
+  name: "",
+  description: "",
+  color: "#CCCCCC",
+  createdOn: "",
+  updatedOn: "",
+});
+
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
 const popup = reactive({
-  addEditStatus: false
+  addEditStatus: false,
 });
 
 const openAddNewStatus = () => {
   popup.addEditStatus = true;
-}
+  router.push({ name: "status-add" });
+};
+
+const closeAddEdit = () => {
+  popup.addEditStatus = false;
+  router.push({ name: "status" });
+};
 </script>
 
 <template>
@@ -37,7 +54,10 @@ const openAddNewStatus = () => {
         <HomeText />
       </div>
       <div class="flex">
-        <buttonSubmit class="itbkk-button-add" buttonType="add" @click="openAddNewStatus" 
+        <buttonSubmit
+          class="itbkk-button-add"
+          buttonType="add"
+          @click="openAddNewStatus"
           >+ Add Status</buttonSubmit
         >
       </div>
@@ -86,7 +106,7 @@ const openAddNewStatus = () => {
                   {{ index + 1 }}
                 </td>
                 <td
-                  class="itbkk-title text-sm text-gray-600 border-b border-r border-gray-300 break-all hover:underline cursor-pointer transition duration-300 ease-in-out hover:text-blue"
+                  class="itbkk-title text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
                   {{ status.name }}
                 </td>
@@ -100,31 +120,15 @@ const openAddNewStatus = () => {
                 >
                   <div
                     :class="{
-                      hidden: status.name === 'NO_STATUS',
-                      visible: status.name !== 'NO_STATUS',
+                      hidden: status.name === 'No Status',
                     }"
                   >
-                    <buttonSubmit
-                      class="itbkk-button-edit"
-                      buttonType="edit"
-                      @click="
-                        router.push({
-                          name: 'edit-status',
-                          params: { id: status.id },
-                        })
-                      "
-                    >
+                    <buttonSubmit class="itbkk-button-edit" buttonType="edit">
                       Edit
                     </buttonSubmit>
                     <buttonSubmit
                       class="itbkk-button-delete"
                       buttonType="delete"
-                      @click="
-                        router.push({
-                          name: 'delete-status',
-                          params: { id: status.id },
-                        })
-                      "
                     >
                       Delete
                     </buttonSubmit>
@@ -137,7 +141,12 @@ const openAddNewStatus = () => {
       </div>
     </div>
   </div>
-  <AddEditStatus v-if="popup.addEditStatus" @closeAddEdit="popup.addEditStatus = false"></AddEditStatus>
+  <AddEditStatus
+    v-if="popup.addEditStatus"
+    :selectedStatus="selectedStatus"
+    :localTimeZone="localTimeZone"
+    @closeAddEdit="closeAddEdit"
+  ></AddEditStatus>
 </template>
 
 <style scoped></style>

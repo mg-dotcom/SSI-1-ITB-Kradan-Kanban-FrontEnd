@@ -51,7 +51,7 @@ const props = defineProps({
               <slot name="status"> </slot>
             </div>
             <div class="flex flex-col lg:w-[230px] sm:w-[200px] text-[13px]">
-              <slot name="Time"></slot>
+              <slot name="time"></slot>
             </div>
           </div>
         </div>

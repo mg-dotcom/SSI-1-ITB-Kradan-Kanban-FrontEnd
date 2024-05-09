@@ -42,6 +42,11 @@ const router = createRouter({
           name: "status-manage",
           component: Status,
         },
+        {
+          path: "/status/add",
+          name: "status-add",
+          component: AddEditTask,
+        },
       ],
     },
     {
