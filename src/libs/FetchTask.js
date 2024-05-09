@@ -2,7 +2,7 @@ import { useRouter } from "vue-router";
 
 async function fetchAllTasks(url) {
   try {
-    const data = await fetch(url);
+    const data = await fetch(`${url}`);
     const res = await data.json();
     return res;
   } catch (error) {
@@ -28,7 +28,7 @@ async function fetchTaskDetails(url, id) {
 
 async function addTask(url, newTask) {
   try {
-    const res = await fetch(url, {
+    const res = await fetch(`${url}`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
