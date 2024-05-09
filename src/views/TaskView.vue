@@ -16,8 +16,10 @@ import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "../stores/TaskStore.js";
+import { useStatusStore } from "../stores/StatusStore";
 import Toast from "primevue/toast";
 import HomeText from "../components/HomeText.vue";
+import { fetchAllStatus } from "../libs/FetchStatus";
 
 const toast = useToast();
 const router = useRouter();
@@ -33,6 +35,9 @@ const selectedTask = ref({
 });
 
 const taskStore = useTaskStore();
+
+const statusStore = useStatusStore();
+
 const taskId = route.params.id;
 
 onMounted(async () => {
@@ -44,6 +49,10 @@ onMounted(async () => {
       `${import.meta.env.VITE_BASE_URL}/tasks`
     );
     taskStore.addAllTasks(allTasks);
+    const allStatus = await fetchAllStatus(
+      `${import.meta.env.VITE_BASE_URL}/statuses`
+    );
+    statusStore.addAllStatuses(allStatus);
   }
 });
 

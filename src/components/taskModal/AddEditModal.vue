@@ -3,7 +3,9 @@ import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "../button/Button.vue";
 import { useRouter } from "vue-router";
 import { defineProps, defineEmits, ref, computed } from "vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
 
+const statusStore = useStatusStore();
 const router = useRouter();
 
 const props = defineProps({
@@ -88,10 +90,12 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
           class="itbkk-status bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="task.status"
         >
-          <option value="NO_STATUS">NO_STATUS</option>
-          <option value="TO_DO">TO_DO</option>
-          <option value="DOING">DOING</option>
-          <option value="DONE">DONE</option>
+          <option
+            :value="status.name"
+            v-for="status in statusStore.getStatuses"
+          >
+            {{ status.name }}
+          </option>
         </select>
       </form>
     </template>
