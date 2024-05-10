@@ -11,6 +11,7 @@ import { onMounted } from 'vue'
 import { reactive } from 'vue'
 import { ref } from 'vue'
 import { useTaskStore } from '../stores/TaskStore'
+import TaskView from './TaskView.vue'
 const router = useRouter()
 const statusStore = useStatusStore()
 const taskStore = useTaskStore()
@@ -30,6 +31,7 @@ onMounted(async () => {
   }
 })
 
+
 const popup = reactive({
   deleteConfirm: false,
   transferConfirm: false
@@ -37,6 +39,7 @@ const popup = reactive({
 
 const selectedStatus = ref({})
 const allStatus = ref([])
+
 
 const openConfirmDelete = async (id) => {
   selectedStatus.value = await fetchAllStatus(
@@ -46,16 +49,21 @@ const openConfirmDelete = async (id) => {
 }
 
 const removeStatus = async (id) => {
-  const statusCode = await deleteStatus(
-    `${import.meta.env.VITE_BASE_URL}/statuses/${id}`
+  const statuses = taskStore.getTasks.map(item =>  item.status);
+
+  const transferOrdelete = ref(
+    statuses.includes(selectedStatus.value.name)
   )
-  if (statusCode === 200) {
-    console.log('successful')
-  } else {
+
+  if (transferOrdelete.value) {
     popup.transferConfirm = true
     allStatus.value = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}/statuses`
     )
+  } else {
+    await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
+    console.log('successful')
+    popup.deleteConfirm = false
   }
 }
 
@@ -65,9 +73,10 @@ const transferStatus = async (id) => {
   )
   if (statusCode === 200) {
     console.log('successful')
-    popup.transferConfirm=false
+    popup.transferConfirm = false
+    popup.deleteConfirm = false
   } else {
-    console.log('Can not transfer');
+    console.log('Can not transfer')
   }
 }
 
