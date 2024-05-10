@@ -1,4 +1,5 @@
 <script setup>
+
 import buttonSubmit from "../components/button/Button.vue";
 import HomeText from "../components/HomeText.vue";
 import { useRouter } from "vue-router";
@@ -8,21 +9,34 @@ import { fetchAllStatus, addStatus, updateStatus } from "../libs/FetchStatus.js"
 import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
 import { useToast } from "primevue/usetoast";
 import StatusButton from "../components/button/StatusButton.vue";
+import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
+import Transfer from '../components/confirmModal/Transfer.vue'
+import { fetchAllStatus, addStatus, deleteStatus } from '../libs/FetchStatus.js'
+import { fetchAllTasks } from '../libs/FetchTask'
+import { useTaskStore } from '../stores/TaskStore'
 
-const router = useRouter();
-const statusStore = useStatusStore();
-const toast = useToast();
-
+const toast = useToast()
+const router = useRouter()
+const statusStore = useStatusStore()
+const taskStore = useTaskStore()
 onMounted(async () => {
+  if (taskStore.getTasks.length === 0) {
+    const allTasks = await fetchAllTasks(
+      `${import.meta.env.VITE_BASE_URL}/tasks`
+    )
+    taskStore.addAllTasks(allTasks)
+  }
+
   if (statusStore.getStatuses.length === 0) {
     const allStatus = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}/statuses`
-    );
-    statusStore.addAllStatuses(allStatus);
+    )
+    statusStore.addAllStatuses(allStatus)
   }
-});
+})
 
 const selectedStatus = ref({
+
   id: "",
   name: "",
   description: "",
@@ -40,52 +54,57 @@ const clearValue = () => {
   selectedStatus.value.updatedOn = "";
 };
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+
+
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
 const popup = reactive({
   addEditStatus: false,
-});
+  deleteConfirm: false,
+  transferConfirm: false
+})
 
 const openAddNewStatus = () => {
-  popup.addEditStatus = true;
-  router.push({ name: "status-add" });
-};
+  popup.addEditStatus = true
+  router.push({ name: 'status-add' })
+}
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
     `${import.meta.env.VITE_BASE_URL}/statuses`,
     newStatus
-  );
-  const addedStatus = await res.json();
+  )
+  const addedStatus = await res.json()
   const existStatus = statusStore.getStatuses.find(
     (statusData) => statusData.name === newStatus.name
-  );
+  )
 
   if (res.status === 201) {
-    statusStore.addStatus(addedStatus);
+    statusStore.addStatus(addedStatus)
     toast.add({
-      severity: "success",
-      summary: "Success",
-      detail: "The status added successfully.",
-      life: 3000,
-    });
-    router.push({ name: "status" });
-    popup.addEditStatus = false;
-    clearValue();
+      severity: 'success',
+      summary: 'Success',
+      detail: 'The status added successfully.',
+      life: 3000
+    })
+    router.push({ name: 'status' })
+    popup.addEditStatus = false
+    clearValue()
   } else if (existStatus) {
     toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "The status already exists. Please try another name.",
-      life: 3000,
-    });
+      severity: 'error',
+      summary: 'Error',
+      detail: 'The status already exists. Please try another name.',
+      life: 3000
+    })
   } else {
     toast.add({
-      severity: "error",
-      summary: "Error",
+      severity: 'error',
+      summary: 'Error',
       detail: `An error occurred adding the task "${newStatus.name}".`,
-      life: 3000,
-    });
+      life: 3000
+    })
   }
+
 };
 
 
@@ -126,12 +145,61 @@ const editStatusModal = (id) => {
  router.push({ name: "status-edit", params: { id: id } });
 }
 
+
+
+
+
 const closeAddEdit = () => {
-  popup.addEditStatus = false;
-  router.push({ name: "status" });
-};
+  popup.addEditStatus = false
+  router.push({ name: 'status' })
+}
 
+const openConfirmDelete = async (id) => {
+  selectedStatus.value = await fetchAllStatus(
+    `${import.meta.env.VITE_BASE_URL}/statuses/${id}`
+  )
+  popup.deleteConfirm = true
+}
 
+const removeStatus = async (id) => {
+  const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase())
+
+  const transferOrdelete = ref(
+    statuses.includes(selectedStatus.value.name.toLowerCase())
+  )
+
+  if (transferOrdelete.value) {
+    popup.transferConfirm = true
+    allStatus.value = await fetchAllStatus(
+      `${import.meta.env.VITE_BASE_URL}/statuses`
+    )
+  } else {
+    await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
+    console.log('successful')
+    statusStore.removeStatus(id)
+    popup.deleteConfirm = false
+  }
+}
+
+const transferStatus = async (id) => {
+  const statusCode = await deleteStatus(
+    `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
+  )
+  if (statusCode === 200) {
+    statusStore.removeStatus(id)
+    console.log('successful')
+    popup.transferConfirm = false
+    popup.deleteConfirm = false
+  } else {
+    console.log('Can not transfer')
+  }
+}
+
+const closeConfirmDelete = () => {
+  popup.deleteConfirm = false
+  popup.transferConfirm = false
+  selectedStatus.value = {}
+}
 
 </script>
 
@@ -166,7 +234,7 @@ const closeAddEdit = () => {
                   class="w-[5%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
                 ></th>
                 <th
-                  class="w-[20%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                  class="w-1/6 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                 >
                   Name
                 </th>
@@ -221,8 +289,10 @@ const closeAddEdit = () => {
                     <buttonSubmit
                       class="itbkk-button-delete"
                       buttonType="delete"
-                      >Delete</buttonSubmit
+                      @click="openConfirmDelete(status.id)"
                     >
+                      Delete
+                    </buttonSubmit>
                   </div>
                 </td>
               </tr>
@@ -231,6 +301,19 @@ const closeAddEdit = () => {
         </div>
       </div>
     </div>
+    <DeleteStatus
+      v-if="popup.deleteConfirm"
+      :selectedStatus="selectedStatus"
+      @deleteStatus="removeStatus"
+      @closeDelete="closeConfirmDelete"
+    ></DeleteStatus>
+    <Transfer
+      v-if="popup.transferConfirm"
+      :selectedStatus="selectedStatus"
+      @transferStatus="transferStatus"
+      @closeDelete="closeConfirmDelete"
+    >
+    </Transfer>
   </div>
   <AddEditStatus
     v-if="popup.addEditStatus"

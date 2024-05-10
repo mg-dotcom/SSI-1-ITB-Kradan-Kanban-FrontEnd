@@ -1,12 +1,22 @@
-import { useRouter } from "vue-router";
-
 async function fetchAllStatus(url) {
   try {
-    const data = await fetch(`${url}`);
-    const res = await data.json();
-    return res;
+    const data = await fetch(`${url}`)
+    const res = await data.json()
+    return res
   } catch (error) {
-    console.log(`error: ${error}`);
+    console.log(`error: ${error}`)
+  }
+}
+
+
+const deleteStatus = async (url) => {
+  try {
+    const res = await fetch(`${url}`,{
+      method: "DELETE",
+    })
+    return res.status
+  } catch (error) {
+    console.log(`error: ${error}`)
   }
 }
 
@@ -28,6 +38,7 @@ async function addStatus(url, newStatus) {
     console.log(`error: ${error}`);
   }
 }
+
 
 
 async function updateStatus(url, statusId, updatedStatus) {
@@ -54,4 +65,5 @@ async function updateStatus(url, statusId, updatedStatus) {
 //   router.push("/");
 //   return;
 // }
-export { fetchAllStatus, addStatus, updateStatus };
+export { fetchAllStatus, addStatus, updateStatus ,deleteStatus };
+
