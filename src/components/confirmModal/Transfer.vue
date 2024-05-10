@@ -4,9 +4,17 @@ import submitButton from '../button/Button.vue'
 import { useStatusStore } from '../../stores/StatusStore.js'
 import { ref } from 'vue';
 defineEmits(["closeDelete", "deleteStatus"]);
+const props=defineProps({
+  selectedStatus:{
+    Type:Object,
+  }
+})
 
 const statusStore = useStatusStore()
-// console.log(statusStore.getStatuses);
+
+const filteredStatuses = statusStore.getStatuses.filter(status => status.id !== props.selectedStatus.id);
+console.log(filteredStatuses);
+
 const transferTo=ref('')
 
 </script>
@@ -26,7 +34,7 @@ const transferTo=ref('')
             v-model="transferTo"
             >
             <option 
-            v-for="status  in statusStore.getStatuses"
+            v-for="status  in filteredStatuses"
             :value="status.id"
             :key="status.id"
             >

@@ -262,6 +262,7 @@ const closeConfirmDelete = () => {
     ></DeleteStatus>
     <Transfer
       v-if="popup.transferConfirm"
+      :selectedStatus="selectedStatus"
       @transferStatus="transferStatus"
       @closeDelete="closeConfirmDelete"
     >
