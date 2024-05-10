@@ -8,6 +8,8 @@ const props=defineProps({
   }
 })
 
+console.log(props.selectedStatus);
+
 </script>
  
 <template>
@@ -16,7 +18,7 @@ const props=defineProps({
       <p>Delete a Status!</p>
     </template>
     <template #question>
-      <p>Do you want to delete the <span class="font-bold">Doing</span>  Status?</p>
+      <p>Do you want to delete the <span class="font-bold">{{ props.selectedStatus.name }}</span>  Status?</p>
     </template>
     <template #button-left>
       <submitButton buttonType="cancel" @click="$emit('closeDelete')">Cancel</submitButton>
