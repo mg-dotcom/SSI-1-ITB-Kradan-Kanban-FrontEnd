@@ -157,7 +157,6 @@ const addNewTask = async (task) => {
 };
 
 const editTask = async (task) => {
-  task.status = task.status.toUpperCase().replace(/ /g, "_");
   const res = await updatedTask(
     `${import.meta.env.VITE_BASE_URL}/tasks`,
     task,
@@ -177,7 +176,7 @@ const editTask = async (task) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `The update was unsuccessful"`,
+      detail: `The update was unsuccessful`,
 
       life: 3000,
     });
@@ -196,7 +195,9 @@ const editTaskModal = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
+
   selectedTask.value.status = taskDetails.status.name;
+  console.log(selectedTask.value.status);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.addEdit = true;

@@ -19,6 +19,8 @@ onMounted(async () => {
     );
     statusStore.addAllStatuses(allStatus);
   }
+
+  console.log(statusStore.getStatuses);
 });
 
 const selectedStatus = reactive({
