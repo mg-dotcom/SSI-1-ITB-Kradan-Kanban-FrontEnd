@@ -120,7 +120,6 @@ const openConfirmDelete = async (id) => {
 
   if (transferOrdelete.value) {
     popup.transferConfirm = true
-
   } else {
     popup.deleteConfirm = true
   }
@@ -128,7 +127,7 @@ const openConfirmDelete = async (id) => {
 
 const removeStatus = async (id) => {
   await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
-  popup.deleteConfirm=false
+  popup.deleteConfirm = false
   console.log('successful')
   clearValue()
   statusStore.removeStatus(id)
@@ -143,8 +142,22 @@ const transferStatus = async (id) => {
     console.log(status)
     clearValue()
     popup.transferConfirm = false
-    router.push('/')
-    console.log(taskStore.getTasks);
+    router.push('/').then(async () => {
+      if (taskStore.getTasks.length === 0) {
+        const allTasks = await fetchAllTasks(
+          `${import.meta.env.VITE_BASE_URL}/tasks`
+        )
+        taskStore.addAllTasks(allTasks)
+      }
+
+      if (statusStore.getStatuses.length === 0) {
+        const allStatus = await fetchAllStatus(
+          `${import.meta.env.VITE_BASE_URL}/statuses`
+        )
+        statusStore.addAllStatuses(allStatus)
+      }
+    })
+    console.log(taskStore.getTasks)
   } else {
     console.log('Can not transfer')
   }

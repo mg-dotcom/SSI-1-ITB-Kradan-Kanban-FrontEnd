@@ -60,28 +60,6 @@ onMounted(async () => {
   }
 })
 
-watch(
-  () => route,
-  (newPath, oldPath) => {
-    if (newPath === '/task' && oldPath !== '/task') {
-      console.log('test')
-      // if (taskStore.getTasks.length === 0) {
-      //   const allTasks = await fetchAllTasks(
-      //     `${import.meta.env.VITE_BASE_URL}/tasks`
-      //   )
-      //   taskStore.addAllTasks(allTasks)
-      // }
-
-      // if (statusStore.getStatuses.length === 0) {
-      //   const allStatus = await fetchAllStatus(
-      //     `${import.meta.env.VITE_BASE_URL}/statuses`
-      //   )
-      //   statusStore.addAllStatuses(allStatus)
-      // }
-    }
-  }
-)
-
 const page = reactive({
   task: true
 })
