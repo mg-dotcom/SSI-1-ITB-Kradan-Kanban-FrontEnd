@@ -9,8 +9,12 @@ export const useStatusStore = defineStore('StatusStore', {
       return state.statuses
     },
     getStatusById: (state) => (id) => {
-      return state.statuses.find((status) => status.id === id)
-    }
+      return state.statuses.find((status) => status.id === id);
+    },
+    getStatusColor: (state) => (name) => {
+      const status = state.statuses.find((status) => status.name === name);
+      return status.color;
+    },
   },
   actions: {
     addAllStatuses(newStatuses) {
@@ -24,8 +28,10 @@ export const useStatusStore = defineStore('StatusStore', {
         id: newStatus.id,
         name: newStatus.name,
         description: newStatus.description,
-        statusColor: newStatus.color
-      })
+        color: newStatus.statusColor,
+        createdOn: newStatus.createdOn,
+        updatedOn: newStatus.updatedOn,
+      });
     },
 
     editStatus(id, updatedStatus) {
@@ -37,8 +43,8 @@ export const useStatusStore = defineStore('StatusStore', {
           id: id,
           name: updatedStatus.name,
           description: updatedStatus.description,
-          statusColor: updatedStatus.color
-        }
+          color: updatedStatus.statusColor,
+        };
       }
     },
 

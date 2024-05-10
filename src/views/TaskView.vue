@@ -2,7 +2,7 @@
 import { onMounted, reactive, ref } from "vue";
 import { initFlowbite, initDropdowns } from "flowbite";
 import Detail from "../components/taskModal/Detail.vue";
-import AddEditModal from "../components/taskModal/AddEditModal.vue";
+import AddEditTask from "../components/taskModal/AddEditTask.vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import {
   fetchAllTasks,
@@ -29,7 +29,7 @@ const selectedTask = ref({
   title: "",
   description: "",
   assignees: "",
-  status: "NO_STATUS",
+  status: "No Status",
   createdOn: "",
   updatedOn: "",
 });
@@ -76,7 +76,7 @@ const clearValue = () => {
     title: "",
     description: "",
     assignees: "",
-    status: "NO_STATUS",
+    status: "No Status",
     createdOn: "",
     updatedOn: "",
   };
@@ -137,7 +137,7 @@ const addNewTask = async (task) => {
     toast.add({
       severity: "success",
       summary: "Success",
-      detail: `The task "${addedTask.title}" is added successfully`,
+      detail: `The task "${addedTask.title}" is added successfully.`,
       life: 3000,
     });
     router.back();
@@ -152,7 +152,6 @@ const addNewTask = async (task) => {
     router.back();
     clearValue();
   }
-  popup.addEdit = false;
   popup.addEdit = false;
   popup.optionEditDelete = false;
 };
@@ -177,7 +176,7 @@ const editTask = async (task) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `The update was unsuccessful"`,
+      detail: `The update was unsuccessful`,
       life: 3000,
     });
     router.push({ name: "task" });
@@ -195,7 +194,9 @@ const editTaskModal = async (id) => {
     return;
   }
   selectedTask.value = taskDetails;
+
   selectedTask.value.status = taskDetails.status.name;
+  console.log(selectedTask.value.status);
   selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
   popup.addEdit = true;
@@ -306,7 +307,7 @@ const deleteData = async (id) => {
                     Assignees
                   </th>
                   <th
-                    class="w-1/6 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-[18%] px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Status
                   </th>
@@ -341,8 +342,11 @@ const deleteData = async (id) => {
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
-                    <div class="flex gap-x-8 items-center text-center">
-                      <StatusButton>
+                    <div class="flex justify-between items-center text-center">
+                      <StatusButton
+                        :statusColor="statusStore.getStatusColor(task.status)"
+                        :statusName="task.status"
+                      >
                         {{ task.status }}
                       </StatusButton>
                       <div>
@@ -415,7 +419,7 @@ const deleteData = async (id) => {
       :localTimeZone="localTimeZone"
     ></Detail>
 
-    <AddEditModal
+    <AddEditTask
       v-if="popup.addEdit"
       class="z-50"
       @closeDetail="closeDetail"
@@ -423,7 +427,7 @@ const deleteData = async (id) => {
       @editNewTask="editTask"
       :selectedTask="selectedTask"
       :localTimeZone="localTimeZone"
-    ></AddEditModal>
+    ></AddEditTask>
   </div>
 </template>
 

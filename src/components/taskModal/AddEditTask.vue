@@ -20,7 +20,6 @@ const task = ref({
   status: props.selectedTask.status,
 });
 
-console.log(task.value.status);
 const oldtask = {
   title: props.selectedTask.title,
   description: props.selectedTask.description,
@@ -100,7 +99,7 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
       </form>
     </template>
 
-    <template #Time>
+    <template #time>
       <div class="pt-7" :class="selectedTask.id == '' ? 'hidden' : 'visible'">
         <span class="itbkk-timezone font-semibold">TimeZone</span> :
         {{ localTimeZone }} <br />
