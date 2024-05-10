@@ -177,7 +177,6 @@ const editTask = async (task) => {
       severity: "error",
       summary: "Error",
       detail: `The update was unsuccessful`,
-
       life: 3000,
     });
     router.push({ name: "task" });
@@ -344,7 +343,10 @@ const deleteData = async (id) => {
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <div class="flex gap-x-8 items-center text-center">
-                      <StatusButton>
+                      <StatusButton
+                        :statusColor="statusStore.getStatusColor(task.status)"
+                        :statusName="task.status"
+                      >
                         {{ task.status }}
                       </StatusButton>
                       <div>

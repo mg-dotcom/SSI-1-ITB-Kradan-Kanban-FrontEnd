@@ -11,6 +11,10 @@ export const useStatusStore = defineStore("StatusStore", {
     getStatusById: (state) => (id) => {
       return state.statuses.find((status) => status.id === id);
     },
+    getStatusColor: (state) => (name) => {
+      const status = state.statuses.find((status) => status.name === name);
+      return status.color;
+    },
   },
   actions: {
     addAllStatuses(newStatuses) {
@@ -24,7 +28,7 @@ export const useStatusStore = defineStore("StatusStore", {
         id: newStatus.id,
         name: newStatus.name,
         description: newStatus.description,
-        statusColor: newStatus.color,
+        color: newStatus.statusColor,
         createdOn: newStatus.createdOn,
         updatedOn: newStatus.updatedOn,
       });
@@ -39,7 +43,7 @@ export const useStatusStore = defineStore("StatusStore", {
           id: id,
           name: updatedStatus.name,
           description: updatedStatus.description,
-          statusColor: updatedStatus.color,
+          color: updatedStatus.statusColor,
         };
       }
     },

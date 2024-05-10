@@ -1,11 +1,12 @@
 <script setup>
 const props = defineProps({
+  statusColor: {
+    type: String,
+    default: "#CCCCCC",
+  },
   statusName: {
-    validator(value) {
-      return ["todo", "doing", "done", "nostatus"].includes(
-        value.toLowerCase().trim()
-      );
-    },
+    type: String,
+    default: "No Status",
   },
 });
 </script>
@@ -13,20 +14,12 @@ const props = defineProps({
 <template>
   <div>
     <div
-      class="itbkk-status bg-gray-status text-white flex justify-center py-1 text-[13px] rounded-full"
-      :class="[
-        statusName === 'todo'
-          ? 'bg-yellow-status w-20 '
-          : statusName === 'doing'
-          ? 'bg-blue-status w-20 '
-          : statusName === 'done'
-          ? 'bg-green-status w-20 '
-          : 'bg-gray-status w-20  ',
-      ]"
+      class="itbkk-status flex justify-center py-1 text-[13px] font-semibold rounded-full"
+      :style="{ backgroundColor: statusColor }"
     >
       <span
         class="relative flex h-2 w-3 top-1 -left-[5px]"
-        v-if="statusName !== 'nostatus'"
+        v-if="statusName !== 'No Status'"
       >
         <span
           class="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"

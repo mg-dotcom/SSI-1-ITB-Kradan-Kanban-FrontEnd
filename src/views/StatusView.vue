@@ -7,6 +7,7 @@ import { onMounted, reactive, ref } from "vue";
 import { fetchAllStatus, addStatus } from "../libs/FetchStatus.js";
 import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
 import { useToast } from "primevue/usetoast";
+import StatusButton from "../components/button/StatusButton.vue";
 
 const router = useRouter();
 const statusStore = useStatusStore();
@@ -19,8 +20,6 @@ onMounted(async () => {
     );
     statusStore.addAllStatuses(allStatus);
   }
-
-  console.log(statusStore.getStatuses);
 });
 
 const selectedStatus = reactive({
@@ -51,28 +50,39 @@ const openAddNewStatus = () => {
   popup.addEditStatus = true;
   router.push({ name: "status-add" });
 };
-const addNewStatus = async (status) => {
+const addNewStatus = async (newStatus) => {
   const res = await addStatus(
     `${import.meta.env.VITE_BASE_URL}/statuses`,
-    status
+    newStatus
   );
   const addedStatus = await res.json();
+  const existStatus = statusStore.getStatuses.find(
+    (statusData) => statusData.name === newStatus.name
+  );
+
   if (res.status === 201) {
     statusStore.addStatus(addedStatus);
     toast.add({
       severity: "success",
       summary: "Success",
-      detail: "Status added successfully",
+      detail: "The status added successfully.",
       life: 3000,
     });
     router.push({ name: "status" });
     popup.addEditStatus = false;
     clearValue();
+  } else if (existStatus) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "The status already exists. Please try another name.",
+      life: 3000,
+    });
   } else {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: "Failed to add status",
+      detail: `An error occurred adding the task "${newStatus.name}".`,
       life: 3000,
     });
   }
@@ -148,7 +158,11 @@ const closeAddEdit = () => {
                 <td
                   class="itbkk-title text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
-                  {{ status.name }}
+                  <StatusButton
+                    :statusColor="status.color"
+                    :statusName="status.name"
+                    >{{ status.name }}</StatusButton
+                  >
                 </td>
                 <td
                   class="itbkk-assignees text-sm border-b border-r border-gray-300 break-all"
