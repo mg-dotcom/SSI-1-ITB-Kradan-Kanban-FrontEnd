@@ -13,7 +13,7 @@ export const useStatusStore = defineStore('StatusStore', {
     },
     getStatusColor: (state) => (name) => {
       const status = state.statuses.find((status) => status.name === name);
-      return status.color;
+      return status ? status.color : ""
     },
   },
   actions: {

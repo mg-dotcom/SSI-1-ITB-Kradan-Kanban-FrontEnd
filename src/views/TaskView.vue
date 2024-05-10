@@ -16,7 +16,7 @@ import { useRouter, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "../stores/TaskStore.js";
-import { useStatusStore } from "../stores/StatusStore";
+import { useStatusStore } from "../stores/StatusStore.js";
 import Toast from "primevue/toast";
 import HomeText from "../components/HomeText.vue";
 import { fetchAllStatus } from "../libs/FetchStatus";

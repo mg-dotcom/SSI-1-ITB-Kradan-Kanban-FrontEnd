@@ -3,7 +3,7 @@ import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
 import { useStatusStore } from '../../stores/StatusStore.js'
 import { ref } from 'vue';
-defineEmits(["closeDelete", "deleteStatus"]);
+defineEmits(["closeDelete", "transferStatus"]);
 const props=defineProps({
   selectedStatus:{
     Type:Object,

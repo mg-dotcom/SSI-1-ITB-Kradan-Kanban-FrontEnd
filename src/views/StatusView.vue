@@ -112,27 +112,26 @@ const openConfirmDelete = async (id) => {
   selectedStatus.value = await fetchAllStatus(
     `${import.meta.env.VITE_BASE_URL}/statuses/${id}`
   )
-  popup.deleteConfirm = true
-}
-
-const removeStatus = async (id) => {
   const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase())
-
-  const transferOrdelete = ref(
-    statuses.includes(selectedStatus.value.name.toLowerCase())
-  )
+  console.log(statuses)
+  console.log(selectedStatus.value)
+  const transferOrdelete = ref(statuses.includes(selectedStatus.value.name))
+  console.log(transferOrdelete.value)
 
   if (transferOrdelete.value) {
     popup.transferConfirm = true
-    allStatus.value = await fetchAllStatus(
-      `${import.meta.env.VITE_BASE_URL}/statuses`
-    )
+
   } else {
-    await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
-    console.log('successful')
-    statusStore.removeStatus(id)
-    popup.deleteConfirm = false
+    popup.deleteConfirm = true
   }
+}
+
+const removeStatus = async (id) => {
+  await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
+  popup.deleteConfirm=false
+  console.log('successful')
+  clearValue()
+  statusStore.removeStatus(id)
 }
 
 const transferStatus = async (id) => {
@@ -140,10 +139,10 @@ const transferStatus = async (id) => {
     `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
   )
   if (statusCode === 200) {
-    statusStore.removeStatus(id)
+    statusStore.removeStatus(selectedStatus.value.id)
     console.log('successful')
+    clearValue()
     popup.transferConfirm = false
-    popup.deleteConfirm = false
   } else {
     console.log('Can not transfer')
   }
