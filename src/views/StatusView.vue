@@ -5,13 +5,12 @@ import HomeText from "../components/HomeText.vue";
 import { useRouter } from "vue-router";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { onMounted, reactive, ref } from "vue";
-import { fetchAllStatus, addStatus, updateStatus } from "../libs/FetchStatus.js";
 import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
 import { useToast } from "primevue/usetoast";
 import StatusButton from "../components/button/StatusButton.vue";
 import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
 import Transfer from '../components/confirmModal/Transfer.vue'
-import { fetchAllStatus, addStatus, deleteStatus } from '../libs/FetchStatus.js'
+import { fetchAllStatus, addStatus, deleteStatus,updateStatus } from '../libs/FetchStatus.js'
 import { fetchAllTasks } from '../libs/FetchTask'
 import { useTaskStore } from '../stores/TaskStore'
 
@@ -170,9 +169,9 @@ const removeStatus = async (id) => {
 
   if (transferOrdelete.value) {
     popup.transferConfirm = true
-    allStatus.value = await fetchAllStatus(
-      `${import.meta.env.VITE_BASE_URL}/statuses`
-    )
+    // allStatus.value = await fetchAllStatus(
+    //   `${import.meta.env.VITE_BASE_URL}/statuses`
+    // )
   } else {
     await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
     console.log('successful')
@@ -186,7 +185,7 @@ const transferStatus = async (id) => {
     `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
   )
   if (statusCode === 200) {
-    statusStore.removeStatus(id)
+    statusStore.removeStatus(selectedStatus.value.id)
     console.log('successful')
     popup.transferConfirm = false
     popup.deleteConfirm = false
