@@ -307,7 +307,7 @@ const deleteData = async (id) => {
                     Assignees
                   </th>
                   <th
-                    class="w-1/6 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="w-[18%] px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Status
                   </th>
@@ -342,7 +342,7 @@ const deleteData = async (id) => {
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
-                    <div class="flex gap-x-8 items-center text-center">
+                    <div class="flex justify-between items-center text-center">
                       <StatusButton
                         :statusColor="statusStore.getStatusColor(task.status)"
                         :statusName="task.status"

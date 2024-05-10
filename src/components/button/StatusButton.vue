@@ -14,7 +14,7 @@ const props = defineProps({
 <template>
   <div>
     <div
-      class="itbkk-status flex justify-center py-1 text-[13px] font-semibold rounded-full"
+      class="itbkk-status flex py-1 px-5 text-[13px] font-semibold rounded-full text-white w-fit"
       :style="{ backgroundColor: statusColor }"
     >
       <span
