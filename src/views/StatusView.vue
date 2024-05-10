@@ -49,10 +49,10 @@ const openConfirmDelete = async (id) => {
 }
 
 const removeStatus = async (id) => {
-  const statuses = taskStore.getTasks.map(item =>  item.status);
+  const statuses = taskStore.getTasks.map(item =>  item.status.toLowerCase());
 
   const transferOrdelete = ref(
-    statuses.includes(selectedStatus.value.name)
+    statuses.includes(selectedStatus.value.name.toLowerCase())
   )
 
   if (transferOrdelete.value) {
@@ -63,6 +63,7 @@ const removeStatus = async (id) => {
   } else {
     await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
     console.log('successful')
+    statusStore.removeStatus(id)
     popup.deleteConfirm = false
   }
 }
@@ -72,6 +73,7 @@ const transferStatus = async (id) => {
     `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
   )
   if (statusCode === 200) {
+    statusStore.removeStatus(id)
     console.log('successful')
     popup.transferConfirm = false
     popup.deleteConfirm = false
