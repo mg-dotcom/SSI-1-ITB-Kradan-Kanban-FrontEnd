@@ -9,12 +9,12 @@ export const useStatusStore = defineStore('StatusStore', {
       return state.statuses
     },
     getStatusById: (state) => (id) => {
-      return state.statuses.find((status) => status.id === id);
+      return state.statuses.find((status) => status.id === id)
     },
     getStatusColor: (state) => (name) => {
-      const status = state.statuses.find((status) => status.name === name);
-      return status ? status.color : ""
-    },
+      const status = state.statuses.find((status) => status.name === name)
+      return status ? status.color : ''
+    }
   },
   actions: {
     addAllStatuses(newStatuses) {
@@ -30,8 +30,8 @@ export const useStatusStore = defineStore('StatusStore', {
         description: newStatus.description,
         color: newStatus.statusColor,
         createdOn: newStatus.createdOn,
-        updatedOn: newStatus.updatedOn,
-      });
+        updatedOn: newStatus.updatedOn
+      })
     },
 
     editStatus(id, updatedStatus) {
@@ -43,8 +43,8 @@ export const useStatusStore = defineStore('StatusStore', {
           id: id,
           name: updatedStatus.name,
           description: updatedStatus.description,
-          color: updatedStatus.statusColor,
-        };
+          color: updatedStatus.statusColor
+        }
       }
     },
 
@@ -54,6 +54,18 @@ export const useStatusStore = defineStore('StatusStore', {
         return
       } else {
         this.statuses.splice(index, 1)
+      }
+    },
+
+    trasferStatus(id) {
+      const index = this.statuses.findIndex((status) => status.id === id)
+      const status = this.getStatusById(id)
+      if (index === -1) {
+        return
+      } else {
+        this.statuses[index] = status
+        this.removeStatus(id)
+        console.log(this.statuses)
       }
     }
   }
