@@ -1,13 +1,12 @@
 <script setup>
 import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
+import { useStatusStore } from '../../stores/StatusStore.js'
 import { ref } from 'vue';
 defineEmits(["closeDelete", "deleteStatus"]);
-const props=defineProps({
-  allStatus:{
-    Type:Object,
-  }
-})
+
+const statusStore = useStatusStore()
+// console.log(statusStore.getStatuses);
 const transferTo=ref('')
 
 </script>
@@ -27,7 +26,7 @@ const transferTo=ref('')
             v-model="transferTo"
             >
             <option 
-            v-for="status  in props.allStatus"
+            v-for="status  in statusStore.getStatuses"
             :value="status.id"
             :key="status.id"
             >

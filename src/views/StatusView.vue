@@ -1,27 +1,20 @@
 <script setup>
-import buttonSubmit from "../components/button/Button.vue";
-import HomeText from "../components/HomeText.vue";
-import { useRouter } from "vue-router";
-import { useStatusStore } from "../stores/StatusStore.js";
-import { onMounted, reactive, ref } from "vue";
-import { fetchAllStatus, addStatus } from "../libs/FetchStatus.js";
-import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
-import { useToast } from "primevue/usetoast";
-import StatusButton from "../components/button/StatusButton.vue";
-
 import buttonSubmit from '../components/button/Button.vue'
 import HomeText from '../components/HomeText.vue'
-import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
-import Transfer from '../components/confirmModal/Transfer.vue'
-import { fetchAllStatus, deleteStatus } from '../libs/FetchStatus.js'
-import { fetchAllTasks } from '../libs/FetchTask'
 import { useRouter } from 'vue-router'
 import { useStatusStore } from '../stores/StatusStore.js'
-import { onMounted } from 'vue'
-import { reactive } from 'vue'
-import { ref } from 'vue'
+import { onMounted, reactive, ref } from 'vue'
+import AddEditStatus from '../components/statusModal/AddEditStatus.vue'
+import { useToast } from 'primevue/usetoast'
+import StatusButton from '../components/button/StatusButton.vue'
+
+import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
+import Transfer from '../components/confirmModal/Transfer.vue'
+import { fetchAllStatus, addStatus, deleteStatus } from '../libs/FetchStatus.js'
+import { fetchAllTasks } from '../libs/FetchTask'
 import { useTaskStore } from '../stores/TaskStore'
-import TaskView from './TaskView.vue'
+
+const toast = useToast()
 const router = useRouter()
 const statusStore = useStatusStore()
 const taskStore = useTaskStore()
@@ -39,86 +32,81 @@ onMounted(async () => {
     )
     statusStore.addAllStatuses(allStatus)
   }
-});
+})
 
-const selectedStatus = reactive({
-  id: "",
-  name: "",
-  description: "",
-  color: "#CCCCCC",
-  createdOn: "",
-  updatedOn: "",
-});
+const selectedStatus = ref({
+  id: '',
+  name: '',
+  description: '',
+  color: '#CCCCCC',
+  createdOn: '',
+  updatedOn: ''
+})
+// const selectedStatus = ref({})
+// const allStatus = ref([])
 
 const clearValue = () => {
-  selectedStatus.id = "";
-  selectedStatus.name = "";
-  selectedStatus.description = "";
-  selectedStatus.color = "#CCCCCC";
-  selectedStatus.createdOn = "";
-  selectedStatus.updatedOn = "";
-};
+  selectedStatus.value.id = ''
+  selectedStatus.value.name = ''
+  selectedStatus.value.description = ''
+  selectedStatus.value.color = '#CCCCCC'
+  selectedStatus.value.createdOn = ''
+  selectedStatus.value.updatedOn = ''
+}
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
 const popup = reactive({
   addEditStatus: false,
   deleteConfirm: false,
   transferConfirm: false
-});
+})
 
 const openAddNewStatus = () => {
-  popup.addEditStatus = true;
-  router.push({ name: "status-add" });
-};
+  popup.addEditStatus = true
+  router.push({ name: 'status-add' })
+}
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
     `${import.meta.env.VITE_BASE_URL}/statuses`,
     newStatus
-  );
-  const addedStatus = await res.json();
+  )
+  const addedStatus = await res.json()
   const existStatus = statusStore.getStatuses.find(
     (statusData) => statusData.name === newStatus.name
-  );
+  )
 
   if (res.status === 201) {
-    statusStore.addStatus(addedStatus);
+    statusStore.addStatus(addedStatus)
     toast.add({
-      severity: "success",
-      summary: "Success",
-      detail: "The status added successfully.",
-      life: 3000,
-    });
-    router.push({ name: "status" });
-    popup.addEditStatus = false;
-    clearValue();
+      severity: 'success',
+      summary: 'Success',
+      detail: 'The status added successfully.',
+      life: 3000
+    })
+    router.push({ name: 'status' })
+    popup.addEditStatus = false
+    clearValue()
   } else if (existStatus) {
     toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "The status already exists. Please try another name.",
-      life: 3000,
-    });
+      severity: 'error',
+      summary: 'Error',
+      detail: 'The status already exists. Please try another name.',
+      life: 3000
+    })
   } else {
     toast.add({
-      severity: "error",
-      summary: "Error",
+      severity: 'error',
+      summary: 'Error',
       detail: `An error occurred adding the task "${newStatus.name}".`,
-      life: 3000,
-    });
+      life: 3000
+    })
   }
-};
+}
 const closeAddEdit = () => {
-  popup.addEditStatus = false;
-  router.push({ name: "status" });
-};
-
-
-
-
-// const selectedStatus = ref({})
-const allStatus = ref([])
-
+  popup.addEditStatus = false
+  router.push({ name: 'status' })
+}
 
 const openConfirmDelete = async (id) => {
   selectedStatus.value = await fetchAllStatus(
@@ -128,7 +116,7 @@ const openConfirmDelete = async (id) => {
 }
 
 const removeStatus = async (id) => {
-  const statuses = taskStore.getTasks.map(item =>  item.status.toLowerCase());
+  const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase())
 
   const transferOrdelete = ref(
     statuses.includes(selectedStatus.value.name.toLowerCase())
@@ -274,7 +262,6 @@ const closeConfirmDelete = () => {
     ></DeleteStatus>
     <Transfer
       v-if="popup.transferConfirm"
-      :allStatus="allStatus"
       @transferStatus="transferStatus"
       @closeDelete="closeConfirmDelete"
     >
