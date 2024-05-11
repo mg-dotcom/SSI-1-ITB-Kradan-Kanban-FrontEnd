@@ -33,7 +33,7 @@ const router = createRouter({
       ],
     },
     {
-      path: "/status/manage",
+      path: "/status",
       name: "status",
       component: Status,
       children: [

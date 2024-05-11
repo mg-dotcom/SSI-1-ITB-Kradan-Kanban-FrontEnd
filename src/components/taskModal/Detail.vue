@@ -2,6 +2,9 @@
 import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "../button/Button.vue";
 import StatusButton from "../button/StatusButton.vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
+
+const statusStore = useStatusStore();
 
 const emit = defineEmits(["closeDetail"]);
 
@@ -14,47 +17,46 @@ const props = defineProps({
 <template>
   <ModalDetail :selectedTask="selectedTask">
     <template #title>
-      <div :title="props.selectedTask.title" class="itbkk-title truncate">
-        {{ props.selectedTask.title }}
+      <div :title="selectedTask.title" class="itbkk-title truncate">
+        {{ selectedTask.title }}
       </div>
     </template>
     <template #desc>
       <div class="itbkk-description">
         {{
-          !props.selectedTask.description
+          !selectedTask.description
             ? "No Description Provided"
-            : props.selectedTask.description
+            : selectedTask.description
         }}
       </div>
     </template>
     <template #assignees>
       <div class="itbkk-assignees">
-        {{
-          !props.selectedTask.assignees
-            ? "Unassigned"
-            : props.selectedTask.assignees
-        }}
+        {{ !selectedTask.assignees ? "Unassigned" : selectedTask.assignees }}
       </div>
     </template>
     <template #status>
       <div class="itbkk-status">
-        <StatusButton>
-          {{ props.selectedTask.status }}
+        <StatusButton
+          :statusName="selectedTask.status"
+          :statusColor="statusStore.getStatusColor(selectedTask.status)"
+        >
+          {{ selectedTask.status }}
         </StatusButton>
       </div>
     </template>
-    <template #Time>
+    <template #time>
       <div class="pt-28">
         <div class="itbkk-timezone">
           <span class="font-semibold">TimeZone</span> : {{ localTimeZone }}
         </div>
         <div class="itbkk-created-on">
           <span class="font-semibold">Created On</span> :
-          {{ props.selectedTask.createdOn }}
+          {{ selectedTask.createdOn }}
         </div>
         <div class="itbkk-updated-on">
           <span class="font-semibold">Updated On</span> :
-          {{ props.selectedTask.updatedOn }}
+          {{ selectedTask.updatedOn }}
         </div>
       </div>
     </template>

@@ -47,7 +47,7 @@ const props = defineProps({
               <slot name="assignees">Unassigned</slot>
             </div>
             <p class="font-semibold mb-2">Status</p>
-            <div class="lg:w-[230px] sm:w-[200px] text-sm">
+            <div class="lg:w-[230px] sm:w-[200px] text-lg">
               <slot name="status"> </slot>
             </div>
             <div class="flex flex-col lg:w-[230px] sm:w-[200px] text-[13px]">
