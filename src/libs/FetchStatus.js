@@ -1,4 +1,4 @@
-async function fetchAllStatus(url) {
+const fetchAllStatus = async (url) => {
   try {
     const data = await fetch(`${url}`)
     const res = await data.json()
@@ -8,11 +8,10 @@ async function fetchAllStatus(url) {
   }
 }
 
-
 const deleteStatus = async (url) => {
   try {
-    const res = await fetch(`${url}`,{
-      method: "DELETE",
+    const res = await fetch(`${url}`, {
+      method: 'DELETE'
     })
     return res.status
   } catch (error) {
@@ -20,50 +19,42 @@ const deleteStatus = async (url) => {
   }
 }
 
-async function addStatus(url, newStatus) {
+const addStatus = async (url, newStatus) => {
   try {
     const res = await fetch(`${url}`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "content-type": "application/json",
+        'content-type': 'application/json'
       },
       body: JSON.stringify({
         name: newStatus.name,
         description: newStatus.description,
-        statusColor: newStatus.color,
-      }),
-    });
-    return res;
+        statusColor: newStatus.color
+      })
+    })
+    return res
   } catch (error) {
-    console.log(`error: ${error}`);
+    console.log(`error: ${error}`)
   }
 }
 
-
-
-async function updateStatus(url, statusId, updatedStatus) {
+const updateStatus = async (url, statusId, updatedStatus) => {
   try {
     const res = await fetch(`${url}/${statusId}`, {
-      method: "PUT",
+      method: 'PUT',
       headers: {
-        "content-type": "application/json",
+        'content-type': 'application/json'
       },
       body: JSON.stringify({
         name: updatedStatus.name,
         description: updatedStatus.description,
-        statusColor: updatedStatus.color,
-      }),
-    });
-    return res;
+        statusColor: updatedStatus.color
+      })
+    })
+    return res
   } catch (error) {
-    console.log(`error: ${error}`);
+    console.log(`error: ${error}`)
   }
 }
 
-// if (!data.ok) {
-//   alert("The requested task does not exist");
-//   router.push("/");
-//   return;
-// }
-export { fetchAllStatus, addStatus, updateStatus ,deleteStatus };
-
+export { fetchAllStatus, addStatus, updateStatus, deleteStatus }

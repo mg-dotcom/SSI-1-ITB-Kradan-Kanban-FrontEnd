@@ -153,7 +153,7 @@ const openConfirmDelete = async (id) => {
     `${import.meta.env.VITE_BASE_URL}/statuses/${id}`
   );
   const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase());
-  const transferOrdelete = ref(statuses.includes(selectedStatus.value.name));
+  const transferOrdelete = ref(statuses.includes(selectedStatus.value.name.toLowerCase()));
   if (transferOrdelete.value) {
     popup.transferConfirm = true;
   } else {
