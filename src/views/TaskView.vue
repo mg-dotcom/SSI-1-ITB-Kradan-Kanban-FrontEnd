@@ -20,9 +20,8 @@ import { useStatusStore } from "../stores/StatusStore.js";
 import Toast from "primevue/toast";
 import HomeText from "../components/HomeText.vue";
 import { fetchAllStatus } from "../libs/FetchStatus";
-import { watch } from "vue";
-import { watchEffect } from "vue";
-
+const STATUS_ENDPOINT='v2/statues'
+const TASK_ENDPOINT='v1/tasks'
 const toast = useToast();
 const router = useRouter();
 const route = useRoute();
@@ -48,11 +47,11 @@ onMounted(async () => {
 
   if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
     const allTasks = await fetchAllTasks(
-      `${import.meta.env.VITE_BASE_URL}/tasks`
+      `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
     );
     taskStore.addAllTasks(allTasks);
     const allStatus = await fetchAllStatus(
-      `${import.meta.env.VITE_BASE_URL}/statuses`
+      `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
     );
     statusStore.addAllStatuses(allStatus);
   }
@@ -95,7 +94,7 @@ function formatDate(date) {
 
 const openDetail = async (id) => {
   const taskDetails = await fetchTaskDetails(
-    `${import.meta.env.VITE_BASE_URL}/tasks`,
+    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
     id
   );
   if (taskDetails === undefined) {
@@ -130,7 +129,7 @@ const openAdd = () => {
 };
 
 const addNewTask = async (task) => {
-  const res = await addTask(`${import.meta.env.VITE_BASE_URL}/tasks`, task);
+  const res = await addTask(`${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`, task);
   const addedTask = await res.json();
   taskStore.addTask(addedTask);
   // tasks.value.addTask(addedTask);
@@ -159,7 +158,7 @@ const addNewTask = async (task) => {
 
 const editTask = async (task) => {
   const res = await updatedTask(
-    `${import.meta.env.VITE_BASE_URL}/tasks`,
+    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
     task,
     selectedTask.value.id
   );
@@ -188,7 +187,7 @@ const editTask = async (task) => {
 
 const editTaskModal = async (id) => {
   const taskDetails = await fetchTaskDetails(
-    `${import.meta.env.VITE_BASE_URL}/tasks`,
+    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
     id
   );
   if (taskDetails === undefined) {
@@ -230,7 +229,7 @@ const openDelete = (id, index) => {
 
 const deleteData = async (id) => {
   const statusCode = await deleteTask(
-    `${import.meta.env.VITE_BASE_URL}/tasks`,
+    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
     id
   );
   const taskValue = taskStore.getTasksById(id);

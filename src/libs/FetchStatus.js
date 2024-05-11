@@ -8,9 +8,19 @@ const fetchAllStatus = async (url) => {
   }
 }
 
-const deleteStatus = async (url) => {
+const fetchStatusById = async (url, id) => {
   try {
-    const res = await fetch(`${url}`, {
+    const data = await fetch(`${url}/${id}`)
+    const res = await data.json()
+    return res
+  } catch (error) {
+    console.log(`error: ${error}`)
+  }
+}
+
+const deleteStatus = async (url,id) => {
+  try {
+    const res = await fetch(`${url}/${id}`, {
       method: 'DELETE'
     })
     return res.status
@@ -38,9 +48,9 @@ const addStatus = async (url, newStatus) => {
   }
 }
 
-const updateStatus = async (url, statusId, updatedStatus) => {
+const updateStatus = async (url, id, updatedStatus) => {
   try {
-    const res = await fetch(`${url}/${statusId}`, {
+    const res = await fetch(`${url}/${id}`, {
       method: 'PUT',
       headers: {
         'content-type': 'application/json'
@@ -57,4 +67,10 @@ const updateStatus = async (url, statusId, updatedStatus) => {
   }
 }
 
-export { fetchAllStatus, addStatus, updateStatus, deleteStatus }
+export {
+  fetchAllStatus,
+  fetchStatusById,
+  addStatus,
+  updateStatus,
+  deleteStatus
+}

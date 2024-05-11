@@ -11,12 +11,15 @@ import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import {
   fetchAllStatus,
+  fetchStatusById,
   addStatus,
   deleteStatus,
   updateStatus,
 } from "../libs/FetchStatus.js";
 import { fetchAllTasks } from "../libs/FetchTask";
 import { useTaskStore } from "../stores/TaskStore";
+const STATUS_ENDPOINT='v2/statues'
+const TASK_ENDPOINT='v1/tasks'
 
 const toast = useToast();
 const router = useRouter();
@@ -25,11 +28,11 @@ const taskStore = useTaskStore();
 onMounted(async () => {
   if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
     const allTasks = await fetchAllTasks(
-      `${import.meta.env.VITE_BASE_URL}/tasks`
+      `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
     );
     taskStore.addAllTasks(allTasks);
     const allStatus = await fetchAllStatus(
-      `${import.meta.env.VITE_BASE_URL}/statuses`
+      `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
     );
     statusStore.addAllStatuses(allStatus);
   }
@@ -68,7 +71,7 @@ const openAddNewStatus = () => {
 };
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
-    `${import.meta.env.VITE_BASE_URL}/statuses`,
+    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
     newStatus
   );
   const addedStatus = await res.json();
@@ -108,7 +111,7 @@ const addNewStatus = async (newStatus) => {
 
 const editStatus = async (status) => {
   const res = await updateStatus(
-    `${import.meta.env.VITE_BASE_URL}/statuses`,
+    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
     selectedStatus.value.id,
     status
   );
@@ -149,9 +152,8 @@ const closeAddEdit = () => {
 };
 
 const openConfirmDelete = async (id) => {
-  selectedStatus.value = await fetchAllStatus(
-    `${import.meta.env.VITE_BASE_URL}/statuses/${id}`
-  );
+  selectedStatus.value = await fetchStatusById(
+    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,id);
   const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase());
   const transferOrdelete = ref(statuses.includes(selectedStatus.value.name.toLowerCase()));
   if (transferOrdelete.value) {
@@ -162,7 +164,7 @@ const openConfirmDelete = async (id) => {
 };
 
 const removeStatus = async (id) => {
-  await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`);
+  await deleteStatus(`${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,id);
   popup.deleteConfirm = false;
   console.log("successful");
   clearValue();
@@ -173,8 +175,7 @@ const transferStatus = async (id) => {
   const newStatus = statusStore.getStatusById(id);
   taskStore.transferTasksStatus(selectedStatus.value.name, newStatus.name);
   const statusCode = await deleteStatus(
-    `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
-  );
+    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${selectedStatus.value.id}`,id);
   if (statusCode === 200) {
     statusStore.removeStatus(selectedStatus.value.id);
     console.log("successful");
