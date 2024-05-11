@@ -1,14 +1,14 @@
 <script setup>
-import buttonSubmit from '../components/button/Button.vue'
-import HomeText from '../components/HomeText.vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useStatusStore } from '../stores/StatusStore.js'
-import { onMounted, reactive, ref } from 'vue'
-import AddEditStatus from '../components/statusModal/AddEditStatus.vue'
-import { useToast } from 'primevue/usetoast'
-import StatusButton from '../components/button/StatusButton.vue'
-import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
-import Transfer from '../components/confirmModal/Transfer.vue'
+import buttonSubmit from "../components/button/Button.vue";
+import HomeText from "../components/HomeText.vue";
+import { useRouter, useRoute } from "vue-router";
+import { useStatusStore } from "../stores/StatusStore.js";
+import { onMounted, reactive, ref } from "vue";
+import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
+import { useToast } from "primevue/usetoast";
+import StatusButton from "../components/button/StatusButton.vue";
+import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
+import Transfer from "../components/confirmModal/Transfer.vue";
 import {
   fetchAllStatus,
   fetchStatusById,
@@ -18,17 +18,13 @@ import {
 } from "../libs/FetchStatus.js";
 import { fetchAllTasks } from "../libs/FetchTask";
 import { useTaskStore } from "../stores/TaskStore";
+const router = useRouter();
 const STATUS_ENDPOINT = "v2/statuses";
 const TASK_ENDPOINT = "v1/tasks";
 
-const toast = useToast();
-const route = useRoute();
-const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
-
-
-const statusId = route.params.id
+const toast = useToast();
 
 onMounted(async () => {
   if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
@@ -78,10 +74,10 @@ const popup = reactive({
 });
 
 const openAddNewStatus = () => {
-  clearValue()
-  popup.addEditStatus = true
-  router.push({ name: 'status-add' })
-}
+  clearValue();
+  popup.addEditStatus = true;
+  router.push({ name: "status-add" });
+};
 
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
@@ -130,6 +126,7 @@ const editStatus = async (status) => {
     selectedStatus.value.id,
     status
   );
+  console.log(status);
   if (res.status === 200) {
     const editedStatus = await res.json();
     statusStore.editStatus(editedStatus.id, editedStatus);
@@ -168,18 +165,18 @@ const editStatusModal = (id) => {
 // }
 
 const closeAddEdit = () => {
-  popup.addEditStatus = false
-  router.push({ name: 'status' })
+  popup.addEditStatus = false;
+  router.push({ name: "status" });
   // selectedStatus.value.id = "";
   // clearValue();
-}
+};
 
 const openConfirmDelete = async (id) => {
   selectedStatus.value = await fetchStatusById(
     `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
     id
-  )
-  console.log(selectedStatus.value)
+  );
+  console.log(selectedStatus.value);
   if (selectedStatus.value.status === 404) {
     //no status found
     toast.add({
@@ -277,7 +274,7 @@ const closeConfirmDelete = () => {
         <a
           class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
           @click="router.push({ name: 'task' })"
-          >
+        >
           Home&nbsp;</a
         >
         <p class="">></p>
@@ -396,8 +393,7 @@ const closeConfirmDelete = () => {
     v-if="popup.addEditStatus"
     :selectedStatus="selectedStatus"
     :localTimeZone="localTimeZone"
-    :popup="popup"
-    @closeAddOrEdit="closeAddOrEdit"
+    @closeAddEdit="closeAddEdit"
     @addNewStatus="addNewStatus"
     @editStatus="editStatus"
   ></AddEditStatus>
