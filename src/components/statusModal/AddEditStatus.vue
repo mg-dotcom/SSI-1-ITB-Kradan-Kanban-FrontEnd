@@ -1,55 +1,55 @@
 <script setup>
-import StatusModal from "./StatusModal.vue";
-import buttonSubmit from "../button/Button.vue";
-import { defineEmits, defineProps, computed, ref } from "vue";
-import { reactive } from "vue";
-import { useRouter, useRoute } from "vue-router";
+import StatusModal from './StatusModal.vue'
+import buttonSubmit from '../button/Button.vue'
+import { defineEmits, defineProps, computed, ref } from 'vue'
+import { reactive } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
-const router = useRouter();
+const router = useRouter()
 
 const props = defineProps({
   selectedStatus: Object,
-  localTimeZone: String,
-});
+  localTimeZone: String
+})
 
 const status = reactive({
   name: props.selectedStatus.name,
   description: props.selectedStatus.description,
-  color: props.selectedStatus.color,
-});
+  color: props.selectedStatus.color
+})
 
-console.log(status);
+console.log(status)
 
 const oldStatus = {
   name: props.selectedStatus.name,
   description: props.selectedStatus.description,
-  color: props.selectedStatus.color,
-};
+  color: props.selectedStatus.color
+}
 
 const isStatusEdited = computed(() => {
   return (
     status.name !== oldStatus.name ||
     status.description !== oldStatus.description ||
     status.color !== oldStatus.color
-  );
-});
+  )
+})
 
 const save = () => {
-  if (props.selectedStatus.id !== "" && isStatusEdited.value === true) {
-    emit("editStatus", status);
-    router.push({ name: "status" });
-  } else if (props.selectedStatus.id === "") {
-    emit("addNewStatus", status);
+  if (props.selectedStatus.id !== '' && isStatusEdited.value === true) {
+    emit('editStatus', status)
+    router.push({ name: 'status' })
+  } else if (props.selectedStatus.id === '') {
+    emit('addNewStatus', status)
   }
-};
+}
 
-const emit = defineEmits(["closeAddEdit", "editStatus", "addNewStatus"]);
+const emit = defineEmits(['closeAddEdit', 'editStatus', 'addNewStatus'])
 </script>
 
 <template>
   <StatusModal>
     <template #title>
-      {{ selectedStatus.id === "" ? "New Task" : "Edit Task" }}
+      {{ selectedStatus.id === '' ? 'New Status' : 'Edit Status' }}
     </template>
     <template #name>
       <input
@@ -89,7 +89,6 @@ const emit = defineEmits(["closeAddEdit", "editStatus", "addNewStatus"]);
       <buttonSubmit buttonType="cancel" @click="$emit('closeAddEdit')"
         >Cancel</buttonSubmit
       >
-
     </template>
     <template #button-right>
       <buttonSubmit

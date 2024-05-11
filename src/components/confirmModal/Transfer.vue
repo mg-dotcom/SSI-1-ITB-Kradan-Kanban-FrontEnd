@@ -15,6 +15,7 @@ const statusStore = useStatusStore()
 const filteredStatuses = statusStore.getStatuses.filter(status => status.id !== props.selectedStatus.id);
 
 const transferTo=ref('')
+console.log(transferTo.value);
 
 </script>
 
@@ -47,7 +48,15 @@ const transferTo=ref('')
       <submitButton buttonType="cancel" @click="$emit('closeDelete')">Cancel</submitButton>
     </template>
     <template #button-right>
-      <submitButton buttonType="ok" @click="$emit('transferStatus',transferTo)">Confirm</submitButton>
+      <submitButton 
+      buttonType="ok" @click="$emit('transferStatus',transferTo)"
+      :disabled="transferTo === ''"
+      :class="
+          transferTo === ''
+            ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
+            : ''
+        "
+      >Transfer</submitButton>
     </template>
   </ConfirmModal>
 </template>

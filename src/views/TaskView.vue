@@ -277,7 +277,7 @@ const deleteData = async (id) => {
 
           <buttonSubmit
             buttonType="manage-status"
-            class="flex gap-x-2"
+            class="itbkk-manage-status flex gap-x-2"
             @click="router.push({ name: 'status' })"
           >
             <img src="../assets/status-list.svg" alt="" class="w-5" /> Manage

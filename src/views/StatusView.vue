@@ -1,196 +1,259 @@
 <script setup>
-import buttonSubmit from "../components/button/Button.vue";
-import HomeText from "../components/HomeText.vue";
-import { useRouter } from "vue-router";
-import { useStatusStore } from "../stores/StatusStore.js";
-import { onMounted, reactive, ref } from "vue";
-import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
-import { useToast } from "primevue/usetoast";
-import StatusButton from "../components/button/StatusButton.vue";
-import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
-import Transfer from "../components/confirmModal/Transfer.vue";
+import buttonSubmit from '../components/button/Button.vue'
+import HomeText from '../components/HomeText.vue'
+import { useRouter } from 'vue-router'
+import { useStatusStore } from '../stores/StatusStore.js'
+import { onMounted, reactive, ref } from 'vue'
+import AddEditStatus from '../components/statusModal/AddEditStatus.vue'
+import { useToast } from 'primevue/usetoast'
+import StatusButton from '../components/button/StatusButton.vue'
+import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
+import Transfer from '../components/confirmModal/Transfer.vue'
 import {
   fetchAllStatus,
   fetchStatusById,
   addStatus,
   deleteStatus,
-  updateStatus,
-} from "../libs/FetchStatus.js";
-import { fetchAllTasks } from "../libs/FetchTask";
-import { useTaskStore } from "../stores/TaskStore";
-const STATUS_ENDPOINT='v2/statuses'
-const TASK_ENDPOINT='v1/tasks'
+  updateStatus
+} from '../libs/FetchStatus.js'
+import { fetchAllTasks } from '../libs/FetchTask'
+import { useTaskStore } from '../stores/TaskStore'
+const STATUS_ENDPOINT = 'v2/statuses'
+const TASK_ENDPOINT = 'v1/tasks'
 
-const toast = useToast();
-const router = useRouter();
-const statusStore = useStatusStore();
-const taskStore = useTaskStore();
+const toast = useToast()
+const router = useRouter()
+const statusStore = useStatusStore()
+const taskStore = useTaskStore()
 onMounted(async () => {
   if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
     const allTasks = await fetchAllTasks(
       `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
-    );
-    taskStore.addAllTasks(allTasks);
+    )
+    taskStore.addAllTasks(allTasks)
     const allStatus = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
-    );
-    statusStore.addAllStatuses(allStatus);
+    )
+    statusStore.addAllStatuses(allStatus)
   }
-});
+})
 
 const selectedStatus = ref({
-  id: "",
-  name: "",
-  description: "",
-  color: "#CCCCCC",
-  createdOn: "",
-  updatedOn: "",
-});
+  id: '',
+  name: '',
+  description: '',
+  color: '#CCCCCC',
+  createdOn: '',
+  updatedOn: ''
+})
 
 const clearValue = () => {
-  selectedStatus.value.id = "";
-  selectedStatus.value.name = "";
-  selectedStatus.value.description = "";
-  selectedStatus.value.color = "#CCCCCC";
-  selectedStatus.value.createdOn = "";
-  selectedStatus.value.updatedOn = "";
-};
+  selectedStatus.value.id = ''
+  selectedStatus.value.name = ''
+  selectedStatus.value.description = ''
+  selectedStatus.value.color = '#CCCCCC'
+  selectedStatus.value.createdOn = ''
+  selectedStatus.value.updatedOn = ''
+}
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+
+function formatDate(date) {
+  const d = new Date(date)
+  return d
+    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
+    .split(',')
+    .join(' ')
+}
 
 const popup = reactive({
   addEditStatus: false,
   deleteConfirm: false,
-  transferConfirm: false,
-});
+  transferConfirm: false
+})
 
 const openAddNewStatus = () => {
-  console.log("openAddNewStatus");
-  popup.addEditStatus = true;
-  router.push({ name: "status-add" });
-};
+  clearValue()
+  popup.addEditStatus = true
+  router.push({ name: 'status-add' })
+}
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
     `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
     newStatus
-  );
-  const addedStatus = await res.json();
+  )
+  const addedStatus = await res.json()
   const existStatus = statusStore.getStatuses.find(
     (statusData) => statusData.name === newStatus.name
-  );
+  )
 
   if (res.status === 201) {
-    statusStore.addStatus(addedStatus);
+    statusStore.addStatus(addedStatus)
     toast.add({
-      severity: "success",
-      summary: "Success",
-      detail: "The status added successfully.",
-      life: 3000,
-    });
-    router.push({ name: "status" });
-    popup.addEditStatus = false;
-    clearValue();
+      severity: 'success',
+      summary: 'Success',
+      detail: 'The status added successfully.',
+      life: 3000
+    })
+    router.push({ name: 'status' })
+    popup.addEditStatus = false
+    clearValue()
   } else if (existStatus) {
     toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "The status already exists. Please try another name.",
-      life: 3000,
-    });
-    router.push({ name: "status" });
+      severity: 'error',
+      summary: 'Error',
+      detail: 'The status already exists. Please try another name.',
+      life: 3000
+    })
+
+    router.push({ name: 'status' })
   } else {
     toast.add({
-      severity: "error",
-      summary: "Error",
+      severity: 'error',
+      summary: 'Error',
       detail: `An error occurred adding the task "${newStatus.name}".`,
-      life: 3000,
-    });
-    router.push({ name: "status" });
+      life: 3000
+    })
+    router.push({ name: 'status' })
   }
-};
+}
 
 const editStatus = async (status) => {
   const res = await updateStatus(
     `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
     selectedStatus.value.id,
     status
-  );
-  console.log(status);
+  )
+  console.log(status)
   if (res.status === 200) {
-    const editedStatus = await res.json();
-    statusStore.editStatus(editedStatus.id, editedStatus);
+    const editedStatus = await res.json()
+    statusStore.editStatus(editedStatus.id, editedStatus)
     toast.add({
-      severity: "success",
-      summary: "Success",
+      severity: 'success',
+      summary: 'Success',
       detail: `The Status has been updated.`,
-      life: 3000,
-    });
-    clearValue();
-    router.push({ name: "status" });
+      life: 3000
+    })
+    clearValue()
+    router.push({ name: 'status' })
   } else {
     toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: `The update was unsuccessful.`,
-      life: 3000,
-    });
-    router.push({ name: "status" });
+      severity: 'error',
+      summary: 'Error',
+      detail: `An error occurred, the status does not exist.`,
+      life: 3000
+    })
+    router.push({ name: 'status' })
   }
-  popup.addEditStatus = false;
-};
+  popup.addEditStatus = false
+}
 
 const editStatusModal = (id) => {
-  const toUpdateStatus = statusStore.getStatusById(id);
-  selectedStatus.value = toUpdateStatus;
-  popup.addEditStatus = true;
-  router.push({ name: "status-edit", params: { id: id } });
-};
+  const toUpdateStatus = statusStore.getStatusById(id)
+  selectedStatus.value = toUpdateStatus
+  selectedStatus.value.createdOn = formatDate(toUpdateStatus.createdOn)
+  selectedStatus.value.updatedOn = formatDate(toUpdateStatus.updatedOn)
+  popup.addEditStatus = true
+  router.push({ name: 'status-edit', params: { id: id } })
+}
 
 const closeAddEdit = () => {
-  popup.addEditStatus = false;
-  router.push({ name: "status" });
-};
+  popup.addEditStatus = false
+  router.push({ name: 'status' })
+  // selectedStatus.value.id = "";
+  // clearValue();
+}
 
 const openConfirmDelete = async (id) => {
   selectedStatus.value = await fetchStatusById(
-    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,id);
-  const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase());
-  const transferOrdelete = ref(statuses.includes(selectedStatus.value.name.toLowerCase()));
-  if (transferOrdelete.value) {
-    popup.transferConfirm = true;
-  } else {
-    popup.deleteConfirm = true;
+    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
+    id
+  )
+  console.log(selectedStatus.value)
+  if (selectedStatus.value.status === 404) { //no status found
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `An error occurred, the status does not exist.`,
+      life: 3000
+    })
+    return
   }
-};
+  const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase())
+  const transferOrdelete = ref(
+    statuses.includes(selectedStatus.value.name.toLowerCase())
+  )
+  if (transferOrdelete.value) {
+    popup.transferConfirm = true
+  } else {
+    popup.deleteConfirm = true
+  }
+}
 
 const removeStatus = async (id) => {
-  await deleteStatus(`${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,id);
-  popup.deleteConfirm = false;
-  console.log("successful");
-  clearValue();
-  statusStore.removeStatus(id);
-};
+  const statusCode = await deleteStatus(
+    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
+    id
+  )
+  popup.deleteConfirm = false
+  console.log('successful')
+  console.log(statusCode)
+  if (statusCode === 200) {
+    statusStore.removeStatus(id)
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: `The Status has been deleted.`,
+      life: 3000
+    })
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `An error occurred, the status does not exist.`,
+      life: 3000
+    })
+  }
+  clearValue()
+  statusStore.removeStatus(id)
+}
 
 const transferStatus = async (id) => {
-  const newStatus = statusStore.getStatusById(id);
-  taskStore.transferTasksStatus(selectedStatus.value.name, newStatus.name);
+  const newStatus = statusStore.getStatusById(id)
+  taskStore.transferTasksStatus(selectedStatus.value.name, newStatus.name)
   const statusCode = await deleteStatus(
-    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${selectedStatus.value.id}`,id);
+    `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${
+      selectedStatus.value.id
+    }`,
+    id
+  )
   if (statusCode === 200) {
-    statusStore.removeStatus(selectedStatus.value.id);
-    console.log("successful");
-    clearValue();
-    popup.transferConfirm = false;
+    statusStore.removeStatus(selectedStatus.value.id)
+    console.log('successful')
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: `The task have been transferred and the status has been deleted.`,
+      life: 3000
+    })
+    clearValue()
+    popup.transferConfirm = false
   } else {
-    console.log("Can not transfer");
+    console.log('Can not transfer')
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `An error occurred, the status does not exist.`,
+      life: 3000
+    })
   }
-};
+}
 
 const closeConfirmDelete = () => {
-  popup.deleteConfirm = false;
-  popup.transferConfirm = false;
-  clearValue();
-};
+  popup.deleteConfirm = false
+  popup.transferConfirm = false
+  clearValue()
+}
 </script>
 
 <template>
@@ -198,7 +261,7 @@ const closeConfirmDelete = () => {
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
       <div
-        class="text-xl font-bold flex items-center text-blue"
+        class="itbkk-button-home text-xl font-bold flex items-center text-blue"
         @click="router.push({ name: 'task' })"
       >
         <HomeText />
