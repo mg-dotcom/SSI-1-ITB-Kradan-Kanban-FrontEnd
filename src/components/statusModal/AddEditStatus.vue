@@ -71,12 +71,12 @@ const emit = defineEmits(['closeAddEdit', 'editStatus', 'addNewStatus'])
       <textarea
         maxlength="200"
         v-model.trim="status.description"
-        :class="selectedStatus.id == '' ? 'h-[241px]' : 'h-44'"
+        :class="selectedStatus.id == '' ? 'h-[241px]' : 'h-52'"
         class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full"
       ></textarea>
     </template>
     <template #time>
-      <div class="pt-6" :class="selectedStatus.id == '' ? 'hidden' : 'visible'">
+      <div class="pt-5" :class="selectedStatus.id == '' ? 'hidden' : 'visible'">
         <span class="itbkk-timezone font-semibold">TimeZone</span> :
         {{ localTimeZone }} <br />
         <span class="itbkk-created-on font-semibold">Created On</span> :

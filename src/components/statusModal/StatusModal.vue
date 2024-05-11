@@ -35,7 +35,7 @@ import buttonSubmit from "../button/Button.vue";
               <slot name="desc"> </slot>
             </div>
           </div>
-          <div class="font-semibold text-sm">
+          <div class="text-sm">
             <slot name="time"></slot>
           </div>
         </div>
