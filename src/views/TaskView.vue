@@ -1,281 +1,258 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
-import { initFlowbite, initDropdowns } from 'flowbite'
-import Detail from '../components/taskModal/Detail.vue'
-import AddEditTask from '../components/taskModal/AddEditTask.vue'
-import StatusButton from '../components/button/StatusButton.vue'
+import { onMounted, reactive, ref } from "vue";
+import { initFlowbite, initDropdowns } from "flowbite";
+import Detail from "../components/taskModal/Detail.vue";
+import AddEditTask from "../components/taskModal/AddEditTask.vue";
+import StatusButton from "../components/button/StatusButton.vue";
 import {
   fetchAllTasks,
   fetchTaskDetails,
   addTask,
   deleteTask,
-  updatedTask
-} from '../libs/FetchTask.js'
-import DeleteModal from '../components/confirmModal/DeleteTask.vue'
-import { useRouter, useRoute } from 'vue-router'
-import buttonSubmit from '../components/button/Button.vue'
-import { useToast } from 'primevue/usetoast'
-import { useTaskStore } from '../stores/TaskStore.js'
-import { useStatusStore } from '../stores/StatusStore.js'
-import Toast from 'primevue/toast'
-import HomeText from '../components/HomeText.vue'
-import { fetchAllStatus } from '../libs/FetchStatus'
-import { watch } from 'vue'
+  updatedTask,
+} from "../libs/FetchTask.js";
+import DeleteModal from "../components/confirmModal/DeleteTask.vue";
+import { useRouter, useRoute } from "vue-router";
+import buttonSubmit from "../components/button/Button.vue";
+import { useToast } from "primevue/usetoast";
+import { useTaskStore } from "../stores/TaskStore.js";
+import { useStatusStore } from "../stores/StatusStore.js";
+import Toast from "primevue/toast";
+import HomeText from "../components/HomeText.vue";
+import { fetchAllStatus } from "../libs/FetchStatus";
 
-const toast = useToast()
-const router = useRouter()
-const route = useRoute()
+const toast = useToast();
+const router = useRouter();
+const route = useRoute();
 const selectedTask = ref({
-  id: '',
-  title: '',
-  description: '',
-  assignees: '',
-  status: 'No Status',
-  createdOn: '',
-  updatedOn: ''
-})
+  id: "",
+  title: "",
+  description: "",
+  assignees: "",
+  status: "No Status",
+  createdOn: "",
+  updatedOn: "",
+});
 
-const taskStore = useTaskStore()
+const taskStore = useTaskStore();
 
-const statusStore = useStatusStore()
+const statusStore = useStatusStore();
 
-const taskId = route.params.id
+const taskId = route.params.id;
 
 onMounted(async () => {
-  initFlowbite()
-  initDropdowns()
+  initFlowbite();
+  initDropdowns();
 
   if (taskStore.getTasks.length === 0) {
     const allTasks = await fetchAllTasks(
       `${import.meta.env.VITE_BASE_URL}/tasks`
-    )
-    taskStore.addAllTasks(allTasks)
+    );
+    taskStore.addAllTasks(allTasks);
   }
 
   if (statusStore.getStatuses.length === 0) {
     const allStatus = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}/statuses`
-    )
-    statusStore.addAllStatuses(allStatus)
+    );
+    statusStore.addAllStatuses(allStatus);
   }
-})
-
-watch(
-  () => route,
-  (newPath, oldPath) => {
-    if (newPath === '/task' && oldPath !== '/task') {
-      console.log('test')
-      // if (taskStore.getTasks.length === 0) {
-      //   const allTasks = await fetchAllTasks(
-      //     `${import.meta.env.VITE_BASE_URL}/tasks`
-      //   )
-      //   taskStore.addAllTasks(allTasks)
-      // }
-
-      // if (statusStore.getStatuses.length === 0) {
-      //   const allStatus = await fetchAllStatus(
-      //     `${import.meta.env.VITE_BASE_URL}/statuses`
-      //   )
-      //   statusStore.addAllStatuses(allStatus)
-      // }
-    }
-  }
-)
+});
 
 const page = reactive({
-  task: true
-})
+  task: true,
+});
 
 const popup = reactive({
   addEdit: false,
   detail: false,
   optionEditDelete: false,
-  delete: false
-})
+  delete: false,
+});
 
 const clearValue = () => {
   selectedTask.value = {
-    id: '',
-    title: '',
-    description: '',
-    assignees: '',
-    status: 'No Status',
-    createdOn: '',
-    updatedOn: ''
-  }
-}
+    id: "",
+    title: "",
+    description: "",
+    assignees: "",
+    status: "No Status",
+    createdOn: "",
+    updatedOn: "",
+  };
+};
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 function formatDate(date) {
-  const d = new Date(date)
+  const d = new Date(date);
   return d
-    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
-    .split(',')
-    .join(' ')
+    .toLocaleString("en-GB", { timeZone: localTimeZone.value })
+    .split(",")
+    .join(" ");
 }
 
 const openDetail = async (id) => {
   const taskDetails = await fetchTaskDetails(
     `${import.meta.env.VITE_BASE_URL}/tasks`,
     id
-  )
+  );
   if (taskDetails === undefined) {
-    return
+    return;
   }
 
-  selectedTask.value = taskDetails
-  selectedTask.value.status = taskDetails.status.name
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
-  popup.detail = true
-  popup.optionEditDelete = false
-  router.push({ name: 'task-detail', params: { id: id } })
-}
+  selectedTask.value = taskDetails;
+  selectedTask.value.status = taskDetails.status.name;
+  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
+  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
+  popup.detail = true;
+  popup.optionEditDelete = false;
+  router.push({ name: "task-detail", params: { id: id } });
+};
 
 if (taskId) {
-  openDetail(taskId)
+  openDetail(taskId);
 }
 
 const closeDetail = () => {
-  popup.detail = false
-  popup.addEdit = false
-  clearValue()
-  router.push({ name: 'task' })
-}
+  popup.detail = false;
+  popup.addEdit = false;
+  clearValue();
+  router.push({ name: "task" });
+};
 
 const openAdd = () => {
-  clearValue()
-  popup.addEdit = true
-  popup.optionEditDelete = false
-  router.push({ name: 'task-add' })
-}
+  clearValue();
+  popup.addEdit = true;
+  popup.optionEditDelete = false;
+  router.push({ name: "task-add" });
+};
 
 const addNewTask = async (task) => {
-  const res = await addTask(`${import.meta.env.VITE_BASE_URL}/tasks`, task)
-  const addedTask = await res.json()
-  taskStore.addTask(addedTask)
+  const res = await addTask(`${import.meta.env.VITE_BASE_URL}/tasks`, task);
+  const addedTask = await res.json();
+  taskStore.addTask(addedTask);
   // tasks.value.addTask(addedTask);
   if (res.status === 201) {
     toast.add({
-      severity: 'success',
-      summary: 'Success',
+      severity: "success",
+      summary: "Success",
       detail: `The task "${addedTask.title}" is added successfully.`,
-      life: 3000
-    })
-    router.back()
-    clearValue()
+      life: 3000,
+    });
+    router.back();
+    clearValue();
   } else {
     toast.add({
-      severity: 'error',
-      summary: 'Error',
+      severity: "error",
+      summary: "Error",
       detail: `An error occurred adding the task "${addedTask.title}"`,
-      life: 3000
-    })
-    router.back()
-    clearValue()
+      life: 3000,
+    });
+    router.back();
+    clearValue();
   }
-  popup.addEdit = false
-  popup.optionEditDelete = false
-}
+  popup.addEdit = false;
+  popup.optionEditDelete = false;
+};
 
 const editTask = async (task) => {
   const res = await updatedTask(
     `${import.meta.env.VITE_BASE_URL}/tasks`,
     task,
     selectedTask.value.id
-  )
+  );
   if (res.status === 200) {
-    const editedTask = await res.json()
-    taskStore.editTask(editedTask.id, editedTask)
+    const editedTask = await res.json();
+    taskStore.editTask(editedTask.id, editedTask);
     toast.add({
-      severity: 'success',
-      summary: 'Success',
+      severity: "success",
+      summary: "Success",
       detail: `The task has been updated`,
-      life: 3000
-    })
-    router.push({ name: 'task' })
+      life: 3000,
+    });
+    router.push({ name: "task" });
   } else {
     toast.add({
-      severity: 'error',
-      summary: 'Error',
+      severity: "error",
+      summary: "Error",
       detail: `The update was unsuccessful`,
-      life: 3000
-    })
-    router.push({ name: 'task' })
+      life: 3000,
+    });
+    router.push({ name: "task" });
   }
-  popup.addEdit = false
-  popup.optionEditDelete = false
-}
+  popup.addEdit = false;
+  popup.optionEditDelete = false;
+};
 
 const editTaskModal = async (id) => {
   const taskDetails = await fetchTaskDetails(
     `${import.meta.env.VITE_BASE_URL}/tasks`,
     id
-  )
+  );
   if (taskDetails === undefined) {
-    return
+    return;
   }
-  selectedTask.value = taskDetails
+  selectedTask.value = taskDetails;
 
-  selectedTask.value.status = taskDetails.status.name
-  console.log(selectedTask.value.status)
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
-  popup.addEdit = true
-  popup.optionEditDelete = false
-  router.push({ name: 'task-edit', params: { id: id } })
-}
+  selectedTask.value.status = taskDetails.status.name;
+  console.log(selectedTask.value.status);
+  selectedTask.value.createdOn = formatDate(taskDetails.createdOn);
+  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn);
+  popup.addEdit = true;
+  popup.optionEditDelete = false;
+  router.push({ name: "task-edit", params: { id: id } });
+};
 
 const showOptionEditDelete = (taskId) => {
-  selectedTask.value.id = taskId
-  popup.detail = false
-  popup.optionEditDelete = !popup.optionEditDelete
-}
+  selectedTask.value.id = taskId;
+  popup.detail = false;
+  popup.optionEditDelete = !popup.optionEditDelete;
+};
 
 const closeDelete = () => {
-  popup.delete = false
-  popup.optionEditDelete = false
-  clearValue()
-}
+  popup.delete = false;
+  popup.optionEditDelete = false;
+  clearValue();
+};
 
-const selectedIndex = ref(0)
+const selectedIndex = ref(0);
 
 const openDelete = (id, index) => {
-  popup.delete = true
-  console.log(id, index)
-  const task = taskStore.getTasksById(id)
-  console.log(task)
-  selectedIndex.value = index
-  selectedTask.value = task
-}
+  popup.delete = true;
+  console.log(id, index);
+  const task = taskStore.getTasksById(id);
+  console.log(task);
+  selectedIndex.value = index;
+  selectedTask.value = task;
+};
 
 const deleteData = async (id) => {
   const statusCode = await deleteTask(
     `${import.meta.env.VITE_BASE_URL}/tasks`,
     id
-  )
-  const taskValue = taskStore.getTasksById(id)
-  const index = taskStore.getTasks.findIndex((task) => task.id === id)
+  );
+  const taskValue = taskStore.getTasksById(id);
+  const index = taskStore.getTasks.findIndex((task) => task.id === id);
   if (statusCode === 200) {
-    taskStore.removeTask(index)
+    taskStore.removeTask(index);
     toast.add({
-      severity: 'success',
-      summary: 'Success',
+      severity: "success",
+      summary: "Success",
       detail: `The task has been deleted`,
-      life: 3000
-    })
-    clearValue()
+      life: 3000,
+    });
+    clearValue();
   } else {
     toast.add({
-      severity: 'error',
-      summary: 'Error',
+      severity: "error",
+      summary: "Error",
       detail: `An error occurred deleting the task "${taskValue.title}"`,
-      life: 3000
-    })
+      life: 3000,
+    });
   }
-  closeDelete()
-}
+  closeDelete();
+};
 </script>
 
 <template>
@@ -360,7 +337,7 @@ const deleteData = async (id) => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || 'Unassigned' }}
+                    {{ task.assignees || "Unassigned" }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"

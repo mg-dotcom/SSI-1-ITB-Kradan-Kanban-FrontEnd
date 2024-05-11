@@ -139,12 +139,10 @@ const transferStatus = async (id) => {
     `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
   )
   if (statusCode === 200) {
-    const status = statusStore.trasferStatus(selectedStatus.value.id)
-    console.log(status)
+    statusStore.removeStatus(selectedStatus.value.id)
+    console.log('successful')
     clearValue()
     popup.transferConfirm = false
-    router.push('/')
-    console.log(taskStore.getTasks);
   } else {
     console.log('Can not transfer')
   }
