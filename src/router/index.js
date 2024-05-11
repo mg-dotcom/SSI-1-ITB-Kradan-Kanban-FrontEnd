@@ -47,6 +47,11 @@ const router = createRouter({
           name: "status-add",
           component: AddEditTask,
         },
+        {
+          path: "/status/:id/edit",
+          name: "status-edit",
+          component: AddEditTask,
+        }
       ],
     },
     {

@@ -168,7 +168,7 @@ const editTask = async (task) => {
     toast.add({
       severity: "success",
       summary: "Success",
-      detail: `The task has been updated`,
+      detail: `The task has been updated.`,
       life: 3000,
     });
     router.push({ name: "task" });
@@ -176,7 +176,7 @@ const editTask = async (task) => {
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: `The update was unsuccessful`,
+      detail: `The update was unsuccessful.`,
       life: 3000,
     });
     router.push({ name: "task" });

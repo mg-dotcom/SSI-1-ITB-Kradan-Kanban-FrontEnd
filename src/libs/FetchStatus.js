@@ -38,4 +38,32 @@ async function addStatus(url, newStatus) {
     console.log(`error: ${error}`);
   }
 }
-export { fetchAllStatus, addStatus,deleteStatus };
+
+
+
+async function updateStatus(url, statusId, updatedStatus) {
+  try {
+    const res = await fetch(`${url}/${statusId}`, {
+      method: "PUT",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        name: updatedStatus.name,
+        description: updatedStatus.description,
+        statusColor: updatedStatus.color,
+      }),
+    });
+    return res;
+  } catch (error) {
+    console.log(`error: ${error}`);
+  }
+}
+
+// if (!data.ok) {
+//   alert("The requested task does not exist");
+//   router.push("/");
+//   return;
+// }
+export { fetchAllStatus, addStatus, updateStatus ,deleteStatus };
+

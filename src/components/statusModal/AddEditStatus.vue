@@ -3,6 +3,9 @@ import StatusModal from "./StatusModal.vue";
 import buttonSubmit from "../button/Button.vue";
 import { defineEmits, defineProps, computed, ref } from "vue";
 import { reactive } from "vue";
+import { useRouter, useRoute } from "vue-router";
+
+const router = useRouter();
 
 const props = defineProps({
   selectedStatus: Object,
@@ -14,6 +17,8 @@ const status = reactive({
   description: props.selectedStatus.description,
   color: props.selectedStatus.color,
 });
+
+console.log(status);
 
 const oldStatus = {
   name: props.selectedStatus.name,
@@ -31,14 +36,14 @@ const isStatusEdited = computed(() => {
 
 const save = () => {
   if (props.selectedStatus.id !== "" && isStatusEdited.value === true) {
-    emit("editNewStatus", status);
+    emit("editStatus", status);
     router.push({ name: "status" });
   } else if (props.selectedStatus.id === "") {
     emit("addNewStatus", status);
   }
 };
 
-const emit = defineEmits(["closeAddEdit", "editNewStatus", "addNewStatus"]);
+const emit = defineEmits(["closeAddEdit", "editStatus", "addNewStatus"]);
 </script>
 
 <template>
@@ -84,6 +89,7 @@ const emit = defineEmits(["closeAddEdit", "editNewStatus", "addNewStatus"]);
       <buttonSubmit buttonType="cancel" @click="$emit('closeAddEdit')"
         >Cancel</buttonSubmit
       >
+
     </template>
     <template #button-right>
       <buttonSubmit
