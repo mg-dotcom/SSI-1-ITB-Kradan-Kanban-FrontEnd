@@ -1,4 +1,3 @@
-
 import { defineStore } from "pinia";
 
 export const useTaskStore = defineStore("TaskStore", {
@@ -51,6 +50,21 @@ export const useTaskStore = defineStore("TaskStore", {
           updatedOn: updatedTask.updatedOn,
         };
       }
+    },
+
+    getTasksByStatus(status) {
+      return this.tasks.filter((task) => task.status === status);
+    },
+
+    transferTasksStatus(currentStatus, newStatus) {
+      console.log("currentStatus", currentStatus);
+      console.log("newStatus", newStatus);
+      const tasksToUpdate = this.tasks.filter(
+        (task) => task.status === currentStatus
+      );
+      tasksToUpdate.forEach((task) => {
+        task.status = newStatus;
+      });
     },
   },
 });

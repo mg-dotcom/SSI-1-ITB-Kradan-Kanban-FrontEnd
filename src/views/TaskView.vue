@@ -20,6 +20,8 @@ import { useStatusStore } from "../stores/StatusStore.js";
 import Toast from "primevue/toast";
 import HomeText from "../components/HomeText.vue";
 import { fetchAllStatus } from "../libs/FetchStatus";
+import { watch } from "vue";
+import { watchEffect } from "vue";
 
 const toast = useToast();
 const router = useRouter();
@@ -44,20 +46,19 @@ onMounted(async () => {
   initFlowbite();
   initDropdowns();
 
-  if (taskStore.getTasks.length === 0) {
+  if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
     const allTasks = await fetchAllTasks(
       `${import.meta.env.VITE_BASE_URL}/tasks`
     );
     taskStore.addAllTasks(allTasks);
-  }
-
-  if (statusStore.getStatuses.length === 0) {
     const allStatus = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}/statuses`
     );
     statusStore.addAllStatuses(allStatus);
   }
+
 });
+
 
 const page = reactive({
   task: true,

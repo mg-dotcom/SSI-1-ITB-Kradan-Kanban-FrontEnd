@@ -1,26 +1,26 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useStatusStore = defineStore('StatusStore', {
+export const useStatusStore = defineStore("StatusStore", {
   state: () => ({
-    statuses: []
+    statuses: [],
   }),
   getters: {
     getStatuses(state) {
-      return state.statuses
+      return state.statuses;
     },
     getStatusById: (state) => (id) => {
       return state.statuses.find((status) => status.id === id);
     },
     getStatusColor: (state) => (name) => {
       const status = state.statuses.find((status) => status.name === name);
-      return status ? status.color : ""
+      return status ? status.color : "";
     },
   },
   actions: {
     addAllStatuses(newStatuses) {
       newStatuses.forEach((status) => {
-        this.addStatus(status)
-      })
+        this.addStatus(status);
+      });
     },
 
     addStatus(newStatus) {
@@ -35,9 +35,9 @@ export const useStatusStore = defineStore('StatusStore', {
     },
 
     editStatus(id, updatedStatus) {
-      const index = this.statuses.findIndex((status) => status.id === id)
+      const index = this.statuses.findIndex((status) => status.id === id);
       if (index === -1) {
-        return
+        return;
       } else {
         this.statuses[index] = {
           id: id,
@@ -49,12 +49,12 @@ export const useStatusStore = defineStore('StatusStore', {
     },
 
     removeStatus(id) {
-      const index = this.statuses.findIndex((status) => status.id === id)
+      const index = this.statuses.findIndex((status) => status.id === id);
       if (index === -1) {
-        return
+        return;
       } else {
-        this.statuses.splice(index, 1)
+        this.statuses.splice(index, 1);
       }
-    }
-  }
-})
+    },
+  },
+});

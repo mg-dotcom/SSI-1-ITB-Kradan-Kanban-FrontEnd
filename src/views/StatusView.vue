@@ -1,5 +1,4 @@
 <script setup>
-
 import buttonSubmit from "../components/button/Button.vue";
 import HomeText from "../components/HomeText.vue";
 import { useRouter } from "vue-router";
@@ -8,34 +7,35 @@ import { onMounted, reactive, ref } from "vue";
 import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
 import { useToast } from "primevue/usetoast";
 import StatusButton from "../components/button/StatusButton.vue";
-import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
-import Transfer from '../components/confirmModal/Transfer.vue'
-import { fetchAllStatus, addStatus, deleteStatus,updateStatus } from '../libs/FetchStatus.js'
-import { fetchAllTasks } from '../libs/FetchTask'
-import { useTaskStore } from '../stores/TaskStore'
+import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
+import Transfer from "../components/confirmModal/Transfer.vue";
+import {
+  fetchAllStatus,
+  addStatus,
+  deleteStatus,
+  updateStatus,
+} from "../libs/FetchStatus.js";
+import { fetchAllTasks } from "../libs/FetchTask";
+import { useTaskStore } from "../stores/TaskStore";
 
-const toast = useToast()
-const router = useRouter()
-const statusStore = useStatusStore()
-const taskStore = useTaskStore()
+const toast = useToast();
+const router = useRouter();
+const statusStore = useStatusStore();
+const taskStore = useTaskStore();
 onMounted(async () => {
-  if (taskStore.getTasks.length === 0) {
+  if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
     const allTasks = await fetchAllTasks(
       `${import.meta.env.VITE_BASE_URL}/tasks`
-    )
-    taskStore.addAllTasks(allTasks)
-  }
-
-  if (statusStore.getStatuses.length === 0) {
+    );
+    taskStore.addAllTasks(allTasks);
     const allStatus = await fetchAllStatus(
       `${import.meta.env.VITE_BASE_URL}/statuses`
-    )
-    statusStore.addAllStatuses(allStatus)
+    );
+    statusStore.addAllStatuses(allStatus);
   }
-})
+});
 
 const selectedStatus = ref({
-
   id: "",
   name: "",
   description: "",
@@ -53,59 +53,57 @@ const clearValue = () => {
   selectedStatus.value.updatedOn = "";
 };
 
-
-
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 const popup = reactive({
   addEditStatus: false,
   deleteConfirm: false,
-  transferConfirm: false
-})
+  transferConfirm: false,
+});
 
 const openAddNewStatus = () => {
-  popup.addEditStatus = true
-  router.push({ name: 'status-add' })
-}
+  popup.addEditStatus = true;
+  router.push({ name: "status-add" });
+};
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
     `${import.meta.env.VITE_BASE_URL}/statuses`,
     newStatus
-  )
-  const addedStatus = await res.json()
+  );
+  const addedStatus = await res.json();
   const existStatus = statusStore.getStatuses.find(
     (statusData) => statusData.name === newStatus.name
-  )
+  );
 
   if (res.status === 201) {
-    statusStore.addStatus(addedStatus)
+    statusStore.addStatus(addedStatus);
     toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'The status added successfully.',
-      life: 3000
-    })
-    router.push({ name: 'status' })
-    popup.addEditStatus = false
-    clearValue()
+      severity: "success",
+      summary: "Success",
+      detail: "The status added successfully.",
+      life: 3000,
+    });
+    router.push({ name: "status" });
+    popup.addEditStatus = false;
+    clearValue();
   } else if (existStatus) {
     toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: 'The status already exists. Please try another name.',
-      life: 3000
-    })
+      severity: "error",
+      summary: "Error",
+      detail: "The status already exists. Please try another name.",
+      life: 3000,
+    });
+    router.push({ name: "status" });
   } else {
     toast.add({
-      severity: 'error',
-      summary: 'Error',
+      severity: "error",
+      summary: "Error",
       detail: `An error occurred adding the task "${newStatus.name}".`,
-      life: 3000
-    })
+      life: 3000,
+    });
+    router.push({ name: "status" });
   }
-
 };
-
 
 const editStatus = async (status) => {
   const res = await updateStatus(
@@ -116,15 +114,16 @@ const editStatus = async (status) => {
   console.log(status);
   if (res.status === 200) {
     const editedStatus = await res.json();
-    statusStore.editStatus(editedStatus.id,editedStatus);
+    statusStore.editStatus(editedStatus.id, editedStatus);
     toast.add({
       severity: "success",
       summary: "Success",
       detail: `The Status has been updated.`,
       life: 3000,
     });
+    clearValue();
     router.push({ name: "status" });
-  }else {
+  } else {
     toast.add({
       severity: "error",
       summary: "Error",
@@ -134,71 +133,62 @@ const editStatus = async (status) => {
     router.push({ name: "status" });
   }
   popup.addEditStatus = false;
-
-}
+};
 
 const editStatusModal = (id) => {
- const toUpdateStatus = statusStore.getStatusById(id);
- selectedStatus.value = toUpdateStatus;
- popup.addEditStatus = true
- router.push({ name: "status-edit", params: { id: id } });
-}
-
-
-
-
+  const toUpdateStatus = statusStore.getStatusById(id);
+  selectedStatus.value = toUpdateStatus;
+  popup.addEditStatus = true;
+  router.push({ name: "status-edit", params: { id: id } });
+};
 
 const closeAddEdit = () => {
-  popup.addEditStatus = false
-  router.push({ name: 'status' })
-}
+  popup.addEditStatus = false;
+  router.push({ name: "status" });
+};
 
 const openConfirmDelete = async (id) => {
   selectedStatus.value = await fetchAllStatus(
     `${import.meta.env.VITE_BASE_URL}/statuses/${id}`
-  )
-  const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase())
-  console.log(statuses)
-  console.log(selectedStatus.value)
-  const transferOrdelete = ref(statuses.includes(selectedStatus.value.name))
-  console.log(transferOrdelete.value)
-
+  );
+  const statuses = taskStore.getTasks.map((item) => item.status.toLowerCase());
+  const transferOrdelete = ref(statuses.includes(selectedStatus.value.name));
   if (transferOrdelete.value) {
-    popup.transferConfirm = true
-
+    popup.transferConfirm = true;
   } else {
-    popup.deleteConfirm = true
+    popup.deleteConfirm = true;
   }
-}
+};
 
 const removeStatus = async (id) => {
-  await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`)
-  popup.deleteConfirm=false
-  console.log('successful')
-  clearValue()
-  statusStore.removeStatus(id)
-}
+  await deleteStatus(`${import.meta.env.VITE_BASE_URL}/statuses/${id}`);
+  popup.deleteConfirm = false;
+  console.log("successful");
+  clearValue();
+  statusStore.removeStatus(id);
+};
 
 const transferStatus = async (id) => {
+  const newStatus = statusStore.getStatusById(id);
+  taskStore.transferTasksStatus(selectedStatus.value.name, newStatus.name);
   const statusCode = await deleteStatus(
     `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
-  )
+  );
   if (statusCode === 200) {
-    statusStore.removeStatus(selectedStatus.value.id)
-    console.log('successful')
-    clearValue()
-    popup.transferConfirm = false
+    statusStore.removeStatus(selectedStatus.value.id);
+    console.log("successful");
+    clearValue();
+    popup.transferConfirm = false;
   } else {
-    console.log('Can not transfer')
+    console.log("Can not transfer");
   }
-}
+};
 
 const closeConfirmDelete = () => {
-  popup.deleteConfirm = false
-  popup.transferConfirm = false
-  selectedStatus.value = {}
-}
-
+  popup.deleteConfirm = false;
+  popup.transferConfirm = false;
+  clearValue();
+};
 </script>
 
 <template>
@@ -281,7 +271,10 @@ const closeConfirmDelete = () => {
                   class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all"
                 >
                   <div v-if="status.name !== 'No Status'">
-                    <buttonSubmit class="itbkk-button-edit" buttonType="edit" @click="editStatusModal(status.id)"
+                    <buttonSubmit
+                      class="itbkk-button-edit"
+                      buttonType="edit"
+                      @click="editStatusModal(status.id)"
                       >Edit</buttonSubmit
                     >
                     <buttonSubmit
@@ -321,7 +314,6 @@ const closeConfirmDelete = () => {
     @addNewStatus="addNewStatus"
     @editStatus="editStatus"
   ></AddEditStatus>
-
 </template>
 
 <style scoped></style>

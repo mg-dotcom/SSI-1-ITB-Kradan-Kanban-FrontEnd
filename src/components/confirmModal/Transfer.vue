@@ -13,7 +13,6 @@ const props=defineProps({
 const statusStore = useStatusStore()
 
 const filteredStatuses = statusStore.getStatuses.filter(status => status.id !== props.selectedStatus.id);
-console.log(filteredStatuses);
 
 const transferTo=ref('')
 
