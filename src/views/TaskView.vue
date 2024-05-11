@@ -20,7 +20,7 @@ import { useStatusStore } from "../stores/StatusStore.js";
 import Toast from "primevue/toast";
 import HomeText from "../components/HomeText.vue";
 import { fetchAllStatus } from "../libs/FetchStatus";
-const STATUS_ENDPOINT='v2/statues'
+const STATUS_ENDPOINT='v2/statuses'
 const TASK_ENDPOINT='v1/tasks'
 const toast = useToast();
 const router = useRouter();

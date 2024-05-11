@@ -18,7 +18,7 @@ import {
 } from "../libs/FetchStatus.js";
 import { fetchAllTasks } from "../libs/FetchTask";
 import { useTaskStore } from "../stores/TaskStore";
-const STATUS_ENDPOINT='v2/statues'
+const STATUS_ENDPOINT='v2/statuses'
 const TASK_ENDPOINT='v1/tasks'
 
 const toast = useToast();
