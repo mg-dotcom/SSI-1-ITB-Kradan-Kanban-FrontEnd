@@ -1,7 +1,7 @@
 <script setup>
 import buttonSubmit from '../components/button/Button.vue'
 import HomeText from '../components/HomeText.vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useStatusStore } from '../stores/StatusStore.js'
 import { onMounted, reactive, ref } from 'vue'
 import AddEditStatus from '../components/statusModal/AddEditStatus.vue'
@@ -23,8 +23,12 @@ const TASK_ENDPOINT = 'v1/tasks'
 
 const toast = useToast()
 const router = useRouter()
+const route = useRoute()
 const statusStore = useStatusStore()
 const taskStore = useTaskStore()
+
+const statusId = route.params.id
+
 onMounted(async () => {
   if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
     const allTasks = await fetchAllTasks(
@@ -77,6 +81,7 @@ const openAddNewStatus = () => {
   popup.addEditStatus = true
   router.push({ name: 'status-add' })
 }
+
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
     `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
@@ -157,6 +162,11 @@ const editStatusModal = (id) => {
   router.push({ name: 'status-edit', params: { id: id } })
 }
 
+// if (statusId) {
+//   router.push({ name: 'status-edit', params: { id: statusId } })
+//   editStatusModal(statusId)
+// }
+
 const closeAddEdit = () => {
   popup.addEditStatus = false
   router.push({ name: 'status' })
@@ -170,7 +180,8 @@ const openConfirmDelete = async (id) => {
     id
   )
   console.log(selectedStatus.value)
-  if (selectedStatus.value.status === 404) { //no status found
+  if (selectedStatus.value.status === 404) {
+    //no status found
     toast.add({
       severity: 'error',
       summary: 'Error',
@@ -262,9 +273,19 @@ const closeConfirmDelete = () => {
     <div class="flex justify-between py-6 px-5">
       <div
         class="itbkk-button-home text-xl font-bold flex items-center text-blue"
-        @click="router.push({ name: 'task' })"
       >
-        <HomeText />
+        <a
+          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
+          @click="router.push({ name: 'task' })"
+          >
+          Home&nbsp;</a
+        >
+        <p class="">></p>
+        <a
+          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
+        >
+          &nbsp;Task Status
+        </a>
       </div>
       <div class="flex">
         <buttonSubmit
