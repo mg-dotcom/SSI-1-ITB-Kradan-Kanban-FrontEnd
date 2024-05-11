@@ -14,7 +14,7 @@ const props = defineProps({
       class="bg-[#F2F2F2] sm:w-[75%] sm:h-[89%] md:w-[45%] md:h-[89%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg py-16 relative"
     >
       <div
-        class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3 "
+        class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
       >
         <slot name="title"></slot>
       </div>
@@ -47,7 +47,7 @@ const props = defineProps({
               <slot name="assignees">Unassigned</slot>
             </div>
             <p class="font-semibold mb-2">Status</p>
-            <div class="lg:w-[230px] sm:w-[200px] text-lg">
+            <div class="lg:w-[230px] sm:w-[200px]">
               <slot name="status"> </slot>
             </div>
             <div class="flex flex-col lg:w-[230px] sm:w-[200px] text-[13px]">

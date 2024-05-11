@@ -1,5 +1,4 @@
 <script setup>
-<<<<<<< Updated upstream
 import buttonSubmit from '../components/button/Button.vue'
 import HomeText from '../components/HomeText.vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -10,18 +9,6 @@ import { useToast } from 'primevue/usetoast'
 import StatusButton from '../components/button/StatusButton.vue'
 import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
 import Transfer from '../components/confirmModal/Transfer.vue'
-=======
-import buttonSubmit from "../components/button/Button.vue";
-import HomeText from "../components/HomeText.vue";
-import { useRouter, useRoute } from "vue-router";
-import { useStatusStore } from "../stores/StatusStore.js";
-import { onMounted, reactive, ref } from "vue";
-import AddEditStatus from "../components/statusModal/AddEditStatus.vue";
-import { useToast } from "primevue/usetoast";
-import StatusButton from "../components/button/StatusButton.vue";
-import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
-import Transfer from "../components/confirmModal/Transfer.vue";
->>>>>>> Stashed changes
 import {
   fetchAllStatus,
   fetchStatusById,
@@ -40,17 +27,9 @@ const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
 
-<<<<<<< Updated upstream
-const toast = useToast()
-const router = useRouter()
-const route = useRoute()
-const statusStore = useStatusStore()
-const taskStore = useTaskStore()
 
 const statusId = route.params.id
 
-=======
->>>>>>> Stashed changes
 onMounted(async () => {
   if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
     const allTasks = await fetchAllTasks(
@@ -99,17 +78,11 @@ const popup = reactive({
 });
 
 const openAddNewStatus = () => {
-<<<<<<< Updated upstream
   clearValue()
   popup.addEditStatus = true
   router.push({ name: 'status-add' })
 }
 
-=======
-  
-  popup.addEditStatus = true;
-};
->>>>>>> Stashed changes
 const addNewStatus = async (newStatus) => {
   const res = await addStatus(
     `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
@@ -189,7 +162,6 @@ const editStatusModal = (id) => {
   router.push({ name: "status-edit", params: { id: id } });
 };
 
-<<<<<<< Updated upstream
 // if (statusId) {
 //   router.push({ name: 'status-edit', params: { id: statusId } })
 //   editStatusModal(statusId)
@@ -201,25 +173,13 @@ const closeAddEdit = () => {
   // selectedStatus.value.id = "";
   // clearValue();
 }
-=======
-const closeAddOrEdit = () => {
-  popup.addEditStatus = false;
-
-  router.push({ name: "status" });
-};
->>>>>>> Stashed changes
 
 const openConfirmDelete = async (id) => {
   selectedStatus.value = await fetchStatusById(
     `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
     id
-<<<<<<< Updated upstream
   )
   console.log(selectedStatus.value)
-=======
-  );
-  console.log(selectedStatus.value);
->>>>>>> Stashed changes
   if (selectedStatus.value.status === 404) {
     //no status found
     toast.add({
