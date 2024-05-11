@@ -33,15 +33,10 @@ const router = createRouter({
       ],
     },
     {
-      path: "/status",
+      path: "/status/manage",
       name: "status",
       component: Status,
       children: [
-        {
-          path: "/status/manage",
-          name: "status-manage",
-          component: Status,
-        },
         {
           path: "/status/add",
           name: "status-add",
@@ -51,7 +46,7 @@ const router = createRouter({
           path: "/status/:id/edit",
           name: "status-edit",
           component: AddEditTask,
-        }
+        },
       ],
     },
     {

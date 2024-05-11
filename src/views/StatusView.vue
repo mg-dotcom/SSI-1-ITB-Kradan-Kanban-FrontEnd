@@ -169,21 +169,21 @@ const removeStatus = async (id) => {
   statusStore.removeStatus(id);
 };
 
-// const transferStatus = async (id) => {
-//   const newStatus = statusStore.getStatusById(id);
-//   taskStore.transferTasksStatus(selectedStatus.value.name, newStatus.name);
-//   const statusCode = await deleteStatus(
-//     `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
-//   );
-//   if (statusCode === 200) {
-//     statusStore.removeStatus(selectedStatus.value.id);
-//     console.log("successful");
-//     clearValue();
-//     popup.transferConfirm = false;
-//   } else {
-//     console.log("Can not transfer");
-//   }
-// };
+const transferStatus = async (id) => {
+  const newStatus = statusStore.getStatusById(id);
+  taskStore.transferTasksStatus(selectedStatus.value.name, newStatus.name);
+  const statusCode = await deleteStatus(
+    `${import.meta.env.VITE_BASE_URL}/statuses/${selectedStatus.value.id}/${id}`
+  );
+  if (statusCode === 200) {
+    statusStore.removeStatus(selectedStatus.value.id);
+    console.log("successful");
+    clearValue();
+    popup.transferConfirm = false;
+  } else {
+    console.log("Can not transfer");
+  }
+};
 
 const closeConfirmDelete = () => {
   popup.deleteConfirm = false;
