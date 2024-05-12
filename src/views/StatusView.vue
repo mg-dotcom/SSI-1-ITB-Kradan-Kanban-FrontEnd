@@ -50,7 +50,7 @@ const selectedStatus = ref({
 const clearValue = () => {
   selectedStatus.value.id = ''
   selectedStatus.value.name = ''
-  selectedStatus.value.description = ''
+  selectedStatus.value.description = null
   selectedStatus.value.color = '#CCCCCC'
   selectedStatus.value.createdOn = ''
   selectedStatus.value.updatedOn = ''

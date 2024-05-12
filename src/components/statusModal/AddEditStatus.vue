@@ -43,11 +43,6 @@ const save = () => {
     emit('addNewStatus', status)
   }
 }
-watch(() => {
-  if (status.description === '') {
-    status.description = null
-  }
-})
 
 const emit = defineEmits(['closeAddEdit', 'editStatus', 'addNewStatus'])
 </script>
