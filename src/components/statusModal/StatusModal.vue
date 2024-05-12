@@ -7,17 +7,18 @@ const router = useRouter()
 const route = useRoute()
 const statusStore = useStatusStore()
 const mode = route.name === 'status-add' ? 'add' : 'edit'
-const selectedStatus= ref({})
+const selectedStatus = ref({})
 const inputStatus = ref({})
-const statusId= Number(route.params.id)
+const statusId = ref(Number(route.params.id))
 
 onMounted(async () => {
-  selectedStatus.value= await statusStore.getStatusById(statusId)
+  selectedStatus.value = await statusStore.getStatusById(statusId.value)
+  inputStatus.value = await statusStore.getStatusById(statusId.value)
+  
 })
-
+// console.log(selectedStatus.value)
 if (mode === 'edit') {
-  inputStatus.value=selectedStatus.value
-  console.log(selectedStatus.value)
+
 } else {
   inputStatus.value = {
     name: '',
@@ -35,19 +36,20 @@ if (mode === 'edit') {
 //   }
 // })
 
-// const isStatusEdited = () => {
-//   return (
-//     inputStatus.value.name !== selectedStatus.value.name ||
-//     inputStatus.value.description !== selectedStatus.value.description ||
-//     inputStatus.value.color !== selectedStatus.value.color
-//   )
-// }
+const isStatusEdited = () => {
+  return (
+    inputStatus.value.name !== selectedStatus.value.name ||
+    inputStatus.value.description !== selectedStatus.value.description ||
+    inputStatus.value.color !== selectedStatus.value.color
+  )
+}
 // console.log(isStatusEdited);
 
 const save = async () => {
   if (mode === 'edit') {
     console.log('edit')
-    // statusStore.editStatus(inputStatus)
+    isStatusEdited()
+    statusStore.editStatus(inputStatus.value)
   } else {
     await statusStore.addStatus(inputStatus.value)
   }
@@ -123,7 +125,17 @@ const save = async () => {
         </slot>
 
         <slot name="button-right">
-          <buttonSubmit buttonType="ok" @click="save">Save</buttonSubmit>
+          <buttonSubmit
+            buttonType="ok"
+            @click="save"
+            :disabled="inputStatus.name === '' || !isStatusEdited()"
+            :class="
+              inputStatus.name === ''|| !isStatusEdited()
+                ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
+                : ''
+            "
+            >Save</buttonSubmit
+          >
         </slot>
       </div>
     </div>
