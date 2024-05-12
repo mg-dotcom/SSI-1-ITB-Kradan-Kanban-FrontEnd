@@ -158,16 +158,11 @@ const editStatusModal = (id) => {
   router.push({ name: 'status-edit', params: { id: id } })
 }
 
-// if (statusId) {
-//   router.push({ name: 'status-edit', params: { id: statusId } })
-//   editStatusModal(statusId)
-// }
 
 const closeAddEdit = () => {
   popup.addEditStatus = false
   router.push({ name: 'status' })
-  // selectedStatus.value.id = "";
-  // clearValue();
+
 }
 
 const openConfirmDelete = async (id) => {
@@ -177,7 +172,6 @@ const openConfirmDelete = async (id) => {
   )
   console.log(selectedStatus.value)
   if (selectedStatus.value.status === 404) {
-    //no status found
     toast.add({
       severity: 'error',
       summary: 'Error',
