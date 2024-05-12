@@ -14,11 +14,10 @@ const statusId = ref(Number(route.params.id))
 onMounted(async () => {
   selectedStatus.value = await statusStore.getStatusById(statusId.value)
   inputStatus.value = await statusStore.getStatusById(statusId.value)
-  
 })
 // console.log(selectedStatus.value)
 if (mode === 'edit') {
-
+  console.log('edit');
 } else {
   inputStatus.value = {
     name: '',
@@ -130,7 +129,7 @@ const save = async () => {
             @click="save"
             :disabled="inputStatus.name === '' || !isStatusEdited()"
             :class="
-              inputStatus.name === ''|| !isStatusEdited()
+              inputStatus.name === '' || !isStatusEdited()
                 ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
                 : ''
             "
