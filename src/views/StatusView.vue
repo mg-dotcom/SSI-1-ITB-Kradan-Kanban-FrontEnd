@@ -1,6 +1,5 @@
 <script setup>
 import buttonSubmit from "../components/button/Button.vue";
-import HomeText from "../components/HomeText.vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { onMounted, reactive, ref } from "vue";
