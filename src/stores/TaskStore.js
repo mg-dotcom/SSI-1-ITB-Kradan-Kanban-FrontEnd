@@ -11,6 +11,8 @@ export const useTaskStore = defineStore("TaskStore", {
     getTasksById: (state) => (id) => {
       return state.tasks.find((task) => task.id === id);
     },
+    getNumberOfTasks(statusName) {
+      return state.tasks.forEach((task) => task.status===statusName).length;
   },
   actions: {
     addAllTasks(newTasks) {
@@ -66,5 +68,5 @@ export const useTaskStore = defineStore("TaskStore", {
         task.status = newStatus;
       });
     },
-  },
+  },}
 });

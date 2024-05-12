@@ -4,6 +4,7 @@ import buttonSubmit from '../button/Button.vue'
 import { defineEmits, defineProps, computed, ref } from 'vue'
 import { reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { watch } from 'vue'
 
 const router = useRouter()
 
@@ -42,6 +43,11 @@ const save = () => {
     emit('addNewStatus', status)
   }
 }
+watch(() => {
+  if (status.description === '') {
+    status.description = null
+  }
+})
 
 const emit = defineEmits(['closeAddEdit', 'editStatus', 'addNewStatus'])
 </script>
