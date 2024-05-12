@@ -1,17 +1,17 @@
 <script setup>
 import submitButton from '../button/Button.vue'
-import { defineEmits } from "vue";
-defineEmits(["closeDelete", "deleteData"]);
+import { defineEmits } from 'vue'
+defineEmits(['closeDelete', 'deleteData'])
 const props = defineProps({
   selectedTask: {
-    type: Object,
+    type: Object
   },
   selectedIndex: {
-    type: Number,
-  },
-});
+    type: Number
+  }
+})
 
-console.log(props.selectedIndex);
+console.log(props.selectedIndex)
 </script>
 
 <template>

@@ -151,18 +151,30 @@ const editStatus = async (status) => {
 
 const editStatusModal = (id) => {
   const toUpdateStatus = statusStore.getStatusById(id)
+  console.log(toUpdateStatus);
   selectedStatus.value = toUpdateStatus
   selectedStatus.value.createdOn = formatDate(toUpdateStatus.createdOn)
   selectedStatus.value.updatedOn = formatDate(toUpdateStatus.updatedOn)
   popup.addEditStatus = true
   router.push({ name: 'status-edit', params: { id: id } })
 }
-
+// const editStatusModal = (id) => {
+//   const toUpdateStatus = statusStore.getStatusById(id)
+//   console.log(toUpdateStatus);
+//   if (!toUpdateStatus) {
+//     router.push({ name: 'status' })
+//     return
+//   }
+//   selectedStatus.value = toUpdateStatus
+//   selectedStatus.value.createdOn = formatDate(toUpdateStatus.createdOn)
+//   selectedStatus.value.updatedOn = formatDate(toUpdateStatus.updatedOn)
+//   popup.addEditStatus = true
+//   router.push({ name: 'status-edit', params: { id: id } })
+// }
 
 const closeAddEdit = () => {
   popup.addEditStatus = false
   router.push({ name: 'status' })
-
 }
 
 const openConfirmDelete = async (id) => {
@@ -351,21 +363,31 @@ const closeConfirmDelete = () => {
                 <td
                   class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all"
                 >
-                  <div v-if="status.name !== 'No Status'">
-                    <buttonSubmit
-                      class="itbkk-button-edit"
-                      buttonType="edit"
-                      @click="editStatusModal(status.id)"
-                      >Edit</buttonSubmit
-                    >
-                    <buttonSubmit
-                      class="itbkk-button-delete"
-                      buttonType="delete"
-                      @click="openConfirmDelete(status.id)"
-                    >
-                      Delete
-                    </buttonSubmit>
-                  </div>
+                  <buttonSubmit
+                    class="itbkk-button-edit"
+                    buttonType="edit"
+                    :disabled="status.name === 'No Status'"
+                    :class="
+                      status.name === 'No Status'
+                        ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
+                        : ''
+                    "
+                    @click="editStatusModal(status.id)"
+                    >Edit</buttonSubmit
+                  >
+                  <buttonSubmit
+                    class="itbkk-button-delete"
+                    buttonType="delete"
+                    :disabled="status.name === 'No Status'"
+                    :class="
+                      status.name === 'No Status'
+                        ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
+                        : ''
+                    "
+                    @click="openConfirmDelete(status.id)"
+                  >
+                    Delete
+                  </buttonSubmit>
                 </td>
               </tr>
             </tbody>

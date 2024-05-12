@@ -97,10 +97,12 @@ const emit = defineEmits(['closeAddEdit', 'editStatus', 'addNewStatus'])
         :buttonType="
           status.name === '' || isStatusEdited === false ? 'cancel' : 'ok'
         "
-        :disabled="status.name === '' || isStatusEdited === false"
+        :disabled="
+          status.name === '' || isStatusEdited === false || selectedStatus.id === 1
+        "
         @click="save"
         :class="
-          status.name === '' || isStatusEdited === false
+          status.name === '' || isStatusEdited === false || selectedStatus.id === 1
             ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "
