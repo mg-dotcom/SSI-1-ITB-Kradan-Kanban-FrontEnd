@@ -226,6 +226,7 @@ const removeStatus = async (id) => {
 }
 
 const transferStatus = async (id) => {
+  const numberOfTask = taskStore.getNumberOfTasks(selectedStatus.value.name)
   const newStatus = statusStore.getStatusById(id)
   taskStore.transferTasksStatus(selectedStatus.value.name, newStatus.name)
   const statusCode = await deleteStatus(
@@ -240,13 +241,12 @@ const transferStatus = async (id) => {
     toast.add({
       severity: 'success',
       summary: 'Success',
-      detail: `The task have been transferred and the status has been deleted.`,
+      detail: `${numberOfTask} task(s) have been transferred and the status has been deleted.`,
       life: 3000
     })
     clearValue()
     popup.transferConfirm = false
   } else {
-    console.log('Can not transfer')
     toast.add({
       severity: 'error',
       summary: 'Error',

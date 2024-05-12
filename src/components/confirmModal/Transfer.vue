@@ -2,18 +2,21 @@
 import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
 import { useTaskStore } from '../../stores/TaskStore.js'
+import { useStatusStore } from '../../stores/StatusStore.js'
 import { ref } from 'vue'
 const taskStore = useTaskStore()
+const statusStore = useStatusStore()
 defineEmits(['closeDelete', 'transferStatus'])
 const props = defineProps({
   selectedStatus: {
     Type: Object
   }
 })
-const filteredStatuses = taskStore.getTasks.filter(
+
+const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.selectedStatus.id
 )
-
+console.log(filteredStatuses);
 const transferTo = ref('')
 
 const numberOfTask = ref(taskStore.getNumberOfTasks(props.selectedStatus.name))
