@@ -28,48 +28,52 @@ onMounted(async () => {
   statusStore.loadStatuses()
 })
 
-const selectedStatus = ref({
-  id: '',
-  name: '',
-  description: '',
-  color: '#CCCCCC',
-  createdOn: '',
-  updatedOn: ''
-})
+// const selectedStatus = ref({
+//   id: '',
+//   name: '',
+//   description: '',
+//   color: '#CCCCCC',
+//   createdOn: '',
+//   updatedOn: ''
+// })
 
-const clearValue = () => {
-  selectedStatus.value.id = ''
-  selectedStatus.value.name = ''
-  selectedStatus.value.description = ''
-  selectedStatus.value.color = '#CCCCCC'
-  selectedStatus.value.createdOn = ''
-  selectedStatus.value.updatedOn = ''
-}
+// const clearValue = () => {
+//   selectedStatus.value.id = ''
+//   selectedStatus.value.name = ''
+//   selectedStatus.value.description = ''
+//   selectedStatus.value.color = '#CCCCCC'
+//   selectedStatus.value.createdOn = ''
+//   selectedStatus.value.updatedOn = ''
+// }
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+// const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
 
-function formatDate(date) {
-  const d = new Date(date)
-  return d
-    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
-    .split(',')
-    .join(' ')
-}
+// function formatDate(date) {
+//   const d = new Date(date)
+//   return d
+//     .toLocaleString('en-GB', { timeZone: localTimeZone.value })
+//     .split(',')
+//     .join(' ')
+// }
 
-const popup = reactive({
-  addEditStatus: false,
-  deleteConfirm: false,
-  transferConfirm: false
-})
+// const popup = reactive({
+//   addEditStatus: false,
+//   deleteConfirm: false,
+//   transferConfirm: false
+// })
 
 const openAddNewStatus = () => {
   router.push({ name: 'status-add' })
 }
 
-const addNewStatus = async (newStatus) => {
-  statusStore.addStatus(newStatus)
-  router.push({ name: 'status' })
+const openeditStatusModal=(id)=>{
+  router.push({ name: 'status-edit', params: { id: id } })
 }
+
+// const addNewStatus = async (newStatus) => {
+//   statusStore.addStatus(newStatus)
+//   router.push({ name: 'status' })
+// }
 </script>
 
 <template>
@@ -165,7 +169,7 @@ const addNewStatus = async (newStatus) => {
                     <buttonSubmit
                       class="itbkk-button-edit"
                       buttonType="edit"
-                      @click="editStatusModal(status.id)"
+                      @click="openeditStatusModal(status.id)"
                       >Edit</buttonSubmit
                     >
                     <buttonSubmit

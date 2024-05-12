@@ -1,8 +1,58 @@
 <script setup>
 import buttonSubmit from '../button/Button.vue'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useStatusStore } from '../../stores/StatusStore.js'
+const router = useRouter()
+const route = useRoute()
+const statusStore = useStatusStore()
+const mode = route.name === 'status-add' ? 'add' : 'edit'
+const selectedStatus= ref({})
+const inputStatus = ref({})
+const statusId= Number(route.params.id)
 
-const mode = ref('ADD')
+onMounted(async () => {
+  selectedStatus.value= await statusStore.getStatusById(statusId)
+})
+
+if (mode === 'edit') {
+  inputStatus.value=selectedStatus.value
+  console.log(selectedStatus.value)
+} else {
+  inputStatus.value = {
+    name: '',
+    description: null,
+    color: '#CCCCCC'
+  }
+}
+// watchEffect(() => {
+//   if (mode === 'edit' && isStatusEdited()) {
+//     console.log('Status is edited')
+//     // Enable save button logic here
+//   } else {
+//     console.log('Status is not edited')
+//     // Disable save button logic here
+//   }
+// })
+
+// const isStatusEdited = () => {
+//   return (
+//     inputStatus.value.name !== selectedStatus.value.name ||
+//     inputStatus.value.description !== selectedStatus.value.description ||
+//     inputStatus.value.color !== selectedStatus.value.color
+//   )
+// }
+// console.log(isStatusEdited);
+
+const save = async () => {
+  if (mode === 'edit') {
+    console.log('edit')
+    // statusStore.editStatus(inputStatus)
+  } else {
+    await statusStore.addStatus(inputStatus.value)
+  }
+  router.push({ name: 'status' })
+}
 </script>
 
 <template>
@@ -15,7 +65,7 @@ const mode = ref('ADD')
       <div
         class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
       >
-        {{ mode === 'ADD' ? 'New Status' : 'Edit Status' }}
+        {{ mode === 'add' ? 'New Status' : 'Edit Status' }}
       </div>
 
       <div
@@ -27,7 +77,7 @@ const mode = ref('ADD')
               <p class="font-semibold mb-2">Name</p>
               <div class="px-3">
                 <input
-                  v-model.trim="status.name"
+                  v-model.trim="inputStatus.name"
                   maxlength="50"
                   type="text"
                   id="default-input"
@@ -39,7 +89,7 @@ const mode = ref('ADD')
               <p class="font-semibold mb-2">Color</p>
               <input
                 type="color"
-                v-model="status.color"
+                v-model="inputStatus.color"
                 id="color"
                 class="itbkk-color w-10 h-10 rounded-lg"
               />
@@ -50,17 +100,13 @@ const mode = ref('ADD')
             <div class="px-3">
               <textarea
                 maxlength="200"
-                v-model.trim="status.description"
-                :class="selectedStatus.id == '' ? 'h-[241px]' : 'h-52'"
+                v-model.trim="inputStatus.description"
                 class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full"
               ></textarea>
             </div>
           </div>
           <div class="text-sm">
-            <div
-              class="pt-5"
-              :class="selectedStatus.id == '' ? 'hidden' : 'visible'"
-            >
+            <div class="pt-5">
               <span class="itbkk-timezone font-semibold">TimeZone</span> :
               Asia/Bangkok <br />
               <span class="itbkk-created-on font-semibold">Created On</span> :
@@ -77,7 +123,7 @@ const mode = ref('ADD')
         </slot>
 
         <slot name="button-right">
-          <buttonSubmit buttonType="ok">Save</buttonSubmit>
+          <buttonSubmit buttonType="ok" @click="save">Save</buttonSubmit>
         </slot>
       </div>
     </div>

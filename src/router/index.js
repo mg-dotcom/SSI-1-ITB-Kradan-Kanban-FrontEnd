@@ -47,7 +47,7 @@ const router = createRouter({
         {
           path: ':id/edit',
           name: 'status-edit',
-          component: AddEditStatus
+          component: StatusModal
         }
       ]
     },
