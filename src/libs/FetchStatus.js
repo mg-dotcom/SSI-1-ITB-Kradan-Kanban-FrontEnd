@@ -1,7 +1,7 @@
 const fetchAllStatus = async (url) => {
-  const data = await fetch(`${url}`)
-  const res = await data.json()
-  return res
+  const res = await fetch(`${url}`)
+  const data = await res.json()
+  return data
 }
 
 const fetchStatusById = async (url, id) => {

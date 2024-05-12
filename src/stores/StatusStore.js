@@ -26,14 +26,14 @@ export const useStatusStore = defineStore('StatusStore', {
   },
   actions: {
     async loadStatuses() {
-      const res = await fetchAllStatus(
+      const data = await fetchAllStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`
       )
-      if (res.status === 200) {
-        this.statuses = res
-        //toast success
+      if (data.status < 200 && data.status > 299) {
+        alert('Failed to fetch statuses')
       } else {
-        //toast error
+        this.statuses = data
+        //toast success
       }
     },
 
@@ -42,6 +42,7 @@ export const useStatusStore = defineStore('StatusStore', {
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         newStatus
       )
+      console.log(res)
       if (res.status === 201) {
         this.statuses.push(res)
         //toast success

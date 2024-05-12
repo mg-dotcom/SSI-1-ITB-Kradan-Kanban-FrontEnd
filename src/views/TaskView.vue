@@ -49,10 +49,10 @@ onMounted(async () => {
       `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
     )
     taskStore.addAllTasks(allTasks)
-    const allStatus = await fetchAllStatus(
-      `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
-    )
-    statusStore.addAllStatuses(allStatus)
+    // const allStatus = await fetchAllStatus(
+    //   `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
+    // )
+    statusStore.loadStatuses()
   }
 })
 
