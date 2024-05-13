@@ -21,7 +21,7 @@ function formatDate(date) {
 
 onMounted(async () => {
   if (mode === "edit") {
-    const selectedStatus = await statusStore.getStatusById(statusId);
+    const selectedStatus = await statusStore.loadStatusDetail(statusId);
     console.log(selectedStatus);
     inputStatus.value = selectedStatus;
     inputStatus.value.timeZone = localTimeZone.value;

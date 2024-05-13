@@ -14,6 +14,7 @@ const deleteStatus = async (url, id) => {
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
   });
+  console.log(res);
   return res;
 };
 

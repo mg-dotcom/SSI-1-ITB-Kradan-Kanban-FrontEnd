@@ -1,70 +1,109 @@
-import { defineStore } from "pinia";
+import { defineStore } from 'pinia'
 import {
   fetchAllStatus,
   fetchStatusById,
   deleteStatus,
   addStatus,
-  updateStatus,
-} from "../libs/FetchStatus.js";
-import { useToast } from "primevue/usetoast";
+  updateStatus
+} from '../libs/FetchStatus.js'
+import { useToast } from 'primevue/usetoast'
+import { useRouter } from 'vue-router'
+import router from '@/router/index.js'
+import { s } from 'vitest/dist/reporters-LqC_WI4d.js'
 
-export const useStatusStore = defineStore("StatusStore", {
+export const useStatusStore = defineStore('StatusStore', {
   state: () => ({
+    router: useRouter(),
     toast: useToast(),
     statuses: [],
-    STATUS_ENDPOINT: "v2/statuses",
+    STATUS_ENDPOINT: 'v2/statuses',
+    statusDetails: {
+      id: '',
+      name: '',
+      description: null,
+      statusColor: '#CCCCCC',
+      createdOn: '',
+      updatedOn: ''
+    }
   }),
   getters: {
     getStatuses(state) {
-      return state.statuses;
+      return state.statuses
     },
     getStatusById: (state) => (id) => {
-      return state.statuses.find((status) => status.id === id);
+      return state.statuses.find((status) => status.id === id)
     },
     getStatusColor: (state) => (name) => {
-      const status = state.statuses.find((status) => status.name === name);
-      return status ? status.color : "";
-    },
+      const status = state.statuses.find((status) => status.name === name)
+      return status ? status.statusColor : ''
+    }
   },
   actions: {
     async loadStatuses() {
       const data = await fetchAllStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`
-      );
-      // console.log(data);
+      )
       if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch statuses");
+        alert('Failed to fetch statuses')
       } else {
-        this.statuses = data;
-        console.log(this.getStatuses);
+        this.statuses = data
+      }
+    },
+    async loadStatusDetail(id) {
+      const data = await fetchStatusById(
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        id
+      )
+      if (data.status < 200 && data.status > 299) {
+        alert('Failed to fetch statuses')
+      } else {
+        this.statusDetails = {
+          id: data.id || '',
+          name: data.name || '',
+          description: data.description || null,
+          statusColor: data.statusColor || '#CCCCCC',
+          createdOn: data.createdOn || '',
+          updatedOn: data.updatedOn || ''
+        }
+        return this.statusDetails
       }
     },
 
     async addStatus(newStatus) {
-      console.log(newStatus);
       const res = await addStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         newStatus
-      );
+      )
 
       const existingStatus = this.statuses.find(
         (status) => status.name === newStatus.name
-      );
+      )
 
       if (res.status === 201) {
-        const data = await res.json();
-        this.statuses.push(res);
-        //toast success
+        const data = await res.json()
+        this.statuses.push(data)
+        this.toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `The status has been added`,
+          life: 3000
+        })
+        router.push({ name: 'status' })
       } else if (existingStatus) {
         this.toast.add({
-          severity: "error",
-          summary: "Error",
+          severity: 'error',
+          summary: 'Error',
           detail: `Status with name "${newStatus.name}" already exists`,
-          life: 3000,
-        });
+          life: 3000
+        })
       } else {
-        console.log("error");
-        //toast error
+        this.toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `An error has occurred, the status could not be added.`,
+          life: 3000
+        })
+        router.push({ name: 'status' })
       }
     },
 
@@ -73,17 +112,41 @@ export const useStatusStore = defineStore("StatusStore", {
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         id,
         updatedStatus
-      );
+      )
       if (res.status === 200) {
-        const index = this.statuses.findIndex((status) => status.id === id);
+        const data = await res.json()
+        const index = this.statuses.findIndex((status) => status.id === id)
         if (index === -1) {
-          return;
+         re  alert('Failed to update status, status not found')
+        
         } else {
           this.statuses[index] = {
-            ...res,
-          };
+            ...data
+          }
         }
       } else {
+        //toast error
+      }
+    },
+
+    async transferStatus(currentId, newId) {
+      const res = await deleteStatus(
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}/${currentId}`,
+        newId
+      )
+      console.log(res)
+      if (res.status === 200) {
+        const index = this.statuses.findIndex(
+          (status) => status.id === currentId
+        )
+        if (index === -1) {
+          return
+        } else {
+          this.statuses.splice(index, 1)
+        }
+        //toast success
+      } else {
+        console.log('fail to remove status')
         //toast error
       }
     },
@@ -92,18 +155,19 @@ export const useStatusStore = defineStore("StatusStore", {
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         id
-      );
-      if (res.status === 204) {
-        const index = this.statuses.findIndex((status) => status.id === id);
+      )
+      if (res.status === 200) {
+        const index = this.statuses.findIndex((status) => status.id === id)
         if (index === -1) {
-          return;
+          return
         } else {
-          this.statuses.splice(index, 1);
+          this.statuses.splice(index, 1)
         }
         //toast success
       } else {
+        console.log('fail to remove status')
         //toast error
       }
-    },
-  },
-});
+    }
+  }
+})

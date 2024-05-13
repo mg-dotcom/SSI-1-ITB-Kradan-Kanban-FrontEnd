@@ -44,16 +44,11 @@ onMounted(async () => {
   initFlowbite()
   initDropdowns()
 
-  if (taskStore.getTasks.length === 0 && statusStore.getStatuses.length === 0) {
-    const allTasks = await fetchAllTasks(
-      `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
-    )
-    taskStore.addAllTasks(allTasks)
-    // const allStatus = await fetchAllStatus(
-    //   `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
-    // )
-    statusStore.loadStatuses()
-  }
+  await statusStore.loadStatuses()
+  await taskStore.loadTasks()
+
+  console.log(taskStore.getTasks)
+  console.log(statusStore.getStatusColor("To Do"));
 })
 
 const page = reactive({
@@ -348,10 +343,12 @@ const deleteData = async (id) => {
                   >
                     <div class="flex justify-between items-center text-center">
                       <StatusButton
-                        :statusColor="statusStore.getStatusColor(task.status)"
-                        :statusName="task.status"
+                        :statusColor="
+                          statusStore.getStatusColor(task.statusName)
+                        "
+                        :statusName="task.statusName"
                       >
-                        {{ task.status }}
+                        {{ task.statusName }}
                       </StatusButton>
                       <div>
                         <div
