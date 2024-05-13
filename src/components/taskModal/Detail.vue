@@ -3,14 +3,27 @@ import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "../button/Button.vue";
 import StatusButton from "../button/StatusButton.vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
+import { useTaskStore } from "../../stores/TaskStore.js";
+import { ref } from "vue";
+import { useRoute } from "vue-router";
+import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
+import { onMounted } from "vue";
+import router from "@/router";
 
+const route = useRoute();
+const taskStore = useTaskStore();
 const statusStore = useStatusStore();
 
-const emit = defineEmits(["closeDetail"]);
+const taskId = route.params.id;
 
-const props = defineProps({
-  selectedTask: Object,
-  localTimeZone: String,
+const selectedTask = ref({});
+
+onMounted(async () => {
+  const taskDetail = await taskStore.loadTaskDetails(taskId);
+  selectedTask.value = taskDetail;
+  selectedTask.value.status = taskDetail.status.name;
+  selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
+  selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
 });
 </script>
 
@@ -62,14 +75,12 @@ const props = defineProps({
     </template>
 
     <template #button-left>
-      <buttonSubmit buttonType="cancel" @click="$emit('closeDetail')"
+      <buttonSubmit buttonType="cancel" @click="router.go(-1)"
         >Cancel</buttonSubmit
       >
     </template>
     <template #button-right>
-      <buttonSubmit buttonType="ok" @click="$emit('closeDetail')"
-        >Ok</buttonSubmit
-      >
+      <buttonSubmit buttonType="ok" @click="router.go(-1)">Ok</buttonSubmit>
     </template>
   </ModalDetail>
 </template>

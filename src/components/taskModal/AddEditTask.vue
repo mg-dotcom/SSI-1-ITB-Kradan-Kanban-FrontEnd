@@ -1,58 +1,115 @@
 <script setup>
 import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "../button/Button.vue";
-import { useRouter } from "vue-router";
-import { defineProps, defineEmits, ref, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { defineEmits, ref, onMounted, watch } from "vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
+import { useTaskStore } from "../../stores/TaskStore.js";
+import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 
 const statusStore = useStatusStore();
+const taskStore = useTaskStore();
 const router = useRouter();
+const route = useRoute();
+const taskId = Number(route.params.id);
+const isChanged = ref(false);
+const mode = route.name === "task-add" ? "add" : "edit";
 
-const props = defineProps({
-  selectedTask: Object,
-  localTimeZone: String,
+const selectedTask = ref({
+  title: "",
+  description: "",
+  assignees: "",
+  statusId: 1,
+  createdOn: "",
+  updatedOn: "",
 });
 
-const task = ref({
-  title: props.selectedTask.title,
-  description: props.selectedTask.description,
-  assignees: props.selectedTask.assignees,
-  status: props.selectedTask.status,
+const outputTask = ref({
+  title: "",
+  description: "",
+  assignees: "",
+  statusId: 1,
+  createdOn: "",
+  updatedOn: "",
 });
 
-const oldtask = {
-  title: props.selectedTask.title,
-  description: props.selectedTask.description,
-  assignees: props.selectedTask.assignees,
-  status: props.selectedTask.status,
-};
+const input = ref({});
 
-const isTaskEdited = computed(() => {
-  return (
-    task.value.title !== oldtask.title ||
-    task.value.description !== oldtask.description ||
-    task.value.assignees !== oldtask.assignees ||
-    task.value.status !== oldtask.status
-  );
+onMounted(async () => {
+  await statusStore.loadStatuses();
+  if (mode == "edit") {
+    const taskDetail = await taskStore.loadTaskDetails(taskId);
+    selectedTask.value = taskDetail;
+    selectedTask.value.statusId = taskDetail.status.id;
+    selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
+    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
+    input.value = { ...selectedTask.value };
+  } else if (mode == "add") {
+    selectedTask.value.statusId = statusStore.getStatuses[0].id;
+  }
 });
 
-const save = () => {
-  if (props.selectedTask.id !== "" && isTaskEdited.value === true) {
-    emit("editNewTask", task.value);
-    router.push({ name: "task" });
-  } else if (props.selectedTask.id === "") {
-    emit("addNewTask", task.value);
+watch(
+  selectedTask,
+  (newValue) => {
+    if (mode === "add") {
+      if (!newValue.title) {
+        isChanged.value = false;
+      } else {
+        isChanged.value = true;
+        return;
+      }
+    }
+    if (mode === "edit") {
+      if (
+        newValue.title !== input.value.title ||
+        newValue.description !== input.value.description ||
+        newValue.assignees !== input.value.assignees ||
+        newValue.statusId !== input.value.statusId
+      ) {
+        isChanged.value = true;
+      } else {
+        isChanged.value = false;
+      }
+    }
+  },
+  { deep: true }
+);
+
+const save = async () => {
+  if (mode === "edit" && taskId !== undefined) {
+    outputTask.value = {
+      title: selectedTask.value.title,
+      description: selectedTask.value.description,
+      assignees: selectedTask.value.assignees,
+      statusId: selectedTask.value.statusId,
+    };
+    const statusDetail = statusStore.getStatuses.find(
+      (status) => status.id === selectedTask.value.statusId
+    );
+    await taskStore.editTask(taskId, outputTask.value, statusDetail);
+    router.go(-1);
+  } else {
+    outputTask.value = {
+      title: selectedTask.value.title,
+      description: selectedTask.value.description,
+      assignees: selectedTask.value.assignees,
+      statusId: selectedTask.value.statusId,
+    };
+    await taskStore.addTask(outputTask.value);
+
+    router.go(-1);
   }
 };
 
-const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
+const emit = defineEmits(["addNewTask", "editNewTask"]);
 </script>
 
 <template>
-  <ModalDetail :selectedTask="selectedTask">
+  <ModalDetail :selectedTask="selectedTask" class="itbkk-modal-task">
     <template #title>
-      {{ selectedTask.id === "" ? "New Task" : "Edit Task" }}</template
-    >
+      {{ mode == "add" ? "Add Task" : "Edit Task" }}
+    </template>
     <div class="mb-4">
       <label
         for="default-input"
@@ -65,7 +122,7 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
           type="text"
           id="default-input"
           class="itbkk-title bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          v-model.trim="task.title"
+          v-model.trim="selectedTask.title"
         />
       </div>
     </div>
@@ -73,26 +130,23 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
       <textarea
         maxlength="500"
         class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-3/4"
-        v-model.trim="task.description"
+        v-model.trim="selectedTask.description"
       ></textarea>
     </template>
     <template #assignees>
       <textarea
         maxlength="30"
         class="itbkk-assignees block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-3/4"
-        v-model.trim="task.assignees"
+        v-model.trim="selectedTask.assignees"
       ></textarea>
     </template>
     <template #status>
       <form class="px-3">
         <select
           class="itbkk-status bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          v-model="task.status"
+          v-model="selectedTask.statusId"
         >
-          <option
-            :value="status.name"
-            v-for="status in statusStore.getStatuses"
-          >
+          <option :value="status.id" v-for="status in statusStore.getStatuses">
             {{ status.name }}
           </option>
         </select>
@@ -100,13 +154,13 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
     </template>
 
     <template #time>
-      <div class="pt-7" :class="selectedTask.id == '' ? 'hidden' : 'visible'">
+      <div class="pt-7" :class="mode == 'add' ? 'hidden' : 'visible'">
         <span class="itbkk-timezone font-semibold">TimeZone</span> :
         {{ localTimeZone }} <br />
         <span class="itbkk-created-on font-semibold">Created On</span> :
-        {{ props.selectedTask.createdOn }} <br />
+        {{ selectedTask.createdOn }} <br />
         <span class="itbkk-updated-on font-semibold">Updated On</span> :
-        {{ props.selectedTask.updatedOn }} <br />
+        {{ selectedTask.updatedOn }} <br />
       </div>
     </template>
 
@@ -114,20 +168,19 @@ const emit = defineEmits(["closeDetail", "addNewTask", "editNewTask"]);
       <buttonSubmit
         buttonType="cancel"
         class="itbkk-button-cancel"
-        @click="$emit('closeDetail')"
+        @click="router.go(-1)"
         >Cancel</buttonSubmit
       >
     </template>
+
     <template #button-right>
       <buttonSubmit
         class="itbkk-button-confirm w-20"
-        :buttonType="
-          task.title === '' || isTaskEdited === false ? 'cancel' : 'ok'
-        "
-        :disabled="task.title === '' || isTaskEdited === false"
+        :buttonType="!isChanged || !selectedTask.title ? 'cancel' : 'ok'"
+        :disabled="!isChanged || !selectedTask.title"
         @click="save"
         :class="
-          task.title === '' || isTaskEdited === false
+          !isChanged || !selectedTask.title
             ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "

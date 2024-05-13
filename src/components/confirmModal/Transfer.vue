@@ -1,26 +1,26 @@
 <script setup>
-import ConfirmModal from './ConfirmModal.vue'
-import submitButton from '../button/Button.vue'
-import { useTaskStore } from '../../stores/TaskStore.js'
-import { useStatusStore } from '../../stores/StatusStore.js'
-import { ref } from 'vue'
-const taskStore = useTaskStore()
-const statusStore = useStatusStore()
-defineEmits(['closeDelete', 'transferStatus'])
+import ConfirmModal from "./ConfirmModal.vue";
+import submitButton from "../button/Button.vue";
+import { ref } from "vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
+defineEmits(["closeDelete", "transferStatus"]);
 const props = defineProps({
-  selectedStatus: {
-    Type: Object
-  }
-})
+  currentStatus: {
+    Type: Object,
+  },
+  numberOfTasks: {
+    Type: Number,
+  },
+});
+
+const statusStore = useStatusStore();
 
 const filteredStatuses = statusStore.getStatuses.filter(
-  (status) => status.id !== props.selectedStatus.id
-)
-console.log(filteredStatuses);
-const transferTo = ref('')
+  (status) => status.id !== props.currentStatus.id
+);
 
-const numberOfTask = ref(taskStore.getNumberOfTasks(props.selectedStatus.name))
-console.log(transferTo.value)
+console.log(props.numberOfTasks);
+const transferTo = ref("");
 </script>
 
 <template>
@@ -29,7 +29,10 @@ console.log(transferTo.value)
       <p>Transfer a Status</p>
     </template>
     <template #question>
-      <p>There is {{ numberOfTask }} task associated with the Doing status.</p>
+      <p class="itbkk-message">
+        There is <span class="font-bold">{{ numberOfTasks }}</span> task
+        associated with the Doing status.
+      </p>
       <div class="flex">
         <p class="content-center">Transfer to</p>
         <form class="px-3">
@@ -49,14 +52,25 @@ console.log(transferTo.value)
       </div>
     </template>
     <template #button-left>
-      <submitButton buttonType="cancel" @click="$emit('closeDelete')"
+      <submitButton
+        buttonType="cancel"
+        class="itbkk-button-cancel"
+        @click="$emit('closeDelete')"
         >Cancel</submitButton
       >
     </template>
     <template #button-right>
       <submitButton
-        buttonType="ok"
-        @click="$emit('transferStatus', transferTo)"
+        class="itbkk-button-confirm"
+        :buttonType="transferTo === '' ? 'transfer-off' : 'transfer-on'"
+        @click="
+          $emit(
+            'transferStatus',
+            props.currentStatus.name,
+            props.currentStatus.id,
+            transferTo
+          )
+        "
         :disabled="transferTo === ''"
         :class="
           transferTo === ''

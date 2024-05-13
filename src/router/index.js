@@ -2,7 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import TaskView from '../views/TaskView.vue'
 import Detail from '../components/taskModal/Detail.vue'
 import AddEditTask from '../components/taskModal/AddEditTask.vue'
-import Status from '../views/StatusView.vue'
+import StatusView from '../views/StatusView.vue'
+import AddEditStatusModal from '../components/statusModal/AddEditStatusModal.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -35,23 +36,22 @@ const router = createRouter({
     {
       path: '/status',
       name: 'status',
-      component: Status,
+      component: StatusView,
       children: [
         {
           path: 'add',
           name: 'status-add',
-          component: AddEditTask
+          component: AddEditStatusModal
         },
         {
           path: ':id/edit',
           name: 'status-edit',
-          component: AddEditTask
+          component: AddEditStatusModal
         }
       ]
     },
-
     {
-      path: '/:catchAll(.*)',
+      path: '/:notfound(.*)',
       redirect: '/task'
     }
   ]
