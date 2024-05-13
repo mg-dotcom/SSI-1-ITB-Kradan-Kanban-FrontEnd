@@ -1,8 +1,9 @@
 <script setup>
 import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
-import { useStatusStore } from '../../stores/StatusStore.js'
 import { ref } from 'vue'
+import { useStatusStore } from '../../stores/StatusStore.js'
+import { useTaskStore } from '../../stores/TaskStore.js'
 defineEmits(['closeDelete', 'transferStatus'])
 const props = defineProps({
   currentStatus: {
@@ -10,6 +11,7 @@ const props = defineProps({
   }
 })
 
+const taskStore = useTaskStore()
 const statusStore = useStatusStore()
 
 const filteredStatuses = statusStore.getStatuses.filter(
@@ -18,6 +20,7 @@ const filteredStatuses = statusStore.getStatuses.filter(
 
 const transferTo = ref('')
 
+const numberOfTasks = ref(taskStore.getTasksByStatus(props.currentStatus.name).length)
 </script>
 
 <template>
@@ -26,7 +29,7 @@ const transferTo = ref('')
       <p>Transfer a Status</p>
     </template>
     <template #question>
-      <p>There is some task associated with the Doing status.</p>
+      <p>There is <span class="font-bold">{{numberOfTasks}}</span> task associated with the Doing status.</p>
       <div class="flex">
         <p class="content-center">Transfer to</p>
         <form class="px-3">
