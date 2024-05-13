@@ -118,20 +118,20 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
 
-    async editTask(id, updatedTaskInput) {
+    async editTask(id, updatedTaskInput, statusDetails) {
       const res = await updatedTask(
         `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
         updatedTaskInput,
         id
       );
-      console.log(updatedTaskInput);
-      console.log(res);
-
       const taskIndex = this.tasks.findIndex((task) => task.id === id);
       if (res.status === 200) {
         const updateData = await res.json();
-        console.log(updateData);
-        this.tasks[taskIndex] = updateData;
+        this.tasks[taskIndex] = {
+          ...updateData,
+        };
+        this.tasks[taskIndex].status = statusDetails;
+
         this.toast.add({
           severity: "success",
           summary: "Success",

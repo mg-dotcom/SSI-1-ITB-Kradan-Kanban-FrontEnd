@@ -84,7 +84,10 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
-    await taskStore.editTask(taskId, outputTask.value);
+    const statusDetail = statusStore.getStatuses.find(
+      (status) => status.id === selectedTask.value.statusId
+    );
+    await taskStore.editTask(taskId, outputTask.value, statusDetail);
     router.go(-1);
   } else {
     outputTask.value = {

@@ -43,7 +43,6 @@ const deleteTask = async (url, id) => {
 };
 
 const updatedTask = async (url, updatedTask, id) => {
-  console.log(updatedTask);
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: {
