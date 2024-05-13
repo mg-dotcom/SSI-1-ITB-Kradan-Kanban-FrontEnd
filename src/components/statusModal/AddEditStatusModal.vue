@@ -1,9 +1,9 @@
 <script setup>
 import buttonSubmit from "../button/Button.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../../stores/StatusStore.js";
-import { watch } from "vue";
+
 const router = useRouter();
 const route = useRoute();
 const statusStore = useStatusStore();
@@ -21,7 +21,7 @@ function formatDate(date) {
 
 onMounted(async () => {
   if (mode === "edit") {
-    const selectedStatus = await statusStore.getStatusById(statusId);
+    const selectedStatus = await statusStore.loadStatusDetail(statusId);
     console.log(selectedStatus);
     inputStatus.value = selectedStatus;
     inputStatus.value.timeZone = localTimeZone.value;
@@ -31,7 +31,7 @@ onMounted(async () => {
   } else if (mode === "add") {
     inputStatus.value = {
       name: "",
-      description: null,
+      description: "",
       statusColor: "#CCCCCC",
     };
   }
@@ -52,7 +52,8 @@ watch(
       if (
         newValue.name !== unEditedStatus.value.name ||
         newValue.description !== unEditedStatus.value.description ||
-        (newValue.statusColor !== unEditedStatus.value.statusColor && newValue.name !== "")
+        (newValue.statusColor !== unEditedStatus.value.statusColor &&
+          newValue.name !== "")
       ) {
         isChanged.value = false;
       } else {
@@ -62,6 +63,22 @@ watch(
   },
   { deep: true }
 );
+
+// ห้ามลบบบบบบบบบบบบบบบบ !!!! เอาไว้ validate
+// const isExistingName = computed(() => {
+//   if (mode === "add") {
+//     return statusStore.getStatuses.some(
+//       (status) => status.name === inputStatus.value.name
+//     );
+//   }
+//   if (mode === "edit") {
+//     return statusStore.getStatuses.some(
+//       (status) =>
+//         status.name === inputStatus.value.name &&
+//         status.id !== inputStatus.value.id
+//     );
+//   }
+// });
 
 const save = async () => {
   if (mode === "edit") {
@@ -145,12 +162,22 @@ const save = async () => {
 
         <buttonSubmit
           :buttonType="
-            inputStatus.name === '' || isChanged === true ? 'cancel' : 'ok'
+            inputStatus.name === '' ||
+            isChanged === true ||
+            isExistingName === true
+              ? 'cancel'
+              : 'ok'
           "
           @click="save"
-          :disabled="inputStatus.name === '' || isChanged === true"
+          :disabled="
+            inputStatus.name === '' ||
+            isChanged === true ||
+            isExistingName === true
+          "
           :class="
-            inputStatus.name === '' || isChanged === true
+            inputStatus.name === '' ||
+            isChanged === true ||
+            isExistingName === true
               ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
               : ''
           "

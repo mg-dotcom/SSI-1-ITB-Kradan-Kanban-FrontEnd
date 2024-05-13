@@ -14,6 +14,7 @@ export const useStatusStore = defineStore("StatusStore", {
     statuses: [],
     STATUS_ENDPOINT: "v2/statuses",
   }),
+  
   getters: {
     getStatuses(state) {
       return state.statuses;
@@ -25,13 +26,15 @@ export const useStatusStore = defineStore("StatusStore", {
       const status = state.statuses.find((status) => status.name === name);
       return status ? status.color : "";
     },
+    getStatusByName: (state) => (name) => {
+      return state.statuses.find((status) => status.name === name);
+    },
   },
   actions: {
     async loadStatuses() {
       const data = await fetchAllStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`
       );
-      // console.log(data);
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses");
       } else {
@@ -40,8 +43,20 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
+    async loadStatusDetail(id) {
+      const data = await fetchStatusById(
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        id
+      );
+
+      if (data.status < 200 && data.status > 299) {
+        alert("Failed to fetch statuses");
+      } else {
+        return data;
+      }
+    },
+
     async addStatus(newStatus) {
-      console.log(newStatus);
       const res = await addStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         newStatus
@@ -53,7 +68,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
       if (res.status === 201) {
         const data = await res.json();
-        this.statuses.push(res);
+        this.statuses.push(data);
         //toast success
       } else if (existingStatus) {
         this.toast.add({
@@ -75,12 +90,13 @@ export const useStatusStore = defineStore("StatusStore", {
         updatedStatus
       );
       if (res.status === 200) {
+        const data = await res.json();
         const index = this.statuses.findIndex((status) => status.id === id);
         if (index === -1) {
           return;
         } else {
           this.statuses[index] = {
-            ...res,
+            ...data,
           };
         }
       } else {

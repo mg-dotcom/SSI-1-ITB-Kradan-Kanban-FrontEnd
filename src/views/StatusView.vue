@@ -23,6 +23,7 @@ const openDeleteOrTransferModal = (id) => {
 
 <template>
   <Toast class="itbkk-message" />
+  <RouterView />
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
       <div
@@ -138,7 +139,7 @@ const openDeleteOrTransferModal = (id) => {
       </div>
     </div>
   </div>
-  <RouterView />
+ 
 </template>
 
 <style scoped></style>
