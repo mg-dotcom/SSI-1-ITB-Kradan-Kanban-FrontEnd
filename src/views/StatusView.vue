@@ -53,6 +53,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
 
 <template>
   <Toast class="itbkk-message" />
+  <RouterView />
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
       <div
@@ -197,7 +198,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
       @transferStatus="transferStatus"
     ></Transfer>
   </div>
-  <RouterView />
+ 
 </template>
 
 <style scoped></style>

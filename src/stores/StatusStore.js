@@ -26,6 +26,7 @@ export const useStatusStore = defineStore('StatusStore', {
       updatedOn: ''
     }
   }),
+  
   getters: {
     getStatuses(state) {
       return state.statuses
@@ -66,6 +67,19 @@ export const useStatusStore = defineStore('StatusStore', {
           updatedOn: data.updatedOn || ''
         }
         return this.statusDetails
+      }
+    },
+
+    async loadStatusDetail(id) {
+      const data = await fetchStatusById(
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        id
+      );
+
+      if (data.status < 200 && data.status > 299) {
+        alert("Failed to fetch statuses");
+      } else {
+        return data;
       }
     },
 
