@@ -8,7 +8,6 @@ import {
 } from '../libs/FetchStatus.js'
 import { useToast } from 'primevue/usetoast'
 
-
 export const useStatusStore = defineStore('StatusStore', {
   state: () => ({
     toast: useToast(),
@@ -148,7 +147,7 @@ export const useStatusStore = defineStore('StatusStore', {
       }
     },
 
-    async transferStatus(currentId, newId) {
+    async transferStatus(currentId, newId, numberOfTasks) {
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}/${currentId}`,
         newId
@@ -162,14 +161,14 @@ export const useStatusStore = defineStore('StatusStore', {
           return
         } else {
           this.statuses.splice(index, 1)
-          // this.toast.add({
-          //   severity: 'success',
-          //   summary: 'Success',
-          //   detail: `${numberOfTasks} ${
-          //     numberOfTasks > 1 ? 'tasks' : 'task'
-          //   } have been transferred to ${newStatus.name} status`,
-          //   life: 3000
-          // })
+          this.toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `${numberOfTasks} ${
+              numberOfTasks > 1 ? 'tasks' : 'task'
+            } have been transferred and the status has been deleted`,
+            life: 3000
+          })
         }
       } else {
         this.toast.add({

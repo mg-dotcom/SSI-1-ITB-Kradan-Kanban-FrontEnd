@@ -1,21 +1,22 @@
 <script setup>
-import { defineProps } from "vue";
+import { defineProps } from 'vue'
 
 const props = defineProps({
   buttonType: {
     type: String,
     validator: (value) => {
       return [
-        "ok",
-        "cancel",
-        "add",
-        "manage-status",
-        "edit",
-        "delete",
-      ].includes(value.toLowerCase().trim());
-    },
-  },
-});
+        'ok',
+        'cancel',
+        'add',
+        'manage-status',
+        'edit',
+        'delete',
+        'transfer'
+      ].includes(value.toLowerCase().trim())
+    }
+  }
+})
 </script>
 
 <template>
@@ -36,6 +37,8 @@ const props = defineProps({
         buttonType === 'edit',
       'bg-red-500 hover:bg-red-600 transition-colors w-20 font-bold active:scale-[93%] active:transition-transform text-white':
         buttonType === 'delete',
+      'bg-[#03bd09] hover:bg-[#20ae27] transition-colors active:scale-[93%]  active:transition-transform text-white w-40':
+        buttonType === 'transfer'
     }"
   >
     <!-- Default content if slot is not provided -->

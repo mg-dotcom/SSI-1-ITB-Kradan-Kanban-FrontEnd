@@ -1,5 +1,4 @@
 <script setup>
-import { useRouter, useRoute } from 'vue-router'
 import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
 defineEmits(['closeDelete', 'deleteStatus'])

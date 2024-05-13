@@ -9,7 +9,7 @@ const props = defineProps({
     Type: Object
   },
   numberOfTasks: {
-    Type: String
+    Type: Number
   }
 })
 
@@ -58,7 +58,7 @@ const transferTo = ref('')
     </template>
     <template #button-right>
       <submitButton
-        :buttonType="transferTo === '' ? 'cancel' : 'ok'"
+        :buttonType="transferTo === '' ? 'cancel' : 'transfer'"
         @click="
           $emit(
             'transferStatus',
