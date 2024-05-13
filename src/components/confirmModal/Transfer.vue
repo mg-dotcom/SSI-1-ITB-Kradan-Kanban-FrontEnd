@@ -1,26 +1,26 @@
 <script setup>
-import ConfirmModal from './ConfirmModal.vue'
-import submitButton from '../button/Button.vue'
-import { ref } from 'vue'
-import { useStatusStore } from '../../stores/StatusStore.js'
-defineEmits(['closeDelete', 'transferStatus'])
+import ConfirmModal from "./ConfirmModal.vue";
+import submitButton from "../button/Button.vue";
+import { ref } from "vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
+defineEmits(["closeDelete", "transferStatus"]);
 const props = defineProps({
   currentStatus: {
-    Type: Object
+    Type: Object,
   },
   numberOfTasks: {
-    Type: Number
-  }
-})
+    Type: Number,
+  },
+});
 
-const statusStore = useStatusStore()
+const statusStore = useStatusStore();
 
 const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
-)
+);
 
-console.log(props.numberOfTasks)
-const transferTo = ref('')
+console.log(props.numberOfTasks);
+const transferTo = ref("");
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const transferTo = ref('')
       <p>Transfer a Status</p>
     </template>
     <template #question>
-      <p>
+      <p class="itbkk-message">
         There is <span class="font-bold">{{ numberOfTasks }}</span> task
         associated with the Doing status.
       </p>
@@ -52,12 +52,16 @@ const transferTo = ref('')
       </div>
     </template>
     <template #button-left>
-      <submitButton buttonType="cancel" @click="$emit('closeDelete')"
+      <submitButton
+        buttonType="cancel"
+        class="itbkk-button-cancel"
+        @click="$emit('closeDelete')"
         >Cancel</submitButton
       >
     </template>
     <template #button-right>
       <submitButton
+        class="itbkk-button-confirm"
         :buttonType="transferTo === '' ? 'transfer-off' : 'transfer-on'"
         @click="
           $emit(

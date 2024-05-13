@@ -134,7 +134,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                   {{ index + 1 }}
                 </td>
                 <td
-                  class="itbkk-title text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                  class="itbkk-status-name text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
                   <StatusButton
                     :statusColor="status.statusColor"
@@ -143,7 +143,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                   >
                 </td>
                 <td
-                  class="itbkk-assignees text-sm border-b border-r border-gray-300 break-all"
+                  class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all"
                   :class="!status.description ? 'text-gray-400 italic' : ''"
                 >
                   {{

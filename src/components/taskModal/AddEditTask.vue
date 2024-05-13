@@ -106,7 +106,7 @@ const emit = defineEmits(["addNewTask", "editNewTask"]);
 </script>
 
 <template>
-  <ModalDetail :selectedTask="selectedTask">
+  <ModalDetail :selectedTask="selectedTask" class="itbkk-modal-task">
     <template #title>
       {{ mode == "add" ? "Add Task" : "Edit Task" }}
     </template>
