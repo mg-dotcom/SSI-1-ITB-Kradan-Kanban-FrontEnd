@@ -1,70 +1,70 @@
 <script setup>
-import buttonSubmit from '../button/Button.vue'
-import { onMounted, ref, watch, computed } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useStatusStore } from '../../stores/StatusStore.js'
-import { localTimeZone, formatDate } from '../../libs/libsUtil.js'
+import buttonSubmit from "../button/Button.vue";
+import { onMounted, ref, watch, computed } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useStatusStore } from "../../stores/StatusStore.js";
+import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 
-const router = useRouter()
-const route = useRoute()
-const statusStore = useStatusStore()
-const mode = route.name === 'status-add' ? 'add' : 'edit'
-const inputStatus = ref({})
-const unEditedStatus = ref({})
-const isChanged = ref(false)
-const statusId = Number(route.params.id)
+const router = useRouter();
+const route = useRoute();
+const statusStore = useStatusStore();
+const mode = route.name === "status-add" ? "add" : "edit";
+const inputStatus = ref({});
+const unEditedStatus = ref({});
+const isChanged = ref(false);
+const statusId = Number(route.params.id);
 
 onMounted(async () => {
-  if (!statusId) {
-    router.push({ name: 'status' })
-  }
   if (statusId === 1) {
-    router.push({ name: 'status' })
+    router.push({ name: "status" });
   }
 
-  if (mode === 'edit') {
-    const selectedStatus = await statusStore.loadStatusDetail(statusId)
-    console.log(selectedStatus)
-    inputStatus.value = selectedStatus
-    inputStatus.value.timeZone = localTimeZone.value
-    inputStatus.value.createdOn = formatDate(selectedStatus.createdOn)
-    inputStatus.value.updatedOn = formatDate(selectedStatus.updatedOn)
-    unEditedStatus.value = { ...selectedStatus }
-  } else if (mode === 'add') {
+  if (mode === "edit") {
+    const selectedStatus = await statusStore.loadStatusDetail(statusId);
+
+    selectedStatus.description
+      ? selectedStatus.description
+      : (selectedStatus.description = "");
+    inputStatus.value = selectedStatus;
+    inputStatus.value.timeZone = localTimeZone.value;
+    inputStatus.value.createdOn = formatDate(selectedStatus.createdOn);
+    inputStatus.value.updatedOn = formatDate(selectedStatus.updatedOn);
+    unEditedStatus.value = { ...selectedStatus };
+  } else if (mode === "add") {
     inputStatus.value = {
-      name: '',
-      description: '',
-      statusColor: '#CCCCCC'
-    }
+      name: "",
+      description: "",
+      statusColor: "#CCCCCC",
+    };
   }
-})
+});
 
 watch(
   inputStatus,
   (newValue) => {
-    if (mode === 'add') {
+    if (mode === "add") {
       if (!newValue.title) {
-        isChanged.value = false
+        isChanged.value = false;
       } else {
-        isChanged.value = true
-        return
+        isChanged.value = true;
+        return;
       }
     }
-    if (mode === 'edit') {
+    if (mode === "edit") {
       if (
         newValue.name !== unEditedStatus.value.name ||
         newValue.description !== unEditedStatus.value.description ||
         (newValue.statusColor !== unEditedStatus.value.statusColor &&
-          newValue.name !== '')
+          newValue.name !== "")
       ) {
-        isChanged.value = false
+        isChanged.value = false;
       } else {
-        isChanged.value = true
+        isChanged.value = true;
       }
     }
   },
   { deep: true }
-)
+);
 
 // ห้ามลบบบบบบบบบบบบบบบบ !!!! เอาไว้ validate
 // const isExistingName = computed(() => {
@@ -83,14 +83,14 @@ watch(
 // });
 
 const save = async () => {
-  if (mode === 'edit') {
-    await statusStore.editStatus(inputStatus.value.id, inputStatus.value)
-    router.go(-1)
+  if (mode === "edit") {
+    await statusStore.editStatus(inputStatus.value.id, inputStatus.value);
+    router.go(-1);
   } else {
-    await statusStore.addStatus(inputStatus.value)
-    router.go(-1)
+    await statusStore.addStatus(inputStatus.value);
+    router.go(-1);
   }
-}
+};
 </script>
 
 <template>
@@ -103,7 +103,7 @@ const save = async () => {
       <div
         class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
       >
-        {{ mode === 'add' ? 'New Status' : 'Edit Status' }}
+        {{ mode === "add" ? "New Status" : "Edit Status" }}
       </div>
 
       <div

@@ -1,49 +1,49 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 import {
   fetchAllTasks,
   addTask,
   deleteTask,
   fetchTaskDetails,
-  updatedTask
-} from '../libs/FetchTask.js'
-import { useToast } from 'primevue/usetoast'
+  updatedTask,
+} from "../libs/FetchTask.js";
+import { useToast } from "primevue/usetoast";
 
-export const useTaskStore = defineStore('TaskStore', {
+export const useTaskStore = defineStore("TaskStore", {
   state: () => ({
     toast: useToast(),
     tasks: [],
-    TASK_ENDPOINT: 'v1/tasks',
+    TASK_ENDPOINT: "v2/tasks",
     taskDetails: {
-      id: '',
-      title: '',
-      description: '',
-      assignees: '',
+      id: "",
+      title: "",
+      description: "",
+      assignees: "",
       status: {},
-      createdOn: '',
-      updatedOn: ''
-    }
+      createdOn: "",
+      updatedOn: "",
+    },
   }),
   getters: {
     getTasks() {
-      return this.tasks
+      return this.tasks;
     },
     getTaskById: (state) => (id) => {
-      return state.tasks.find((task) => task.id === id)
+      return state.tasks.find((task) => task.id === id);
     },
     getTasksByStatus: (state) => (status) => {
-      return state.tasks.filter((task) => task.statusName === status)
-    }
+      return state.tasks.filter((task) => task.statusName === status);
+    },
   },
   actions: {
     async loadTasks() {
       const data = await fetchAllTasks(
         `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`
-      )
+      );
       if (data.status < 200 && data.status > 299) {
         //fetch data failed
-        alert('Failed to fetch tasks')
+        alert("Failed to fetch tasks");
       } else {
-        this.tasks = data
+        this.tasks = data;
       }
     },
 
@@ -51,21 +51,21 @@ export const useTaskStore = defineStore('TaskStore', {
       const data = await fetchTaskDetails(
         `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
         id
-      )
+      );
       if (data.status < 200 && data.status > 299) {
         //fetch data failed
-        alert('Failed to fetch task details')
+        alert("Failed to fetch task details");
       } else {
         this.taskDetails = {
-          id: data.id || '',
-          title: data.title || '',
-          description: data.description || '',
-          assignees: data.assignees || '',
+          id: data.id || "",
+          title: data.title || "",
+          description: data.description || "",
+          assignees: data.assignees || "",
           status: data.status || {},
-          createdOn: data.createdOn || '',
-          updatedOn: data.updatedOn || ''
-        }
-        return this.taskDetails
+          createdOn: data.createdOn || "",
+          updatedOn: data.updatedOn || "",
+        };
+        return this.taskDetails;
       }
     },
 
@@ -73,23 +73,23 @@ export const useTaskStore = defineStore('TaskStore', {
       const res = await addTask(
         `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
         newTask
-      )
+      );
       if (res.status >= 200 && res.status <= 299) {
-        const addedData = await res.json()
-        this.tasks.push(addedData)
+        const addedData = await res.json();
+        this.tasks.push(addedData);
         this.toast.add({
-          severity: 'success',
-          summary: 'Success',
+          severity: "success",
+          summary: "Success",
           detail: `The task has been successfully added`,
-          life: 3000
-        })
+          life: 3000,
+        });
       } else {
         this.toast.add({
-          severity: 'error',
-          summary: 'Error',
+          severity: "error",
+          summary: "Error",
           detail: `An error occurred adding the task "${addedData.title}"`,
-          life: 3000
-        })
+          life: 3000,
+        });
       }
     },
 
@@ -97,24 +97,24 @@ export const useTaskStore = defineStore('TaskStore', {
       const res = await deleteTask(
         `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
         id
-      )
-      const taskIndex = this.tasks.findIndex((task) => task.id === id)
+      );
+      const taskIndex = this.tasks.findIndex((task) => task.id === id);
       if (res.status === 200) {
-        console.log('Task deleted successfully')
-        this.tasks.splice(taskIndex, 1)
+        console.log("Task deleted successfully");
+        this.tasks.splice(taskIndex, 1);
         this.toast.add({
-          severity: 'success',
-          summary: 'Success',
+          severity: "success",
+          summary: "Success",
           detail: `The task has been deleted`,
-          life: 3000
-        })
+          life: 3000,
+        });
       } else {
         this.toast.add({
-          severity: 'error',
-          summary: 'Error',
+          severity: "error",
+          summary: "Error",
           detail: `An error has occurred, the task does not exist.`,
-          life: 3000
-        })
+          life: 3000,
+        });
       }
     },
 
@@ -123,35 +123,39 @@ export const useTaskStore = defineStore('TaskStore', {
         `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
         updatedTaskInput,
         id
-      )
-      const taskIndex = this.tasks.findIndex((task) => task.id === id)
+      );
+      console.log(updatedTaskInput);
+      console.log(res);
+
+      const taskIndex = this.tasks.findIndex((task) => task.id === id);
       if (res.status === 200) {
-        const updateData = await res.json()
-        this.tasks[taskIndex] = updateData
+        const updateData = await res.json();
+        console.log(updateData);
+        this.tasks[taskIndex] = updateData;
         this.toast.add({
-          severity: 'success',
-          summary: 'Success',
+          severity: "success",
+          summary: "Success",
           detail: `The task has been updated`,
-          life: 3000
-        })
+          life: 3000,
+        });
       } else {
         this.toast.add({
-          severity: 'error',
-          summary: 'Error',
+          severity: "error",
+          summary: "Error",
           detail: `An error has occurred, the task does not exist`,
-          life: 3000
-        })
+          life: 3000,
+        });
       }
     },
 
     transferTasksStatus(currentStatus, newStatus) {
       const tasksToUpdate = this.tasks.filter(
         (task) => task.statusName === currentStatus
-      )
+      );
 
       tasksToUpdate.forEach((task) => {
-        task.statusName = newStatus
-      })
-    }
-  }
-})
+        task.statusName = newStatus;
+      });
+    },
+  },
+});

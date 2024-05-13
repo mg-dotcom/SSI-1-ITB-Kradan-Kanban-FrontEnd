@@ -19,6 +19,7 @@ const fetchTaskDetails = async (url, id) => {
 };
 
 const addTask = async (url, newTask) => {
+  console.log(newTask);
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -28,7 +29,7 @@ const addTask = async (url, newTask) => {
       title: newTask.title,
       description: newTask.description,
       assignees: newTask.assignees,
-      statusName: newTask.status,
+      status: newTask.statusId,
     }),
   });
   return res;
@@ -42,6 +43,7 @@ const deleteTask = async (url, id) => {
 };
 
 const updatedTask = async (url, updatedTask, id) => {
+  console.log(updatedTask);
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: {
@@ -51,7 +53,7 @@ const updatedTask = async (url, updatedTask, id) => {
       title: updatedTask.title,
       description: updatedTask.description,
       assignees: updatedTask.assignees,
-      statusName: updatedTask.status,
+      status: updatedTask.statusId,
     }),
   });
   return res;

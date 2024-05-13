@@ -19,22 +19,33 @@ const selectedTask = ref({
   title: "",
   description: "",
   assignees: "",
-  status: "",
+  statusId: 1,
   createdOn: "",
   updatedOn: "",
 });
+
+const outputTask = ref({
+  title: "",
+  description: "",
+  assignees: "",
+  statusId: 1,
+  createdOn: "",
+  updatedOn: "",
+});
+
 const input = ref({});
 
 onMounted(async () => {
+  await statusStore.loadStatuses();
   if (mode == "edit") {
     const taskDetail = await taskStore.loadTaskDetails(taskId);
     selectedTask.value = taskDetail;
-    selectedTask.value.status = taskDetail.status.name;
+    selectedTask.value.statusId = taskDetail.status.id;
     selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
     selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
     input.value = { ...selectedTask.value };
   } else if (mode == "add") {
-    selectedTask.value.status = "No Status";
+    selectedTask.value.statusId = statusStore.getStatuses[0].id;
   }
 });
 
@@ -50,12 +61,11 @@ watch(
       }
     }
     if (mode === "edit") {
-
       if (
         newValue.title !== input.value.title ||
         newValue.description !== input.value.description ||
         newValue.assignees !== input.value.assignees ||
-        newValue.status !== input.value.status
+        newValue.statusId !== input.value.statusId
       ) {
         isChanged.value = true;
       } else {
@@ -68,10 +78,23 @@ watch(
 
 const save = async () => {
   if (mode === "edit" && taskId !== undefined) {
-    await taskStore.editTask(taskId, selectedTask.value);
+    outputTask.value = {
+      title: selectedTask.value.title,
+      description: selectedTask.value.description,
+      assignees: selectedTask.value.assignees,
+      statusId: selectedTask.value.statusId,
+    };
+    await taskStore.editTask(taskId, outputTask.value);
     router.go(-1);
   } else {
-    await taskStore.addTask(selectedTask.value);
+    outputTask.value = {
+      title: selectedTask.value.title,
+      description: selectedTask.value.description,
+      assignees: selectedTask.value.assignees,
+      statusId: selectedTask.value.statusId,
+    };
+    await taskStore.addTask(outputTask.value);
+
     router.go(-1);
   }
 };
@@ -118,12 +141,9 @@ const emit = defineEmits(["addNewTask", "editNewTask"]);
       <form class="px-3">
         <select
           class="itbkk-status bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          v-model="selectedTask.status"
+          v-model="selectedTask.statusId"
         >
-          <option
-            :value="status.name"
-            v-for="status in statusStore.getStatuses"
-          >
+          <option :value="status.id" v-for="status in statusStore.getStatuses">
             {{ status.name }}
           </option>
         </select>
