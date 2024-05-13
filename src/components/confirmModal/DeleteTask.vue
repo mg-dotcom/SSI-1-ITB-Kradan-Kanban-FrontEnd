@@ -1,17 +1,23 @@
 <script setup>
-import submitButton from '../button/Button.vue'
-import { defineEmits } from "vue";
-defineEmits(["closeDelete", "deleteData"]);
+import submitButton from "../button/Button.vue";
+import { ref, defineProps } from "vue";
+import { useRouter } from "vue-router";
+import { useTaskStore } from "../../stores/TaskStore.js";
+
 const props = defineProps({
-  selectedTask: {
-    type: Object,
-  },
-  selectedIndex: {
-    type: Number,
-  },
+  selectedId: Number,
+  selectedIndex: Number,
 });
 
-console.log(props.selectedIndex);
+const emit = defineEmits(["confirmDeleteTask"]);
+
+const taskStore = useTaskStore();
+const selectedTask = taskStore.getTaskById(props.selectedId);
+
+const deleteTask = async () => {
+  await taskStore.deleteTask(props.selectedId);
+  emit("confirmDeleteTask");
+};
 </script>
 
 <template>
@@ -25,7 +31,7 @@ console.log(props.selectedIndex);
       <div class="title-line w-full h-px bg-gray-300 mb-4"></div>
       <div class="itbkk-message mb-6 break-all">
         <p>
-          Do you want to delete the task number {{ props.selectedIndex + 1 }} -
+          Do you want to delete the task number {{ selectedIndex + 1 }} -
           {{ selectedTask.title }} ?
         </p>
       </div>
@@ -36,9 +42,7 @@ console.log(props.selectedIndex);
           >
         </div>
         <div class="itbkk-button-confirm">
-          <submitButton
-            buttonType="ok"
-            @click="$emit('deleteData', selectedTask.id)"
+          <submitButton buttonType="ok" @click="deleteTask"
             >Confirm</submitButton
           >
         </div>

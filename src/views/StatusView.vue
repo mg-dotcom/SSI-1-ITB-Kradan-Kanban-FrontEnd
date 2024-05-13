@@ -45,6 +45,8 @@ const deleteStatus = (id) => {
 
 const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
   taskStore.transferTasksStatus(currentStatus, newStatusId)
+  // const numberOfTasks = taskStore.getTasksByStatus(currentStatus).length
+  // console.log(numberOfTasks);
   await statusStore.transferStatus(currentStatusId, newStatusId)
   openTransfer.value = false
   router.push({ name: 'status' })
@@ -127,9 +129,11 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                 <td
                   class="itbkk-title text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
-                  <StatusButton :statusColor="status.statusColor">{{
-                    status.name
-                  }}</StatusButton>
+                  <StatusButton
+                    :statusColor="status.statusColor"
+                    :statusName="status.name"
+                    >{{ status.name }}</StatusButton
+                  >
                 </td>
                 <td
                   class="itbkk-assignees text-sm border-b border-r border-gray-300 break-all"
@@ -156,11 +160,11 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                         : ''
                     "
                     @click="
-                        router.push({
-                          name: 'status-edit',
-                          params: { id: status.id },
-                        })
-                      "
+                      router.push({
+                        name: 'status-edit',
+                        params: { id: status.id }
+                      })
+                    "
                     >Edit</buttonSubmit
                   >
                   <buttonSubmit
@@ -198,7 +202,6 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
       @transferStatus="transferStatus"
     ></Transfer>
   </div>
- 
 </template>
 
 <style scoped></style>

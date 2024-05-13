@@ -7,13 +7,10 @@ import {
   updateStatus
 } from '../libs/FetchStatus.js'
 import { useToast } from 'primevue/usetoast'
-import { useRouter } from 'vue-router'
-import router from '@/router/index.js'
-import { s } from 'vitest/dist/reporters-LqC_WI4d.js'
+
 
 export const useStatusStore = defineStore('StatusStore', {
   state: () => ({
-    router: useRouter(),
     toast: useToast(),
     statuses: [],
     STATUS_ENDPOINT: 'v2/statuses',
@@ -26,7 +23,7 @@ export const useStatusStore = defineStore('StatusStore', {
       updatedOn: ''
     }
   }),
-  
+
   getters: {
     getStatuses(state) {
       return state.statuses
@@ -74,12 +71,12 @@ export const useStatusStore = defineStore('StatusStore', {
       const data = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         id
-      );
+      )
 
       if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch statuses");
+        alert('Failed to fetch statuses')
       } else {
-        return data;
+        return data
       }
     },
 
@@ -102,7 +99,6 @@ export const useStatusStore = defineStore('StatusStore', {
           detail: `The status has been added`,
           life: 3000
         })
-        router.push({ name: 'status' })
       } else if (existingStatus) {
         this.toast.add({
           severity: 'error',
@@ -117,7 +113,6 @@ export const useStatusStore = defineStore('StatusStore', {
           detail: `An error has occurred, the status could not be added.`,
           life: 3000
         })
-        router.push({ name: 'status' })
       }
     },
 
@@ -131,15 +126,25 @@ export const useStatusStore = defineStore('StatusStore', {
         const data = await res.json()
         const index = this.statuses.findIndex((status) => status.id === id)
         if (index === -1) {
-         re  alert('Failed to update status, status not found')
-        
+          return alert('Failed to update status, status not found')
         } else {
           this.statuses[index] = {
             ...data
           }
         }
+        this.toast.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: `The status has been updated`,
+          life: 3000
+        })
       } else {
-        //toast error
+        this.toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `An error has occurred, the status does not exist.`,
+          life: 3000
+        })
       }
     },
 
@@ -148,7 +153,7 @@ export const useStatusStore = defineStore('StatusStore', {
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}/${currentId}`,
         newId
       )
-      console.log(res)
+      const newStatus = this.statuses.find((status) => status.id === newId)
       if (res.status === 200) {
         const index = this.statuses.findIndex(
           (status) => status.id === currentId
@@ -157,11 +162,23 @@ export const useStatusStore = defineStore('StatusStore', {
           return
         } else {
           this.statuses.splice(index, 1)
+          // this.toast.add({
+          //   severity: 'success',
+          //   summary: 'Success',
+          //   detail: `${numberOfTasks} ${
+          //     numberOfTasks > 1 ? 'tasks' : 'task'
+          //   } have been transferred to ${newStatus.name} status`,
+          //   life: 3000
+          // })
         }
-        //toast success
       } else {
-        console.log('fail to remove status')
-        //toast error
+        this.toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `An error has occurred, the status does not exist`,
+          life: 3000
+        })
+        router.push({ name: 'task' })
       }
     },
 
@@ -176,11 +193,20 @@ export const useStatusStore = defineStore('StatusStore', {
           return
         } else {
           this.statuses.splice(index, 1)
+          this.toast.add({
+            severity: 'success',
+            summary: 'Success',
+            detail: `The status has been deleted`,
+            life: 3000
+          })
         }
-        //toast success
       } else {
-        console.log('fail to remove status')
-        //toast error
+        this.toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `An error has occurred, the status does not exist.`,
+          life: 3000
+        })
       }
     }
   }

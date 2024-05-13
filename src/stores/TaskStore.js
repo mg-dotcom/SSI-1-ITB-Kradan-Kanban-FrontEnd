@@ -7,9 +7,6 @@ import {
   updatedTask
 } from '../libs/FetchTask.js'
 import { useToast } from 'primevue/usetoast'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
 
 export const useTaskStore = defineStore('TaskStore', {
   state: () => ({
@@ -35,9 +32,6 @@ export const useTaskStore = defineStore('TaskStore', {
     },
     getTasksByStatus: (state) => (status) => {
       return state.tasks.filter((task) => task.statusName === status)
-    },
-    getNumberOfTasks: (state) => (statusName) => {
-      return state.tasks.filter((task) => task.statusName === statusName).length
     }
   },
   actions: {
@@ -96,7 +90,6 @@ export const useTaskStore = defineStore('TaskStore', {
           detail: `An error occurred adding the task "${addedData.title}"`,
           life: 3000
         })
-        router.push({ name: 'task' })
       }
     },
 
@@ -122,7 +115,6 @@ export const useTaskStore = defineStore('TaskStore', {
           detail: `An error has occurred, the task does not exist.`,
           life: 3000
         })
-        router.push({ name: 'task' })
       }
     },
 
@@ -143,13 +135,12 @@ export const useTaskStore = defineStore('TaskStore', {
           life: 3000
         })
       } else {
-        toast.add({
+        this.toast.add({
           severity: 'error',
           summary: 'Error',
           detail: `An error has occurred, the task does not exist`,
           life: 3000
         })
-        router.push({ name: 'task' })
       }
     },
 
@@ -161,25 +152,6 @@ export const useTaskStore = defineStore('TaskStore', {
       tasksToUpdate.forEach((task) => {
         task.statusName = newStatus
       })
-
-      if (tasksToUpdate) {
-        this.toast.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: `${tasksToUpdate.length} ${
-            tasksToUpdate.length > 1 ? 'tasks' : 'task'
-          } have been transferred and the status has been deleted`,
-          life: 3000
-        })
-      } else {
-        this.toast.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: `An error has occurred, the status does not exist`,
-          life: 3000
-        })
-        router.push({ name: 'task' })
-      }
     }
   }
 })

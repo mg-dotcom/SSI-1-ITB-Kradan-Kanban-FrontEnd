@@ -1,54 +1,26 @@
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
 import { initFlowbite, initDropdowns } from 'flowbite'
-import Detail from '../components/taskModal/Detail.vue'
-import AddEditTask from '../components/taskModal/AddEditTask.vue'
 import StatusButton from '../components/button/StatusButton.vue'
-import {
-  fetchAllTasks,
-  fetchTaskDetails,
-  addTask,
-  deleteTask,
-  updatedTask
-} from '../libs/FetchTask.js'
 import DeleteModal from '../components/confirmModal/DeleteTask.vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, RouterView } from 'vue-router'
 import buttonSubmit from '../components/button/Button.vue'
-import { useToast } from 'primevue/usetoast'
 import { useTaskStore } from '../stores/TaskStore.js'
 import { useStatusStore } from '../stores/StatusStore.js'
 import Toast from 'primevue/toast'
-import { fetchAllStatus } from '../libs/FetchStatus'
-const STATUS_ENDPOINT = 'v2/statuses'
-const TASK_ENDPOINT = 'v1/tasks'
-const toast = useToast()
-const router = useRouter()
-const route = useRoute()
-const selectedTask = ref({
-  id: '',
-  title: '',
-  description: '',
-  assignees: '',
-  status: 'No Status',
-  createdOn: '',
-  updatedOn: ''
-})
 
+const router = useRouter()
+const selectedId = ref('')
+const selectedIndex = ref(0)
 const taskStore = useTaskStore()
 
 const statusStore = useStatusStore()
 
-const taskId = route.params.id
-
 onMounted(async () => {
   initFlowbite()
   initDropdowns()
-
-  await statusStore.loadStatuses()
   await taskStore.loadTasks()
-
-  console.log(taskStore.getTasks)
-  console.log(statusStore.getStatusColor("To Do"));
+  await statusStore.loadStatuses()
 })
 
 const page = reactive({
@@ -57,202 +29,31 @@ const page = reactive({
 
 const popup = reactive({
   addEdit: false,
-  detail: false,
   optionEditDelete: false,
   delete: false
 })
 
-const clearValue = () => {
-  selectedTask.value = {
-    id: '',
-    title: '',
-    description: '',
-    assignees: '',
-    status: 'No Status',
-    createdOn: '',
-    updatedOn: ''
-  }
+const showOptionEditDelete = (taskId) => {
+  selectedId.value = taskId
+  popup.optionEditDelete = !popup.optionEditDelete
 }
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
-
-function formatDate(date) {
-  const d = new Date(date)
-  return d
-    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
-    .split(',')
-    .join(' ')
-}
-
-const openDetail = async (id) => {
-  const taskDetails = await fetchTaskDetails(
-    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-    id
-  )
-  if (taskDetails === undefined) {
-    return
-  }
-
-  selectedTask.value = taskDetails
-  selectedTask.value.status = taskDetails.status.name
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
-  popup.detail = true
+const openDetail = (id) => {
   popup.optionEditDelete = false
   router.push({ name: 'task-detail', params: { id: id } })
 }
 
-if (taskId) {
-  openDetail(taskId)
-}
-
-const closeDetail = () => {
-  popup.detail = false
-  popup.addEdit = false
-  clearValue()
-  router.push({ name: 'task' })
-}
-
-const openAdd = () => {
-  clearValue()
-  popup.addEdit = true
-  popup.optionEditDelete = false
-  router.push({ name: 'task-add' })
-}
-
-const addNewTask = async (task) => {
-  const res = await addTask(
-    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-    task
-  )
-  const addedTask = await res.json()
-  taskStore.addTask(addedTask)
-  // tasks.value.addTask(addedTask);
-  if (res.status === 201) {
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: `The task "${addedTask.title}" is added successfully.`,
-      life: 3000
-    })
-    router.back()
-    clearValue()
-  } else {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: `An error occurred adding the task "${addedTask.title}"`,
-      life: 3000
-    })
-    router.back()
-    clearValue()
-  }
-  popup.addEdit = false
-  popup.optionEditDelete = false
-}
-
-const editTask = async (task) => {
-  const res = await updatedTask(
-    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-    task,
-    selectedTask.value.id
-  )
-  if (res.status === 200) {
-    const editedTask = await res.json()
-    taskStore.editTask(editedTask.id, editedTask)
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: `The task has been updated.`,
-      life: 3000
-    })
-    router.push({ name: 'task' })
-  } else {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: `The update was unsuccessful.`,
-      life: 3000
-    })
-    router.push({ name: 'task' })
-  }
-  popup.addEdit = false
-  popup.optionEditDelete = false
-}
-
-const editTaskModal = async (id) => {
-  const taskDetails = await fetchTaskDetails(
-    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-    id
-  )
-  if (taskDetails === undefined) {
-    return
-  }
-  selectedTask.value = taskDetails
-
-  selectedTask.value.status = taskDetails.status.name
-  console.log(selectedTask.value.status)
-  selectedTask.value.createdOn = formatDate(taskDetails.createdOn)
-  selectedTask.value.updatedOn = formatDate(taskDetails.updatedOn)
-  popup.addEdit = true
-  popup.optionEditDelete = false
-  router.push({ name: 'task-edit', params: { id: id } })
-}
-
-const showOptionEditDelete = (taskId) => {
-  selectedTask.value.id = taskId
-  popup.detail = false
-  popup.optionEditDelete = !popup.optionEditDelete
-}
-
-const closeDelete = () => {
-  popup.delete = false
-  popup.optionEditDelete = false
-  clearValue()
-}
-
-const selectedIndex = ref(0)
-
 const openDelete = (id, index) => {
-  popup.delete = true
-  console.log(id, index)
-  const task = taskStore.getTasksById(id)
-  console.log(task)
+  selectedId.value = id
   selectedIndex.value = index
-  selectedTask.value = task
-}
-
-const deleteData = async (id) => {
-  const statusCode = await deleteTask(
-    `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-    id
-  )
-  const taskValue = taskStore.getTasksById(id)
-  const index = taskStore.getTasks.findIndex((task) => task.id === id)
-  if (statusCode === 200) {
-    taskStore.removeTask(index)
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: `The task has been deleted`,
-      life: 3000
-    })
-    clearValue()
-  } else {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: `An error occurred deleting the task "${taskValue.title}"`,
-      life: 3000
-    })
-  }
-  closeDelete()
+  popup.delete = true
 }
 </script>
 
 <template>
   <Toast class="itbkk-message" />
   <div class="h-screen w-full">
+    <RouterView />
     <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="page.task">
       <div class="flex justify-between py-6 px-5">
         <div
@@ -261,6 +62,7 @@ const deleteData = async (id) => {
         >
           <a
             class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
+            @click="router.push({ name: 'task' })"
           >
             Home&nbsp;</a
           >
@@ -269,11 +71,9 @@ const deleteData = async (id) => {
           <buttonSubmit
             class="itbkk-button-add"
             buttonType="add"
-            @closeDetail="closeDetail"
-            v-on:click="openAdd"
+            @click="router.push({ name: 'task-add' })"
             >+ Add Task</buttonSubmit
           >
-
           <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2"
@@ -367,17 +167,24 @@ const deleteData = async (id) => {
                               d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"
                             />
                           </svg>
+
                           <div
                             class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[20px]"
                             v-show="
-                              popup.optionEditDelete &&
-                              selectedTask.id === task.id
+                              popup.optionEditDelete && selectedId === task.id
                             "
                           >
                             <ul
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
                             >
-                              <li @click="editTaskModal(task.id)">
+                              <li
+                                @click="
+                                  router.push({
+                                    name: 'task-edit',
+                                    params: { id: task.id }
+                                  })
+                                "
+                              >
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
@@ -407,28 +214,11 @@ const deleteData = async (id) => {
     </div>
     <DeleteModal
       v-if="popup.delete"
-      @closeDelete="closeDelete"
-      :selectedTask="selectedTask"
+      :selectedId="selectedId"
       :selectedIndex="selectedIndex"
-      @deleteData="deleteData"
+      @closeDelete="popup.delete = false"
+      @confirmDeleteTask="popup.delete = false"
     ></DeleteModal>
-
-    <Detail
-      v-if="popup.detail"
-      @closeDetail="closeDetail"
-      :selectedTask="selectedTask"
-      :localTimeZone="localTimeZone"
-    ></Detail>
-
-    <AddEditTask
-      v-if="popup.addEdit"
-      class="z-50"
-      @closeDetail="closeDetail"
-      @addNewTask="addNewTask"
-      @editNewTask="editTask"
-      :selectedTask="selectedTask"
-      :localTimeZone="localTimeZone"
-    ></AddEditTask>
   </div>
 </template>
 

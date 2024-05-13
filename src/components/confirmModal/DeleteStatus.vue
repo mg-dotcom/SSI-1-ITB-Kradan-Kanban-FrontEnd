@@ -3,7 +3,6 @@ import { useRouter, useRoute } from "vue-router";
 import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
 defineEmits(["closeDelete", "deleteStatus"]);
-const router = useRouter();
 const props=defineProps({
   currentStatus:{
     Type:Object,
@@ -18,7 +17,7 @@ const props=defineProps({
       <p>Delete a Status!</p>
     </template>
     <template #question>
-      <p>Do you want to delete the <span class="font-bold">{{ props.currentStatus.name }}</span>  Status?</p>
+      <p>Do you want to delete the <span class="font-bold">{{ props.currentStatus.name }}</span>  status ?</p>
     </template>
     <template #button-left>
       <submitButton buttonType="cancel" @click="$emit('closeDelete')">Cancel</submitButton>
