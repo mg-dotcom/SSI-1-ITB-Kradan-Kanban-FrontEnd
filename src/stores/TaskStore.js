@@ -31,7 +31,7 @@ export const useTaskStore = defineStore("TaskStore", {
       return state.tasks.find((task) => task.id === id);
     },
     getTasksByStatus: (state) => (status) => {
-      return state.tasks.filter((task) => task.statusName === status);
+      return state.tasks.filter((task) => task.status.name === status);
     },
   },
   actions: {

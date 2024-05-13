@@ -12,7 +12,8 @@ const props = defineProps({
         'manage-status',
         'edit',
         'delete',
-        'transfer'
+        'transfer-on',
+        'transfer-off'
       ].includes(value.toLowerCase().trim())
     }
   }
@@ -38,7 +39,9 @@ const props = defineProps({
       'bg-red-500 hover:bg-red-600 transition-colors w-20 font-bold active:scale-[93%] active:transition-transform text-white':
         buttonType === 'delete',
       'bg-[#03bd09] hover:bg-[#20ae27] transition-colors active:scale-[93%]  active:transition-transform text-white w-40':
-        buttonType === 'transfer'
+        buttonType === 'transfer-on',
+      'bg-gray-500 hover:bg-gray-600 transition-colors w-40 active:scale-[93%] active:transition-transform text-white':
+        buttonType === 'transfer-off'
     }"
   >
     <!-- Default content if slot is not provided -->
