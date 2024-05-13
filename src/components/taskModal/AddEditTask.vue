@@ -33,7 +33,6 @@ onMounted(async () => {
     selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
     selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
     input.value = { ...selectedTask.value };
-    console.log("JO");
   } else if (mode == "add") {
     selectedTask.value.status = "No Status";
   }

@@ -121,6 +121,7 @@ export const useStatusStore = defineStore('StatusStore', {
         id,
         updatedStatus
       )
+
       if (res.status === 200) {
         const data = await res.json()
         const index = this.statuses.findIndex((status) => status.id === id)

@@ -3,6 +3,7 @@ import buttonSubmit from '../button/Button.vue'
 import { onMounted, ref, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStatusStore } from '../../stores/StatusStore.js'
+import { localTimeZone, formatDate } from '../../libs/libsUtil.js'
 
 const router = useRouter()
 const route = useRoute()
@@ -13,13 +14,14 @@ const unEditedStatus = ref({})
 const isChanged = ref(false)
 const statusId = Number(route.params.id)
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
-function formatDate(date) {
-  const d = new Date(date)
-  return d.toLocaleString('en-GB', { timeZone: localTimeZone.value })
-}
-
 onMounted(async () => {
+  if (!statusId) {
+    router.push({ name: 'status' })
+  }
+  if (statusId === 1) {
+    router.push({ name: 'status' })
+  }
+
   if (mode === 'edit') {
     const selectedStatus = await statusStore.loadStatusDetail(statusId)
     console.log(selectedStatus)
