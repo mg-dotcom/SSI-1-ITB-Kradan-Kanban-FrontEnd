@@ -129,8 +129,8 @@ export const useTaskStore = defineStore("TaskStore", {
         const updateData = await res.json();
         this.tasks[taskIndex] = {
           ...updateData,
+          status: statusDetails,
         };
-        this.tasks[taskIndex].status = statusDetails;
 
         this.toast.add({
           severity: "success",
