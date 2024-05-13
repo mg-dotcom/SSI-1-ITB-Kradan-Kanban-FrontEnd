@@ -28,7 +28,9 @@ const openTransfer = ref(false);
 
 const openDeleteOrTransferModal = (id) => {
   currentStatus.value = statusStore.getStatusById(id);
+  console.log(currentStatus.value.name);
   const haveTask = taskStore.getTasksByStatus(currentStatus.value.name);
+  console.log(haveTask);
   numberOfTasks.value = haveTask.length;
   console.log(haveTask.length);
   if (haveTask.length > 0) {

@@ -58,7 +58,7 @@ const transferTo = ref('')
     </template>
     <template #button-right>
       <submitButton
-        :buttonType="transferTo === '' ? 'cancel' : 'transfer'"
+        :buttonType="transferTo === '' ? 'transfer-off' : 'transfer-on'"
         @click="
           $emit(
             'transferStatus',
