@@ -31,12 +31,12 @@ export const useStatusStore = defineStore("StatusStore", {
       const data = await fetchAllStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`
       );
-      console.log(data);
+      // console.log(data);
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses");
       } else {
-        console.log(this.getStatuses);
         this.statuses = data;
+        console.log(this.getStatuses);
       }
     },
 
@@ -52,6 +52,7 @@ export const useStatusStore = defineStore("StatusStore", {
       );
 
       if (res.status === 201) {
+        const data = await res.json();
         this.statuses.push(res);
         //toast success
       } else if (existingStatus) {
