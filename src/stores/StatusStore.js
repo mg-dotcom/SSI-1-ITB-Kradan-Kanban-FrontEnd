@@ -1,53 +1,68 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 import {
   fetchAllStatus,
   fetchStatusById,
   deleteStatus,
   addStatus,
-  updateStatus
-} from '../libs/FetchStatus.js'
+  updateStatus,
+} from "../libs/FetchStatus.js";
+import { useToast } from "primevue/usetoast";
 
-export const useStatusStore = defineStore('StatusStore', {
+export const useStatusStore = defineStore("StatusStore", {
   state: () => ({
+    toast: useToast(),
     statuses: [],
-    STATUS_ENDPOINT: 'v2/statuses'
+    STATUS_ENDPOINT: "v2/statuses",
   }),
   getters: {
     getStatuses(state) {
-      return state.statuses
+      return state.statuses;
     },
     getStatusById: (state) => (id) => {
-      return state.statuses.find((status) => status.id === id)
+      return state.statuses.find((status) => status.id === id);
     },
     getStatusColor: (state) => (name) => {
-      const status = state.statuses.find((status) => status.name === name)
-      return status ? status.color : ''
-    }
+      const status = state.statuses.find((status) => status.name === name);
+      return status ? status.color : "";
+    },
   },
   actions: {
     async loadStatuses() {
       const data = await fetchAllStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`
-      )
+      );
+      console.log(data);
       if (data.status < 200 && data.status > 299) {
-        alert('Failed to fetch statuses')
+        alert("Failed to fetch statuses");
       } else {
-        this.statuses = data
-        return this.statuses
-        //toast success
+        console.log(this.getStatuses);
+        this.statuses = data;
       }
     },
 
     async addStatus(newStatus) {
+      console.log(newStatus);
       const res = await addStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         newStatus
-      )
-      console.log(res)
+      );
+
+      const existingStatus = this.statuses.find(
+        (status) => status.name === newStatus.name
+      );
+
       if (res.status === 201) {
-        this.statuses.push(res)
+        this.statuses.push(res);
         //toast success
+      } else if (existingStatus) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `Status with name "${newStatus.name}" already exists`,
+          life: 3000,
+        });
       } else {
+        console.log("error");
         //toast error
       }
     },
@@ -57,15 +72,15 @@ export const useStatusStore = defineStore('StatusStore', {
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         id,
         updatedStatus
-      )
+      );
       if (res.status === 200) {
-        const index = this.statuses.findIndex((status) => status.id === id)
+        const index = this.statuses.findIndex((status) => status.id === id);
         if (index === -1) {
-          return
+          return;
         } else {
           this.statuses[index] = {
-            ...res
-          }
+            ...res,
+          };
         }
       } else {
         //toast error
@@ -76,18 +91,18 @@ export const useStatusStore = defineStore('StatusStore', {
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         id
-      )
+      );
       if (res.status === 204) {
-        const index = this.statuses.findIndex((status) => status.id === id)
+        const index = this.statuses.findIndex((status) => status.id === id);
         if (index === -1) {
-          return
+          return;
         } else {
-          this.statuses.splice(index, 1)
+          this.statuses.splice(index, 1);
         }
         //toast success
       } else {
         //toast error
       }
-    }
-  }
-})
+    },
+  },
+});

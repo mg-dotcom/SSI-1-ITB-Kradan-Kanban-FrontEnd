@@ -1,24 +1,24 @@
 <script setup>
-import buttonSubmit from '../components/button/Button.vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useStatusStore } from '../stores/StatusStore.js'
-import { onMounted } from 'vue'
-import StatusButton from '../components/button/StatusButton.vue'
-import { RouterView } from 'vue-router'
+import buttonSubmit from "../components/button/Button.vue";
+import { useRouter, useRoute } from "vue-router";
+import { useStatusStore } from "../stores/StatusStore.js";
+import { onMounted } from "vue";
+import StatusButton from "../components/button/StatusButton.vue";
+import { RouterView } from "vue-router";
 
-const router = useRouter()
-const route = useRoute()
-const statusStore = useStatusStore()
+const router = useRouter();
+const route = useRoute();
+const statusStore = useStatusStore();
 
 onMounted(async () => {
-  console.log(await statusStore.loadStatuses());
-  await statusStore.loadStatuses()
-})
+  if (statusStore.getStatuses.length === 0) {
+    await statusStore.loadStatuses();
+  }
+});
 
-const openDeleteOrTransferModal=(id)=>{
+const openDeleteOrTransferModal = (id) => {
   // open modal here
-}
-
+};
 </script>
 
 <template>
@@ -97,7 +97,7 @@ const openDeleteOrTransferModal=(id)=>{
                   class="itbkk-title text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
                   <StatusButton
-                    :statusColor="status.color"
+                    :statusColor="status.statusColor"
                     :statusName="status.name"
                     >{{ status.name }}</StatusButton
                   >
@@ -114,7 +114,12 @@ const openDeleteOrTransferModal=(id)=>{
                     <buttonSubmit
                       class="itbkk-button-edit"
                       buttonType="edit"
-                      @click="router.push({ name: 'status-edit', params: { id: status.id } })"
+                      @click="
+                        router.push({
+                          name: 'status-edit',
+                          params: { id: status.id },
+                        })
+                      "
                       >Edit</buttonSubmit
                     >
                     <buttonSubmit

@@ -1,81 +1,77 @@
 <script setup>
-import buttonSubmit from '../button/Button.vue'
-import { onMounted, ref } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-import { useStatusStore } from '../../stores/StatusStore.js'
-import { watch } from 'vue'
-const router = useRouter()
-const route = useRoute()
-const statusStore = useStatusStore()
-const mode = route.name === 'status-add' ? 'add' : 'edit'
-const inputStatus = ref({})
-const unEditedStatus = ref({})
-const isChanged = ref(false)
-const statusId = ref(Number(route.params.id))
+import buttonSubmit from "../button/Button.vue";
+import { onMounted, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
+import { useStatusStore } from "../../stores/StatusStore.js";
+import { watch } from "vue";
+const router = useRouter();
+const route = useRoute();
+const statusStore = useStatusStore();
+const mode = route.name === "status-add" ? "add" : "edit";
+const inputStatus = ref({});
+const unEditedStatus = ref({});
+const isChanged = ref(false);
+const statusId = Number(route.params.id);
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 function formatDate(date) {
-  const d = new Date(date)
-  return d
-    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
+  const d = new Date(date);
+  return d.toLocaleString("en-GB", { timeZone: localTimeZone.value });
 }
 
 onMounted(async () => {
-  if (mode === 'edit') {
-    const selectedStatus = await statusStore.getStatusById(statusId.value)
-    inputStatus.value = selectedStatus
-    inputStatus.value.timeZone=localTimeZone.value
-    inputStatus.value.createdOn = formatDate(selectedStatus.createdOn)
-    inputStatus.value.updatedOn = formatDate(selectedStatus.updatedOn)
-    unEditedStatus.value = { ...selectedStatus }
-  } else if (mode === 'add') {
+  if (mode === "edit") {
+    const selectedStatus = await statusStore.getStatusById(statusId);
+    console.log(selectedStatus);
+    inputStatus.value = selectedStatus;
+    inputStatus.value.timeZone = localTimeZone.value;
+    inputStatus.value.createdOn = formatDate(selectedStatus.createdOn);
+    inputStatus.value.updatedOn = formatDate(selectedStatus.updatedOn);
+    unEditedStatus.value = { ...selectedStatus };
+  } else if (mode === "add") {
     inputStatus.value = {
-      name: '',
+      name: "",
       description: null,
-      color: '#CCCCCC'
-    }
+      statusColor: "#CCCCCC",
+    };
   }
-})
+});
 
 watch(
   inputStatus,
   (newValue) => {
-    console.log(inputStatus.value)
-    console.log(newValue)
-    console.log(unEditedStatus.value)
-    if (mode === 'add') {
+    if (mode === "add") {
       if (!newValue.title) {
-        isChanged.value = false
+        isChanged.value = false;
       } else {
-        isChanged.value = true
-        return
+        isChanged.value = true;
+        return;
       }
     }
-    if (mode === 'edit') {
+    if (mode === "edit") {
       if (
         newValue.name !== unEditedStatus.value.name ||
         newValue.description !== unEditedStatus.value.description ||
-        (newValue.color !== unEditedStatus.value.color && newValue.name !== '')
+        (newValue.statusColor !== unEditedStatus.value.statusColor && newValue.name !== "")
       ) {
-        isChanged.value = false
+        isChanged.value = false;
       } else {
-        isChanged.value = true
+        isChanged.value = true;
       }
     }
   },
   { deep: true }
-)
+);
 
 const save = async () => {
-  if (mode === 'edit') {
-    await statusStore.editStatus(inputStatus.value.id, inputStatus.value)
-    router.go(-1)
+  if (mode === "edit") {
+    await statusStore.editStatus(inputStatus.value.id, inputStatus.value);
+    router.go(-1);
   } else {
-    await statusStore.addStatus(inputStatus.value)
-    router.go(-1)
+    await statusStore.addStatus(inputStatus.value);
+    router.go(-1);
   }
-  // router.push({ name: 'status' })
-}
+};
 </script>
 
 <template>
@@ -88,7 +84,7 @@ const save = async () => {
       <div
         class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
       >
-        {{ mode === 'add' ? 'New Status' : 'Edit Status' }}
+        {{ mode === "add" ? "New Status" : "Edit Status" }}
       </div>
 
       <div
@@ -112,7 +108,7 @@ const save = async () => {
               <p class="font-semibold mb-2">Color</p>
               <input
                 type="color"
-                v-model="inputStatus.color"
+                v-model="inputStatus.statusColor"
                 id="color"
                 class="itbkk-color w-10 h-10 rounded-lg"
               />
@@ -124,7 +120,7 @@ const save = async () => {
               <textarea
                 maxlength="200"
                 v-model.trim="inputStatus.description"
-                class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full"
+                class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-52"
               ></textarea>
             </div>
           </div>
@@ -141,10 +137,16 @@ const save = async () => {
         </div>
       </div>
       <div class="absolute right-6 bottom-3">
-        <buttonSubmit buttonType="cancel" @click="router.push({ name: 'status' })">Cancel</buttonSubmit>
+        <buttonSubmit
+          buttonType="cancel"
+          @click="router.push({ name: 'status' })"
+          >Cancel</buttonSubmit
+        >
 
         <buttonSubmit
-          buttonType="ok"
+          :buttonType="
+            inputStatus.name === '' || isChanged === true ? 'cancel' : 'ok'
+          "
           @click="save"
           :disabled="inputStatus.name === '' || isChanged === true"
           :class="
