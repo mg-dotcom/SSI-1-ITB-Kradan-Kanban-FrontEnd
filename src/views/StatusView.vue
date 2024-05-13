@@ -19,6 +19,7 @@ onMounted(async () => {
   await taskStore.loadTasks()
 })
 
+const numberOfTasks = ref(0)
 const currentStatus = ref('')
 const openDelete = ref(false)
 const openTransfer = ref(false)
@@ -26,6 +27,7 @@ const openTransfer = ref(false)
 const openDeleteOrTransferModal = (id) => {
   currentStatus.value = statusStore.getStatusById(id)
   const haveTask = taskStore.getTasksByStatus(currentStatus.value.name)
+  numberOfTasks.value = haveTask.length
   console.log(haveTask.length)
   if (haveTask.length > 0) {
     console.log('open transfer modal')
@@ -42,12 +44,13 @@ const deleteStatus = (id) => {
   openDelete.value = false
   console.log('delete successful')
 }
-
 const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
   taskStore.transferTasksStatus(currentStatus, newStatusId)
-  // const numberOfTasks = taskStore.getTasksByStatus(currentStatus).length
-  // console.log(numberOfTasks);
-  await statusStore.transferStatus(currentStatusId, newStatusId)
+  await statusStore.transferStatus(
+    currentStatusId,
+    newStatusId,
+    numberOfTasks.value
+  )
   openTransfer.value = false
   router.push({ name: 'status' })
 }
@@ -198,6 +201,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
     <Transfer
       v-if="openTransfer"
       :currentStatus="currentStatus"
+      :numberOfTasks="numberOfTasks"
       @closeDelete="openTransfer = false"
       @transferStatus="transferStatus"
     ></Transfer>

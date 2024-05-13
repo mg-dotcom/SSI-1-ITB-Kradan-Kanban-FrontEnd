@@ -3,24 +3,24 @@ import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
 import { ref } from 'vue'
 import { useStatusStore } from '../../stores/StatusStore.js'
-import { useTaskStore } from '../../stores/TaskStore.js'
 defineEmits(['closeDelete', 'transferStatus'])
 const props = defineProps({
   currentStatus: {
     Type: Object
+  },
+  numberOfTasks: {
+    Type: String
   }
 })
 
-const taskStore = useTaskStore()
 const statusStore = useStatusStore()
 
 const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
 )
 
+console.log(props.numberOfTasks)
 const transferTo = ref('')
-
-const numberOfTasks = ref(taskStore.getTasksByStatus(props.currentStatus.name).length)
 </script>
 
 <template>
@@ -29,7 +29,10 @@ const numberOfTasks = ref(taskStore.getTasksByStatus(props.currentStatus.name).l
       <p>Transfer a Status</p>
     </template>
     <template #question>
-      <p>There is <span class="font-bold">{{numberOfTasks}}</span> task associated with the Doing status.</p>
+      <p>
+        There is <span class="font-bold">{{ numberOfTasks }}</span> task
+        associated with the Doing status.
+      </p>
       <div class="flex">
         <p class="content-center">Transfer to</p>
         <form class="px-3">
@@ -70,7 +73,7 @@ const numberOfTasks = ref(taskStore.getTasksByStatus(props.currentStatus.name).l
             ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "
-        >Transfer</submitButton
+        >Transfer and Delete</submitButton
       >
     </template>
   </ConfirmModal>
