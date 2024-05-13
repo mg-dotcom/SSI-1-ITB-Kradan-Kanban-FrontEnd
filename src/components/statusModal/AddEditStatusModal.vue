@@ -3,56 +3,78 @@ import buttonSubmit from '../button/Button.vue'
 import { onMounted, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStatusStore } from '../../stores/StatusStore.js'
+import { watch } from 'vue'
 const router = useRouter()
 const route = useRoute()
 const statusStore = useStatusStore()
 const mode = route.name === 'status-add' ? 'add' : 'edit'
-const selectedStatus = ref({})
 const inputStatus = ref({})
+const unEditedStatus = ref({})
+const isChanged = ref(false)
 const statusId = ref(Number(route.params.id))
 
-onMounted(async () => {
-  selectedStatus.value = await statusStore.getStatusById(statusId.value)
-  inputStatus.value = await statusStore.getStatusById(statusId.value)
-})
-// console.log(selectedStatus.value)
-if (mode === 'edit') {
-  console.log('edit');
-} else {
-  inputStatus.value = {
-    name: '',
-    description: null,
-    color: '#CCCCCC'
-  }
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+function formatDate(date) {
+  const d = new Date(date)
+  return d
+    .toLocaleString('en-GB', { timeZone: localTimeZone.value })
 }
-// watchEffect(() => {
-//   if (mode === 'edit' && isStatusEdited()) {
-//     console.log('Status is edited')
-//     // Enable save button logic here
-//   } else {
-//     console.log('Status is not edited')
-//     // Disable save button logic here
-//   }
-// })
 
-const isStatusEdited = () => {
-  return (
-    inputStatus.value.name !== selectedStatus.value.name ||
-    inputStatus.value.description !== selectedStatus.value.description ||
-    inputStatus.value.color !== selectedStatus.value.color
-  )
-}
-// console.log(isStatusEdited);
+onMounted(async () => {
+  if (mode === 'edit') {
+    const selectedStatus = await statusStore.getStatusById(statusId.value)
+    inputStatus.value = selectedStatus
+    inputStatus.value.timeZone=localTimeZone.value
+    inputStatus.value.createdOn = formatDate(selectedStatus.createdOn)
+    inputStatus.value.updatedOn = formatDate(selectedStatus.updatedOn)
+    unEditedStatus.value = { ...selectedStatus }
+  } else if (mode === 'add') {
+    inputStatus.value = {
+      name: '',
+      description: null,
+      color: '#CCCCCC'
+    }
+  }
+})
+
+watch(
+  inputStatus,
+  (newValue) => {
+    console.log(inputStatus.value)
+    console.log(newValue)
+    console.log(unEditedStatus.value)
+    if (mode === 'add') {
+      if (!newValue.title) {
+        isChanged.value = false
+      } else {
+        isChanged.value = true
+        return
+      }
+    }
+    if (mode === 'edit') {
+      if (
+        newValue.name !== unEditedStatus.value.name ||
+        newValue.description !== unEditedStatus.value.description ||
+        (newValue.color !== unEditedStatus.value.color && newValue.name !== '')
+      ) {
+        isChanged.value = false
+      } else {
+        isChanged.value = true
+      }
+    }
+  },
+  { deep: true }
+)
 
 const save = async () => {
   if (mode === 'edit') {
-    console.log('edit')
-    isStatusEdited()
-    statusStore.editStatus(inputStatus.value)
+    await statusStore.editStatus(inputStatus.value.id, inputStatus.value)
+    router.go(-1)
   } else {
     await statusStore.addStatus(inputStatus.value)
+    router.go(-1)
   }
-  router.push({ name: 'status' })
+  // router.push({ name: 'status' })
 }
 </script>
 
@@ -106,36 +128,32 @@ const save = async () => {
               ></textarea>
             </div>
           </div>
-          <div class="text-sm">
+          <div class="text-sm" v-if="mode === 'edit'">
             <div class="pt-5">
               <span class="itbkk-timezone font-semibold">TimeZone</span> :
               Asia/Bangkok <br />
               <span class="itbkk-created-on font-semibold">Created On</span> :
-              5/12/2024 6:00:00 <br />
+              {{ inputStatus.createdOn }} <br />
               <span class="itbkk-updated-on font-semibold">Updated On</span> :
-              5/12/2024 6:00:00 <br />
+              {{ inputStatus.updatedOn }} <br />
             </div>
           </div>
         </div>
       </div>
       <div class="absolute right-6 bottom-3">
-        <slot name="button-left">
-          <buttonSubmit buttonType="cancel">Cancel</buttonSubmit>
-        </slot>
+        <buttonSubmit buttonType="cancel" @click="router.push({ name: 'status' })">Cancel</buttonSubmit>
 
-        <slot name="button-right">
-          <buttonSubmit
-            buttonType="ok"
-            @click="save"
-            :disabled="inputStatus.name === '' || !isStatusEdited()"
-            :class="
-              inputStatus.name === '' || !isStatusEdited()
-                ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
-                : ''
-            "
-            >Save</buttonSubmit
-          >
-        </slot>
+        <buttonSubmit
+          buttonType="ok"
+          @click="save"
+          :disabled="inputStatus.name === '' || isChanged === true"
+          :class="
+            inputStatus.name === '' || isChanged === true
+              ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
+              : ''
+          "
+          >Save</buttonSubmit
+        >
       </div>
     </div>
   </div>

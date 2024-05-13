@@ -2,78 +2,23 @@
 import buttonSubmit from '../components/button/Button.vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStatusStore } from '../stores/StatusStore.js'
-import { onMounted, reactive, ref } from 'vue'
-import AddEditStatus from '../components/statusModal/AddEditStatus.vue'
-import { useToast } from 'primevue/usetoast'
+import { onMounted } from 'vue'
 import StatusButton from '../components/button/StatusButton.vue'
-import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
-import Transfer from '../components/confirmModal/Transfer.vue'
 import { RouterView } from 'vue-router'
-import {
-  fetchAllStatus,
-  fetchStatusById,
-  addStatus,
-  deleteStatus,
-  updateStatus
-} from '../libs/FetchStatus.js'
-import { fetchAllTasks } from '../libs/FetchTask'
-import { useTaskStore } from '../stores/TaskStore'
+
 const router = useRouter()
 const route = useRoute()
 const statusStore = useStatusStore()
-const taskStore = useTaskStore()
-const toast = useToast()
 
 onMounted(async () => {
-  statusStore.loadStatuses()
+  console.log(await statusStore.loadStatuses());
+  await statusStore.loadStatuses()
 })
 
-// const selectedStatus = ref({
-//   id: '',
-//   name: '',
-//   description: '',
-//   color: '#CCCCCC',
-//   createdOn: '',
-//   updatedOn: ''
-// })
-
-// const clearValue = () => {
-//   selectedStatus.value.id = ''
-//   selectedStatus.value.name = ''
-//   selectedStatus.value.description = ''
-//   selectedStatus.value.color = '#CCCCCC'
-//   selectedStatus.value.createdOn = ''
-//   selectedStatus.value.updatedOn = ''
-// }
-
-// const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
-
-// function formatDate(date) {
-//   const d = new Date(date)
-//   return d
-//     .toLocaleString('en-GB', { timeZone: localTimeZone.value })
-//     .split(',')
-//     .join(' ')
-// }
-
-// const popup = reactive({
-//   addEditStatus: false,
-//   deleteConfirm: false,
-//   transferConfirm: false
-// })
-
-const openAddNewStatus = () => {
-  router.push({ name: 'status-add' })
+const openDeleteOrTransferModal=(id)=>{
+  // open modal here
 }
 
-const openeditStatusModal=(id)=>{
-  router.push({ name: 'status-edit', params: { id: id } })
-}
-
-// const addNewStatus = async (newStatus) => {
-//   statusStore.addStatus(newStatus)
-//   router.push({ name: 'status' })
-// }
 </script>
 
 <template>
@@ -100,7 +45,7 @@ const openeditStatusModal=(id)=>{
         <buttonSubmit
           class="itbkk-button-add"
           buttonType="add"
-          @click="openAddNewStatus"
+          @click="router.push({ name: 'status-add' })"
           >+ Add Status</buttonSubmit
         >
       </div>
@@ -169,13 +114,13 @@ const openeditStatusModal=(id)=>{
                     <buttonSubmit
                       class="itbkk-button-edit"
                       buttonType="edit"
-                      @click="openeditStatusModal(status.id)"
+                      @click="router.push({ name: 'status-edit', params: { id: status.id } })"
                       >Edit</buttonSubmit
                     >
                     <buttonSubmit
                       class="itbkk-button-delete"
                       buttonType="delete"
-                      @click="openConfirmDelete(status.id)"
+                      @click="openDeleteOrTransferModal(status.id)"
                     >
                       Delete
                     </buttonSubmit>

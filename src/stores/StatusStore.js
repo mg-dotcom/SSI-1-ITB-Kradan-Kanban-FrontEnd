@@ -33,6 +33,7 @@ export const useStatusStore = defineStore('StatusStore', {
         alert('Failed to fetch statuses')
       } else {
         this.statuses = data
+        return this.statuses
         //toast success
       }
     },
@@ -63,7 +64,7 @@ export const useStatusStore = defineStore('StatusStore', {
           return
         } else {
           this.statuses[index] = {
-            ...editedStatus
+            ...res
           }
         }
       } else {
