@@ -148,7 +148,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                 >
                   {{
                     !status.description
-                      ? "No Description Provided"
+                      ? "No description is provided"
                       : status.description
                   }}
                 </td>

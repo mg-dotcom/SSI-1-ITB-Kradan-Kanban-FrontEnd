@@ -4,9 +4,12 @@ import { onMounted, ref, watch, computed } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
+import { useToast } from "primevue/usetoast";
 
 const router = useRouter();
 const route = useRoute();
+const toast = useToast();
+
 const statusStore = useStatusStore();
 const mode = route.name === "status-add" ? "add" : "edit";
 const inputStatus = ref({});
@@ -16,12 +19,26 @@ const statusId = Number(route.params.id);
 
 onMounted(async () => {
   if (statusId === 1) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You cannot edit or delete this default status",
+      life: 3000,
+    });
     router.push({ name: "status" });
   }
 
   if (mode === "edit") {
     const selectedStatus = await statusStore.loadStatusDetail(statusId);
-
+    if (!selectedStatus.id) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: "An error has occurred, the status does not exist",
+        life: 3000,
+      });
+      router.push({ name: "status" });
+    }
     selectedStatus.description
       ? selectedStatus.description
       : (selectedStatus.description = "");
