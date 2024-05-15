@@ -1,4 +1,7 @@
 <script setup>
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { defineProps, defineEmits } from "vue";
+
 const props = defineProps({
   statusColor: {
     type: String,
@@ -8,13 +11,18 @@ const props = defineProps({
     type: String,
     default: "No Status",
   },
+  filterStatuses: {
+    type: Array,
+  },
 });
+
+const selectedId = defineEmits(["clear-status"]);
 </script>
 
 <template>
   <div>
     <div
-      class="itbkk-status flex py-1 px-5 text-[13px] font-semibold rounded-full text-white w-fit"
+      class="itbkk-status flex py-1 px-3 text-[13px] font-semibold rounded-full text-white w-fit sm:min-w-[120px] sm:w-fit md:min-w-[140px] md:w-fit lg:min-w-[160px] lg:w-fit xl:min-w-[110px] xl:w-fit relative"
       :style="{ backgroundColor: statusColor }"
     >
       <span
@@ -28,6 +36,13 @@ const props = defineProps({
       </span>
 
       <slot class="">No Status</slot>
+      <span
+        class="absolute right-3 hover:shadow-md hover:bg-red-400 cursor-pointer transition-all duration-300 rounded-full w-5 text-center z-[100]"
+        v-if="filterStatuses"
+        @click="$emit('clear-status', statusName)"
+      >
+        <font-awesome-icon icon="fa-solid fa-xmark" class="" />
+      </span>
     </div>
   </div>
 </template>

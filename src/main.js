@@ -12,6 +12,9 @@ import App from "./App.vue";
 import router from "./router";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { fas } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const app = createApp(App);
 app.component("Toast", Toast);
@@ -33,6 +36,8 @@ app.component("Button", Button);
 app.use(ToastService);
 app.component("Dialog", Dialog);
 app.use(createPinia());
+app.component("fa", FontAwesomeIcon);
+library.add(fas);
 
 app.use(router);
 

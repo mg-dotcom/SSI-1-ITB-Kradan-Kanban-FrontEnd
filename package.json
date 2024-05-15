@@ -17,6 +17,9 @@
   "dependencies": {
     "@coreui/coreui": "^5.0.1",
     "@coreui/vue": "^5.0.0",
+    "@fortawesome/fontawesome-svg-core": "^6.5.2",
+    "@fortawesome/free-solid-svg-icons": "^6.5.2",
+    "@fortawesome/vue-fontawesome": "^3.0.6",
     "@mantine/core": "^7.9.1",
     "@mantine/hooks": "^7.9.1",
     "@preline/dropdown": "^2.1.0",

@@ -68,17 +68,13 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
         class="itbkk-button-home text-xl font-bold flex items-center text-blue"
       >
         <a
-          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
+          class="relative opacity-65 after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
           @click="router.push({ name: 'task' })"
         >
           Home&nbsp;</a
         >
-        <p class="">></p>
-        <a
-          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
-        >
-          &nbsp;Task Status
-        </a>
+        <p class="opacity-65">></p>
+        <a class="text-blue"> &nbsp;Task Status </a>
       </div>
       <div class="flex">
         <buttonSubmit

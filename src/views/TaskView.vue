@@ -8,6 +8,7 @@ import buttonSubmit from "../components/button/Button.vue";
 import { useTaskStore } from "../stores/TaskStore.js";
 import { useStatusStore } from "../stores/StatusStore.js";
 import Toast from "primevue/toast";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 const router = useRouter();
 const selectedId = ref("");
@@ -59,83 +60,119 @@ const cycleSortType = () => {
   console.log(taskStore.getTasks);
 };
 
-const checkedItems = ref([]);
-
-const buttonText = computed(() => {
-  if (checkedItems.value.length > 0) {
-    return `${checkedItems.value.length} Selected`;
-  } else {
-    return "Select Language";
-  }
-});
+const filterStatuses = ref([]);
 
 const toggleSelect = () => {
   const selectBtn = document.querySelector(".select-btn");
   selectBtn.classList.toggle("open");
+  showList.value = !showList.value;
 };
 
-const toggleItem = (index) => {
-  if (checkedItems.value.includes(index)) {
-    checkedItems.value = checkedItems.value.filter((item) => item !== index);
-    const addCheck = document.querySelectorAll(".list-items");
+const showList = ref(false);
+
+const toggleItem = (id) => {
+  const listItems = document.querySelectorAll(".item");
+  const index = statusStore.getStatuses.findIndex((status) => status.id === id);
+  const selectedStatus = statusStore.getStatuses[index];
+  const listItem = listItems[index];
+
+  if (filterStatuses.value.includes(selectedStatus.name)) {
+    filterStatuses.value = filterStatuses.value.filter(
+      (item) => item !== selectedStatus.name
+    );
   } else {
-    checkedItems.value = [...checkedItems.value, index];
-    console.log(checkedItems.value);
+    filterStatuses.value = [...filterStatuses.value, selectedStatus.name];
+    listItem.classList.add("checked");
   }
+};
+
+const clearEachStatus = (statusName) => {
+  filterStatuses.value = filterStatuses.value.filter(
+    (status) => status !== statusName
+  );
+};
+
+const clearFilter = () => {
+  filterStatuses.value = [];
 };
 </script>
 
 <template>
-  <div class="container z-10">
-    <div class="select-btn" @click="toggleSelect">
-      <span class="btn-text">{{ buttonText }}</span>
-      <span class="arrow-dwn">
-        <i class="fa-solid fa-chevron-down"> </i>
-      </span>
-    </div>
-
-    <ul class="list-items">
-      <li
-        class="item"
-        v-for="(status, index) in statusStore.getStatuses"
-        :key="index"
-        @click="toggleItem(index)"
-      >
-        <span class="checkbox">
-          <i
-            class="fa-solid fa-check"
-            :class="{ 'check-icon': checkedItems.includes(index) }"
-          ></i>
-        </span>
-        <span class="item-text">{{ status.name }}</span>
-      </li>
-    </ul>
-  </div>
   <Toast class="itbkk-message" />
 
   <div class="h-screen w-full">
     <RouterView />
-    <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="page.task">
-      <div class="flex justify-between py-6 px-5">
-        <div
-          class="text-xl font-bold flex items-center text-blue"
+    <div
+      class="table lg:px-24 sm:px-10 overflow-hidden z-10"
+      v-if="page.task"
+      @click.self="closeList"
+    >
+      <div
+        class="text-xl font-bold flex items-center text-blue pt-7 px-5"
+        @click="router.push({ name: 'task' })"
+      >
+        <a
+          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
           @click="router.push({ name: 'task' })"
         >
-          <a
-            class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
-            @click="router.push({ name: 'task' })"
+          Home&nbsp;</a
+        >
+      </div>
+      <div class="flex justify-between py-6 px-5">
+        <div class="container z-20">
+          <div
+            class="select-btn"
+            @click="toggleSelect"
+            :style="{
+              height: filterStatuses.length > 2 ? 'auto' : '2.5rem',
+            }"
           >
-            Home&nbsp;</a
-          >
+            <StatusButton
+              v-for="status in filterStatuses"
+              :status-color="statusStore.getStatusColor(status)"
+              :status-name="status"
+              :key="status"
+              :filterStatuses="filterStatuses"
+              @clear-status="clearEachStatus"
+            >
+              <p>{{ status }}</p>
+            </StatusButton>
+
+            <span class="text-gray-400" v-if="filterStatuses.length === 0">
+              Filter by
+              {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
+            </span>
+            <span class="close-icon z-40" @click="clearFilter">
+              <font-awesome-icon icon="fa-solid fa-xmark" />
+            </span>
+          </div>
+
+          <ul class="list-items" v-if="showList">
+            <li
+              v-for="(status, index) in statusStore.getStatuses"
+              class="item"
+              :key="status.id"
+              @click="toggleItem(status.id)"
+            >
+              <input
+                type="checkbox"
+                class="checkbox"
+                v-model="filterStatuses"
+                :value="status.name"
+                @click="toggleItem(status.id)"
+              />
+              <span class="item-text">{{ status.name }}</span>
+            </li>
+          </ul>
         </div>
         <div class="flex">
           <buttonSubmit
             buttonType="manage-status"
-            class="itbkk-manage-status flex gap-x-2"
+            class="itbkk-manage-status flex gap-x-2 justify-center items-center"
             @click="router.push({ name: 'status' })"
           >
-            <img src="../assets/status-list.svg" alt="" class="w-5" /> Manage
-            Status</buttonSubmit
+            <img src="../assets/status-list.svg" alt="" class="w-5" />
+            Manage Status</buttonSubmit
           >
           <buttonSubmit button-type="add">
             <svg
