@@ -158,16 +158,23 @@ export const useTaskStore = defineStore("TaskStore", {
       });
     },
 
-    // async loadSortTasks(String sortType) {
-    //   const data = await fetchAllTasks(
-    //     `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`
-    //   );
-    //   if (data.status < 200 && data.status > 299) {
-    //     //fetch data failed
-    //     alert("Failed to fetch tasks");
-    //   } else {
-    //     this.tasks = data;
-    //   }
-    // },
+    async loadSortTasks(sortType) {
+      const data = await fetchAllTasks(
+        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`
+      );
+      if (data.status < 200 && data.status > 299) {
+        //fetch data failed
+        alert("Failed to fetch tasks");
+      } else {
+        // this.tasks = data;
+        // let sorted = [...tasks.value];
+        if (sortType === "ascending") {
+          this.tasks.sort((a, b) => a.status.name.localeCompare(b.status.name));
+        } else if (sortType === "descending") {
+          this.tasks.sort((a, b) => b.status.name.localeCompare(a.status.name));
+        }
+        return sorted;
+      }
+    },
   },
 });

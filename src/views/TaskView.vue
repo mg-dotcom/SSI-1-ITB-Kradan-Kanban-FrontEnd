@@ -48,16 +48,14 @@ const openDelete = (id, index) => {
   selectedIndex.value = index
   popup.delete = true
 }
-const sortTypes = ['default', 'ascending', 'descending']
+
+const sortTypes = ['default', 'descending', 'ascending']
 const sortType = ref('default')
 const cycleSortType = () => {
-  // console.log(sortTypes);
   const currentIndex = sortTypes.indexOf(sortType.value)
-  console.log(currentIndex);
-  sortType.value = this.sortTypes[(currentIndex + 1) % sortTypes.length]
-  console.log(sortType);
-  // console.log(currentIndex);
-  //this.loadSortTasks() // Reload tasks with the new sort type
+  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
+  console.log(sortType.value);
+  return taskStore.getTasks
 }
 
 
@@ -134,7 +132,19 @@ const cycleSortType = () => {
                           src="../assets/alphabeticalSorting.svg"
                           alt=""
                           class="mx-5 w-5 content-center"
-                          v-if="true"
+                          v-if="sortType==='default'"
+                        />
+                        <img
+                          src="../assets/alphabeticalSorting-green.svg"
+                          alt=""
+                          class="mx-5 w-5 content-center"
+                          v-if="sortType==='descending'"
+                        />
+                        <img
+                          src="../assets/alphabeticalReverse.svg"
+                          alt=""
+                          class="mx-5 w-4 content-center"
+                          v-if="sortType==='ascending'"
                         />
                       </div>
                     </div>
