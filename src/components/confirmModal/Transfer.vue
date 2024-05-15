@@ -83,4 +83,5 @@ const transferTo = ref("");
   </ConfirmModal>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

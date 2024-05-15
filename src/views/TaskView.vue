@@ -93,8 +93,8 @@ const openDelete = (id, index) => {
               <thead class="bg-lightgray">
                 <tr class="">
                   <th
-                    class="w-[5%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  ></th>
+                    class="w-[5%] text-center bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
+                  ><img src="../assets/addTaskIcon.svg" alt="" class="w-5 h-5 flex justify-center"></th>
                   <th
                     class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
@@ -211,7 +211,9 @@ const openDelete = (id, index) => {
           </div>
         </div>
       </div>
+      
     </div>
+
     <DeleteModal
       v-if="popup.delete"
       :selectedId="selectedId"
