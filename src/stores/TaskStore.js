@@ -157,5 +157,17 @@ export const useTaskStore = defineStore("TaskStore", {
         task.statusName = newStatus;
       });
     },
+
+    // async loadSortTasks(String sortType) {
+    //   const data = await fetchAllTasks(
+    //     `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`
+    //   );
+    //   if (data.status < 200 && data.status > 299) {
+    //     //fetch data failed
+    //     alert("Failed to fetch tasks");
+    //   } else {
+    //     this.tasks = data;
+    //   }
+    // },
   },
 });

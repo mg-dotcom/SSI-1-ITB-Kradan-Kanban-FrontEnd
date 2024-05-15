@@ -1,53 +1,66 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
-import { initFlowbite, initDropdowns } from "flowbite";
-import StatusButton from "../components/button/StatusButton.vue";
-import DeleteModal from "../components/confirmModal/DeleteTask.vue";
-import { useRouter, useRoute, RouterView } from "vue-router";
-import buttonSubmit from "../components/button/Button.vue";
-import { useTaskStore } from "../stores/TaskStore.js";
-import { useStatusStore } from "../stores/StatusStore.js";
-import Toast from "primevue/toast";
+import { onMounted, reactive, ref, watch } from 'vue'
+import { initFlowbite, initDropdowns } from 'flowbite'
+import StatusButton from '../components/button/StatusButton.vue'
+import DeleteModal from '../components/confirmModal/DeleteTask.vue'
+import { useRouter, useRoute, RouterView } from 'vue-router'
+import buttonSubmit from '../components/button/Button.vue'
+import { useTaskStore } from '../stores/TaskStore.js'
+import { useStatusStore } from '../stores/StatusStore.js'
+import Toast from 'primevue/toast'
 
-const router = useRouter();
-const selectedId = ref("");
-const selectedIndex = ref(0);
-const taskStore = useTaskStore();
+const router = useRouter()
+const selectedId = ref('')
+const selectedIndex = ref(0)
+const taskStore = useTaskStore()
 
-const statusStore = useStatusStore();
+const statusStore = useStatusStore()
 
 onMounted(async () => {
-  initFlowbite();
-  initDropdowns();
-  await taskStore.loadTasks();
-  await statusStore.loadStatuses();
-});
+  initFlowbite()
+  initDropdowns()
+  await taskStore.loadTasks()
+  await statusStore.loadStatuses()
+})
 
 const page = reactive({
-  task: true,
-});
+  task: true
+})
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
-  delete: false,
-});
+  delete: false
+})
 
 const showOptionEditDelete = (taskId) => {
-  selectedId.value = taskId;
-  popup.optionEditDelete = !popup.optionEditDelete;
-};
+  selectedId.value = taskId
+  popup.optionEditDelete = !popup.optionEditDelete
+}
 
 const openDetail = (id) => {
-  popup.optionEditDelete = false;
-  router.push({ name: "task-detail", params: { id: id } });
-};
+  popup.optionEditDelete = false
+  router.push({ name: 'task-detail', params: { id: id } })
+}
 
 const openDelete = (id, index) => {
-  selectedId.value = id;
-  selectedIndex.value = index;
-  popup.delete = true;
-};
+  selectedId.value = id
+  selectedIndex.value = index
+  popup.delete = true
+}
+const sortTypes = ['default', 'ascending', 'descending']
+const sortType = ref('default')
+const cycleSortType = () => {
+  // console.log(sortTypes);
+  const currentIndex = sortTypes.indexOf(sortType.value)
+  console.log(currentIndex);
+  sortType.value = this.sortTypes[(currentIndex + 1) % sortTypes.length]
+  console.log(sortType);
+  // console.log(currentIndex);
+  //this.loadSortTasks() // Reload tasks with the new sort type
+}
+
+
 </script>
 
 <template>
@@ -94,7 +107,13 @@ const openDelete = (id, index) => {
                 <tr class="">
                   <th
                     class="w-[5%] text-center bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  ><img src="../assets/addTaskIcon.svg" alt="" class="w-5 h-5 flex justify-center"></th>
+                  >
+                    <img
+                      src="../assets/addTaskIcon.svg"
+                      alt=""
+                      class="w-5 h-5 flex justify-center"
+                    />
+                  </th>
                   <th
                     class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
@@ -108,7 +127,17 @@ const openDelete = (id, index) => {
                   <th
                     class="w-[18%] px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
-                    Status
+                    <div class="flex">
+                      <p class="content-center">Status</p>
+                      <div @click="cycleSortType">
+                        <img
+                          src="../assets/alphabeticalSorting.svg"
+                          alt=""
+                          class="mx-5 w-5 content-center"
+                          v-if="true"
+                        />
+                      </div>
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -136,7 +165,7 @@ const openDelete = (id, index) => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || "Unassigned" }}
+                    {{ task.assignees || 'Unassigned' }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
@@ -181,7 +210,7 @@ const openDelete = (id, index) => {
                                 @click="
                                   router.push({
                                     name: 'task-edit',
-                                    params: { id: task.id },
+                                    params: { id: task.id }
                                   })
                                 "
                               >
@@ -211,7 +240,6 @@ const openDelete = (id, index) => {
           </div>
         </div>
       </div>
-      
     </div>
 
     <DeleteModal
