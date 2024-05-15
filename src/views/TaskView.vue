@@ -54,12 +54,10 @@ const sortType = ref('default')
 const cycleSortType = () => {
   const currentIndex = sortTypes.indexOf(sortType.value)
   sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
-  console.log(sortType.value);
+  console.log(sortType.value)
   taskStore.loadSortTasks(sortType.value)
-  console.log(taskStore.getTasks);
+  console.log(taskStore.getTasks)
 }
-
-
 </script>
 
 <template>
@@ -110,7 +108,7 @@ const cycleSortType = () => {
                     <img
                       src="../assets/addTaskIcon.svg"
                       alt=""
-                      class="w-5 h-5 flex justify-center"
+                      class="scale-95 hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
                     />
                   </th>
                   <th
@@ -133,19 +131,19 @@ const cycleSortType = () => {
                           src="../assets/alphabeticalSorting.svg"
                           alt=""
                           class="mx-5 w-5 content-center"
-                          v-if="sortType==='default'"
+                          v-if="sortType === 'default'"
                         />
                         <img
                           src="../assets/alphabeticalSorting-green.svg"
                           alt=""
                           class="mx-5 w-5 content-center"
-                          v-if="sortType==='descending'"
+                          v-if="sortType === 'descending'"
                         />
                         <img
                           src="../assets/alphabeticalReverse.svg"
                           alt=""
-                          class="mx-5 w-4 content-center"
-                          v-if="sortType==='ascending'"
+                          class="mx-5 w-5 content-center"
+                          v-if="sortType === 'ascending'"
                         />
                       </div>
                     </div>

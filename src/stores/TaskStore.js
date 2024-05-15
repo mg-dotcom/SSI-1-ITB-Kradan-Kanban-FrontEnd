@@ -167,7 +167,6 @@ export const useTaskStore = defineStore("TaskStore", {
         alert("Failed to fetch tasks");
       } else {
         this.tasks = data;
-        // let sorted = [...tasks.value];
         if (sortType === "descending") {
           this.tasks.sort((a, b) => a.status.name.localeCompare(b.status.name));
         } else if (sortType === "ascending") {

@@ -1,11 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
-
-<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" 
-	 viewBox="0 0 32 32" enable-background="new 0 0 32 32" xml:space="preserve">
-<line fill="none" stroke="#5E5C5C" stroke-width="2" stroke-miterlimit="10" x1="23" y1="26.1" x2="23" y2="5"/>
-<polyline fill="none" stroke="#5E5C5C" stroke-width="2" stroke-miterlimit="10" points="18.7,21.8 23,26.1 27.3,21.8 "/>
-<polyline fill="none" stroke="#5E5C5C" stroke-width="2" stroke-miterlimit="10" points="12,15 12,14 9.1,6 8.9,6 6,14 6,15 "/>
-<line fill="none" stroke="#5E5C5C" stroke-width="2" stroke-miterlimit="10" x1="6" y1="12" x2="12" y2="12"/>
-<polyline fill="none" stroke="#5E5C5C" stroke-width="2" stroke-miterlimit="10" points="5,18 12,18 12,19 6,25 6,26 13,26 "/>
+<svg width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M18 21.1V0" stroke="#A9A4A4" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M13.7002 16.8L18.0002 21.1L22.3002 16.8" stroke="#A9A4A4" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M7 10V9L4.1 1H3.9L1 9V10" stroke="#A9A4A4" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M1 7H7" stroke="#A9A4A4" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M0 13H7V14L1 20V21H8" stroke="#A9A4A4" stroke-width="2" stroke-miterlimit="10"/>
 </svg>
