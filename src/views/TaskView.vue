@@ -1,67 +1,118 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
-import { initFlowbite, initDropdowns } from 'flowbite'
-import StatusButton from '../components/button/StatusButton.vue'
-import DeleteModal from '../components/confirmModal/DeleteTask.vue'
-import { useRouter, useRoute, RouterView } from 'vue-router'
-import buttonSubmit from '../components/button/Button.vue'
-import { useTaskStore } from '../stores/TaskStore.js'
-import { useStatusStore } from '../stores/StatusStore.js'
-import Toast from 'primevue/toast'
+import { onMounted, reactive, ref, watch, computed } from "vue";
+import { initFlowbite, initDropdowns } from "flowbite";
+import StatusButton from "../components/button/StatusButton.vue";
+import DeleteModal from "../components/confirmModal/DeleteTask.vue";
+import { useRouter, useRoute, RouterView } from "vue-router";
+import buttonSubmit from "../components/button/Button.vue";
+import { useTaskStore } from "../stores/TaskStore.js";
+import { useStatusStore } from "../stores/StatusStore.js";
+import Toast from "primevue/toast";
 
-const router = useRouter()
-const selectedId = ref('')
-const selectedIndex = ref(0)
-const taskStore = useTaskStore()
+const router = useRouter();
+const selectedId = ref("");
+const selectedIndex = ref(0);
+const taskStore = useTaskStore();
 
-const statusStore = useStatusStore()
+const statusStore = useStatusStore();
 
 onMounted(async () => {
-  initFlowbite()
-  initDropdowns()
-  await taskStore.loadTasks()
-  await statusStore.loadStatuses()
-})
+  initFlowbite();
+  initDropdowns();
+  await taskStore.loadTasks();
+  await statusStore.loadStatuses();
+});
 
 const page = reactive({
-  task: true
-})
+  task: true,
+});
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
-  delete: false
-})
+  delete: false,
+});
 
 const showOptionEditDelete = (taskId) => {
-  selectedId.value = taskId
-  popup.optionEditDelete = !popup.optionEditDelete
-}
+  selectedId.value = taskId;
+  popup.optionEditDelete = !popup.optionEditDelete;
+};
 
 const openDetail = (id) => {
-  popup.optionEditDelete = false
-  router.push({ name: 'task-detail', params: { id: id } })
-}
+  popup.optionEditDelete = false;
+  router.push({ name: "task-detail", params: { id: id } });
+};
 
 const openDelete = (id, index) => {
-  selectedId.value = id
-  selectedIndex.value = index
-  popup.delete = true
-}
+  selectedId.value = id;
+  selectedIndex.value = index;
+  popup.delete = true;
+};
 
-const sortTypes = ['default', 'descending', 'ascending']
-const sortType = ref('default')
+const sortTypes = ["default", "descending", "ascending"];
+const sortType = ref("default");
 const cycleSortType = () => {
-  const currentIndex = sortTypes.indexOf(sortType.value)
-  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
-  console.log(sortType.value)
-  taskStore.loadSortTasks(sortType.value)
-  console.log(taskStore.getTasks)
-}
+  const currentIndex = sortTypes.indexOf(sortType.value);
+  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length];
+  console.log(sortType.value);
+  taskStore.loadSortTasks(sortType.value);
+  console.log(taskStore.getTasks);
+};
+
+const checkedItems = ref([]);
+
+const buttonText = computed(() => {
+  if (checkedItems.value.length > 0) {
+    return `${checkedItems.value.length} Selected`;
+  } else {
+    return "Select Language";
+  }
+});
+
+const toggleSelect = () => {
+  const selectBtn = document.querySelector(".select-btn");
+  selectBtn.classList.toggle("open");
+};
+
+const toggleItem = (index) => {
+  if (checkedItems.value.includes(index)) {
+    checkedItems.value = checkedItems.value.filter((item) => item !== index);
+    const addCheck = document.querySelectorAll(".list-items");
+  } else {
+    checkedItems.value = [...checkedItems.value, index];
+    console.log(checkedItems.value);
+  }
+};
 </script>
 
 <template>
+  <div class="container z-10">
+    <div class="select-btn" @click="toggleSelect">
+      <span class="btn-text">{{ buttonText }}</span>
+      <span class="arrow-dwn">
+        <i class="fa-solid fa-chevron-down"> </i>
+      </span>
+    </div>
+
+    <ul class="list-items">
+      <li
+        class="item"
+        v-for="(status, index) in statusStore.getStatuses"
+        :key="index"
+        @click="toggleItem(index)"
+      >
+        <span class="checkbox">
+          <i
+            class="fa-solid fa-check"
+            :class="{ 'check-icon': checkedItems.includes(index) }"
+          ></i>
+        </span>
+        <span class="item-text">{{ status.name }}</span>
+      </li>
+    </ul>
+  </div>
   <Toast class="itbkk-message" />
+
   <div class="h-screen w-full">
     <RouterView />
     <div class="table lg:px-24 sm:px-10 overflow-hidden" v-if="page.task">
@@ -78,7 +129,6 @@ const cycleSortType = () => {
           >
         </div>
         <div class="flex">
-
           <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2"
@@ -87,6 +137,22 @@ const cycleSortType = () => {
             <img src="../assets/status-list.svg" alt="" class="w-5" /> Manage
             Status</buttonSubmit
           >
+          <buttonSubmit button-type="add">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="23"
+              height="23"
+              viewBox="0 0 34 32"
+              fill="none"
+            >
+              <path
+                d="M28.52 26.8947H33M3.98667 16L1 16.0733M3.98667 16C3.98667 18.2092 5.89691 20 8.25333 20C10.6097 20 12.52 18.2092 12.52 16C12.52 13.7908 10.6097 12 8.25333 12C5.89691 12 3.98667 13.7908 3.98667 16ZM13.7449 16.0735H33M18.424 5.25207H1M33 5.25207H28.52M1 26.8947H18.424M27.4533 27C27.4533 29.2092 25.5431 31 23.1867 31C20.8302 31 18.92 29.2092 18.92 27C18.92 24.7908 20.8302 23 23.1867 23C25.5431 23 27.4533 24.7908 27.4533 27ZM27.4533 5C27.4533 7.20913 25.5431 9 23.1867 9C20.8302 9 18.92 7.20913 18.92 5C18.92 2.79087 20.8302 1 23.1867 1C25.5431 1 27.4533 2.79087 27.4533 5Z"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </buttonSubmit>
         </div>
       </div>
       <div class="-my-2 mb-8 sm:-mx">
@@ -170,7 +236,7 @@ const cycleSortType = () => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || 'Unassigned' }}
+                    {{ task.assignees || "Unassigned" }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
@@ -215,7 +281,7 @@ const cycleSortType = () => {
                                 @click="
                                   router.push({
                                     name: 'task-edit',
-                                    params: { id: task.id }
+                                    params: { id: task.id },
                                   })
                                 "
                               >

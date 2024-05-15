@@ -1,4 +1,5 @@
 import "./assets/main.css";
+import { CAlert } from "@coreui/vue";
 import PrimeVue from "primevue/config";
 import "primevue/resources/themes/aura-light-green/theme.css";
 import "primevue/resources/primevue.min.css";
@@ -26,6 +27,7 @@ app.use(PrimeVue, {
     },
   },
 });
+app.component("CAlert", CAlert);
 app.component("ToggleButton", ToggleButton);
 app.component("Button", Button);
 app.use(ToastService);

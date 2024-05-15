@@ -9,7 +9,6 @@ import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import { ref } from "vue";
-
 const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
