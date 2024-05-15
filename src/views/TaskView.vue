@@ -78,12 +78,7 @@ const cycleSortType = () => {
           >
         </div>
         <div class="flex">
-          <buttonSubmit
-            class="itbkk-button-add"
-            buttonType="add"
-            @click="router.push({ name: 'task-add' })"
-            >+ Add Task</buttonSubmit
-          >
+
           <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2"
@@ -108,7 +103,8 @@ const cycleSortType = () => {
                     <img
                       src="../assets/addTaskIcon.svg"
                       alt=""
-                      class="scale-95 hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
+                      @click="router.push({ name: 'task-add' })"
+                      class="itbkk-button-add scale-95 hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
                     />
                   </th>
                   <th
