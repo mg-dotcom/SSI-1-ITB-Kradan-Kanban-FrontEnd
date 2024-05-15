@@ -54,9 +54,7 @@ const sortType = ref('default')
 const cycleSortType = () => {
   const currentIndex = sortTypes.indexOf(sortType.value)
   sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
-  console.log(sortType.value)
   taskStore.loadSortTasks(sortType.value)
-  console.log(taskStore.getTasks)
 }
 </script>
 
@@ -78,7 +76,6 @@ const cycleSortType = () => {
           >
         </div>
         <div class="flex">
-
           <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2"

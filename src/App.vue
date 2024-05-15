@@ -1,6 +1,6 @@
 <script setup>
 import { RouterView } from "vue-router";
-import StatusSetting from "./components/confirmModal/StatusSetting.vue";
+// import StatusSetting from "./components/confirmModal/StatusSetting.vue";
 </script>
 
 <template>
@@ -19,8 +19,8 @@ import StatusSetting from "./components/confirmModal/StatusSetting.vue";
         </h1>
       </div>
     </div>
-    <!-- <RouterView /> -->
-    <StatusSetting />
+    <RouterView />
+    <!-- <StatusSetting/> -->
   </div>
 </template>
 
