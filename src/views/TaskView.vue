@@ -55,7 +55,8 @@ const cycleSortType = () => {
   const currentIndex = sortTypes.indexOf(sortType.value)
   sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
   console.log(sortType.value);
-  return taskStore.getTasks
+  taskStore.loadSortTasks(sortType.value)
+  console.log(taskStore.getTasks);
 }
 
 

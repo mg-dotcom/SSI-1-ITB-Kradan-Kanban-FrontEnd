@@ -166,14 +166,14 @@ export const useTaskStore = defineStore("TaskStore", {
         //fetch data failed
         alert("Failed to fetch tasks");
       } else {
-        // this.tasks = data;
+        this.tasks = data;
         // let sorted = [...tasks.value];
-        if (sortType === "ascending") {
+        if (sortType === "descending") {
           this.tasks.sort((a, b) => a.status.name.localeCompare(b.status.name));
-        } else if (sortType === "descending") {
+        } else if (sortType === "ascending") {
           this.tasks.sort((a, b) => b.status.name.localeCompare(a.status.name));
         }
-        return sorted;
+        return this.tasks;
       }
     },
   },
