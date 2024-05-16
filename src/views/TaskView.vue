@@ -9,6 +9,7 @@ import { useTaskStore } from "../stores/TaskStore.js";
 import { useStatusStore } from "../stores/StatusStore.js";
 import Toast from "primevue/toast";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import StatusSetting from "../components/confirmModal/SettingStatus.vue";
 
 const router = useRouter();
 const selectedId = ref("");
@@ -32,6 +33,7 @@ const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
   delete: false,
+  limitStatus: false,
 });
 
 const showOptionEditDelete = (taskId) => {
@@ -98,6 +100,15 @@ const clearFilter = () => {
   filterStatuses.value = [];
   const selectBtn = document.querySelector(".select-btn");
   selectBtn.classList.remove("open");
+};
+
+const openLimitStatus = () => {
+  popup.limitStatus = true;
+};
+
+const saveLimitStatus = (isLimit, maxLimit) => {
+  taskStore.limitStatusTasks(isLimit, maxLimit);
+  popup.limitStatus = false;
 };
 </script>
 
@@ -178,7 +189,7 @@ const clearFilter = () => {
             <img src="../assets/status-list.svg" alt="" class="w-5" />
             Manage Status</buttonSubmit
           >
-          <buttonSubmit button-type="add" class="itbkk-status-setting">
+          <buttonSubmit button-type="add" @click="openLimitStatus">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="23"
@@ -362,6 +373,12 @@ const clearFilter = () => {
       @confirmDeleteTask="popup.delete = false"
     ></DeleteModal>
   </div>
+
+  <StatusSetting
+    v-if="popup.limitStatus"
+    @closeLimitStatus="popup.limitStatus = false"
+    @saveLimitStatus="saveLimitStatus"
+  ></StatusSetting>
 </template>
 
 <style scoped>
