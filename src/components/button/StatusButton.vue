@@ -37,7 +37,7 @@ const selectedId = defineEmits(["clear-status"]);
 
       <slot class="">No Status</slot>
       <span
-        class="absolute right-3 hover:shadow-md hover:bg-red-400 cursor-pointer transition-all duration-300 rounded-full w-5 text-center z-[100]"
+        class="absolute right-3 hover:shadow-md bg-red-400 cursor-pointer transition-all duration-300 rounded-full w-5 text-center z-[100] hover:bg-red-500"
         v-if="filterStatuses"
         @click="$emit('clear-status', statusName)"
       >

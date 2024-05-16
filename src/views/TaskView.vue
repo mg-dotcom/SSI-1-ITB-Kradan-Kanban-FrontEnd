@@ -80,9 +80,11 @@ const toggleItem = (id) => {
     filterStatuses.value = filterStatuses.value.filter(
       (item) => item !== selectedStatus.name
     );
+    console.log(filterStatuses.value);
   } else {
     filterStatuses.value = [...filterStatuses.value, selectedStatus.name];
     listItem.classList.add("checked");
+    console.log(filterStatuses.value);
   }
 };
 
@@ -94,6 +96,8 @@ const clearEachStatus = (statusName) => {
 
 const clearFilter = () => {
   filterStatuses.value = [];
+  const selectBtn = document.querySelector(".select-btn");
+  selectBtn.classList.remove("open");
 };
 </script>
 

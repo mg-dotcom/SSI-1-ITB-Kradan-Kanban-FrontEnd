@@ -14,9 +14,10 @@
 
 .container {
   position: relative;
-  max-width: 320px;
-  width: 100%;
+  max-width: 300px;
+  width: 80%;
 }
+
 .select-btn {
   display: flex;
   align-items: center;
@@ -24,6 +25,7 @@
   padding: 5px 15px;
   border-radius: 8px;
   background-color: #fff;
+  width: 90%;
   border: 1px solid #c0c0c0;
   cursor: pointer;
   overflow: auto;
@@ -47,7 +49,7 @@
   justify-content: center;
   transition: 0.3s;
   position: absolute;
-  right: 23px; /* Align to the right */
+  right: 3px; /* Align to the right */
   display: flex;
   /* Align content to the end */
   align-items: center;
