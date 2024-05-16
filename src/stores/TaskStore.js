@@ -175,5 +175,27 @@ export const useTaskStore = defineStore("TaskStore", {
         return this.tasks;
       }
     },
+
+    limitStatusTasks(isLimit, maxLimit) {
+      if (isLimit) {
+        // for(let i = 0; i  )
+        // if (this.getTasksByStatus("Doing").length < maxLimit) {
+        //   this.toast.add({
+        //     severity: "success",
+        //     summary: "Success",
+        //     detail: `The task has been successfully limited`,
+        //     life: 3000,
+        //   });
+        //   return;
+        // }
+      } else {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `An error has occurred, the task cannot be limited`,
+          life: 3000,
+        });
+      }
+    },
   },
 });

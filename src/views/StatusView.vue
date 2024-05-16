@@ -9,7 +9,6 @@ import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import { ref } from "vue";
-
 const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
@@ -69,17 +68,13 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
         class="itbkk-button-home text-xl font-bold flex items-center text-blue"
       >
         <a
-          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
+          class="relative opacity-65 after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
           @click="router.push({ name: 'task' })"
         >
           Home&nbsp;</a
         >
-        <p class="">></p>
-        <a
-          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
-        >
-          &nbsp;Task Status
-        </a>
+        <p class="opacity-65">></p>
+        <a class="text-blue"> &nbsp;Task Status </a>
       </div>
       <div class="flex">
         <buttonSubmit
@@ -158,30 +153,32 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                   <buttonSubmit
                     class="itbkk-button-edit"
                     :buttonType="
-                      status.name === 'No Status' ? 'cancel' : 'edit'
+                      status.name === 'No Status' || status.name === 'Done'
+                        ? 'cancel'
+                        : 'edit'
                     "
-                    :disabled="status.name === 'No Status'"
+                    :disabled="
+                      status.name === 'No Status' || status.name === 'Done'
+                    "
                     :class="
-                      status.name === 'No Status'
+                      status.name === 'No Status' || status.name === 'Done'
                         ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
                         : ''
-                    "
-                    @click="
-                      router.push({
-                        name: 'status-edit',
-                        params: { id: status.id },
-                      })
                     "
                     >Edit</buttonSubmit
                   >
                   <buttonSubmit
                     class="itbkk-button-delete"
                     :buttonType="
-                      status.name === 'No Status' ? 'cancel' : 'delete'
+                      status.name === 'No Status' || status.name === 'Done'
+                        ? 'cancel'
+                        : 'delete'
                     "
-                    :disabled="status.name === 'No Status'"
+                    :disabled="
+                      status.name === 'No Status' || status.name === 'Done'
+                    "
                     :class="
-                      status.name === 'No Status'
+                      status.name === 'No Status' || status.name === 'Done'
                         ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
                         : ''
                     "

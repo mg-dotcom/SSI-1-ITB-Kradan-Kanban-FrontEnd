@@ -12,3 +12,137 @@
   @tailwind utilities;
 }
 
+.container {
+  position: relative;
+  max-width: 300px;
+  width: 80%;
+}
+
+.select-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 5px 15px;
+  border-radius: 8px;
+  background-color: #fff;
+  width: 90%;
+  border: 1px solid #c0c0c0;
+  cursor: pointer;
+  overflow: auto;
+}
+
+.select-btn .btn-text {
+  font-size: 17px;
+  font-weight: 400;
+  color: #333;
+}
+
+.select-btn .close-icon {
+  display: flex;
+  height: 21px;
+  width: 21px;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 50%;
+  background: lightgray;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s;
+  position: absolute;
+  right: 3px; /* Align to the right */
+  display: flex;
+  /* Align content to the end */
+  align-items: center;
+}
+
+.close-icon:hover {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+}
+
+.select-btn.open .arrow-dwn {
+  transform: rotate(-180deg);
+}
+.select-btn.open ~ .list-items {
+  opacity: 0;
+  animation-name: fadeInUp;
+  -webkit-animation-name: fadeInUp;
+  animation-duration: 0.4s;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 0.4s;
+  -webkit-animation-fill-mode: both;
+}
+.list-items {
+  position: absolute;
+  max-width: 320px;
+  width: 100%;
+  margin-top: 15px;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #fff;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  animation-name: fadeInDown;
+  -webkit-animation-name: fadeInDown;
+  animation-duration: 0.35s;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 0.35s;
+  -webkit-animation-fill-mode: both;
+  word-break: break-all;
+}
+.list-items .item {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  height: 50px;
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 0 15px;
+  border-radius: 8px;
+}
+.list-items .item:hover {
+  background-color: #e7edfe;
+}
+.item .item-text {
+  font-size: 16px;
+  font-weight: 400;
+  color: #333;
+}
+
+.item .checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 16px;
+  width: 16px;
+  border-radius: 4px;
+  margin-right: 12px;
+  border: 1.5px solid #c0c0c0;
+  transition: all 0.3s ease-in-out;
+}
+
+.item.checked .check-icon {
+  transform: scale(1);
+}
+
+.item.checked .check-icon {
+  transform: scale(1);
+}
+
+@keyframes fadeInUp {
+  from {
+    transform: translate3d(0, 30px, 0);
+  }
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+}
+@keyframes fadeInDown {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, 20px, 0);
+    opacity: 0;
+  }
+}
