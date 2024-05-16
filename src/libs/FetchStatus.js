@@ -20,6 +20,7 @@ const deleteStatus = async (url, id) => {
 };
 
 const addStatus = async (url, newStatus) => {
+  console.log(newStatus);
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {

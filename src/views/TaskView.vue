@@ -112,7 +112,6 @@ const saveLimitStatus = (isLimit, maxLimit) => {
 
 <template>
   <Toast class="itbkk-message" />
-
   <div class="h-screen w-full">
     <RouterView />
     <div

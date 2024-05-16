@@ -165,6 +165,12 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                         ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
                         : ''
                     "
+                    @click="
+                      router.push({
+                        name: 'status-edit',
+                        params: { id: status.id },
+                      })
+                    "
                     >Edit</buttonSubmit
                   >
                   <buttonSubmit

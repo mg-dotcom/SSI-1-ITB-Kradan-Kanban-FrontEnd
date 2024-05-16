@@ -114,6 +114,8 @@ const save = async () => {
     await statusStore.editStatus(inputStatus.value.id, inputStatus.value);
     router.go(-1);
   } else {
+    if (inputStatus.value.description === "")
+      inputStatus.value.description = null;
     await statusStore.addStatus(inputStatus.value);
     router.go(-1);
   }
