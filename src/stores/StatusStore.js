@@ -13,14 +13,7 @@ export const useStatusStore = defineStore("StatusStore", {
     toast: useToast(),
     statuses: [],
     STATUS_ENDPOINT: "v2/statuses",
-    statusDetails: {
-      id: "",
-      name: "",
-      description: null,
-      statusColor: "#CCCCCC",
-      createdOn: "",
-      updatedOn: "",
-    },
+
   }),
 
   getters: {
@@ -55,14 +48,7 @@ export const useStatusStore = defineStore("StatusStore", {
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses");
       } else {
-        this.statusDetails = {
-          id: data.id || "",
-          name: data.name || "",
-          description: data.description,
-          statusColor: data.statusColor || "#CCCCCC",
-          createdOn: data.createdOn || "",
-          updatedOn: data.updatedOn || "",
-        };
+
         return this.statusDetails;
       }
     },

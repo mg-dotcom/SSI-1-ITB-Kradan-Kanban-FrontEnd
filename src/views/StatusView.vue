@@ -1,62 +1,63 @@
 <script setup>
-import buttonSubmit from "../components/button/Button.vue";
-import { useRouter, useRoute } from "vue-router";
-import { useStatusStore } from "../stores/StatusStore.js";
-import { useTaskStore } from "../stores/TaskStore.js";
-import { onMounted } from "vue";
-import StatusButton from "../components/button/StatusButton.vue";
-import { RouterView } from "vue-router";
-import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
-import Transfer from "../components/confirmModal/Transfer.vue";
-import { ref } from "vue";
-const router = useRouter();
-const statusStore = useStatusStore();
-const taskStore = useTaskStore();
+import buttonSubmit from '../components/button/Button.vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useStatusStore } from '../stores/StatusStore.js'
+import { useTaskStore } from '../stores/TaskStore.js'
+import { onMounted } from 'vue'
+import StatusButton from '../components/button/StatusButton.vue'
+import { RouterView } from 'vue-router'
+import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
+import Transfer from '../components/confirmModal/Transfer.vue'
+import { ref } from 'vue'
+const router = useRouter()
+const statusStore = useStatusStore()
+const taskStore = useTaskStore()
 
 onMounted(async () => {
-  await statusStore.loadStatuses();
-  await taskStore.loadTasks();
+  await statusStore.loadStatuses()
+  await taskStore.loadTasks()
 
-  console.log("status", statusStore.getStatuses);
-});
+  console.log('status', statusStore.getStatuses)
+})
 
-const numberOfTasks = ref(0);
-const currentStatus = ref("");
-const openDelete = ref(false);
-const openTransfer = ref(false);
+const numberOfTasks = ref(0)
+const maximumTask = ref(5)
+const currentStatus = ref('')
+const openDelete = ref(false)
+const openTransfer = ref(false)
 
 const openDeleteOrTransferModal = (id) => {
-  currentStatus.value = statusStore.getStatusById(id);
-  console.log(currentStatus.value.name);
-  const haveTask = taskStore.getTasksByStatus(currentStatus.value.name);
-  console.log(haveTask);
-  numberOfTasks.value = haveTask.length;
-  console.log(haveTask.length);
+  currentStatus.value = statusStore.getStatusById(id)
+  console.log(currentStatus.value.name)
+  const haveTask = taskStore.getTasksByStatus(currentStatus.value.name)
+  console.log(haveTask)
+  numberOfTasks.value = haveTask.length
+  console.log(haveTask.length)
   if (haveTask.length > 0) {
-    console.log("open transfer modal");
-    openTransfer.value = true;
+    console.log('open transfer modal')
+    openTransfer.value = true
   } else {
-    console.log("open delete modal");
-    openDelete.value = true;
+    console.log('open delete modal')
+    openDelete.value = true
   }
-};
+}
 
 const deleteStatus = (id) => {
-  console.log(id);
-  statusStore.removeStatus(id);
-  openDelete.value = false;
-  console.log("delete successful");
-};
+  console.log(id)
+  statusStore.removeStatus(id)
+  openDelete.value = false
+  console.log('delete successful')
+}
 const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
-  taskStore.transferTasksStatus(currentStatus, newStatusId);
+  taskStore.transferTasksStatus(currentStatus, newStatusId)
   await statusStore.transferStatus(
     currentStatusId,
     newStatusId,
     numberOfTasks.value
-  );
-  openTransfer.value = false;
-  router.push({ name: "status" });
-};
+  )
+  openTransfer.value = false
+  router.push({ name: 'status' })
+}
 </script>
 
 <template>
@@ -143,7 +144,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                 >
                   {{
                     !status.description
-                      ? "No description is provided"
+                      ? 'No description is provided'
                       : status.description
                   }}
                 </td>
@@ -152,6 +153,12 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                 >
                   <buttonSubmit
                     class="itbkk-button-edit"
+                    @click="
+                      router.push({
+                        name: 'status-edit',
+                        params: { id: status.id }
+                      })
+                    "
                     :buttonType="
                       status.name === 'No Status' || status.name === 'Done'
                         ? 'cancel'
@@ -203,6 +210,7 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
       v-if="openTransfer"
       :currentStatus="currentStatus"
       :numberOfTasks="numberOfTasks"
+      :maximumTask="maximumTask"
       @closeDelete="openTransfer = false"
       @transferStatus="transferStatus"
     ></Transfer>

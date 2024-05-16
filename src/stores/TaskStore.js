@@ -13,15 +13,7 @@ export const useTaskStore = defineStore("TaskStore", {
     toast: useToast(),
     tasks: [],
     TASK_ENDPOINT: "v2/tasks",
-    taskDetails: {
-      id: "",
-      title: "",
-      description: "",
-      assignees: "",
-      status: {},
-      createdOn: "",
-      updatedOn: "",
-    },
+
   }),
   getters: {
     getTasks() {
@@ -56,15 +48,6 @@ export const useTaskStore = defineStore("TaskStore", {
         //fetch data failed
         alert("Failed to fetch task details");
       } else {
-        this.taskDetails = {
-          id: data.id || "",
-          title: data.title || "",
-          description: data.description || "",
-          assignees: data.assignees || "",
-          status: data.status || {},
-          createdOn: data.createdOn || "",
-          updatedOn: data.updatedOn || "",
-        };
         return this.taskDetails;
       }
     },
