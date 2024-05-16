@@ -6,7 +6,7 @@ import submitButton from "../button/Button.vue";
   <div
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
-    <div class="bg-white p-6 rounded-lg shadow-lg w-2/5">
+    <div class="itbkk-modal-setting bg-white p-6 rounded-lg shadow-lg w-2/5">
       <div class="font-bold mb-4">
         <p>Status Settings</p>
       </div>
@@ -19,7 +19,7 @@ import submitButton from "../button/Button.vue";
         </p>
         <div class="my-3">
           <label class="inline-flex items-center cursor-pointer">
-            <input type="checkbox" class="toggle toggle-success" checked />
+            <input type="checkbox" class="itbkk-limit-task toggle toggle-success" checked />
             <span
               class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"
               >Limit tasks in this status</span
@@ -33,7 +33,7 @@ import submitButton from "../button/Button.vue";
           </p>
           <input
             type="text"
-            class="itbkk-status-name bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="itbkk-max-task bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
       </div>
@@ -56,3 +56,4 @@ import submitButton from "../button/Button.vue";
 </template>
 
 <style scoped></style>
+ n{}

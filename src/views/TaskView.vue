@@ -178,7 +178,7 @@ const clearFilter = () => {
             <img src="../assets/status-list.svg" alt="" class="w-5" />
             Manage Status</buttonSubmit
           >
-          <buttonSubmit button-type="add">
+          <buttonSubmit button-type="add" class="itbkk-status-setting">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="23"
@@ -227,7 +227,7 @@ const clearFilter = () => {
                   <th
                     class="w-[18%] px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
-                    <div class="flex">
+                    <div class="itbkk-status-sort flex">
                       <p class="content-center">Status</p>
                       <div @click="cycleSortType">
                         <img
