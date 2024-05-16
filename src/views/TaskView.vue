@@ -138,7 +138,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
         >
       </div>
       <div class="flex justify-between py-6 px-5">
-        <div class="container z-20">
+        <div class="container z-[100]">
           <div
             class="select-btn"
             @click="toggleSelect"
@@ -211,7 +211,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
           </buttonSubmit>
         </div>
       </div>
-      <div class="-my-2 mb-8 sm:-mx">
+      <div class="-my-2 mb-24 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
             class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
