@@ -5,6 +5,7 @@ import {
   deleteTask,
   fetchTaskDetails,
   updatedTask,
+  fetchFilterTasks
 } from "../libs/FetchTask.js";
 import { useToast } from "primevue/usetoast";
 
@@ -48,8 +49,19 @@ export const useTaskStore = defineStore("TaskStore", {
         //fetch data failed
         alert("Failed to fetch task details");
       } else {
-        return this.taskDetails;
+        return data;
       }
+    },
+    async loadFilterTasks(arrayOfStatusesNames) {
+      if (arrayOfStatusesNames.length === 0) {
+        this.loadTasks();
+        return;
+      }
+      const data = await fetchFilterTasks(
+        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        arrayOfStatusesNames
+      );
+      this.tasks = data;
     },
 
     async addTask(newTask) {
@@ -180,5 +192,7 @@ export const useTaskStore = defineStore("TaskStore", {
         });
       }
     },
+
+
   },
 });

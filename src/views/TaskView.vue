@@ -21,8 +21,10 @@ const statusStore = useStatusStore()
 onMounted(async () => {
   initFlowbite()
   initDropdowns()
+
   await taskStore.loadTasks()
   await statusStore.loadStatuses()
+
 })
 
 const page = reactive({
@@ -63,6 +65,10 @@ const cycleSortType = () => {
 }
 
 const filterStatuses = ref([])
+
+watch(filterStatuses, async (newfilterStatuses) => {
+  await taskStore.loadFilterTasks(newfilterStatuses)
+})
 
 const toggleSelect = () => {
   const selectBtn = document.querySelector('.select-btn')

@@ -39,6 +39,7 @@ onMounted(async () => {
   await statusStore.loadStatuses();
   if (mode == "edit") {
     const taskDetail = await taskStore.loadTaskDetails(taskId);
+    console.log(taskDetail);
     selectedTask.value = taskDetail;
     selectedTask.value.statusId = taskDetail.status.id;
     selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
