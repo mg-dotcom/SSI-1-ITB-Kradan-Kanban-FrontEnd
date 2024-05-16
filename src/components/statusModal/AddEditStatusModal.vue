@@ -28,6 +28,16 @@ onMounted(async () => {
     router.push({ name: "status" });
   }
 
+  if (statusId === 4) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You cannot edit or delete this done status",
+      life: 3000,
+    });
+    router.push({ name: "status" });
+  }
+
   if (mode === "edit") {
     const selectedStatus = await statusStore.loadStatusDetail(statusId);
     if (!selectedStatus.id) {

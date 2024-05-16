@@ -98,8 +98,6 @@ const clearEachStatus = (statusName) => {
 
 const clearFilter = () => {
   filterStatuses.value = [];
-  const selectBtn = document.querySelector(".select-btn");
-  selectBtn.classList.remove("open");
 };
 
 const openLimitStatus = () => {

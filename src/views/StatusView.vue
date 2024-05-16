@@ -153,30 +153,32 @@ const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
                   <buttonSubmit
                     class="itbkk-button-edit"
                     :buttonType="
-                      status.name === 'No Status' ? 'cancel' : 'edit'
+                      status.name === 'No Status' || status.name === 'Done'
+                        ? 'cancel'
+                        : 'edit'
                     "
-                    :disabled="status.name === 'No Status'"
+                    :disabled="
+                      status.name === 'No Status' || status.name === 'Done'
+                    "
                     :class="
-                      status.name === 'No Status'
+                      status.name === 'No Status' || status.name === 'Done'
                         ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
                         : ''
-                    "
-                    @click="
-                      router.push({
-                        name: 'status-edit',
-                        params: { id: status.id },
-                      })
                     "
                     >Edit</buttonSubmit
                   >
                   <buttonSubmit
                     class="itbkk-button-delete"
                     :buttonType="
-                      status.name === 'No Status' ? 'cancel' : 'delete'
+                      status.name === 'No Status' || status.name === 'Done'
+                        ? 'cancel'
+                        : 'delete'
                     "
-                    :disabled="status.name === 'No Status'"
+                    :disabled="
+                      status.name === 'No Status' || status.name === 'Done'
+                    "
                     :class="
-                      status.name === 'No Status'
+                      status.name === 'No Status' || status.name === 'Done'
                         ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
                         : ''
                     "
