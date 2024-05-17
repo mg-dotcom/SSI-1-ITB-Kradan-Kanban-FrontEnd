@@ -49,10 +49,29 @@ const updateStatus = async (url, id, updatedStatus) => {
   return res;
 };
 
+const fetchStatusSetting = async (url,id) => {
+  const res = await fetch(`${url}/${id}
+  `);
+  console.log(res);
+  const data = await res.json();
+  console.log(data);
+  return data;
+}
+
+const patchStatus = async (url, id) => {
+  const res = await fetch(`${url}/${id}`, {
+    method: "PATCH",
+  });
+  return res;
+};
+
+
 export {
   fetchAllStatus,
   fetchStatusById,
   addStatus,
   updateStatus,
   deleteStatus,
+  fetchStatusSetting,
+  patchStatus
 };

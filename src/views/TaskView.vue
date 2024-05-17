@@ -10,7 +10,7 @@ import { useStatusStore } from '../stores/StatusStore.js'
 import { useSortStore } from '../stores/SortStore.js'
 import Toast from 'primevue/toast'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import StatusSetting from '../components/confirmModal/SettingStatus.vue'
+import StatusSetting from '../components/confirmModal/StatusSetting.vue'
 
 const router = useRouter()
 const selectedId = ref('')
@@ -114,6 +114,7 @@ const openLimitStatus = () => {
 const saveLimitStatus = (isLimit, maxLimit) => {
   taskStore.limitStatusTasks(isLimit, maxLimit)
   popup.limitStatus = false
+  
 }
 </script>
 
