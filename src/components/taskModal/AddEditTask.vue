@@ -1,117 +1,150 @@
 <script setup>
-import ModalDetail from "./ModalDetail.vue";
-import buttonSubmit from "../button/Button.vue";
-import { useRouter, useRoute } from "vue-router";
-import { defineEmits, ref, onMounted, watch } from "vue";
-import { useStatusStore } from "../../stores/StatusStore.js";
+import ModalDetail from './ModalDetail.vue'
+import buttonSubmit from '../button/Button.vue'
+import { useRouter, useRoute } from 'vue-router'
+import { defineEmits, ref, onMounted, watch } from 'vue'
+import { useStatusStore } from '../../stores/StatusStore.js'
 import { useSortStore } from '../../stores/SortStore.js'
-import { useTaskStore } from "../../stores/TaskStore.js";
-import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
-
-const statusStore = useStatusStore();
-const taskStore = useTaskStore();
+import { useTaskStore } from '../../stores/TaskStore.js'
+import { localTimeZone, formatDate } from '../../libs/libsUtil.js'
+import { useToast } from 'primevue/usetoast'
+const statusStore = useStatusStore()
+const taskStore = useTaskStore()
 const sortStore = useSortStore()
-const router = useRouter();
-const route = useRoute();
-const taskId = Number(route.params.id);
-const isChanged = ref(false);
-const mode = route.name === "task-add" ? "add" : "edit";
+const toast = useToast()
+const router = useRouter()
+const route = useRoute()
+const taskId = Number(route.params.id)
+const isChanged = ref(false)
+const mode = route.name === 'task-add' ? 'add' : 'edit'
 
 const selectedTask = ref({
-  title: "",
-  description: "",
-  assignees: "",
+  title: '',
+  description: '',
+  assignees: '',
   statusId: 1,
-  createdOn: "",
-  updatedOn: "",
-});
+  createdOn: '',
+  updatedOn: ''
+})
 
 const outputTask = ref({
-  title: "",
-  description: "",
-  assignees: "",
+  title: '',
+  description: '',
+  assignees: '',
   statusId: 1,
-  createdOn: "",
-  updatedOn: "",
-});
+  createdOn: '',
+  updatedOn: ''
+})
 
-const input = ref({});
+const input = ref({})
 
 onMounted(async () => {
-  await statusStore.loadStatuses();
-  if (mode == "edit") {
-    const taskDetail = await taskStore.loadTaskDetails(taskId);
-    console.log(taskDetail);
-    selectedTask.value = taskDetail;
-    selectedTask.value.statusId = taskDetail.status.id;
-    selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
-    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
-    input.value = { ...selectedTask.value };
-  } else if (mode == "add") {
-    selectedTask.value.statusId = statusStore.getStatuses[0].id;
+  await statusStore.loadStatuses()
+  if (mode == 'edit') {
+    const taskDetail = await taskStore.loadTaskDetails(taskId)
+    console.log(taskDetail)
+    selectedTask.value = taskDetail
+    selectedTask.value.statusId = taskDetail.status.id
+    selectedTask.value.createdOn = formatDate(taskDetail.createdOn)
+    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn)
+    input.value = { ...selectedTask.value }
+  } else if (mode == 'add') {
+    selectedTask.value.statusId = statusStore.getStatuses[0].id
   }
-});
+})
+
+const isLimit = ref(false)
+watch(
+  () => selectedTask.value.statusId,
+  (newValue) => {
+    const status = statusStore.getStatusById(newValue)
+    const tasks = taskStore.getTasksByStatus(status.name)
+
+    isLimit.value = tasks.length >= 5
+  }
+)
 
 watch(
   selectedTask,
   (newValue) => {
-    if (mode === "add") {
+    if (mode === 'add') {
       if (!newValue.title) {
-        isChanged.value = false;
+        isChanged.value = false
       } else {
-        isChanged.value = true;
-        return;
+        isChanged.value = true
+        return
       }
     }
-    if (mode === "edit") {
+    if (mode === 'edit') {
       if (
         newValue.title !== input.value.title ||
         newValue.description !== input.value.description ||
         newValue.assignees !== input.value.assignees ||
         newValue.statusId !== input.value.statusId
       ) {
-        isChanged.value = true;
+        isChanged.value = true
       } else {
-        isChanged.value = false;
+        isChanged.value = false
       }
     }
   },
   { deep: true }
-);
+)
 
 const save = async () => {
-  if (mode === "edit" && taskId !== undefined) {
+  if (mode === 'edit' && taskId !== undefined) {
     outputTask.value = {
       title: selectedTask.value.title,
       description: selectedTask.value.description,
       assignees: selectedTask.value.assignees,
-      statusId: selectedTask.value.statusId,
-    };
+      statusId: selectedTask.value.statusId
+    }
     const statusDetail = statusStore.getStatuses.find(
       (status) => status.id === selectedTask.value.statusId
-    );
-    await taskStore.editTask(taskId, outputTask.value, statusDetail);
-    router.go(-1);
+    )
+    if (isLimit.value) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
+        life: 3000
+      })
+      return
+    } else {
+      await taskStore.editTask(taskId, outputTask.value, statusDetail)
+      router.go(-1)
+    }
   } else {
     outputTask.value = {
       title: selectedTask.value.title,
       description: selectedTask.value.description,
       assignees: selectedTask.value.assignees,
-      statusId: selectedTask.value.statusId,
-    };
-    await taskStore.addTask(outputTask.value);
-    await taskStore.loadSortTasks(sortStore.getSortType);
-    router.go(-1);
+      statusId: selectedTask.value.statusId
+    }
+    if (isLimit.value) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
+        life: 3000
+      })
+      // router.go(-1)
+      return
+    } else {
+      await taskStore.addTask(outputTask.value)
+      await taskStore.loadSortTasks(sortStore.getSortType)
+      router.go(-1)
+    }
   }
-};
+}
 
-const emit = defineEmits(["addNewTask", "editNewTask"]);
+const emit = defineEmits(['addNewTask', 'editNewTask'])
 </script>
 
 <template>
   <ModalDetail :selectedTask="selectedTask" class="itbkk-modal-task">
     <template #title>
-      {{ mode == "add" ? "Add Task" : "Edit Task" }}
+      {{ mode == 'add' ? 'Add Task' : 'Edit Task' }}
     </template>
     <div class="mb-4">
       <label
