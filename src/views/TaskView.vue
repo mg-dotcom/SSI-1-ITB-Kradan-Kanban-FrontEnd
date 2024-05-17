@@ -11,12 +11,12 @@ import { useSortStore } from '../stores/SortStore.js'
 import Toast from 'primevue/toast'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import StatusSetting from '../components/confirmModal/SettingStatus.vue'
-
+import { useToast } from 'primevue/usetoast'
 const router = useRouter()
 const selectedId = ref('')
 const selectedIndex = ref(0)
 const taskStore = useTaskStore()
-
+const toast = useToast()
 const statusStore = useStatusStore()
 const sortStore = useSortStore()
 const sortTypes = ['default',  'ascending', 'descending']
@@ -112,8 +112,27 @@ const openLimitStatus = () => {
 }
 
 const saveLimitStatus = (isLimit, maxLimit) => {
-  taskStore.limitStatusTasks(isLimit, maxLimit)
+  // taskStore.limitStatusTasks(isLimit, maxLimit)
+  // console.log(isLimit);
   popup.limitStatus = false
+  if (isLimit) {
+    toast.add({
+      severity: 'success',
+      summary: 'Enabled Limit Status',
+      detail: `The Kanban board now limits 10 tasks in each status.`,
+      life: 3000
+    })
+    return;
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Disabled Limit Status',
+      detail: `The Kanban board has disabled the task limit in each status.`,
+      life: 3000
+    })
+    return;
+  }
+
 }
 </script>
 

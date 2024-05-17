@@ -2,32 +2,13 @@
 import router from '@/router'
 import submitButton from '../button/Button.vue'
 import { ref } from 'vue'
-import { useToast } from 'primevue/usetoast'
-const limitStatus = ref(true)
 
+const limitStatus = ref(true)
 const maximumLimit = ref(10)
-const toast = useToast()
+
 const toggleLimitStatus = () => {
   limitStatus.value = !limitStatus.value
   console.log('limitStatus', limitStatus.value)
-
-  if (limitStatus.value) {
-    toast.add({
-      severity: 'success',
-      summary: 'Success',
-      detail: `The Kanban board now limits 10 tasks in each status.`,
-      life: 3000
-    })
-    return
-  } else {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: `The Kanban board has disabled the task limit in each status.`,
-      life: 3000
-    })
-    return
-  }
 }
 
 defineEmits(['closeLimitStatus', 'saveLimitStatus'])
@@ -54,7 +35,7 @@ defineEmits(['closeLimitStatus', 'saveLimitStatus'])
               type="checkbox"
               @click="toggleLimitStatus"
               class="toggle toggle-success"
-              checked
+              
             />
             <span class="ms-3 text-gray-900 dark:text-gray-300"
               >Limit tasks in this status</span
