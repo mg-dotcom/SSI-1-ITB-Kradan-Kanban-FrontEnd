@@ -4,11 +4,13 @@ import buttonSubmit from "../button/Button.vue";
 import { useRouter, useRoute } from "vue-router";
 import { defineEmits, ref, onMounted, watch } from "vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
+import { useSortStore } from '../../stores/SortStore.js'
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
+const sortStore = useSortStore()
 const router = useRouter();
 const route = useRoute();
 const taskId = Number(route.params.id);
@@ -98,7 +100,7 @@ const save = async () => {
       statusId: selectedTask.value.statusId,
     };
     await taskStore.addTask(outputTask.value);
-
+    await taskStore.loadSortTasks(sortStore.getSortType);
     router.go(-1);
   }
 };

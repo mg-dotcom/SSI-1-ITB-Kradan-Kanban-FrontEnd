@@ -14,6 +14,7 @@ export const useTaskStore = defineStore("TaskStore", {
     toast: useToast(),
     tasks: [],
     TASK_ENDPOINT: "v2/tasks",
+    sortType: "",
 
   }),
   getters: {
@@ -162,37 +163,14 @@ export const useTaskStore = defineStore("TaskStore", {
         alert("Failed to fetch tasks");
       } else {
         this.tasks = data;
-        if (sortType === "descending") {
+        if (sortType === "ascending") {
           this.tasks.sort((a, b) => a.status.name.localeCompare(b.status.name));
-        } else if (sortType === "ascending") {
+        } else if (sortType === "descending") {
           this.tasks.sort((a, b) => b.status.name.localeCompare(a.status.name));
         }
         return this.tasks;
       }
     },
-
-    limitStatusTasks(isLimit, maxLimit) {
-      if (isLimit) {
-        // for(let i = 0; i  )
-        // if (this.getTasksByStatus("Doing").length < maxLimit) {
-        //   this.toast.add({
-        //     severity: "success",
-        //     summary: "Success",
-        //     detail: `The task has been successfully limited`,
-        //     life: 3000,
-        //   });
-        //   return;
-        // }
-      } else {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: `An error has occurred, the task cannot be limited`,
-          life: 3000,
-        });
-      }
-    },
-
 
   },
 });

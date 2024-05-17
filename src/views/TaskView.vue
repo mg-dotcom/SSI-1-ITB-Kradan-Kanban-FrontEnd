@@ -7,6 +7,7 @@ import { useRouter, useRoute, RouterView } from 'vue-router'
 import buttonSubmit from '../components/button/Button.vue'
 import { useTaskStore } from '../stores/TaskStore.js'
 import { useStatusStore } from '../stores/StatusStore.js'
+import { useSortStore } from '../stores/SortStore.js'
 import Toast from 'primevue/toast'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import StatusSetting from '../components/confirmModal/SettingStatus.vue'
@@ -17,11 +18,12 @@ const selectedIndex = ref(0)
 const taskStore = useTaskStore()
 
 const statusStore = useStatusStore()
-
+const sortStore = useSortStore()
+const sortTypes = ['default',  'ascending', 'descending']
+const sortType = ref('default')
 onMounted(async () => {
   initFlowbite()
   initDropdowns()
-
   await taskStore.loadTasks()
   await statusStore.loadStatuses()
 
@@ -54,13 +56,12 @@ const openDelete = (id, index) => {
   popup.delete = true
 }
 
-const sortTypes = ['default', 'descending', 'ascending']
-const sortType = ref('default')
 const cycleSortType = () => {
   const currentIndex = sortTypes.indexOf(sortType.value)
   sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
   console.log(sortType.value)
   taskStore.loadSortTasks(sortType.value)
+  sortStore.setSortType(sortType.value)
   console.log(taskStore.getTasks)
 }
 
