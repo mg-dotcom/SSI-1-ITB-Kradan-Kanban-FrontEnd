@@ -1,19 +1,36 @@
 <script setup>
-import router from "@/router";
-import submitButton from "../button/Button.vue";
+import router from '@/router'
+import submitButton from '../button/Button.vue'
+import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
+const limitStatus = ref(true)
 
-import { ref } from "vue";
-
-const limitStatus = ref(true);
-
-const maximumLimit = ref(10);
-
+const maximumLimit = ref(10)
+const toast = useToast()
 const toggleLimitStatus = () => {
-  limitStatus.value = !limitStatus.value;
-  console.log("limitStatus", limitStatus.value);
-};
+  limitStatus.value = !limitStatus.value
+  console.log('limitStatus', limitStatus.value)
 
-defineEmits(["closeLimitStatus", "saveLimitStatus"]);
+  if (limitStatus.value) {
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: `The Kanban board now limits 10 tasks in each status.`,
+      life: 3000
+    })
+    return
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `The Kanban board has disabled the task limit in each status.`,
+      life: 3000
+    })
+    return
+  }
+}
+
+defineEmits(['closeLimitStatus', 'saveLimitStatus'])
 </script>
 
 <template>
@@ -75,4 +92,4 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
 </template>
 
 <style scoped></style>
- n{}
+n{}
