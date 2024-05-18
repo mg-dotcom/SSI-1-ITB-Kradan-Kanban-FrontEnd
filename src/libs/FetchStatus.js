@@ -20,6 +20,7 @@ const deleteStatus = async (url, id) => {
 };
 
 const addStatus = async (url, newStatus) => {
+  console.log(newStatus);
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -53,17 +54,21 @@ const fetchStatusSetting = async (url,id) => {
   const res = await fetch(`${url}/${id}/maximum-task`);
   console.log(res);
   const data = await res.json();
-  console.log(data);
   return data;
-}
+};
 
-const patchStatus = async (url, id) => {
+const updateStatusSetting = async (url, id, updatedLimit) => {
   const res = await fetch(`${url}/${id}/maximum-task`, {
     method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+    },
+    body: JSON.stringify({
+      limitMaximumTask: updatedLimit,
+    }),
   });
   return res;
 };
-
 
 export {
   fetchAllStatus,
@@ -72,5 +77,5 @@ export {
   updateStatus,
   deleteStatus,
   fetchStatusSetting,
-  patchStatus
+  updateStatusSetting,
 };

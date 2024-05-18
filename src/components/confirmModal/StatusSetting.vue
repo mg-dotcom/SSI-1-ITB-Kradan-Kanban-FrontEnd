@@ -1,33 +1,35 @@
 <script setup>
-import router from "@/router";
 import submitButton from "../button/Button.vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
-import { ref,onMounted } from "vue";
-
+import { ref, onMounted } from "vue";
+import router from "@/router";
 
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
+const id = 1;
+const statusStore = useStatusStore();
+
 onMounted(async () => {
-  const settingDetail =  await statusStore.loadStatusSetting(id);
+  const settingDetail = await statusStore.loadStatusSetting(id);
   limitMaximumTask.value = settingDetail.limitMaximumTask;
   maximumTask.value = settingDetail.maximumTask;
-})
-
-
-const id = 1;
-
-const statusStore = useStatusStore(); 
+});
 
 const toggleLimitStatus = () => {
-  limitStatus.value = !limitStatus.value;
-  
-  console.log("limitStatus", limitStatus.value);
+  limitMaximumTask.value = !limitMaximumTask.value;
+  console.log("limitStatus", limitMaximumTask.value);
 };
 
+const saveLimitStatus = async (limitMaximumTask) => {
+  if (limitMaximumTask != null) {
+    await statusStore.editStatusSetting(id, limitMaximumTask);
+    router.go({ name: "task" });
+  }
+};
 
-defineEmits(["closeLimitStatus", "saveLimitStatus"]);
+defineEmits(["closeLimitStatus"]);
 </script>
- 
+
 <template>
   <div
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -56,7 +58,7 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
             >
           </label>
         </div>
- 
+
         <div class="flex">
           <p class="pr-5 content-center text-green-status font-bold">
             Maximum tasks
@@ -78,12 +80,12 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
         <submitButton
           buttonType="ok"
           class="itbkk-button-confirm"
-          @click="$emit('saveLimitStatus', limitStatus, maximumLimit)"
+          @click="saveLimitStatus(limitMaximumTask)"
           >Save</submitButton
         >
       </div>
     </div>
   </div>
 </template>
- 
+
 <style scoped></style>
