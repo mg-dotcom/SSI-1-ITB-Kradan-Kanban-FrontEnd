@@ -1,25 +1,25 @@
 <script setup>
-import ModalDetail from "./ModalDetail.vue";
-import buttonSubmit from "../button/Button.vue";
-import { useRouter, useRoute } from "vue-router";
-import { defineEmits, ref, onMounted, watch } from "vue";
-import { useStatusStore } from "../../stores/StatusStore.js";
-import { useSortStore } from "../../stores/SortStore.js";
-import { useTaskStore } from "../../stores/TaskStore.js";
-import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
-import StatusButton from "../button/StatusButton.vue";
+import ModalDetail from './ModalDetail.vue'
+import buttonSubmit from '../button/Button.vue'
+import { useRouter, useRoute } from 'vue-router'
+import { defineEmits, ref, onMounted, watch } from 'vue'
+import { useStatusStore } from '../../stores/StatusStore.js'
+import { useSortStore } from '../../stores/SortStore.js'
+import { useTaskStore } from '../../stores/TaskStore.js'
+import { localTimeZone, formatDate } from '../../libs/libsUtil.js'
+import StatusButton from '../button/StatusButton.vue'
 import { useToast } from 'primevue/usetoast'
-const statusStore = useStatusStore();
-const taskStore = useTaskStore();
-const sortStore = useSortStore();
-const router = useRouter();
-const route = useRoute();
-const taskId = Number(route.params.id);
-const isChanged = ref(false);
-const mode = route.name === "task-add" ? "add" : "edit";
-const id = 1;
-const limitMaximumTask = ref(false);
-const maximumTask = ref(0);
+const statusStore = useStatusStore()
+const taskStore = useTaskStore()
+const sortStore = useSortStore()
+const router = useRouter()
+const route = useRoute()
+const taskId = Number(route.params.id)
+const isChanged = ref(false)
+const mode = route.name === 'task-add' ? 'add' : 'edit'
+const id = 1
+const limitMaximumTask = ref(false)
+const maximumTask = ref(0)
 const toast = useToast()
 
 const selectedTask = ref({
@@ -43,21 +43,21 @@ const outputTask = ref({
 const input = ref({})
 
 onMounted(async () => {
-  await statusStore.loadStatuses();
-  const settingDetail =  await statusStore.loadStatusSetting(id);
-  limitMaximumTask.value = settingDetail.limitMaximumTask;
-  maximumTask.value = settingDetail.maximumTask;
+  await statusStore.loadStatuses()
+  const settingDetail = await statusStore.loadStatusSetting(id)
+  limitMaximumTask.value = settingDetail.limitMaximumTask
+  maximumTask.value = settingDetail.maximumTask
 
-  if (mode == "edit") {
-    const taskDetail = await taskStore.loadTaskDetails(taskId);
-    console.log(taskDetail);
-    selectedTask.value = taskDetail;
-    selectedTask.value.statusId = taskDetail.status.id;
-    selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
-    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
-    input.value = { ...selectedTask.value };
-  } else if (mode == "add") {
-    selectedTask.value.statusId = statusStore.getStatuses[0].id;
+  if (mode == 'edit') {
+    const taskDetail = await taskStore.loadTaskDetails(taskId)
+    console.log(taskDetail)
+    selectedTask.value = taskDetail
+    selectedTask.value.statusId = taskDetail.status.id
+    selectedTask.value.createdOn = formatDate(taskDetail.createdOn)
+    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn)
+    input.value = { ...selectedTask.value }
+  } else if (mode == 'add') {
+    selectedTask.value.statusId = statusStore.getStatuses[0].id
   }
 })
 
@@ -67,8 +67,9 @@ watch(
   (newValue) => {
     const status = statusStore.getStatusById(newValue)
     const tasks = taskStore.getTasksByStatus(status.name)
-
-    isLimit.value = tasks.length >= maximumTask.value
+    if (limitMaximumTask.value) { //user turn on limit
+      isLimit.value = tasks.length >= maximumTask.value
+    }
   }
 )
 
@@ -153,17 +154,16 @@ const emit = defineEmits(['addNewTask', 'editNewTask'])
   <ModalDetail :selectedTask="selectedTask" class="itbkk-modal-task">
     <template #title>
       <div class="flex justify-between">
-        <div>{{ mode == "add" ? "Add Task" : "Edit Task" }}</div>
+        <div>{{ mode == 'add' ? 'Add Task' : 'Edit Task' }}</div>
         <div>
           <StatusButton statusColor="#1BFF00" v-if="limitMaximumTask == true">
-          Limit On
-        </StatusButton>
-        <StatusButton statusColor="#FF2D00"   v-if="limitMaximumTask == false">
-          Limit Off
-        </StatusButton>
+            Limit On
+          </StatusButton>
+          <StatusButton statusColor="#FF2D00" v-if="limitMaximumTask == false">
+            Limit Off
+          </StatusButton>
         </div>
       </div>
-      
     </template>
     <div class="mb-4">
       <label
