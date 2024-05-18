@@ -5,6 +5,7 @@ import {
   deleteStatus,
   addStatus,
   updateStatus,
+  fetchStatusSetting
 } from "../libs/FetchStatus.js";
 import { useToast } from "primevue/usetoast";
 
@@ -40,6 +41,20 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
+    async loadStatusSetting(id){
+      const data = await fetchStatusSetting(
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,id
+      );
+      if (data.status < 200 && data.status > 299) {
+        alert("Failed to fetch statuses setting");
+      } else {
+
+        return data;
+      }
+
+    },
+
+  
     async loadStatusDetail(id) {
       const data = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
