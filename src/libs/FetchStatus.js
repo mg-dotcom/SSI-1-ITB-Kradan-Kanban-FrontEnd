@@ -50,8 +50,7 @@ const updateStatus = async (url, id, updatedStatus) => {
 };
 
 const fetchStatusSetting = async (url,id) => {
-  const res = await fetch(`${url}/${id}
-  `);
+  const res = await fetch(`${url}/${id}/maximum-task`);
   console.log(res);
   const data = await res.json();
   console.log(data);
@@ -59,7 +58,7 @@ const fetchStatusSetting = async (url,id) => {
 }
 
 const patchStatus = async (url, id) => {
-  const res = await fetch(`${url}/${id}`, {
+  const res = await fetch(`${url}/${id}/maximum-task`, {
     method: "PATCH",
   });
   return res;

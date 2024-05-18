@@ -1,7 +1,7 @@
 <script setup>
 import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useStatusStore } from '../../stores/StatusStore.js'
 import { useTaskStore } from '../../stores/TaskStore.js'
 import { useToast } from 'primevue/usetoast'
@@ -22,19 +22,28 @@ const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
 )
 
-const transferTo = ref('')
 const isLimit = ref(false)
-const numberTaskOfTransferTo = ref(
-  taskStore.getTasksByStatus(transferTo.value).length
-)
-console.log(props.numberOfTasks)
-console.log(numberTaskOfTransferTo.value)
+const maximumTask = ref(0)
+onMounted(async () => {
+  const limitOfStatus = await statusStore.loadStatusSetting(1)
+  console.log(limitOfStatus)
+  // isLimit.value = limitOfStatus.limitMaximumTask
+  maximumTask.value = limitOfStatus.maximumTask
+})
+
+const transferTo = ref('')
 
 watch(transferTo, (newValue) => {
   const status = statusStore.getStatusById(newValue)
   const tasks = taskStore.getTasksByStatus(status.name)
-
-  isLimit.value = tasks.length >= 5
+  // console.log(status.name !== 'No Status')
+  if (status.name !== 'No Status' && status.name !== 'Done') {
+    isLimit.value = tasks.length >= maximumTask.value
+    // console.log(isLimit.value);
+  }
+  console.log(tasks.length);
+  console.log(maximumTask.value);
+  isLimit.value = tasks.length+props.numberOfTasks >= maximumTask.value
   if (isLimit.value) {
     toast.add({
       severity: 'error',

@@ -19,6 +19,7 @@ const isChanged = ref(false);
 const mode = route.name === "task-add" ? "add" : "edit";
 const id = 1;
 const limitMaximumTask = ref(false);
+const maximumTask = ref(0);
 const toast = useToast()
 
 const selectedTask = ref({
@@ -45,6 +46,7 @@ onMounted(async () => {
   await statusStore.loadStatuses();
   const settingDetail =  await statusStore.loadStatusSetting(id);
   limitMaximumTask.value = settingDetail.limitMaximumTask;
+  maximumTask.value = settingDetail.maximumTask;
 
   if (mode == "edit") {
     const taskDetail = await taskStore.loadTaskDetails(taskId);
@@ -66,7 +68,7 @@ watch(
     const status = statusStore.getStatusById(newValue)
     const tasks = taskStore.getTasksByStatus(status.name)
 
-    isLimit.value = tasks.length >= 5
+    isLimit.value = tasks.length >= maximumTask.value
   }
 )
 
@@ -108,7 +110,7 @@ const save = async () => {
     const statusDetail = statusStore.getStatuses.find(
       (status) => status.id === selectedTask.value.statusId
     )
-    if (isLimit.value) {
+    if (isLimit.value && limitMaximumTask.value) {
       toast.add({
         severity: 'error',
         summary: 'Error',
@@ -127,7 +129,7 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId
     }
-    if (isLimit.value) {
+    if (isLimit.value && limitMaximumTask.value) {
       toast.add({
         severity: 'error',
         summary: 'Error',
