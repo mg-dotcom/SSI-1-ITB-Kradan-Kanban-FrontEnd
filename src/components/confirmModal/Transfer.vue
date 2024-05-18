@@ -23,11 +23,12 @@ const filteredStatuses = statusStore.getStatuses.filter(
 )
 
 const isLimit = ref(false)
+const limitMaximumTask = ref(false)
 const maximumTask = ref(0)
 onMounted(async () => {
   const limitOfStatus = await statusStore.loadStatusSetting(1)
   console.log(limitOfStatus)
-  // isLimit.value = limitOfStatus.limitMaximumTask
+  limitMaximumTask.value = limitOfStatus.limitMaximumTask
   maximumTask.value = limitOfStatus.maximumTask
 })
 
@@ -36,25 +37,22 @@ const transferTo = ref('')
 watch(transferTo, (newValue) => {
   const status = statusStore.getStatusById(newValue)
   const tasks = taskStore.getTasksByStatus(status.name)
-  // console.log(status.name !== 'No Status')
-  if (status.name !== 'No Status' && status.name !== 'Done') {
-    isLimit.value = tasks.length >= maximumTask.value
-    // console.log(isLimit.value);
-  }
-  console.log(tasks.length);
-  console.log(maximumTask.value);
-  isLimit.value = tasks.length+props.numberOfTasks >= maximumTask.value
-  if (isLimit.value) {
-    toast.add({
-      severity: 'error',
-      summary: 'Error',
-      detail: `Cannot transfer to ${status.name} status
+  if (limitMaximumTask.value) {
+    if (status.name !== 'No Status' && status.name !== 'Done') {
+      isLimit.value = tasks.length >= maximumTask.value
+    }
+
+    isLimit.value = tasks.length + props.numberOfTasks >= maximumTask.value
+    if (isLimit.value) {
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `Cannot transfer to ${status.name} status
  since it will exceed the limit.  Please choose another status to transfer to.`,
-      life: 3000
-    })
+        life: 3000
+      })
+    }
   }
-  console.log(tasks.length)
-  console.log(isLimit.value)
 })
 </script>
 
