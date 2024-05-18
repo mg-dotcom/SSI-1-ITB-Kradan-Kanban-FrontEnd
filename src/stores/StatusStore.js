@@ -72,6 +72,7 @@ export const useStatusStore = defineStore("StatusStore", {
             detail: `The kanban board now limits ${maximumTask} tasks in each status`,
             life: 3000,
           });
+          
         } else {
           this.toast.add({
             severity: "success",
