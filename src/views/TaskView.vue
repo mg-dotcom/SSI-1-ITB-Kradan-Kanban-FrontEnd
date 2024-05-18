@@ -1,236 +1,235 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from 'vue'
-import { initFlowbite, initDropdowns } from 'flowbite'
-import StatusButton from '../components/button/StatusButton.vue'
-import DeleteModal from '../components/confirmModal/DeleteTask.vue'
-import { useRouter, useRoute, RouterView } from 'vue-router'
-import buttonSubmit from '../components/button/Button.vue'
-import { useTaskStore } from '../stores/TaskStore.js'
-import { useStatusStore } from '../stores/StatusStore.js'
-import { useSortStore } from '../stores/SortStore.js'
-import Toast from 'primevue/toast'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import StatusSetting from '../components/confirmModal/SettingStatus.vue'
-import { useToast } from 'primevue/usetoast'
-const router = useRouter()
-const selectedId = ref('')
-const selectedIndex = ref(0)
-const taskStore = useTaskStore()
-const toast = useToast()
-const statusStore = useStatusStore()
-const sortStore = useSortStore()
-const sortTypes = ['default',  'ascending', 'descending']
-const sortType = ref('default')
+import { onMounted, reactive, ref, watch, computed } from "vue";
+import { initFlowbite, initDropdowns } from "flowbite";
+import StatusButton from "../components/button/StatusButton.vue";
+import DeleteModal from "../components/confirmModal/DeleteTask.vue";
+import { useRouter, useRoute, RouterView } from "vue-router";
+import buttonSubmit from "../components/button/Button.vue";
+import { useTaskStore } from "../stores/TaskStore.js";
+import { useStatusStore } from "../stores/StatusStore.js";
+import { useSortStore } from "../stores/SortStore.js";
+import Toast from "primevue/toast";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import StatusSetting from "../components/confirmModal/SettingStatus.vue";
+import { useToast } from "primevue/usetoast";
+const router = useRouter();
+const selectedId = ref("");
+const selectedIndex = ref(0);
+const taskStore = useTaskStore();
+const toast = useToast();
+const statusStore = useStatusStore();
+const sortStore = useSortStore();
+const sortTypes = ["default", "ascending", "descending"];
+const sortType = ref("default");
 onMounted(async () => {
-  initFlowbite()
-  initDropdowns()
-  await taskStore.loadTasks()
-  await statusStore.loadStatuses()
-
-})
+  initFlowbite();
+  initDropdowns();
+  await taskStore.loadTasks();
+  await statusStore.loadStatuses();
+});
 
 const page = reactive({
-  task: true
-})
+  task: true,
+});
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
   delete: false,
-  limitStatus: false
-})
+  limitStatus: false,
+});
 
 const showOptionEditDelete = (taskId) => {
-  selectedId.value = taskId
-  popup.optionEditDelete = !popup.optionEditDelete
-}
+  selectedId.value = taskId;
+  popup.optionEditDelete = !popup.optionEditDelete;
+};
 
 const openDetail = (id) => {
-  popup.optionEditDelete = false
-  router.push({ name: 'task-detail', params: { id: id } })
-}
+  popup.optionEditDelete = false;
+  router.push({ name: "task-detail", params: { id: id } });
+};
 
 const openDelete = (id, index) => {
-  selectedId.value = id
-  selectedIndex.value = index
-  popup.delete = true
-}
+  selectedId.value = id;
+  selectedIndex.value = index;
+  popup.delete = true;
+};
 
 const cycleSortType = () => {
-  const currentIndex = sortTypes.indexOf(sortType.value)
-  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
-  console.log(sortType.value)
-  taskStore.loadSortTasks(sortType.value)
-  sortStore.setSortType(sortType.value)
-  console.log(taskStore.getTasks)
-}
+  const currentIndex = sortTypes.indexOf(sortType.value);
+  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length];
+  console.log(sortType.value);
+  taskStore.loadSortTasks(sortType.value);
+  sortStore.setSortType(sortType.value);
+  console.log(taskStore.getTasks);
+};
 
-const filterStatuses = ref([])
+const filterStatuses = ref([]);
 
 watch(filterStatuses, async (newfilterStatuses) => {
-  await taskStore.loadFilterTasks(newfilterStatuses)
-})
+  await taskStore.loadFilterTasks(newfilterStatuses);
+});
 
 const toggleSelect = () => {
-  const selectBtn = document.querySelector('.select-btn')
-  selectBtn.classList.toggle('open')
-  showList.value = !showList.value
-}
+  const selectBtn = document.querySelector(".select-btn");
+  selectBtn.classList.toggle("open");
+  showList.value = !showList.value;
+};
 
-const showList = ref(false)
+const showList = ref(false);
 
 const toggleItem = (id) => {
-  const listItems = document.querySelectorAll('.item')
-  const index = statusStore.getStatuses.findIndex((status) => status.id === id)
-  const selectedStatus = statusStore.getStatuses[index]
-  const listItem = listItems[index]
+  const listItems = document.querySelectorAll(".item");
+  const index = statusStore.getStatuses.findIndex((status) => status.id === id);
+  const selectedStatus = statusStore.getStatuses[index];
+  const listItem = listItems[index];
 
   if (filterStatuses.value.includes(selectedStatus.name)) {
     filterStatuses.value = filterStatuses.value.filter(
       (item) => item !== selectedStatus.name
-    )
-    console.log(filterStatuses.value)
+    );
+    console.log(filterStatuses.value);
   } else {
-    filterStatuses.value = [...filterStatuses.value, selectedStatus.name]
-    listItem.classList.add('checked')
-    console.log(filterStatuses.value)
+    filterStatuses.value = [...filterStatuses.value, selectedStatus.name];
+    listItem.classList.add("checked");
+    console.log(filterStatuses.value);
   }
-}
+};
 
 const clearEachStatus = (statusName) => {
   filterStatuses.value = filterStatuses.value.filter(
     (status) => status !== statusName
-  )
-}
+  );
+};
 
 const clearFilter = () => {
-  filterStatuses.value = []
-}
+  filterStatuses.value = [];
+};
 
 const openLimitStatus = () => {
-  popup.limitStatus = true
-}
+  popup.limitStatus = true;
+};
 
 const saveLimitStatus = (isLimit, maxLimit) => {
   // taskStore.limitStatusTasks(isLimit, maxLimit)
   // console.log(isLimit);
-  popup.limitStatus = false
+  popup.limitStatus = false;
   if (isLimit) {
     toast.add({
-      severity: 'success',
-      summary: 'Enabled Limit Status',
+      severity: "success",
+      summary: "Enabled Limit Status",
       detail: `The Kanban board now limits 10 tasks in each status.`,
-      life: 3000
-    })
+      life: 3000,
+    });
     return;
   } else {
     toast.add({
-      severity: 'error',
-      summary: 'Disabled Limit Status',
+      severity: "error",
+      summary: "Disabled Limit Status",
       detail: `The Kanban board has disabled the task limit in each status.`,
-      life: 3000
-    })
+      life: 3000,
+    });
     return;
   }
-
-}
+};
 </script>
 
 <template>
+  <RouterView />
   <Toast class="itbkk-message" />
   <div class="h-screen w-full">
-    <RouterView />
+    <div
+      class="text-xl font-bold flex items-center text-blue pt-7 px-28"
+      @click="router.push({ name: 'task' })"
+    >
+      <a
+        class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
+        @click="router.push({ name: 'task' })"
+      >
+        Home&nbsp;</a
+      >
+    </div>
+    <div class="flex justify-between py-6 px-28">
+      <div class="container z-[100]">
+        <div
+          class="select-btn"
+          @click="toggleSelect"
+          :style="{
+            height: filterStatuses.length > 2 ? 'auto' : '2.5rem',
+          }"
+        >
+          <StatusButton
+            v-for="status in filterStatuses"
+            :status-color="statusStore.getStatusColor(status)"
+            :status-name="status"
+            :key="status"
+            :filterStatuses="filterStatuses"
+            @clear-status="clearEachStatus"
+          >
+            <p>{{ status }}</p>
+          </StatusButton>
+
+          <span class="text-gray-400" v-if="filterStatuses.length === 0">
+            Filter by
+            {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
+          </span>
+          <span class="close-icon z-40" @click="clearFilter">
+            <font-awesome-icon icon="fa-solid fa-xmark" />
+          </span>
+        </div>
+
+        <ul class="list-items" v-if="showList">
+          <li
+            v-for="(status, index) in statusStore.getStatuses"
+            class="item"
+            :key="status.id"
+            @click="toggleItem(status.id)"
+          >
+            <input
+              type="checkbox"
+              class="checkbox"
+              v-model="filterStatuses"
+              :value="status.name"
+              @click="toggleItem(status.id)"
+            />
+            <span class="item-text">{{ status.name }}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="flex">
+        <buttonSubmit
+          buttonType="manage-status"
+          class="itbkk-manage-status flex gap-x-2 justify-center items-center"
+          @click="router.push({ name: 'status' })"
+        >
+          <img src="../assets/status-list.svg" alt="" class="w-5" />
+          Manage Status</buttonSubmit
+        >
+        <buttonSubmit button-type="add" @click="openLimitStatus">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="23"
+            height="23"
+            viewBox="0 0 34 32"
+            fill="none"
+          >
+            <path
+              d="M28.52 26.8947H33M3.98667 16L1 16.0733M3.98667 16C3.98667 18.2092 5.89691 20 8.25333 20C10.6097 20 12.52 18.2092 12.52 16C12.52 13.7908 10.6097 12 8.25333 12C5.89691 12 3.98667 13.7908 3.98667 16ZM13.7449 16.0735H33M18.424 5.25207H1M33 5.25207H28.52M1 26.8947H18.424M27.4533 27C27.4533 29.2092 25.5431 31 23.1867 31C20.8302 31 18.92 29.2092 18.92 27C18.92 24.7908 20.8302 23 23.1867 23C25.5431 23 27.4533 24.7908 27.4533 27ZM27.4533 5C27.4533 7.20913 25.5431 9 23.1867 9C20.8302 9 18.92 7.20913 18.92 5C18.92 2.79087 20.8302 1 23.1867 1C25.5431 1 27.4533 2.79087 27.4533 5Z"
+              stroke="white"
+              stroke-width="2"
+              stroke-linecap="round"
+            />
+          </svg>
+        </buttonSubmit>
+      </div>
+    </div>
+
     <div
       class="table lg:px-24 sm:px-10 overflow-hidden z-10"
       v-if="page.task"
       @click.self="closeList"
     >
-      <div
-        class="text-xl font-bold flex items-center text-blue pt-7 px-5"
-        @click="router.push({ name: 'task' })"
-      >
-        <a
-          class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
-          @click="router.push({ name: 'task' })"
-        >
-          Home&nbsp;</a
-        >
-      </div>
-      <div class="flex justify-between py-6 px-5">
-        <div class="container z-[100]">
-          <div
-            class="select-btn"
-            @click="toggleSelect"
-            :style="{
-              height: filterStatuses.length > 2 ? 'auto' : '2.5rem'
-            }"
-          >
-            <StatusButton
-              v-for="status in filterStatuses"
-              :status-color="statusStore.getStatusColor(status)"
-              :status-name="status"
-              :key="status"
-              :filterStatuses="filterStatuses"
-              @clear-status="clearEachStatus"
-            >
-              <p>{{ status }}</p>
-            </StatusButton>
-
-            <span class="text-gray-400" v-if="filterStatuses.length === 0">
-              Filter by
-              {{ statusStore.getStatuses.length > 1 ? 'Statuses' : 'Status' }}
-            </span>
-            <span class="close-icon z-40" @click="clearFilter">
-              <font-awesome-icon icon="fa-solid fa-xmark" />
-            </span>
-          </div>
-
-          <ul class="list-items" v-if="showList">
-            <li
-              v-for="(status, index) in statusStore.getStatuses"
-              class="item"
-              :key="status.id"
-              @click="toggleItem(status.id)"
-            >
-              <input
-                type="checkbox"
-                class="checkbox"
-                v-model="filterStatuses"
-                :value="status.name"
-                @click="toggleItem(status.id)"
-              />
-              <span class="item-text">{{ status.name }}</span>
-            </li>
-          </ul>
-        </div>
-        <div class="flex">
-          <buttonSubmit
-            buttonType="manage-status"
-            class="itbkk-manage-status flex gap-x-2 justify-center items-center"
-            @click="router.push({ name: 'status' })"
-          >
-            <img src="../assets/status-list.svg" alt="" class="w-5" />
-            Manage Status</buttonSubmit
-          >
-          <buttonSubmit button-type="add" @click="openLimitStatus">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="23"
-              height="23"
-              viewBox="0 0 34 32"
-              fill="none"
-            >
-              <path
-                d="M28.52 26.8947H33M3.98667 16L1 16.0733M3.98667 16C3.98667 18.2092 5.89691 20 8.25333 20C10.6097 20 12.52 18.2092 12.52 16C12.52 13.7908 10.6097 12 8.25333 12C5.89691 12 3.98667 13.7908 3.98667 16ZM13.7449 16.0735H33M18.424 5.25207H1M33 5.25207H28.52M1 26.8947H18.424M27.4533 27C27.4533 29.2092 25.5431 31 23.1867 31C20.8302 31 18.92 29.2092 18.92 27C18.92 24.7908 20.8302 23 23.1867 23C25.5431 23 27.4533 24.7908 27.4533 27ZM27.4533 5C27.4533 7.20913 25.5431 9 23.1867 9C20.8302 9 18.92 7.20913 18.92 5C18.92 2.79087 20.8302 1 23.1867 1C25.5431 1 27.4533 2.79087 27.4533 5Z"
-                stroke="white"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-            </svg>
-          </buttonSubmit>
-        </div>
-      </div>
-      <div class="-my-2 mb-24 sm:-mx">
+      <div class="-my-1 mb-16 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
             class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
@@ -311,7 +310,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || 'Unassigned' }}
+                    {{ task.assignees || "Unassigned" }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
@@ -356,7 +355,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
                                 @click="
                                   router.push({
                                     name: 'task-edit',
-                                    params: { id: task.id }
+                                    params: { id: task.id },
                                   })
                                 "
                               >
