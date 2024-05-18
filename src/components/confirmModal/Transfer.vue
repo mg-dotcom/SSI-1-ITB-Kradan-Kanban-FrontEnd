@@ -1,59 +1,61 @@
 <script setup>
-import ConfirmModal from './ConfirmModal.vue'
-import submitButton from '../button/Button.vue'
-import { onMounted, ref, watch } from 'vue'
-import { useStatusStore } from '../../stores/StatusStore.js'
-import { useTaskStore } from '../../stores/TaskStore.js'
-import { useToast } from 'primevue/usetoast'
-defineEmits(['closeDelete', 'transferStatus'])
+import ConfirmModal from "./ConfirmModal.vue";
+import submitButton from "../button/Button.vue";
+import { onMounted, ref, watch } from "vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
+import { useTaskStore } from "../../stores/TaskStore.js";
+import { useToast } from "primevue/usetoast";
+defineEmits(["closeDelete", "transferStatus"]);
 const props = defineProps({
   currentStatus: {
-    Type: Object
+    Type: Object,
   },
   numberOfTasks: {
-    Type: Number
-  }
-})
+    Type: Number,
+  },
+});
 
-const statusStore = useStatusStore()
-const taskStore = useTaskStore()
-const toast = useToast()
+const statusStore = useStatusStore();
+const taskStore = useTaskStore();
+const toast = useToast();
 const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
-)
+);
 
-const isLimit = ref(false)
-const limitMaximumTask = ref(false)
-const maximumTask = ref(0)
+const isLimit = ref(false);
+const limitMaximumTask = ref(false);
+const maximumTask = ref(0);
 onMounted(async () => {
-  const limitOfStatus = await statusStore.loadStatusSetting(1)
-  console.log(limitOfStatus)
-  limitMaximumTask.value = limitOfStatus.limitMaximumTask
-  maximumTask.value = limitOfStatus.maximumTask
-})
+  const limitOfStatus = await statusStore.loadStatusSetting(1);
+  console.log(limitOfStatus);
+  limitMaximumTask.value = limitOfStatus.limitMaximumTask;
+  maximumTask.value = limitOfStatus.maximumTask;
+});
 
-const transferTo = ref('')
+const transferTo = ref("");
 
 watch(transferTo, (newValue) => {
-  const status = statusStore.getStatusById(newValue)
-  const tasks = taskStore.getTasksByStatus(status.name)
-  if (limitMaximumTask.value) { //check only if user turn on limit
-    if (status.name !== 'No Status' && status.name !== 'Done') {
-      isLimit.value = tasks.length >= maximumTask.value
+  const status = statusStore.getStatusById(newValue);
+  const tasks = taskStore.getTasksByStatus(status.name);
+  if (limitMaximumTask.value) {
+    //check only if user turn on limit
+    if (status.name !== "No Status" && status.name !== "Done") {
+      isLimit.value = tasks.length + props.numberOfTasks >= maximumTask.value;
+    } else {
+      isLimit.value = false;
     }
 
-    isLimit.value = tasks.length + props.numberOfTasks >= maximumTask.value
     if (isLimit.value) {
       toast.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: `Cannot transfer to ${status.name} status
+        severity: "error",
+        summary: "Error",
+        detail: `Cannot transfer to "${status.name}" status
  since it will exceed the limit.  Please choose another status to transfer to.`,
-        life: 3000
-      })
+        life: 3000,
+      });
     }
   }
-})
+});
 </script>
 
 <template>

@@ -20,14 +20,7 @@ const toggleLimitStatus = () => {
   console.log("limitStatus", limitMaximumTask.value);
 };
 
-const saveLimitStatus = async (limitMaximumTask) => {
-  if (limitMaximumTask != null) {
-    await statusStore.editStatusSetting(id, limitMaximumTask);
-    router.go({ name: "task" });
-  }
-};
-
-defineEmits(["closeLimitStatus"]);
+defineEmits(["closeLimitStatus", "saveLimitStatus"]);
 </script>
 
 <template>
@@ -66,6 +59,7 @@ defineEmits(["closeLimitStatus"]);
           <input
             type="text"
             v-model="maximumTask"
+            disabled="disabled"
             class="itbkk-status-name bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
@@ -80,7 +74,7 @@ defineEmits(["closeLimitStatus"]);
         <submitButton
           buttonType="ok"
           class="itbkk-button-confirm"
-          @click="saveLimitStatus(limitMaximumTask)"
+          @click="$emit('saveLimitStatus', id, limitMaximumTask, maximumTask)"
           >Save</submitButton
         >
       </div>

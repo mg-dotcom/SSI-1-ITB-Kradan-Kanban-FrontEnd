@@ -28,6 +28,10 @@ export const useStatusStore = defineStore("StatusStore", {
       const status = state.statuses.find((status) => status.name === name);
       return status ? status.statusColor : "";
     },
+    // getTaskThatExceedsLimit: (state) => (statusId, limit) => {
+    //   const status = state.statuses.find((status) => status.id === statusId);
+    //   return status ? status.tasks.length > limit : false;
+    // },
   },
   actions: {
     async loadStatuses() {
@@ -53,22 +57,29 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
-    async editStatusSetting(id, updatedLimit) {
+    async editStatusSetting(id, updatedLimit, maximumTask) {
       console.log(updatedLimit);
       const res = await updateStatusSetting(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         id,
         updatedLimit
       );
-      const data = await res.json();
       if (res.status === 200) {
-        console.log(data);
-        this.toast.add({
-          severity: "success",
-          summary: "Success",
-          detail: `The status setting has been updated`,
-          life: 3000,
-        });
+        if (updatedLimit === true) {
+          this.toast.add({
+            severity: "success",
+            summary: "Enabled Limit",
+            detail: `The kanban board now limits ${maximumTask} tasks in each status`,
+            life: 3000,
+          });
+        } else {
+          this.toast.add({
+            severity: "success",
+            summary: "Disabled Limit",
+            detail: `The kanban board has disabled the task limit in each statuss`,
+            life: 3000,
+          });
+        }
       } else {
         this.toast.add({
           severity: "error",
@@ -165,7 +176,6 @@ export const useStatusStore = defineStore("StatusStore", {
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}/${currentId}`,
         newId
       );
-      const newStatus = this.statuses.find((status) => status.id === newId);
       if (res.status === 200) {
         const index = this.statuses.findIndex(
           (status) => status.id === currentId
