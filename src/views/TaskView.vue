@@ -1,113 +1,139 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
-import { initFlowbite, initDropdowns } from "flowbite";
-import StatusButton from "../components/button/StatusButton.vue";
-import DeleteModal from "../components/confirmModal/DeleteTask.vue";
-import { useRouter, useRoute, RouterView } from "vue-router";
-import buttonSubmit from "../components/button/Button.vue";
-import { useTaskStore } from "../stores/TaskStore.js";
-import { useStatusStore } from "../stores/StatusStore.js";
-import Toast from "primevue/toast";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import StatusSetting from "../components/confirmModal/SettingStatus.vue";
-
-const router = useRouter();
-const selectedId = ref("");
-const selectedIndex = ref(0);
-const taskStore = useTaskStore();
-
-const statusStore = useStatusStore();
-
+import { onMounted, reactive, ref, watch, computed } from 'vue'
+import { initFlowbite, initDropdowns } from 'flowbite'
+import StatusButton from '../components/button/StatusButton.vue'
+import DeleteModal from '../components/confirmModal/DeleteTask.vue'
+import { useRouter, useRoute, RouterView } from 'vue-router'
+import buttonSubmit from '../components/button/Button.vue'
+import { useTaskStore } from '../stores/TaskStore.js'
+import { useStatusStore } from '../stores/StatusStore.js'
+import { useSortStore } from '../stores/SortStore.js'
+import Toast from 'primevue/toast'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import StatusSetting from '../components/confirmModal/SettingStatus.vue'
+import { useToast } from 'primevue/usetoast'
+const router = useRouter()
+const selectedId = ref('')
+const selectedIndex = ref(0)
+const taskStore = useTaskStore()
+const toast = useToast()
+const statusStore = useStatusStore()
+const sortStore = useSortStore()
+const sortTypes = ['default',  'ascending', 'descending']
+const sortType = ref('default')
 onMounted(async () => {
-  initFlowbite();
-  initDropdowns();
-  await taskStore.loadTasks();
-  await statusStore.loadStatuses();
-});
+  initFlowbite()
+  initDropdowns()
+  await taskStore.loadTasks()
+  await statusStore.loadStatuses()
+
+})
 
 const page = reactive({
-  task: true,
-});
+  task: true
+})
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
   delete: false,
-  limitStatus: false,
-});
+  limitStatus: false
+})
 
 const showOptionEditDelete = (taskId) => {
-  selectedId.value = taskId;
-  popup.optionEditDelete = !popup.optionEditDelete;
-};
+  selectedId.value = taskId
+  popup.optionEditDelete = !popup.optionEditDelete
+}
 
 const openDetail = (id) => {
-  popup.optionEditDelete = false;
-  router.push({ name: "task-detail", params: { id: id } });
-};
+  popup.optionEditDelete = false
+  router.push({ name: 'task-detail', params: { id: id } })
+}
 
 const openDelete = (id, index) => {
-  selectedId.value = id;
-  selectedIndex.value = index;
-  popup.delete = true;
-};
+  selectedId.value = id
+  selectedIndex.value = index
+  popup.delete = true
+}
 
-const sortTypes = ["default", "descending", "ascending"];
-const sortType = ref("default");
 const cycleSortType = () => {
-  const currentIndex = sortTypes.indexOf(sortType.value);
-  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length];
-  console.log(sortType.value);
-  taskStore.loadSortTasks(sortType.value);
-  console.log(taskStore.getTasks);
-};
+  const currentIndex = sortTypes.indexOf(sortType.value)
+  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
+  console.log(sortType.value)
+  taskStore.loadSortTasks(sortType.value)
+  sortStore.setSortType(sortType.value)
+  console.log(taskStore.getTasks)
+}
 
-const filterStatuses = ref([]);
+const filterStatuses = ref([])
+
+watch(filterStatuses, async (newfilterStatuses) => {
+  await taskStore.loadFilterTasks(newfilterStatuses)
+})
 
 const toggleSelect = () => {
-  const selectBtn = document.querySelector(".select-btn");
-  selectBtn.classList.toggle("open");
-  showList.value = !showList.value;
-};
+  const selectBtn = document.querySelector('.select-btn')
+  selectBtn.classList.toggle('open')
+  showList.value = !showList.value
+}
 
-const showList = ref(false);
+const showList = ref(false)
 
 const toggleItem = (id) => {
-  const listItems = document.querySelectorAll(".item");
-  const index = statusStore.getStatuses.findIndex((status) => status.id === id);
-  const selectedStatus = statusStore.getStatuses[index];
-  const listItem = listItems[index];
+  const listItems = document.querySelectorAll('.item')
+  const index = statusStore.getStatuses.findIndex((status) => status.id === id)
+  const selectedStatus = statusStore.getStatuses[index]
+  const listItem = listItems[index]
 
   if (filterStatuses.value.includes(selectedStatus.name)) {
     filterStatuses.value = filterStatuses.value.filter(
       (item) => item !== selectedStatus.name
-    );
-    console.log(filterStatuses.value);
+    )
+    console.log(filterStatuses.value)
   } else {
-    filterStatuses.value = [...filterStatuses.value, selectedStatus.name];
-    listItem.classList.add("checked");
-    console.log(filterStatuses.value);
+    filterStatuses.value = [...filterStatuses.value, selectedStatus.name]
+    listItem.classList.add('checked')
+    console.log(filterStatuses.value)
   }
-};
+}
 
 const clearEachStatus = (statusName) => {
   filterStatuses.value = filterStatuses.value.filter(
     (status) => status !== statusName
-  );
-};
+  )
+}
 
 const clearFilter = () => {
-  filterStatuses.value = [];
-};
+  filterStatuses.value = []
+}
 
 const openLimitStatus = () => {
-  popup.limitStatus = true;
-};
+  popup.limitStatus = true
+}
 
 const saveLimitStatus = (isLimit, maxLimit) => {
-  taskStore.limitStatusTasks(isLimit, maxLimit);
-  popup.limitStatus = false;
-};
+  // taskStore.limitStatusTasks(isLimit, maxLimit)
+  // console.log(isLimit);
+  popup.limitStatus = false
+  if (isLimit) {
+    toast.add({
+      severity: 'success',
+      summary: 'Enabled Limit Status',
+      detail: `The Kanban board now limits 10 tasks in each status.`,
+      life: 3000
+    })
+    return;
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Disabled Limit Status',
+      detail: `The Kanban board has disabled the task limit in each status.`,
+      life: 3000
+    })
+    return;
+  }
+
+}
 </script>
 
 <template>
@@ -131,12 +157,12 @@ const saveLimitStatus = (isLimit, maxLimit) => {
         >
       </div>
       <div class="flex justify-between py-6 px-5">
-        <div class="container z-20">
+        <div class="container z-[100]">
           <div
             class="select-btn"
             @click="toggleSelect"
             :style="{
-              height: filterStatuses.length > 2 ? 'auto' : '2.5rem',
+              height: filterStatuses.length > 2 ? 'auto' : '2.5rem'
             }"
           >
             <StatusButton
@@ -152,7 +178,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
 
             <span class="text-gray-400" v-if="filterStatuses.length === 0">
               Filter by
-              {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
+              {{ statusStore.getStatuses.length > 1 ? 'Statuses' : 'Status' }}
             </span>
             <span class="close-icon z-40" @click="clearFilter">
               <font-awesome-icon icon="fa-solid fa-xmark" />
@@ -204,7 +230,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
           </buttonSubmit>
         </div>
       </div>
-      <div class="-my-2 mb-8 sm:-mx">
+      <div class="-my-2 mb-24 sm:-mx">
         <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
           <div
             class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
@@ -285,7 +311,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || "Unassigned" }}
+                    {{ task.assignees || 'Unassigned' }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
@@ -330,7 +356,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
                                 @click="
                                   router.push({
                                     name: 'task-edit',
-                                    params: { id: task.id },
+                                    params: { id: task.id }
                                   })
                                 "
                               >

@@ -1,26 +1,52 @@
 <script setup>
-import ConfirmModal from "./ConfirmModal.vue";
-import submitButton from "../button/Button.vue";
-import { ref } from "vue";
-import { useStatusStore } from "../../stores/StatusStore.js";
-defineEmits(["closeDelete", "transferStatus"]);
+import ConfirmModal from './ConfirmModal.vue'
+import submitButton from '../button/Button.vue'
+import { ref, watch } from 'vue'
+import { useStatusStore } from '../../stores/StatusStore.js'
+import { useTaskStore } from '../../stores/TaskStore.js'
+import { useToast } from 'primevue/usetoast'
+defineEmits(['closeDelete', 'transferStatus'])
 const props = defineProps({
   currentStatus: {
-    Type: Object,
+    Type: Object
   },
   numberOfTasks: {
-    Type: Number,
-  },
-});
+    Type: Number
+  }
+})
 
-const statusStore = useStatusStore();
-
+const statusStore = useStatusStore()
+const taskStore = useTaskStore()
+const toast = useToast()
 const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
-);
+)
 
-console.log(props.numberOfTasks);
-const transferTo = ref("");
+const transferTo = ref('')
+const isLimit = ref(false)
+const numberTaskOfTransferTo = ref(
+  taskStore.getTasksByStatus(transferTo.value).length
+)
+console.log(props.numberOfTasks)
+console.log(numberTaskOfTransferTo.value)
+
+watch(transferTo, (newValue) => {
+  const status = statusStore.getStatusById(newValue)
+  const tasks = taskStore.getTasksByStatus(status.name)
+
+  isLimit.value = tasks.length >= 5
+  if (isLimit.value) {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `Cannot transfer to ${status.name} status
+ since it will exceed the limit.  Please choose another status to transfer to.`,
+      life: 3000
+    })
+  }
+  console.log(tasks.length)
+  console.log(isLimit.value)
+})
 </script>
 
 <template>
@@ -62,7 +88,9 @@ const transferTo = ref("");
     <template #button-right>
       <submitButton
         class="itbkk-button-confirm"
-        :buttonType="transferTo === '' ? 'transfer-off' : 'transfer-on'"
+        :buttonType="
+          transferTo === '' || isLimit ? 'transfer-off' : 'transfer-on'
+        "
         @click="
           $emit(
             'transferStatus',
@@ -71,9 +99,9 @@ const transferTo = ref("");
             transferTo
           )
         "
-        :disabled="transferTo === ''"
+        :disabled="transferTo === '' || isLimit"
         :class="
-          transferTo === ''
+          transferTo === '' || isLimit
             ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "
@@ -83,5 +111,4 @@ const transferTo = ref("");
   </ConfirmModal>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

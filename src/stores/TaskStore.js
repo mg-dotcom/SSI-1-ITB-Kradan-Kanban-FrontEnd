@@ -5,6 +5,7 @@ import {
   deleteTask,
   fetchTaskDetails,
   updatedTask,
+  fetchFilterTasks
 } from "../libs/FetchTask.js";
 import { useToast } from "primevue/usetoast";
 
@@ -13,15 +14,8 @@ export const useTaskStore = defineStore("TaskStore", {
     toast: useToast(),
     tasks: [],
     TASK_ENDPOINT: "v2/tasks",
-    taskDetails: {
-      id: "",
-      title: "",
-      description: "",
-      assignees: "",
-      status: {},
-      createdOn: "",
-      updatedOn: "",
-    },
+    sortType: "",
+
   }),
   getters: {
     getTasks() {
@@ -56,17 +50,19 @@ export const useTaskStore = defineStore("TaskStore", {
         //fetch data failed
         alert("Failed to fetch task details");
       } else {
-        this.taskDetails = {
-          id: data.id || "",
-          title: data.title || "",
-          description: data.description || "",
-          assignees: data.assignees || "",
-          status: data.status || {},
-          createdOn: data.createdOn || "",
-          updatedOn: data.updatedOn || "",
-        };
-        return this.taskDetails;
+        return data;
       }
+    },
+    async loadFilterTasks(arrayOfStatusesNames) {
+      if (arrayOfStatusesNames.length === 0) {
+        this.loadTasks();
+        return;
+      }
+      const data = await fetchFilterTasks(
+        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        arrayOfStatusesNames
+      );
+      this.tasks = data;
     },
 
     async addTask(newTask) {
@@ -167,35 +163,14 @@ export const useTaskStore = defineStore("TaskStore", {
         alert("Failed to fetch tasks");
       } else {
         this.tasks = data;
-        if (sortType === "descending") {
+        if (sortType === "ascending") {
           this.tasks.sort((a, b) => a.status.name.localeCompare(b.status.name));
-        } else if (sortType === "ascending") {
+        } else if (sortType === "descending") {
           this.tasks.sort((a, b) => b.status.name.localeCompare(a.status.name));
         }
         return this.tasks;
       }
     },
 
-    limitStatusTasks(isLimit, maxLimit) {
-      if (isLimit) {
-        // for(let i = 0; i  )
-        // if (this.getTasksByStatus("Doing").length < maxLimit) {
-        //   this.toast.add({
-        //     severity: "success",
-        //     summary: "Success",
-        //     detail: `The task has been successfully limited`,
-        //     life: 3000,
-        //   });
-        //   return;
-        // }
-      } else {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: `An error has occurred, the task cannot be limited`,
-          life: 3000,
-        });
-      }
-    },
   },
 });

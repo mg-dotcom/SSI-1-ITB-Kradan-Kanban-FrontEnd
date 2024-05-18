@@ -5,6 +5,7 @@ import {
   deleteStatus,
   addStatus,
   updateStatus,
+  fetchStatusSetting
 } from "../libs/FetchStatus.js";
 import { useToast } from "primevue/usetoast";
 
@@ -13,14 +14,7 @@ export const useStatusStore = defineStore("StatusStore", {
     toast: useToast(),
     statuses: [],
     STATUS_ENDPOINT: "v2/statuses",
-    statusDetails: {
-      id: "",
-      name: "",
-      description: null,
-      statusColor: "#CCCCCC",
-      createdOn: "",
-      updatedOn: "",
-    },
+
   }),
 
   getters: {
@@ -47,35 +41,29 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
-    async loadStatusDetail(id) {
-      const data = await fetchStatusById(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
-        id
+    async loadStatusSetting(id){
+      const data = await fetchStatusSetting(
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,id
       );
       if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch statuses");
+        alert("Failed to fetch statuses setting");
       } else {
-        this.statusDetails = {
-          id: data.id || "",
-          name: data.name || "",
-          description: data.description,
-          statusColor: data.statusColor || "#CCCCCC",
-          createdOn: data.createdOn || "",
-          updatedOn: data.updatedOn || "",
-        };
-        return this.statusDetails;
+
+        return data;
       }
+
     },
 
+  
     async loadStatusDetail(id) {
       const data = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
         id
       );
-
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses");
       } else {
+
         return data;
       }
     },

@@ -1,19 +1,32 @@
 <script setup>
-import router from '@/router'
-import submitButton from '../button/Button.vue'
-import { ref } from 'vue'
+import router from "@/router";
+import submitButton from "../button/Button.vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
+import { ref,onMounted } from "vue";
 
-const limitStatus = ref(true)
-const maximumLimit = ref(10)
+
+const limitMaximumTask = ref(false);
+const maximumTask = ref(10);
+onMounted(async () => {
+  const settingDetail =  await statusStore.loadStatusSetting(id);
+  limitMaximumTask.value = settingDetail.limitMaximumTask;
+  maximumTask.value = settingDetail.maximumTask;
+})
+
+
+const id = 1;
+
+const statusStore = useStatusStore(); 
 
 const toggleLimitStatus = () => {
-  limitStatus.value = !limitStatus.value
-  console.log('limitStatus', limitStatus.value)
-}
+  limitStatus.value = !limitStatus.value;
+  console.log("limitStatus", limitStatus.value);
+};
 
-defineEmits(['closeLimitStatus', 'saveLimitStatus'])
+
+defineEmits(["closeLimitStatus", "saveLimitStatus"]);
 </script>
-
+ 
 <template>
   <div
     class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
@@ -31,25 +44,25 @@ defineEmits(['closeLimitStatus', 'saveLimitStatus'])
         <div class="my-3">
           <label class="inline-flex items-center cursor-pointer">
             <input
-              v-model="limitStatus"
+              v-model="limitMaximumTask"
               type="checkbox"
               @click="toggleLimitStatus"
               class="toggle toggle-success"
-              
+              checked
             />
             <span class="ms-3 text-gray-900 dark:text-gray-300"
               >Limit tasks in this status</span
             >
           </label>
         </div>
-
+ 
         <div class="flex">
           <p class="pr-5 content-center text-green-status font-bold">
             Maximum tasks
           </p>
           <input
             type="text"
-            v-model="maximumLimit"
+            v-model="maximumTask"
             class="itbkk-status-name bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
@@ -71,6 +84,5 @@ defineEmits(['closeLimitStatus', 'saveLimitStatus'])
     </div>
   </div>
 </template>
-
+ 
 <style scoped></style>
-n{}
