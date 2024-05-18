@@ -10,7 +10,7 @@ import { useStatusStore } from "../stores/StatusStore.js";
 import { useSortStore } from "../stores/SortStore.js";
 import Toast from "primevue/toast";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import StatusSetting from "../components/confirmModal/SettingStatus.vue";
+import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import { useToast } from "primevue/usetoast";
 const router = useRouter();
 const selectedId = ref("");
@@ -150,7 +150,7 @@ const saveLimitStatus = (isLimit, maxLimit) => {
       >
     </div>
     <div class="flex justify-between py-6 px-28">
-      <div class="container z-[100]">
+      <div class="container z-30">
         <div
           class="select-btn"
           @click="toggleSelect"

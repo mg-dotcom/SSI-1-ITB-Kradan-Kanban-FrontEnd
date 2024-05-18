@@ -5,7 +5,8 @@ import {
   deleteStatus,
   addStatus,
   updateStatus,
-  fetchStatusSetting
+  updateStatusSetting,
+  fetchStatusSetting,
 } from "../libs/FetchStatus.js";
 import { useToast } from "primevue/usetoast";
 
@@ -14,7 +15,6 @@ export const useStatusStore = defineStore("StatusStore", {
     toast: useToast(),
     statuses: [],
     STATUS_ENDPOINT: "v2/statuses",
-
   }),
 
   getters: {
@@ -41,20 +41,44 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
-    async loadStatusSetting(id){
+    async loadStatusSetting(id) {
       const data = await fetchStatusSetting(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,id
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        id
       );
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses setting");
       } else {
-
         return data;
       }
-
     },
 
-  
+    async editStatusSetting(id, updatedLimit) {
+      console.log(updatedLimit);
+      const res = await updateStatusSetting(
+        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        id,
+        updatedLimit
+      );
+      const data = await res.json();
+      if (res.status === 200) {
+        console.log(data);
+        this.toast.add({
+          severity: "success",
+          summary: "Success",
+          detail: `The status setting has been updated`,
+          life: 3000,
+        });
+      } else {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `An error has occurred, the status setting can not update.`,
+          life: 3000,
+        });
+      }
+    },
+
     async loadStatusDetail(id) {
       const data = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
@@ -63,7 +87,6 @@ export const useStatusStore = defineStore("StatusStore", {
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses");
       } else {
-
         return data;
       }
     },
