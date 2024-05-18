@@ -20,6 +20,7 @@ const statusStore = useStatusStore();
 
 const toggleLimitStatus = () => {
   limitStatus.value = !limitStatus.value;
+  
   console.log("limitStatus", limitStatus.value);
 };
 

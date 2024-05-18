@@ -67,7 +67,7 @@ watch(
   (newValue) => {
     const status = statusStore.getStatusById(newValue)
     const tasks = taskStore.getTasksByStatus(status.name)
-    if (limitMaximumTask.value) { //user turn on limit
+    if (limitMaximumTask.value) { //check only if user turn on limit
       isLimit.value = tasks.length >= maximumTask.value
     }
   }

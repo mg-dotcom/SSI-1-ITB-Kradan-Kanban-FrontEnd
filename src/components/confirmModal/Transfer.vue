@@ -37,7 +37,7 @@ const transferTo = ref('')
 watch(transferTo, (newValue) => {
   const status = statusStore.getStatusById(newValue)
   const tasks = taskStore.getTasksByStatus(status.name)
-  if (limitMaximumTask.value) {
+  if (limitMaximumTask.value) { //check only if user turn on limit
     if (status.name !== 'No Status' && status.name !== 'Done') {
       isLimit.value = tasks.length >= maximumTask.value
     }
