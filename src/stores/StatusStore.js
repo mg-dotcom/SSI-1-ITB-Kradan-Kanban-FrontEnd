@@ -28,10 +28,7 @@ export const useStatusStore = defineStore("StatusStore", {
       const status = state.statuses.find((status) => status.name === name);
       return status ? status.statusColor : "";
     },
-    // getTaskThatExceedsLimit: (state) => (statusId, limit) => {
-    //   const status = state.statuses.find((status) => status.id === statusId);
-    //   return status ? status.tasks.length > limit : false;
-    // },
+
   },
   actions: {
     async loadStatuses() {

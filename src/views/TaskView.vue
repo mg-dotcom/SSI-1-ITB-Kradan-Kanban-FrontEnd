@@ -64,7 +64,7 @@ const cycleSortType = () => {
 const filterStatuses = ref([]);
 
 watch(filterStatuses, async (newfilterStatuses) => {
-  await taskStore.loadFilterTasks(newfilterStatuses);
+  await taskStore.loadFilterTasks(newfilterStatuses,sortType.value);
 });
 
 const toggleSelect = () => {
@@ -230,13 +230,13 @@ const clearFilter = () => {
                           src="../assets/alphabeticalSorting-green.svg"
                           alt=""
                           class="mx-5 w-5 content-center"
-                          v-if="sortType === 'descending'"
+                          v-if="sortType === 'ascending'"
                         />
                         <img
                           src="../assets/alphabeticalReverse.svg"
                           alt=""
                           class="mx-5 w-5 content-center"
-                          v-if="sortType === 'ascending'"
+                          v-if="sortType === 'descending'"
                         />
                       </div>
                     </div>

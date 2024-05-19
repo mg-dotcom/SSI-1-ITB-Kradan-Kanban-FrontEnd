@@ -7,6 +7,7 @@ import {
   updatedTask,
   fetchFilterTasks
 } from "../libs/FetchTask.js";
+import {sortTasks} from "../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
 
 export const useTaskStore = defineStore("TaskStore", {
@@ -52,17 +53,6 @@ export const useTaskStore = defineStore("TaskStore", {
       } else {
         return data;
       }
-    },
-    async loadFilterTasks(arrayOfStatusesNames) {
-      if (arrayOfStatusesNames.length === 0) {
-        this.loadTasks();
-        return;
-      }
-      const data = await fetchFilterTasks(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
-        arrayOfStatusesNames
-      );
-      this.tasks = data;
     },
 
     async addTask(newTask) {
@@ -163,13 +153,20 @@ export const useTaskStore = defineStore("TaskStore", {
         alert("Failed to fetch tasks");
       } else {
         this.tasks = data;
-        if (sortType === "ascending") {
-          this.tasks.sort((a, b) => a.status.name.localeCompare(b.status.name));
-        } else if (sortType === "descending") {
-          this.tasks.sort((a, b) => b.status.name.localeCompare(a.status.name));
-        }
-        return this.tasks;
+        return sortTasks(this.tasks, sortType);
       }
+    },
+    async loadFilterTasks(arrayOfStatusesNames,sortType) {
+      if (arrayOfStatusesNames.length === 0) {
+        this.loadTasks();
+        return;
+      }
+      const data = await fetchFilterTasks(
+        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        arrayOfStatusesNames
+      );
+      this.tasks = data;
+      return sortTasks(this.tasks, sortType);
     },
 
   },
