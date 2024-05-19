@@ -24,7 +24,7 @@ const filteredStatuses = statusStore.getStatuses.filter(
 
 const isLimit = ref(false);
 const limitMaximumTask = ref(false);
-const maximumTask = ref(0);
+const maximumTask = ref(10);
 onMounted(async () => {
   const limitOfStatus = await statusStore.loadStatusSetting(1);
   console.log(limitOfStatus);

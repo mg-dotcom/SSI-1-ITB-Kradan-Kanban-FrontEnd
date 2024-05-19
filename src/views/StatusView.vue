@@ -1,94 +1,90 @@
 <script setup>
-import buttonSubmit from "../components/button/Button.vue";
-import { useRouter, useRoute } from "vue-router";
-import StatusSetting from "../components/confirmModal/StatusSetting.vue";
-import { useStatusStore } from "../stores/StatusStore.js";
-import { useTaskStore } from "../stores/TaskStore.js";
-import { onMounted } from "vue";
-import StatusButton from "../components/button/StatusButton.vue";
-import { RouterView } from "vue-router";
-import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
-import Transfer from "../components/confirmModal/Transfer.vue";
-import { ref } from "vue";
-const router = useRouter();
-const statusStore = useStatusStore();
-const taskStore = useTaskStore();
-
+import buttonSubmit from '../components/button/Button.vue'
+import { useRouter, useRoute } from 'vue-router'
+import StatusSetting from '../components/confirmModal/StatusSetting.vue'
+import { useStatusStore } from '../stores/StatusStore.js'
+import { useTaskStore } from '../stores/TaskStore.js'
+import { onMounted } from 'vue'
+import StatusButton from '../components/button/StatusButton.vue'
+import { RouterView } from 'vue-router'
+import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
+import Transfer from '../components/confirmModal/Transfer.vue'
+import { ref } from 'vue'
+import { useToast } from 'primevue/usetoast'
+const router = useRouter()
+const statusStore = useStatusStore()
+const taskStore = useTaskStore()
+const toast = useToast()
 onMounted(async () => {
-  await statusStore.loadStatuses();
-  await taskStore.loadTasks();
+  await statusStore.loadStatuses()
+  await taskStore.loadTasks()
 
-  console.log("status", statusStore.getStatuses);
-});
+  console.log('status', statusStore.getStatuses)
+})
 
-const numberOfTasks = ref(0);
-const maximumTask = ref(5);
-const currentStatus = ref("");
-const openDelete = ref(false);
-const openTransfer = ref(false);
-const openLimit = ref(false);
+const numberOfTasks = ref(0)
+const currentStatus = ref('')
+const openDelete = ref(false)
+const openTransfer = ref(false)
+const openLimit = ref(false)
 
 const openDeleteOrTransferModal = (id) => {
-  currentStatus.value = statusStore.getStatusById(id);
-  console.log(currentStatus.value.name);
-  const haveTask = taskStore.getTasksByStatus(currentStatus.value.name);
-  console.log(haveTask);
-  numberOfTasks.value = haveTask.length;
-  console.log(haveTask.length);
+  currentStatus.value = statusStore.getStatusById(id)
+  console.log(currentStatus.value.name)
+  const haveTask = taskStore.getTasksByStatus(currentStatus.value.name)
+  console.log(haveTask)
+  numberOfTasks.value = haveTask.length
+  console.log(haveTask.length)
   if (haveTask.length > 0) {
-    console.log("open transfer modal");
-    openTransfer.value = true;
+    console.log('open transfer modal')
+    openTransfer.value = true
   } else {
-    console.log("open delete modal");
-    openDelete.value = true;
+    console.log('open delete modal')
+    openDelete.value = true
   }
-};
+}
 
 const deleteStatus = (id) => {
-  statusStore.removeStatus(id);
-  openDelete.value = false;
-};
+  statusStore.removeStatus(id)
+  openDelete.value = false
+}
 const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
-  taskStore.transferTasksStatus(currentStatus, newStatusId);
+  taskStore.transferTasksStatus(currentStatus, newStatusId)
   await statusStore.transferStatus(
     currentStatusId,
     newStatusId,
     numberOfTasks.value
-  );
-  openTransfer.value = false;
-  router.push({ name: "status" });
-};
+  )
+  openTransfer.value = false
+  router.push({ name: 'status' })
+}
 
 const openLimitStatus = () => {
-  openLimit.value = true;
-};
+  openLimit.value = true
+}
 
-// const saveLimitStatus = (isLimit) => {
-//   openLimit = false;
-//   if (isLimit) {
-//     toast.add({
-//       severity: "success",
-//       summary: "Enabled Limit Status",
-//       detail: `The Kanban board now limits 10 tasks in each status.`,
-//       life: 3000,
-//     });
-//     return;
-//   } else {
-//     toast.add({
-//       severity: "error",
-//       summary: "Disabled Limit Status",
-//       detail: `The Kanban board has disabled the task limit in each status.`,
-//       life: 3000,
-//     });
-//     return;
-//   }
-// };
-
-const saveLimitStatus = async (id, limitMaximumTask , maximumTask) => {
-  await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask);
-  openLimit.value = false;
-  router.push({ name: "status" });
-};
+const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
+  await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask)
+  openLimit.value = false
+  router.push({ name: 'status' })
+  if (limitMaximumTask) {
+    const allStatus = statusStore.getStatuses
+    const statusesExceedLimit = allStatus
+      .filter((status) => {
+        const tasks = taskStore.getTasksByStatus(status.name)
+        return tasks.length >= maximumTask
+      })
+      .map((status) => `${status.name}: ${taskStore.getTasksByStatus(status.name).length} tasks`)
+      .join(', ')
+    toast.add({
+      severity: 'success',
+      summary: 'Enabled Limit Status',
+      detail: 
+      `${statusesExceedLimit}
+      These statuses have reached the task limit. No additional tasks can be added to these statuses at this time.`,
+    })
+  }
+}
 </script>
 
 <template>
@@ -191,7 +187,7 @@ const saveLimitStatus = async (id, limitMaximumTask , maximumTask) => {
                 >
                   {{
                     !status.description
-                      ? "No description is provided"
+                      ? 'No description is provided'
                       : status.description
                   }}
                 </td>
@@ -203,7 +199,7 @@ const saveLimitStatus = async (id, limitMaximumTask , maximumTask) => {
                     @click="
                       router.push({
                         name: 'status-edit',
-                        params: { id: status.id },
+                        params: { id: status.id }
                       })
                     "
                     :buttonType="
@@ -257,7 +253,6 @@ const saveLimitStatus = async (id, limitMaximumTask , maximumTask) => {
       v-if="openTransfer"
       :currentStatus="currentStatus"
       :numberOfTasks="numberOfTasks"
-      :maximumTask="maximumTask"
       @closeDelete="openTransfer = false"
       @transferStatus="transferStatus"
     ></Transfer>
