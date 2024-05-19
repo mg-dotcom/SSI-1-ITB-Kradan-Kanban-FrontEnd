@@ -72,7 +72,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
     const statusesExceedLimit = allStatus
       .filter((status) => {
         const tasks = taskStore.getTasksByStatus(status.name)
-        return tasks.length >= 5
+        return tasks.length >= maximumTask
       })
       .map((status) => `${status.name}: ${taskStore.getTasksByStatus(status.name).length} tasks`)
       .join(', ')
