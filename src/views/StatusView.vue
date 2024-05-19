@@ -68,16 +68,16 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   openLimit.value = false
   router.push({ name: 'status' })
   if (limitMaximumTask) {
-    const allStatus = statusStore.getStatuses
+    const allStatus = statusStore.getStatuses.filter(status => status.name !== 'No Status' && status.name !== 'Done')
     const statusesExceedLimit = allStatus
       .filter((status) => {
         const tasks = taskStore.getTasksByStatus(status.name)
-        return tasks.length >= maximumTask
+        return tasks.length >= 5
       })
       .map((status) => `${status.name}: ${taskStore.getTasksByStatus(status.name).length} tasks`)
       .join(', ')
     toast.add({
-      severity: 'success',
+      severity: 'warn',
       summary: 'Enabled Limit Status',
       detail: 
       `${statusesExceedLimit}
