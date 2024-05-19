@@ -1,167 +1,171 @@
 <script setup>
-import ModalDetail from './ModalDetail.vue'
-import buttonSubmit from '../button/Button.vue'
-import { useRouter, useRoute } from 'vue-router'
-import { defineEmits, ref, onMounted, watch } from 'vue'
-import { useStatusStore } from '../../stores/StatusStore.js'
-import { useSortStore } from '../../stores/SortStore.js'
-import { useTaskStore } from '../../stores/TaskStore.js'
-import { localTimeZone, formatDate } from '../../libs/libsUtil.js'
-import StatusButton from '../button/StatusButton.vue'
-import { useToast } from 'primevue/usetoast'
-const statusStore = useStatusStore()
-const taskStore = useTaskStore()
-const sortStore = useSortStore()
-const router = useRouter()
-const route = useRoute()
-const taskId = Number(route.params.id)
-const isChanged = ref(false)
-const mode = route.name === 'task-add' ? 'add' : 'edit'
-const id = 1
-const limitMaximumTask = ref(false)
-const maximumTask = ref(0)
-const toast = useToast()
+import ModalDetail from "./ModalDetail.vue";
+import buttonSubmit from "../button/Button.vue";
+import { useRouter, useRoute } from "vue-router";
+import { defineEmits, ref, onMounted, watch } from "vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
+import { useSortStore } from "../../stores/SortStore.js";
+import { useTaskStore } from "../../stores/TaskStore.js";
+import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
+import StatusButton from "../button/StatusButton.vue";
+import { useToast } from "primevue/usetoast";
+const statusStore = useStatusStore();
+const taskStore = useTaskStore();
+const sortStore = useSortStore();
+const router = useRouter();
+const route = useRoute();
+const taskId = Number(route.params.id);
+const isChanged = ref(false);
+const mode = route.name === "task-add" ? "add" : "edit";
+const id = 1;
+const limitMaximumTask = ref(false);
+const maximumTask = ref(0);
+const toast = useToast();
 
 const selectedTask = ref({
-  title: '',
-  description: '',
-  assignees: '',
+  title: "",
+  description: "",
+  assignees: "",
   statusId: 1,
-  createdOn: '',
-  updatedOn: ''
-})
+  createdOn: "",
+  updatedOn: "",
+});
 
 const outputTask = ref({
-  title: '',
-  description: '',
-  assignees: '',
+  title: "",
+  description: "",
+  assignees: "",
   statusId: 1,
-  createdOn: '',
-  updatedOn: ''
-})
+  createdOn: "",
+  updatedOn: "",
+});
 
-const input = ref({})
+const input = ref({});
 
 onMounted(async () => {
-  await statusStore.loadStatuses()
-  const settingDetail = await statusStore.loadStatusSetting(id)
-  limitMaximumTask.value = settingDetail.limitMaximumTask
-  maximumTask.value = settingDetail.maximumTask
+  await statusStore.loadStatuses();
+  const settingDetail = await statusStore.loadStatusSetting(id);
+  limitMaximumTask.value = settingDetail.limitMaximumTask;
+  maximumTask.value = settingDetail.maximumTask;
 
-  if (mode == 'edit') {
-    const taskDetail = await taskStore.loadTaskDetails(taskId)
-    console.log(taskDetail)
-    selectedTask.value = taskDetail
-    selectedTask.value.statusId = taskDetail.status.id
-    selectedTask.value.createdOn = formatDate(taskDetail.createdOn)
-    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn)
-    input.value = { ...selectedTask.value }
-  } else if (mode == 'add') {
-    selectedTask.value.statusId = statusStore.getStatuses[0].id
+  if (mode == "edit") {
+    const taskDetail = await taskStore.loadTaskDetails(taskId);
+    console.log(taskDetail);
+    selectedTask.value = taskDetail;
+    selectedTask.value.statusId = taskDetail.status.id;
+    selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
+    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
+    input.value = { ...selectedTask.value };
+  } else if (mode == "add") {
+    selectedTask.value.statusId = statusStore.getStatuses[0].id;
   }
-})
+});
 
-const isLimit = ref(false)
+const isLimit = ref(false);
 watch(
   () => selectedTask.value.statusId,
   (newValue) => {
-    const status = statusStore.getStatusById(newValue)
-    const tasks = taskStore.getTasksByStatus(status.name)
-    if (limitMaximumTask.value) { //check only if user turn on limit
-      isLimit.value = tasks.length >= maximumTask.value
+    const status = statusStore.getStatusById(newValue);
+    const tasks = taskStore.getTasksByStatus(status.name);
+    if (limitMaximumTask.value) {
+      //check only if user turn on limit
+      isLimit.value = tasks.length >= maximumTask.value;
     }
   }
-)
+);
 
 watch(
   selectedTask,
   (newValue) => {
-    if (mode === 'add') {
+    if (mode === "add") {
       if (!newValue.title) {
-        isChanged.value = false
+        isChanged.value = false;
       } else {
-        isChanged.value = true
-        return
+        isChanged.value = true;
+        return;
       }
     }
-    if (mode === 'edit') {
+    if (mode === "edit") {
       if (
         newValue.title !== input.value.title ||
         newValue.description !== input.value.description ||
         newValue.assignees !== input.value.assignees ||
         newValue.statusId !== input.value.statusId
       ) {
-        isChanged.value = true
+        isChanged.value = true;
       } else {
-        isChanged.value = false
+        isChanged.value = false;
       }
     }
   },
   { deep: true }
-)
+);
 
 const save = async () => {
-  if (mode === 'edit' && taskId !== undefined) {
+  if (mode === "edit" && taskId !== undefined) {
     outputTask.value = {
       title: selectedTask.value.title,
       description: selectedTask.value.description,
       assignees: selectedTask.value.assignees,
-      statusId: selectedTask.value.statusId
-    }
+      statusId: selectedTask.value.statusId,
+    };
     const statusDetail = statusStore.getStatuses.find(
       (status) => status.id === selectedTask.value.statusId
-    )
+    );
     if (isLimit.value && limitMaximumTask.value) {
       toast.add({
-        severity: 'error',
-        summary: 'Error',
+        severity: "error",
+        summary: "Error",
         detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
-        life: 3000
-      })
-      return
+        life: 3000,
+      });
+      return;
     } else {
-      await taskStore.editTask(taskId, outputTask.value, statusDetail)
-      router.go(-1)
+      await taskStore.editTask(taskId, outputTask.value, statusDetail);
+      router.go(-1);
     }
   } else {
     outputTask.value = {
       title: selectedTask.value.title,
       description: selectedTask.value.description,
       assignees: selectedTask.value.assignees,
-      statusId: selectedTask.value.statusId
-    }
+      statusId: selectedTask.value.statusId,
+    };
     if (isLimit.value && limitMaximumTask.value) {
       toast.add({
-        severity: 'error',
-        summary: 'Error',
+        severity: "error",
+        summary: "Error",
         detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
-        life: 3000
-      })
+        life: 3000,
+      });
       // router.go(-1)
-      return
+      return;
     } else {
-      await taskStore.addTask(outputTask.value)
-      await taskStore.loadSortTasks(sortStore.getSortType)
-      router.go(-1)
+      await taskStore.addTask(outputTask.value);
+      await taskStore.loadSortTasks(sortStore.getSortType);
+      router.go(-1);
     }
   }
-}
+};
 
-const emit = defineEmits(['addNewTask', 'editNewTask'])
+const emit = defineEmits(["addNewTask", "editNewTask"]);
 </script>
 
 <template>
   <ModalDetail :selectedTask="selectedTask" class="itbkk-modal-task">
     <template #title>
       <div class="flex justify-between">
-        <div>{{ mode == 'add' ? 'Add Task' : 'Edit Task' }}</div>
+        <div>{{ mode == "add" ? "Add Task" : "Edit Task" }}</div>
         <div>
-          <StatusButton statusColor="#1BFF00" v-if="limitMaximumTask == true">
-            Limit On
-          </StatusButton>
-          <StatusButton statusColor="#FF2D00" v-if="limitMaximumTask == false">
-            Limit Off
-          </StatusButton>
+          <span
+            :class="{
+              'bg-red-200 text-red-800 dark:text-red-400 border border-red-400': limitMaximumTask === false,
+              'bg-green-200 text-green-800 dark:text-green-400 border border-green-400': limitMaximumTask === true,
+            }"
+            class="text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 "
+            >Limit  {{ limitMaximumTask ? "On" : "Off" }}</span
+            </span
+          >
         </div>
       </div>
     </template>
