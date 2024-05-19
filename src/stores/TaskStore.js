@@ -39,6 +39,7 @@ export const useTaskStore = defineStore("TaskStore", {
         alert("Failed to fetch tasks");
       } else {
         this.tasks = data;
+        
       }
     },
 
@@ -157,14 +158,13 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
     async loadFilterTasks(arrayOfStatusesNames,sortType) {
-      if (arrayOfStatusesNames.length === 0) {
-        this.loadTasks();
-        return;
-      }
       const data = await fetchFilterTasks(
         `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
         arrayOfStatusesNames
       );
+      if (arrayOfStatusesNames.length === 0) {
+        return sortTasks(this.tasks, sortType);
+      }
       this.tasks = data;
       return sortTasks(this.tasks, sortType);
     },
