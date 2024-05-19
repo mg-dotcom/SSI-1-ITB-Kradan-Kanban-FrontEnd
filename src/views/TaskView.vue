@@ -109,7 +109,6 @@ const clearFilter = () => {
 
 <template>
   <RouterView />
-  <Toast class="itbkk-message" />
   <div class="h-screen w-full">
     <div
       class="text-xl font-bold flex items-center text-blue pt-7 px-28"

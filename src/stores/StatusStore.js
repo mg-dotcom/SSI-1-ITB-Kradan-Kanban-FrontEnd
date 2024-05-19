@@ -9,6 +9,7 @@ import {
   fetchStatusSetting,
 } from "../libs/FetchStatus.js";
 import { useToast } from "primevue/usetoast";
+import { useTaskStore } from "./TaskStore.js";
 
 export const useStatusStore = defineStore("StatusStore", {
   state: () => ({
@@ -28,7 +29,6 @@ export const useStatusStore = defineStore("StatusStore", {
       const status = state.statuses.find((status) => status.name === name);
       return status ? status.statusColor : "";
     },
-
   },
   actions: {
     async loadStatuses() {
@@ -69,7 +69,31 @@ export const useStatusStore = defineStore("StatusStore", {
             detail: `The kanban board now limits ${maximumTask} tasks in each status`,
             life: 3000,
           });
-          
+
+          const taskStore = useTaskStore();
+          const allStatus = this.getStatuses.filter(
+            (status) => status.name !== "No Status" && status.name !== "Done"
+          );
+          const statusesExceedLimit = allStatus
+            .filter((status) => {
+              const tasks = taskStore.getTasksByStatus(status.name);
+              return tasks.length > maximumTask;
+            })
+            .map(
+              (status) =>
+                `${status.name}: ${
+                  taskStore.getTasksByStatus(status.name).length
+                } tasks`
+            )
+            .join(", ");
+          if (statusesExceedLimit.length > 0) {
+            this.toast.add({
+              severity: "warn",
+              summary: "Enabled Limit Status",
+              detail: `${statusesExceedLimit}
+                  These statuses have reached the task limit. No additional tasks can be added to these statuses at this time.`,
+            });
+          }
         } else {
           this.toast.add({
             severity: "success",

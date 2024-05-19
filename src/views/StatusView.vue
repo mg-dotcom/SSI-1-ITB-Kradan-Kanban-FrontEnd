@@ -67,28 +67,12 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask)
   openLimit.value = false
   router.push({ name: 'status' })
-  if (limitMaximumTask) {
-    const allStatus = statusStore.getStatuses.filter(status => status.name !== 'No Status' && status.name !== 'Done')
-    const statusesExceedLimit = allStatus
-      .filter((status) => {
-        const tasks = taskStore.getTasksByStatus(status.name)
-        return tasks.length >= maximumTask
-      })
-      .map((status) => `${status.name}: ${taskStore.getTasksByStatus(status.name).length} tasks`)
-      .join(', ')
-    toast.add({
-      severity: 'warn',
-      summary: 'Enabled Limit Status',
-      detail: 
-      `${statusesExceedLimit}
-      These statuses have reached the task limit. No additional tasks can be added to these statuses at this time.`,
-    })
-  }
+ 
 }
 </script>
 
 <template>
-  <Toast class="itbkk-message" />
+  
   <RouterView />
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
