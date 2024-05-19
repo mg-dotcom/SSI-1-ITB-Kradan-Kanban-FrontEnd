@@ -5,18 +5,17 @@ import {
   deleteTask,
   fetchTaskDetails,
   updatedTask,
-  fetchFilterTasks
+  fetchFilterTasks,
 } from "../libs/FetchTask.js";
-import {sortTasks} from "../libs/libsUtil.js";
+import { sortTasks } from "../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
+const TASK_ENDPOINT = import.meta.env.VITE_TASK_ENDPOINT;
 
 export const useTaskStore = defineStore("TaskStore", {
   state: () => ({
     toast: useToast(),
     tasks: [],
-    TASK_ENDPOINT: "v2/tasks",
     sortType: "",
-
   }),
   getters: {
     getTasks() {
@@ -32,20 +31,19 @@ export const useTaskStore = defineStore("TaskStore", {
   actions: {
     async loadTasks() {
       const data = await fetchAllTasks(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`
+        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
       );
       if (data.status < 200 && data.status > 299) {
         //fetch data failed
         alert("Failed to fetch tasks");
       } else {
         this.tasks = data;
-        
       }
     },
 
     async loadTaskDetails(id) {
       const data = await fetchTaskDetails(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
         id
       );
       if (data.status < 200 && data.status > 299) {
@@ -58,7 +56,7 @@ export const useTaskStore = defineStore("TaskStore", {
 
     async addTask(newTask) {
       const res = await addTask(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
         newTask
       );
       if (res.status >= 200 && res.status <= 299) {
@@ -82,7 +80,7 @@ export const useTaskStore = defineStore("TaskStore", {
 
     async deleteTask(id) {
       const res = await deleteTask(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
         id
       );
       const taskIndex = this.tasks.findIndex((task) => task.id === id);
@@ -107,7 +105,7 @@ export const useTaskStore = defineStore("TaskStore", {
 
     async editTask(id, updatedTaskInput, statusDetails) {
       const res = await updatedTask(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
         updatedTaskInput,
         id
       );
@@ -147,7 +145,7 @@ export const useTaskStore = defineStore("TaskStore", {
 
     async loadSortTasks(sortType) {
       const data = await fetchAllTasks(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`
+        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
       );
       if (data.status < 200 && data.status > 299) {
         //fetch data failed
@@ -157,9 +155,9 @@ export const useTaskStore = defineStore("TaskStore", {
         return sortTasks(this.tasks, sortType);
       }
     },
-    async loadFilterTasks(arrayOfStatusesNames,sortType) {
+    async loadFilterTasks(arrayOfStatusesNames, sortType) {
       const data = await fetchFilterTasks(
-        `${import.meta.env.VITE_BASE_URL}${this.TASK_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
         arrayOfStatusesNames
       );
       if (arrayOfStatusesNames.length === 0) {
@@ -168,6 +166,5 @@ export const useTaskStore = defineStore("TaskStore", {
       this.tasks = data;
       return sortTasks(this.tasks, sortType);
     },
-
   },
 });

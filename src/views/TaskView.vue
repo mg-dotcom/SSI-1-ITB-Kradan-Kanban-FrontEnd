@@ -18,6 +18,7 @@ const statusStore = useStatusStore();
 const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
+
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
@@ -64,7 +65,7 @@ const cycleSortType = () => {
 const filterStatuses = ref([]);
 
 watch(filterStatuses, async (newfilterStatuses) => {
-  await taskStore.loadFilterTasks(newfilterStatuses,sortType.value);
+  await taskStore.loadFilterTasks(newfilterStatuses, sortType.value);
 });
 
 const toggleSelect = () => {
@@ -102,9 +103,6 @@ const clearEachStatus = (statusName) => {
 const clearFilter = () => {
   filterStatuses.value = [];
 };
-
-
-
 </script>
 
 <template>
@@ -351,8 +349,6 @@ const clearFilter = () => {
       @confirmDeleteTask="popup.delete = false"
     ></DeleteModal>
   </div>
-
-
 </template>
 
 <style scoped>

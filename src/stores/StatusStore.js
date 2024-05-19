@@ -11,11 +11,12 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "./TaskStore.js";
 
+const STATUS_ENDPOINT = import.meta.env.VITE_STATUS_ENDPOINT;
+
 export const useStatusStore = defineStore("StatusStore", {
   state: () => ({
     toast: useToast(),
     statuses: [],
-    STATUS_ENDPOINT: "v2/statuses",
   }),
 
   getters: {
@@ -33,7 +34,7 @@ export const useStatusStore = defineStore("StatusStore", {
   actions: {
     async loadStatuses() {
       const data = await fetchAllStatus(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
       );
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses");
@@ -44,7 +45,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async loadStatusSetting(id) {
       const data = await fetchStatusSetting(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         id
       );
       if (data.status < 200 && data.status > 299) {
@@ -57,7 +58,7 @@ export const useStatusStore = defineStore("StatusStore", {
     async editStatusSetting(id, updatedLimit, maximumTask) {
       console.log(updatedLimit);
       const res = await updateStatusSetting(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         id,
         updatedLimit
       );
@@ -98,7 +99,7 @@ export const useStatusStore = defineStore("StatusStore", {
           this.toast.add({
             severity: "success",
             summary: "Disabled Limit",
-            detail: `The kanban board has disabled the task limit in each statuss`,
+            detail: `The kanban board has disabled the task limit in each status`,
             life: 3000,
           });
         }
@@ -114,7 +115,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async loadStatusDetail(id) {
       const data = await fetchStatusById(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         id
       );
       if (data.status < 200 && data.status > 299) {
@@ -126,7 +127,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async addStatus(newStatus) {
       const res = await addStatus(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         newStatus
       );
 
@@ -162,7 +163,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async editStatus(id, updatedStatus) {
       const res = await updateStatus(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         id,
         updatedStatus
       );
@@ -195,7 +196,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async transferStatus(currentId, newId, numberOfTasks) {
       const res = await deleteStatus(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}/${currentId}`,
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${currentId}`,
         newId
       );
       if (res.status === 200) {
@@ -228,7 +229,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async removeStatus(id) {
       const res = await deleteStatus(
-        `${import.meta.env.VITE_BASE_URL}${this.STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         id
       );
       if (res.status === 200) {
