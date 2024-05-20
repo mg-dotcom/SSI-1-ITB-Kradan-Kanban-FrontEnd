@@ -110,7 +110,7 @@ const save = async () => {
       (status) => status.id === selectedTask.value.statusId
     );
     const statusCode=await taskStore.editTask(taskId, outputTask.value, statusDetail);
-    if(statusCode===200){
+    if(statusCode.status===200){
       router.go(-1);
     }else{
       return;
@@ -124,7 +124,7 @@ const save = async () => {
       statusId: selectedTask.value.statusId,
     };
     const statusCode= await taskStore.addTask(outputTask.value);
-    if(statusCode===200){
+    if(statusCode.status===201){
       await taskStore.loadSortTasks(sortStore.getSortType);
       router.go(-1);
     }else{

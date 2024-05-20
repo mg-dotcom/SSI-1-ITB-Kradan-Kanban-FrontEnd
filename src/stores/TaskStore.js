@@ -76,6 +76,7 @@ export const useTaskStore = defineStore("TaskStore", {
           life: 3000,
         });
       }
+      return res;
     },
 
     async deleteTask(id) {
@@ -131,6 +132,7 @@ export const useTaskStore = defineStore("TaskStore", {
           life: 3000,
         });
       }
+      return res;
     },
 
     transferTasksStatus(currentStatus, newStatus) {
@@ -156,17 +158,18 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
     async loadFilterTasks(arrayStatusesName, sortType) {
-      if (arrayStatusesName.length === 0) {
-        const data = await fetchAllTasks(
-          `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
-        );
-        this.tasks = data;
-        return sortTasks(this.tasks, sortType);
-      }
-      const data = await fetchFilterTasks(
+            const data = await fetchFilterTasks(
         `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
         arrayStatusesName
       );
+      if (arrayStatusesName.length === 0) {
+        // const data = await fetchAllTasks(
+        //   `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
+        // );
+        // this.tasks = data;
+        return sortTasks(this.tasks, sortType);
+      }
+
       this.tasks = data;
       return sortTasks(this.tasks, sortType);
     },
