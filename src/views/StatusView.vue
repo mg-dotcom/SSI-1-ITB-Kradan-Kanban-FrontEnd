@@ -18,8 +18,6 @@ const toast = useToast()
 onMounted(async () => {
   await statusStore.loadStatuses()
   await taskStore.loadTasks()
-
-  console.log('status', statusStore.getStatuses)
 })
 
 const numberOfTasks = ref(0)
@@ -30,16 +28,11 @@ const openLimit = ref(false)
 
 const openDeleteOrTransferModal = (id) => {
   currentStatus.value = statusStore.getStatusById(id)
-  console.log(currentStatus.value.name)
   const haveTask = taskStore.getTasksByStatus(currentStatus.value.name)
-  console.log(haveTask)
   numberOfTasks.value = haveTask.length
-  console.log(haveTask.length)
   if (haveTask.length > 0) {
-    console.log('open transfer modal')
     openTransfer.value = true
   } else {
-    console.log('open delete modal')
     openDelete.value = true
   }
 }

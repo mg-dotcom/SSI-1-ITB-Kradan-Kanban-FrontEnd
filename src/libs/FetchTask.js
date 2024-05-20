@@ -15,12 +15,10 @@ const fetchTaskDetails = async (url, id) => {
     return
   }
   const res = await data.json()
-  console.log(res);
   return res
 }
 
 const addTask = async (url, newTask) => {
-  // console.log(newTask);
   const res = await fetch(`${url}`, {
     method: 'POST',
     headers: {

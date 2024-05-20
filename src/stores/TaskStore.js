@@ -86,7 +86,6 @@ export const useTaskStore = defineStore('TaskStore', {
       )
       const taskIndex = this.tasks.findIndex((task) => task.id === id)
       if (res.status >= 200 && res.status <= 299) {
-        console.log('Task deleted successfully')
         this.tasks.splice(taskIndex, 1)
         this.toast.add({
           severity: 'success',

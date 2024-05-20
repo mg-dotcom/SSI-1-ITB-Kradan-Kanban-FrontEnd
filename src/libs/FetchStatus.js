@@ -15,12 +15,10 @@ const deleteStatus = async (url, id) => {
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
   });
-  console.log(res);
   return res;
 };
 
 const addStatus = async (url, newStatus) => {
-  console.log(newStatus);
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -52,7 +50,6 @@ const updateStatus = async (url, id, updatedStatus) => {
 
 const fetchStatusSetting = async (url) => {
   const res = await fetch(`${url}/1/maximum-task`);
-  console.log(res);
   const data = await res.json();
   return data;
 };
