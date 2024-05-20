@@ -66,22 +66,15 @@ export const useTaskStore = defineStore('TaskStore', {
           severity: 'success',
           summary: 'Success',
           detail: `The task has been successfully added`,
-          life: 3000,
-        });
-      } else if (res.status === 400) {
+          life: 3000
+        })
+      } else {
         this.toast.add({
           severity: 'error',
           summary: 'Error',
           detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
-          life: 3000,
-        });
-      } else {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: `An error has occurred, can not add task.`,
-          life: 3000,
-        });
+          life: 3000
+        })
       }
       return res
     },
@@ -122,29 +115,22 @@ export const useTaskStore = defineStore('TaskStore', {
         const updateData = await res.json()
         this.tasks[taskIndex] = {
           ...updateData,
-          status: statusDetails,
-        };
+          status: statusDetails
+        }
 
         this.toast.add({
           severity: 'success',
           summary: 'Success',
           detail: `The task has been updated`,
-          life: 3000,
-        });
-      } else if (res.status === 400) {
+          life: 3000
+        })
+      } else {
         this.toast.add({
           severity: 'error',
           summary: 'Error',
           detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
-          life: 3000,
-        });
-      } else {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: `An error has occurred, the task does not exist.`,
-          life: 3000,
-        });
+          life: 3000
+        })
       }
       return res
     },
@@ -172,16 +158,14 @@ export const useTaskStore = defineStore('TaskStore', {
       }
     },
     async loadFilterTasks(arrayStatusesName, sortType) {
-            const data = await fetchFilterTasks(
-        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-        arrayStatusesName
-      );
       if (arrayStatusesName.length === 0) {
-        // const data = await fetchAllTasks(
-        //   `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
-        // );
-        // this.tasks = data;
-        return sortTasks(this.tasks, sortType);
+        await this.loadTasks()
+      } else {
+        const data = await fetchFilterTasks(
+          `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
+          arrayStatusesName
+        )
+        this.tasks = data
       }
       sortTasks(this.tasks, sortType)
     }
