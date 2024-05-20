@@ -61,7 +61,7 @@ const updatedTask = async (url, updatedTask, id) => {
 
 const fetchFilterTasks = async (url, arr) => {
   const param = new URLSearchParams()
-  param.append('statusId', arr)
+  param.append('filterStatuses', arr)
   const res = await fetch(`${url}?${param.toString()}`)
   const data = await res.json()
   return data
