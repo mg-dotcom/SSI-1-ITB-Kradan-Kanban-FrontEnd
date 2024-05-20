@@ -68,11 +68,18 @@ export const useTaskStore = defineStore("TaskStore", {
           detail: `The task has been successfully added`,
           life: 3000,
         });
-      } else {
+      } else if (res.status === 400) {
         this.toast.add({
           severity: "error",
           summary: "Error",
           detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
+          life: 3000,
+        });
+      } else {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `An error has occurred, can not add task.`,
           life: 3000,
         });
       }
@@ -117,18 +124,24 @@ export const useTaskStore = defineStore("TaskStore", {
           ...updateData,
           status: statusDetails,
         };
-
         this.toast.add({
           severity: "success",
           summary: "Success",
           detail: `The task has been updated`,
           life: 3000,
         });
-      } else {
+      } else if (res.status === 400) {
         this.toast.add({
           severity: "error",
           summary: "Error",
           detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
+          life: 3000,
+        });
+      } else {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `An error has occurred, the task does not exist.`,
           life: 3000,
         });
       }
@@ -158,7 +171,7 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
     async loadFilterTasks(arrayStatusesName, sortType) {
-            const data = await fetchFilterTasks(
+      const data = await fetchFilterTasks(
         `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
         arrayStatusesName
       );
