@@ -66,7 +66,7 @@ const filterStatuses = ref([]);
 
 watch(filterStatuses, async (newfilterStatuses) => {
   const arrayStatusesId= statusStore.getStatuses.filter((status) => newfilterStatuses.includes(status.name)).map((status) => status.id);
-  console.log(arrayStatusesId); //status id
+  console.log(arrayStatusesId);
   await taskStore.loadFilterTasks(arrayStatusesId, sortType.value);
 });
 

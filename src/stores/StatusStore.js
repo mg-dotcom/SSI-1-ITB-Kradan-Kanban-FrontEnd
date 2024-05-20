@@ -56,13 +56,12 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async editStatusSetting(id, updatedLimit, maximumTask) {
-      console.log(updatedLimit);
       const res = await updateStatusSetting(
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         id,
         updatedLimit
       );
-      if (res.status === 200) {
+      if (res.status >= 200 && res.status <= 299) {
         if (updatedLimit === true) {
           this.toast.add({
             severity: "success",
@@ -168,7 +167,7 @@ export const useStatusStore = defineStore("StatusStore", {
         updatedStatus
       );
 
-      if (res.status === 200) {
+      if (res.status >= 200 && res.status <= 299) {
         const data = await res.json();
         const index = this.statuses.findIndex((status) => status.id === id);
         if (index === -1) {
@@ -199,7 +198,7 @@ export const useStatusStore = defineStore("StatusStore", {
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${currentId}`,
         newId
       );
-      if (res.status === 200) {
+      if (res.status >= 200 && res.status <= 299) {
         const index = this.statuses.findIndex(
           (status) => status.id === currentId
         );
@@ -232,7 +231,7 @@ export const useStatusStore = defineStore("StatusStore", {
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         id
       );
-      if (res.status === 200) {
+      if (res.status >= 200 && res.status <= 299) {
         const index = this.statuses.findIndex((status) => status.id === id);
         if (index === -1) {
           return;
