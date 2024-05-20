@@ -60,7 +60,8 @@ const cycleSortType = () => {
 }
 
 watch(taskStore.filterStatuses, async () => {
-  await taskStore.loadFilterTasks(taskStore.filterStatuses, sortType.value)
+  const arrayStatusesId= statusStore.getStatuses.filter((status) => taskStore.filterStatuses.includes(status.name)).map((status) => status.id);
+  await taskStore.loadFilterTasks(arrayStatusesId, sortType.value)
 })
 
 const toggleSelect = () => {
