@@ -1,71 +1,69 @@
 <script setup>
-import buttonSubmit from '../components/button/Button.vue'
-import { useRouter } from 'vue-router'
-import StatusSetting from '../components/confirmModal/StatusSetting.vue'
-import { useStatusStore } from '../stores/StatusStore.js'
-import { useTaskStore } from '../stores/TaskStore.js'
-import { onMounted } from 'vue'
-import StatusButton from '../components/button/StatusButton.vue'
-import { RouterView } from 'vue-router'
-import DeleteStatus from '../components/confirmModal/DeleteStatus.vue'
-import Transfer from '../components/confirmModal/Transfer.vue'
-import { ref } from 'vue'
-import { useToast } from 'primevue/usetoast'
-const router = useRouter()
-const statusStore = useStatusStore()
-const taskStore = useTaskStore()
-const toast = useToast()
+import buttonSubmit from "../components/button/Button.vue";
+import { useRouter } from "vue-router";
+import StatusSetting from "../components/confirmModal/StatusSetting.vue";
+import { useStatusStore } from "../stores/StatusStore.js";
+import { useTaskStore } from "../stores/TaskStore.js";
+import { onMounted } from "vue";
+import StatusButton from "../components/button/StatusButton.vue";
+import { RouterView } from "vue-router";
+import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
+import Transfer from "../components/confirmModal/Transfer.vue";
+import { ref } from "vue";
+import { useToast } from "primevue/usetoast";
+const router = useRouter();
+const statusStore = useStatusStore();
+const taskStore = useTaskStore();
+const toast = useToast();
 onMounted(async () => {
-  await statusStore.loadStatuses()
-  await taskStore.loadTasks()
-})
+  await statusStore.loadStatuses();
+  await taskStore.loadTasks();
+});
 
-const numberOfTasks = ref(0)
-const currentStatus = ref('')
-const openDelete = ref(false)
-const openTransfer = ref(false)
-const openLimit = ref(false)
+const numberOfTasks = ref(0);
+const currentStatus = ref("");
+const openDelete = ref(false);
+const openTransfer = ref(false);
+const openLimit = ref(false);
 
 const openDeleteOrTransferModal = (id) => {
-  currentStatus.value = statusStore.getStatusById(id)
-  const haveTask = taskStore.getTasksByStatus(currentStatus.value.name)
-  numberOfTasks.value = haveTask.length
+  currentStatus.value = statusStore.getStatusById(id);
+  const haveTask = taskStore.getTasksByStatus(currentStatus.value.name);
+  numberOfTasks.value = haveTask.length;
   if (haveTask.length > 0) {
-    openTransfer.value = true
+    openTransfer.value = true;
   } else {
-    openDelete.value = true
+    openDelete.value = true;
   }
-}
+};
 
 const deleteStatus = (id) => {
-  statusStore.removeStatus(id)
-  openDelete.value = false
-}
+  statusStore.removeStatus(id);
+  openDelete.value = false;
+};
 const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
-  taskStore.transferTasksStatus(currentStatus, newStatusId)
+  taskStore.transferTasksStatus(currentStatus, newStatusId);
   await statusStore.transferStatus(
     currentStatusId,
     newStatusId,
     numberOfTasks.value
-  )
-  openTransfer.value = false
-  router.push({ name: 'status' })
-}
+  );
+  openTransfer.value = false;
+  router.push({ name: "status" });
+};
 
 const openLimitStatus = () => {
-  openLimit.value = true
-}
+  openLimit.value = true;
+};
 
 const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
-  await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask)
-  openLimit.value = false
-  router.push({ name: 'status' })
- 
-}
+  await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask);
+  openLimit.value = false;
+  router.push({ name: "status" });
+};
 </script>
 
 <template>
-  
   <RouterView />
   <div class="table lg:px-24 sm:px-10 overflow-hidden">
     <div class="flex justify-between py-6 px-5">
@@ -88,7 +86,11 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
           @click="router.push({ name: 'status-add' })"
           >+ Add Status</buttonSubmit
         >
-        <buttonSubmit button-type="add" @click="openLimitStatus">
+        <buttonSubmit
+          class="itbkk-status-setting"
+          button-type="add"
+          @click="openLimitStatus"
+        >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="23"
@@ -164,7 +166,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                 >
                   {{
                     !status.description
-                      ? 'No description is provided'
+                      ? "No description is provided"
                       : status.description
                   }}
                 </td>
@@ -176,7 +178,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                     @click="
                       router.push({
                         name: 'status-edit',
-                        params: { id: status.id }
+                        params: { id: status.id },
                       })
                     "
                     :buttonType="

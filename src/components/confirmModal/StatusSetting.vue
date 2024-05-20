@@ -22,7 +22,7 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
 
 <template>
   <div
-    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    class="itbkk-modal-setting fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
     <div class="bg-white p-6 rounded-lg shadow-lg w-[38%]">
       <div class="font-bold mb-4">
@@ -40,7 +40,7 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
               v-model="limitMaximumTask"
               type="checkbox"
               @click="toggleLimitStatus"
-              class="toggle toggle-success"
+              class="itbkk-limit-task toggle toggle-success"
               checked
             />
             <span class="ms-3 text-gray-900 dark:text-gray-300"
@@ -57,7 +57,7 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
             type="text"
             v-model="maximumTask"
             disabled="disabled"
-            class="itbkk-status-name bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            class="itbkk-max-task bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
         </div>
       </div>
