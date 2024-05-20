@@ -196,6 +196,8 @@ export const useStatusStore = defineStore("StatusStore", {
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${currentId}`,
         newId
       );
+
+      const newStatus = this.statuses.find((status) => status.id === newId);
       if (res.status >= 200 && res.status <= 299) {
         const index = this.statuses.findIndex(
           (status) => status.id === currentId
@@ -213,14 +215,21 @@ export const useStatusStore = defineStore("StatusStore", {
             life: 3000,
           });
         }
+      } else if (res.status === 400) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `Cannot transfer to "${newStatus.name}" status
+           since it will exceed the limit.  Please choose another status to transfer to.`,
+          life: 3000,
+        });
       } else {
         this.toast.add({
           severity: "error",
           summary: "Error",
-          detail: `An error has occurred, the status does not exist`,
+          detail: `An error has occurred, the status does not exist.`,
           life: 3000,
         });
-        router.push({ name: "task" });
       }
     },
 
