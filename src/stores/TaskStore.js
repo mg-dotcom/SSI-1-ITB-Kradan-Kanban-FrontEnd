@@ -72,7 +72,7 @@ export const useTaskStore = defineStore("TaskStore", {
         this.toast.add({
           severity: "error",
           summary: "Error",
-          detail: `An error occurred adding the task "${addedData.title}"`,
+          detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
           life: 3000,
         });
       }
@@ -127,7 +127,7 @@ export const useTaskStore = defineStore("TaskStore", {
         this.toast.add({
           severity: "error",
           summary: "Error",
-          detail: `An error has occurred, the task does not exist`,
+          detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
           life: 3000,
         });
       }

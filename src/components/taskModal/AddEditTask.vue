@@ -109,18 +109,13 @@ const save = async () => {
     const statusDetail = statusStore.getStatuses.find(
       (status) => status.id === selectedTask.value.statusId
     );
-    if (isLimit.value && limitMaximumTask.value) {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
-        life: 3000,
-      });
-      return;
-    } else {
-      await taskStore.editTask(taskId, outputTask.value, statusDetail);
+    const statusCode=await taskStore.editTask(taskId, outputTask.value, statusDetail);
+    if(statusCode===200){
       router.go(-1);
+    }else{
+      return;
     }
+      
   } else {
     outputTask.value = {
       title: selectedTask.value.title,
@@ -128,19 +123,14 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
-    if (isLimit.value && limitMaximumTask.value) {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
-        life: 3000,
-      });
-      return;
-    } else {
-      await taskStore.addTask(outputTask.value);
+    const statusCode= await taskStore.addTask(outputTask.value);
+    if(statusCode===200){
       await taskStore.loadSortTasks(sortStore.getSortType);
       router.go(-1);
+    }else{
+      return;
     }
+      
   }
 };
 
