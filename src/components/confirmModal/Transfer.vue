@@ -96,7 +96,7 @@ watch(transferTo, (newValue) => {
       <submitButton
         class="itbkk-button-confirm"
         :buttonType="
-          transferTo === '' ? 'transfer-off' : 'transfer-on'
+          transferTo === '' || isLimit? 'transfer-off' : 'transfer-on'
         "
         @click="
           $emit(
@@ -106,9 +106,9 @@ watch(transferTo, (newValue) => {
             transferTo
           )
         "
-        :disabled="transferTo === ''"
+        :disabled="transferTo === '' || isLimit"
         :class="
-          transferTo === ''
+          transferTo === '' || isLimit
             ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "
