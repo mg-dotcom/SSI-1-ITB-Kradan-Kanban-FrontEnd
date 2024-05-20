@@ -219,7 +219,7 @@ const clearFilter = () => {
                   >
                     <div class="itbkk-status-sort flex">
                       <p class="content-center">Status</p>
-                      <div @click="cycleSortType">
+                      <div @click="cycleSortType" class="cursor-pointer">
                         <img
                           src="../assets/alphabeticalSorting.svg"
                           alt=""
