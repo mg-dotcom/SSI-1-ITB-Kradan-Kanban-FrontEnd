@@ -1,9 +1,10 @@
 <script setup>
 import ConfirmModal from "./ConfirmModal.vue";
 import submitButton from "../button/Button.vue";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
-
+import { useTaskStore } from "../../stores/TaskStore.js";
+import { useToast } from "primevue/usetoast";
 defineEmits(["closeDelete", "transferStatus"]);
 const props = defineProps({
   currentStatus: {
@@ -15,10 +16,13 @@ const props = defineProps({
 });
 
 const statusStore = useStatusStore();
+const taskStore = useTaskStore();
+const toast = useToast();
 const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
 );
 
+const isLimit = ref(false);
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
 onMounted(async () => {
@@ -27,6 +31,29 @@ onMounted(async () => {
   maximumTask.value = limitOfStatus.maximumTask;
 });
 
+const transferTo = ref("");
+
+watch(transferTo, (newValue) => {
+  const status = statusStore.getStatusById(newValue);
+  const tasks = taskStore.getTasksByStatus(status.name);
+  if (limitMaximumTask.value) {
+    if (status.name !== "No Status" && status.name !== "Done") {
+      isLimit.value = tasks.length + props.numberOfTasks >= maximumTask.value;
+    } else {
+      isLimit.value = false;
+    }
+
+    if (isLimit.value) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: `Cannot transfer to "${status.name}" status
+ since it will exceed the limit.  Please choose another status to transfer to.`,
+        life: 3000,
+      });
+    }
+  }
+});
 </script>
 
 <template>
@@ -37,7 +64,7 @@ onMounted(async () => {
     <template #question>
       <p class="itbkk-message">
         There is <span class="font-bold">{{ numberOfTasks }}</span> task
-        associated with the Doing status.
+        associated with the {{ currentStatus.name }} status.
       </p>
       <div class="flex">
         <p class="content-center">Transfer to</p>
