@@ -8,11 +8,10 @@ const formatDate = (date) => {
 
 const sortTasks = (tasks, sortType) => {
   if (sortType === 'ascending') {
-    return tasks.sort((a, b) => a.status.name.localeCompare(b.status.name))
+    tasks.sort((a, b) => a.status.name.localeCompare(b.status.name))
   } else if (sortType === 'descending') {
-    return tasks.sort((a, b) => b.status.name.localeCompare(a.status.name))
+    tasks.sort((a, b) => b.status.name.localeCompare(a.status.name))
   }
-  return tasks
 }
 
 export { formatDate, localTimeZone, sortTasks }

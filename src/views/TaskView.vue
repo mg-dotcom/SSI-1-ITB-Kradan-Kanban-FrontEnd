@@ -1,115 +1,113 @@
 <script setup>
-import { onMounted, reactive, ref, watch, computed } from "vue";
-import { initFlowbite, initDropdowns } from "flowbite";
-import StatusButton from "../components/button/StatusButton.vue";
-import DeleteModal from "../components/confirmModal/DeleteTask.vue";
-import { useRouter, useRoute, RouterView } from "vue-router";
-import buttonSubmit from "../components/button/Button.vue";
-import { useTaskStore } from "../stores/TaskStore.js";
-import { useStatusStore } from "../stores/StatusStore.js";
-import { useSortStore } from "../stores/SortStore.js";
-import Toast from "primevue/toast";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-const router = useRouter();
-const selectedId = ref("");
-const selectedIndex = ref(0);
-const taskStore = useTaskStore();
-const statusStore = useStatusStore();
-const sortStore = useSortStore();
-const sortTypes = ["default", "ascending", "descending"];
-const sortType = ref("default");
+import { onMounted, reactive, ref, watch } from 'vue'
+import { initFlowbite, initDropdowns } from 'flowbite'
+import StatusButton from '../components/button/StatusButton.vue'
+import DeleteModal from '../components/confirmModal/DeleteTask.vue'
+import { useRouter, useRoute, RouterView } from 'vue-router'
+import buttonSubmit from '../components/button/Button.vue'
+import { useTaskStore } from '../stores/TaskStore.js'
+import { useStatusStore } from '../stores/StatusStore.js'
+import { useSortStore } from '../stores/SortStore.js'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const router = useRouter()
+const selectedId = ref('')
+const selectedIndex = ref(0)
+const taskStore = useTaskStore()
+const statusStore = useStatusStore()
+const sortStore = useSortStore()
+const sortTypes = ['default', 'ascending', 'descending']
+const sortType = ref('default')
 
 onMounted(async () => {
-  initFlowbite();
-  initDropdowns();
-  await taskStore.loadTasks();
-  await statusStore.loadStatuses();
-});
+  initFlowbite()
+  initDropdowns()
+  await taskStore.loadTasks()
+  await statusStore.loadStatuses()
+})
 
 const page = reactive({
-  task: true,
-});
+  task: true
+})
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
   delete: false,
-  limitStatus: false,
-});
+  limitStatus: false
+})
 
 const showOptionEditDelete = (taskId) => {
-  selectedId.value = taskId;
-  popup.optionEditDelete = !popup.optionEditDelete;
-};
+  selectedId.value = taskId
+  popup.optionEditDelete = !popup.optionEditDelete
+}
 
 const openDetail = (id) => {
-  popup.optionEditDelete = false;
-  router.push({ name: "task-detail", params: { id: id } });
-};
+  popup.optionEditDelete = false
+  router.push({ name: 'task-detail', params: { id: id } })
+}
 
 const openDelete = (id, index) => {
-  selectedId.value = id;
-  selectedIndex.value = index;
-  popup.delete = true;
-};
+  selectedId.value = id
+  selectedIndex.value = index
+  popup.delete = true
+}
 
 const cycleSortType = () => {
-  const currentIndex = sortTypes.indexOf(sortType.value);
-  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length];
-  console.log(sortType.value);
-  taskStore.loadSortTasks(sortType.value);
-  sortStore.setSortType(sortType.value);
-  console.log(taskStore.getTasks);
-};
+  const currentIndex = sortTypes.indexOf(sortType.value)
+  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
+  taskStore.loadSortTasks(sortType.value)
+  sortStore.setSortType(sortType.value)
+}
 
-const filterStatuses = ref([]);
-
-watch(filterStatuses, async (newfilterStatuses) => {
-  console.log(newfilterStatuses);
-  await taskStore.loadFilterTasks(newfilterStatuses, sortType.value);
-});
-
+watch(taskStore.filterStatuses, async () => {
+  await taskStore.loadFilterTasks(taskStore.filterStatuses, sortType.value)
+})
 
 const toggleSelect = () => {
-  const selectBtn = document.querySelector(".select-btn");
-  selectBtn.classList.toggle("open");
-  showList.value = !showList.value;
-};
+  showList.value = !showList.value
+}
 
-const showList = ref(false);
+const showList = ref(false)
 
 const toggleItem = (id) => {
-  const listItems = document.querySelectorAll(".item");
-  const index = statusStore.getStatuses.findIndex((status) => status.id === id);
-  const selectedStatus = statusStore.getStatuses[index];
-  const listItem = listItems[index];
+  const listItems = document.querySelectorAll('.item')
+  const index = statusStore.getStatuses.findIndex((status) => status.id === id)
+  const selectedStatus = statusStore.getStatuses[index]
+  const listItem = listItems[index]
 
-  if (filterStatuses.value.includes(selectedStatus.name)) {
-    filterStatuses.value = filterStatuses.value.filter(
-      (item) => item !== selectedStatus.name
-    );
-    console.log(filterStatuses.value);
+  if (taskStore.filterStatuses.includes(selectedStatus.name)) {
+    taskStore.filterStatuses.splice(
+      taskStore.filterStatuses.indexOf(selectedStatus.name),
+      1
+    )
   } else {
-    filterStatuses.value = [...filterStatuses.value, selectedStatus.name];
-    listItem.classList.add("checked");
-    console.log(filterStatuses.value);
+    taskStore.filterStatuses.push(selectedStatus.name)
+    listItem.classList.add('checked')
   }
-};
+}
 
 const clearEachStatus = (statusName) => {
-  filterStatuses.value = filterStatuses.value.filter(
-    (status) => status !== statusName
-  );
-};
+  taskStore.filterStatuses.splice(
+    taskStore.filterStatuses.indexOf(statusName),
+    1
+  )
+}
 
 const clearFilter = () => {
-  filterStatuses.value = [];
-};
+  taskStore.filterStatuses.length = 0
+}
 </script>
 
 <template>
   <RouterView />
-  <div class="h-screen w-full">
+  <div
+    class="h-screen w-full"
+    @click="
+      () => {
+        showList = false
+      }
+    "
+  >
     <div
       class="text-xl font-bold flex items-center text-blue pt-7 px-28"
       @click="router.push({ name: 'task' })"
@@ -125,25 +123,29 @@ const clearFilter = () => {
       <div class="container z-30">
         <div
           class="select-btn"
-          @click="toggleSelect"
+          :class="showList ? 'open' : ''"
+          @click.stop="toggleSelect"
           :style="{
-            height: filterStatuses.length > 2 ? 'auto' : '2.5rem',
+            height: taskStore.filterStatuses.length > 2 ? 'auto' : '2.5rem'
           }"
         >
           <StatusButton
-            v-for="status in filterStatuses"
+            v-for="status in taskStore.filterStatuses"
             :status-color="statusStore.getStatusColor(status)"
             :status-name="status"
             :key="status"
-            :filterStatuses="filterStatuses"
+            :filterStatuses="taskStore.filterStatuses"
             @clear-status="clearEachStatus"
           >
             <p>{{ status }}</p>
           </StatusButton>
 
-          <span class="text-gray-400" v-if="filterStatuses.length === 0">
+          <span
+            class="text-gray-400"
+            v-if="taskStore.filterStatuses.length === 0"
+          >
             Filter by
-            {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
+            {{ statusStore.getStatuses.length > 1 ? 'Statuses' : 'Status' }}
           </span>
           <span class="close-icon z-40" @click="clearFilter">
             <font-awesome-icon icon="fa-solid fa-xmark" />
@@ -155,14 +157,13 @@ const clearFilter = () => {
             v-for="(status, index) in statusStore.getStatuses"
             class="item"
             :key="status.id"
-            @click="toggleItem(status.id)"
+            @click.stop="toggleItem(status.id)"
           >
             <input
               type="checkbox"
               class="checkbox"
-              v-model="filterStatuses"
+              v-model="taskStore.filterStatuses"
               :value="status.name"
-              @click="toggleItem(status.id)"
             />
             <span class="item-text">{{ status.name }}</span>
           </li>
@@ -266,7 +267,7 @@ const clearFilter = () => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || "Unassigned" }}
+                    {{ task.assignees || 'Unassigned' }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
@@ -311,7 +312,7 @@ const clearFilter = () => {
                                 @click="
                                   router.push({
                                     name: 'task-edit',
-                                    params: { id: task.id },
+                                    params: { id: task.id }
                                   })
                                 "
                               >
