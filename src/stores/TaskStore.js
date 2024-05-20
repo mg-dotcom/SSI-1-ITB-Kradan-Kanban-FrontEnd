@@ -155,15 +155,17 @@ export const useTaskStore = defineStore("TaskStore", {
         return sortTasks(this.tasks, sortType);
       }
     },
-    async loadFilterTasks(arrayOfStatusesId, sortType) {
+    async loadFilterTasks(arrayStatusesName, sortType) {
       const data = await fetchFilterTasks(
         `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-        arrayOfStatusesId
+        arrayStatusesName
       );
-      if (arrayOfStatusesId.length === 0) {
+      this.tasks = data;
+      if (arrayStatusesName.length === 0) {
+        // this.loadTasks();
         return sortTasks(this.tasks, sortType);
       }
-      this.tasks = data;
+      
       return sortTasks(this.tasks, sortType);
     },
   },
