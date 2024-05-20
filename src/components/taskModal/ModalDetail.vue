@@ -1,9 +1,11 @@
 <script setup>
 import buttonSubmit from "../button/Button.vue";
 import { defineProps } from "vue";
+
 const props = defineProps({
   selectedTask: Object,
 });
+
 </script>
 
 <template>

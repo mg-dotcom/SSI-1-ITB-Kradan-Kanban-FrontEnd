@@ -1,7 +1,6 @@
 <script setup>
 import submitButton from "../button/Button.vue";
-import { ref, defineProps } from "vue";
-import { useRouter } from "vue-router";
+import { defineProps } from "vue";
 import { useTaskStore } from "../../stores/TaskStore.js";
 
 const props = defineProps({

@@ -7,8 +7,8 @@ import { useStatusStore } from "../../stores/StatusStore.js";
 import { useSortStore } from "../../stores/SortStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
-import StatusButton from "../button/StatusButton.vue";
 import { useToast } from "primevue/usetoast";
+
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
 const sortStore = useSortStore();
@@ -17,7 +17,6 @@ const route = useRoute();
 const taskId = Number(route.params.id);
 const isChanged = ref(false);
 const mode = route.name === "task-add" ? "add" : "edit";
-const id = 1;
 const limitMaximumTask = ref(false);
 const maximumTask = ref(0);
 const toast = useToast();
@@ -44,13 +43,12 @@ const input = ref({});
 
 onMounted(async () => {
   await statusStore.loadStatuses();
-  const settingDetail = await statusStore.loadStatusSetting(id);
+  const settingDetail = await statusStore.loadStatusSetting();
   limitMaximumTask.value = settingDetail.limitMaximumTask;
   maximumTask.value = settingDetail.maximumTask;
 
   if (mode == "edit") {
     const taskDetail = await taskStore.loadTaskDetails(taskId);
-    console.log(taskDetail);
     selectedTask.value = taskDetail;
     selectedTask.value.statusId = taskDetail.status.id;
     selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
@@ -68,7 +66,6 @@ watch(
     const status = statusStore.getStatusById(newValue);
     const tasks = taskStore.getTasksByStatus(status.name);
     if (limitMaximumTask.value) {
-      //check only if user turn on limit
       isLimit.value = tasks.length >= maximumTask.value;
     }
   }
@@ -138,7 +135,6 @@ const save = async () => {
         detail: `Can not Add Task since it will exceed the limit. Please choose another status to add task.`,
         life: 3000,
       });
-      // router.go(-1)
       return;
     } else {
       await taskStore.addTask(outputTask.value);

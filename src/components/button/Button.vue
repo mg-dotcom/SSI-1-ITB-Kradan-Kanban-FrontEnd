@@ -21,7 +21,6 @@ const props = defineProps({
 </script>
 
 <template>
-  <!-- Button element with dynamic class bindings based on buttonType prop -->
   <button
     :class="{
       'fancy-btn': true,
@@ -43,7 +42,6 @@ const props = defineProps({
         buttonType === 'transfer-off',
     }"
   >
-    <!-- Default content if slot is not provided -->
     <slot>No Status</slot>
   </button>
 </template>
@@ -52,7 +50,7 @@ const props = defineProps({
 .fancy-btn {
   padding: 5px 10px;
   margin: 5px;
-  border-radius: 8px; /* Adding border-radius */
+  border-radius: 8px;
   height: 35px;
 }
 </style>

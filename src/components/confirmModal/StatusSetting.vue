@@ -2,22 +2,19 @@
 import submitButton from "../button/Button.vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { ref, onMounted } from "vue";
-import router from "@/router";
 
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
-const id = 1;
 const statusStore = useStatusStore();
 
 onMounted(async () => {
-  const settingDetail = await statusStore.loadStatusSetting(id);
+  const settingDetail = await statusStore.loadStatusSetting();
   limitMaximumTask.value = settingDetail.limitMaximumTask;
   maximumTask.value = settingDetail.maximumTask;
 });
 
 const toggleLimitStatus = () => {
   limitMaximumTask.value = !limitMaximumTask.value;
-  console.log("limitStatus", limitMaximumTask.value);
 };
 
 defineEmits(["closeLimitStatus", "saveLimitStatus"]);
@@ -74,7 +71,7 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
         <submitButton
           buttonType="ok"
           class="itbkk-button-confirm"
-          @click="$emit('saveLimitStatus', id, limitMaximumTask, maximumTask)"
+          @click="$emit('saveLimitStatus', limitMaximumTask, maximumTask)"
           >Save</submitButton
         >
       </div>

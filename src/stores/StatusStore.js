@@ -43,10 +43,9 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
-    async loadStatusSetting(id) {
+    async loadStatusSetting() {
       const data = await fetchStatusSetting(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
-        id
+        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
       );
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses setting");
@@ -55,10 +54,9 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
-    async editStatusSetting(id, updatedLimit, maximumTask) {
+    async editStatusSetting(updatedLimit, maximumTask) {
       const res = await updateStatusSetting(
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
-        id,
         updatedLimit
       );
       if (res.status >= 200 && res.status <= 299) {

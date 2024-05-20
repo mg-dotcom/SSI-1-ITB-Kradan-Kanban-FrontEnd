@@ -50,15 +50,15 @@ const updateStatus = async (url, id, updatedStatus) => {
   return res;
 };
 
-const fetchStatusSetting = async (url,id) => {
-  const res = await fetch(`${url}/${id}/maximum-task`);
+const fetchStatusSetting = async (url) => {
+  const res = await fetch(`${url}/1/maximum-task`);
   console.log(res);
   const data = await res.json();
   return data;
 };
 
-const updateStatusSetting = async (url, id, updatedLimit) => {
-  const res = await fetch(`${url}/${id}/maximum-task`, {
+const updateStatusSetting = async (url, updatedLimit) => {
+  const res = await fetch(`${url}/1/maximum-task`, {
     method: "PATCH",
     headers: {
       "content-type": "application/json",

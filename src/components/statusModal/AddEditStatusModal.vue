@@ -1,6 +1,6 @@
 <script setup>
 import buttonSubmit from "../button/Button.vue";
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
@@ -92,22 +92,6 @@ watch(
   },
   { deep: true }
 );
-
-// ห้ามลบบบบบบบบบบบบบบบบ !!!! เอาไว้ validate
-// const isExistingName = computed(() => {
-//   if (mode === "add") {
-//     return statusStore.getStatuses.some(
-//       (status) => status.name === inputStatus.value.name
-//     );
-//   }
-//   if (mode === "edit") {
-//     return statusStore.getStatuses.some(
-//       (status) =>
-//         status.name === inputStatus.value.name &&
-//         status.id !== inputStatus.value.id
-//     );
-//   }
-// });
 
 const save = async () => {
   if (mode === "edit") {

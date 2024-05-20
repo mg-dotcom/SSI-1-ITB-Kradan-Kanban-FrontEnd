@@ -20,7 +20,6 @@ import { RouterView } from "vue-router";
       </div>
     </div>
     <RouterView />
-    <!-- <StatusSetting/> -->
   </div>
 </template>
 
