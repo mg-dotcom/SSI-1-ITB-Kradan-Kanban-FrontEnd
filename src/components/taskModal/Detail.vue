@@ -1,30 +1,29 @@
 <script setup>
-import ModalDetail from "./ModalDetail.vue";
-import buttonSubmit from "../button/Button.vue";
-import StatusButton from "../button/StatusButton.vue";
-import { useStatusStore } from "../../stores/StatusStore.js";
-import { useTaskStore } from "../../stores/TaskStore.js";
-import { ref } from "vue";
-import { useRoute } from "vue-router";
-import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
-import { onMounted } from "vue";
-import router from "@/router";
+import ModalDetail from './ModalDetail.vue'
+import buttonSubmit from '../button/Button.vue'
+import StatusButton from '../button/StatusButton.vue'
+import { useStatusStore } from '../../stores/StatusStore.js'
+import { useTaskStore } from '../../stores/TaskStore.js'
+import { ref, onMounted } from 'vue'
+import { useRoute , useRouter } from 'vue-router'
+import { localTimeZone, formatDate } from '../../libs/libsUtil.js'
 
-const route = useRoute();
-const taskStore = useTaskStore();
-const statusStore = useStatusStore();
+const route = useRoute()
+const router = useRouter()
+const taskStore = useTaskStore()
+const statusStore = useStatusStore()
 
-const taskId = route.params.id;
+const taskId = route.params.id
 
-const selectedTask = ref({});
+const selectedTask = ref({})
 
 onMounted(async () => {
-  const taskDetail = await taskStore.loadTaskDetails(taskId);
-  selectedTask.value = taskDetail;
-  selectedTask.value.status = taskDetail.status.name;
-  selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
-  selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
-});
+  const taskDetail = await taskStore.loadTaskDetails(taskId)
+  selectedTask.value = taskDetail
+  selectedTask.value.status = taskDetail.status.name
+  selectedTask.value.createdOn = formatDate(taskDetail.createdOn)
+  selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn)
+})
 </script>
 
 <template>
@@ -38,14 +37,14 @@ onMounted(async () => {
       <div class="itbkk-description">
         {{
           !selectedTask.description
-            ? "No Description Provided"
+            ? 'No Description Provided'
             : selectedTask.description
         }}
       </div>
     </template>
     <template #assignees>
       <div class="itbkk-assignees">
-        {{ !selectedTask.assignees ? "Unassigned" : selectedTask.assignees }}
+        {{ !selectedTask.assignees ? 'Unassigned' : selectedTask.assignees }}
       </div>
     </template>
     <template #status>

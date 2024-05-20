@@ -1,4 +1,3 @@
-import { useRouter } from "vue-router";
 const fetchAllStatus = async (url) => {
   const res = await fetch(`${url}`);
   const data = await res.json();

@@ -1,6 +1,6 @@
 <script setup>
 import buttonSubmit from '../components/button/Button.vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import StatusSetting from '../components/confirmModal/StatusSetting.vue'
 import { useStatusStore } from '../stores/StatusStore.js'
 import { useTaskStore } from '../stores/TaskStore.js'

@@ -7,8 +7,7 @@ import { useStatusStore } from "../../stores/StatusStore.js";
 import { useSortStore } from "../../stores/SortStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
-import { useToast } from "primevue/usetoast";
-
+const emit = defineEmits(["addNewTask", "editNewTask"]);
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
 const sortStore = useSortStore();
@@ -18,8 +17,7 @@ const taskId = Number(route.params.id);
 const isChanged = ref(false);
 const mode = route.name === "task-add" ? "add" : "edit";
 const limitMaximumTask = ref(false);
-const maximumTask = ref(0);
-const toast = useToast();
+const maximumTask = ref(10);
 
 const selectedTask = ref({
   title: "",
@@ -40,7 +38,7 @@ const outputTask = ref({
 });
 
 const input = ref({});
-
+const isLimit = ref(false);
 onMounted(async () => {
   await statusStore.loadStatuses();
   const settingDetail = await statusStore.loadStatusSetting();
@@ -59,7 +57,7 @@ onMounted(async () => {
   }
 });
 
-const isLimit = ref(false);
+
 watch(
   () => selectedTask.value.statusId,
   (newValue) => {
@@ -136,7 +134,6 @@ const save = async () => {
   }
 };
 
-const emit = defineEmits(["addNewTask", "editNewTask"]);
 </script>
 
 <template>
