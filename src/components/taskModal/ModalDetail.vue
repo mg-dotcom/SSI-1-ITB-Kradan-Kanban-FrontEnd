@@ -1,11 +1,10 @@
 <script setup>
-import buttonSubmit from "../button/Button.vue";
-import { defineProps } from "vue";
+import buttonSubmit from '../button/Button.vue'
+import { defineProps } from 'vue'
 
 const props = defineProps({
-  selectedTask: Object,
-});
-
+  selectedTask: Object
+})
 </script>
 
 <template>
@@ -24,7 +23,7 @@ const props = defineProps({
       <div
         class="bg-white w-full h-full border-b border-t border-[#CACACA] py-6 px-8"
       >
-        <slot></slot>
+      <slot></slot>
 
         <div class="w-full h-full flex justify-between">
           <div class="flex flex-col">
