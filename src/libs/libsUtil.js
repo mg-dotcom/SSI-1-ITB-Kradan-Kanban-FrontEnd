@@ -8,9 +8,9 @@ const formatDate = (date) => {
 
 const sortTasks = (tasks, sortType) => {
   if (sortType === 'ascending') {
-    tasks.sort((a, b) => a.status.name.localeCompare(b.status.name))
+    tasks.sort((a, b) => a.status.localeCompare(b.status))
   } else if (sortType === 'descending') {
-    tasks.sort((a, b) => b.status.name.localeCompare(a.status.name))
+    tasks.sort((a, b) => b.status.localeCompare(a.status))
   }
 }
 

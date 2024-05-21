@@ -1,104 +1,101 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from "vue";
-import { initFlowbite, initDropdowns } from "flowbite";
-import StatusButton from "../components/button/StatusButton.vue";
-import DeleteModal from "../components/confirmModal/DeleteTask.vue";
-import { useRouter, RouterView } from "vue-router";
-import buttonSubmit from "../components/button/Button.vue";
-import { useTaskStore } from "../stores/TaskStore.js";
-import { useStatusStore } from "../stores/StatusStore.js";
-import { useSortStore } from "../stores/SortStore.js";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-const router = useRouter();
-const selectedId = ref("");
-const selectedIndex = ref(0);
-const taskStore = useTaskStore();
-const statusStore = useStatusStore();
-const sortStore = useSortStore();
-const sortTypes = ["default", "ascending", "descending"];
-const sortType = ref("default");
+import { onMounted, reactive, ref, watch } from 'vue'
+import { initFlowbite, initDropdowns } from 'flowbite'
+import StatusButton from '../components/button/StatusButton.vue'
+import DeleteModal from '../components/confirmModal/DeleteTask.vue'
+import { useRouter, RouterView } from 'vue-router'
+import buttonSubmit from '../components/button/Button.vue'
+import { useTaskStore } from '../stores/TaskStore.js'
+import { useStatusStore } from '../stores/StatusStore.js'
+import { useSortStore } from '../stores/SortStore.js'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const router = useRouter()
+const selectedId = ref('')
+const selectedIndex = ref(0)
+const taskStore = useTaskStore()
+const statusStore = useStatusStore()
+const sortStore = useSortStore()
+const sortTypes = ['default', 'ascending', 'descending']
+const sortType = ref('default')
 
 onMounted(async () => {
-  initFlowbite();
-  initDropdowns();
-  await taskStore.loadTasks();
-  await statusStore.loadStatuses();
-});
+  initFlowbite()
+  initDropdowns()
+  await taskStore.loadTasks()
+  await statusStore.loadStatuses()
+})
 
 const page = reactive({
-  task: true,
-});
+  task: true
+})
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
   delete: false,
-  limitStatus: false,
-});
+  limitStatus: false
+})
 
 const showOptionEditDelete = (taskId) => {
-  selectedId.value = taskId;
-  popup.optionEditDelete = !popup.optionEditDelete;
-};
+  selectedId.value = taskId
+  popup.optionEditDelete = !popup.optionEditDelete
+}
 
 const openDetail = (id) => {
-  popup.optionEditDelete = false;
-  router.push({ name: "task-detail", params: { id: id } });
-};
+  popup.optionEditDelete = false
+  router.push({ name: 'task-detail', params: { id: id } })
+}
 
 const openDelete = (id, index) => {
-  selectedId.value = id;
-  selectedIndex.value = index;
-  popup.delete = true;
-};
+  selectedId.value = id
+  selectedIndex.value = index
+  popup.delete = true
+}
 
 const cycleSortType = () => {
-  const currentIndex = sortTypes.indexOf(sortType.value);
-  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length];
-  taskStore.loadSortTasks(sortType.value);
-  sortStore.setSortType(sortType.value);
-};
+  const currentIndex = sortTypes.indexOf(sortType.value)
+  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
+  taskStore.loadSortTasks(sortType.value)
+  sortStore.setSortType(sortType.value)
+}
 
 watch(taskStore.filterStatuses, async () => {
-  const arrayStatusesId = statusStore.getStatuses
-    .filter((status) => taskStore.filterStatuses.includes(status.name))
-    .map((status) => status.id);
-  await taskStore.loadFilterTasks(arrayStatusesId, sortType.value);
-});
+  await taskStore.loadFilterTasks(taskStore.filterStatuses, sortType.value)
+})
 
 const toggleSelect = () => {
-  showList.value = !showList.value;
-};
+  showList.value = !showList.value
+}
 
-const showList = ref(false);
+const showList = ref(false)
 
 const toggleItem = (id) => {
-  const listItems = document.querySelectorAll(".item");
-  const index = statusStore.getStatuses.findIndex((status) => status.id === id);
-  const selectedStatus = statusStore.getStatuses[index];
-  const listItem = listItems[index];
+  const listItems = document.querySelectorAll('.item')
+  const index = statusStore.getStatuses.findIndex((status) => status.id === id)
+  const selectedStatus = statusStore.getStatuses[index]
+  const listItem = listItems[index]
 
   if (taskStore.filterStatuses.includes(selectedStatus.name)) {
     taskStore.filterStatuses.splice(
       taskStore.filterStatuses.indexOf(selectedStatus.name),
       1
-    );
+    )
   } else {
-    taskStore.filterStatuses.push(selectedStatus.name);
-    listItem.classList.add("checked");
+    taskStore.filterStatuses.push(selectedStatus.name)
+    listItem.classList.add('checked')
   }
-};
+}
 
 const clearEachStatus = (statusName) => {
   taskStore.filterStatuses.splice(
     taskStore.filterStatuses.indexOf(statusName),
     1
-  );
-};
+  )
+}
 
 const clearFilter = () => {
-  taskStore.filterStatuses.length = 0;
-};
+  taskStore.filterStatuses.length = 0
+}
 </script>
 
 <template>
@@ -107,7 +104,7 @@ const clearFilter = () => {
     class="h-screen w-full"
     @click="
       () => {
-        showList = false;
+        showList = false
       }
     "
   >
@@ -123,13 +120,13 @@ const clearFilter = () => {
       >
     </div>
     <div class="flex justify-between py-6 px-28">
-      <div class="itbkk-status-filter container z-30">
+      <div class="container z-30">
         <div
-          class="select-btn"
+          class="itbkk-status-filter select-btn"
           :class="showList ? 'open' : ''"
           @click.stop="toggleSelect"
           :style="{
-            height: taskStore.filterStatuses.length > 2 ? 'auto' : '2.5rem',
+            height: taskStore.filterStatuses.length > 2 ? 'auto' : '2.5rem'
           }"
         >
           <StatusButton
@@ -149,7 +146,7 @@ const clearFilter = () => {
             v-if="taskStore.filterStatuses.length === 0"
           >
             Filter by
-            {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
+            {{ statusStore.getStatuses.length > 1 ? 'Statuses' : 'Status' }}
           </span>
           <span class="close-icon itbkk-filter-clear z-40" @click="clearFilter">
             <font-awesome-icon icon="fa-solid fa-xmark" />
@@ -157,20 +154,22 @@ const clearFilter = () => {
         </div>
 
         <ul class="list-items" v-if="showList">
-          <li
-            v-for="(status, index) in statusStore.getStatuses"
-            class="item"
-            :key="status.id"
-            @click.stop="toggleItem(status.id)"
-          >
-            <input
-              type="checkbox"
-              class="checkbox"
-              v-model="taskStore.filterStatuses"
-              :value="status.name"
-            />
-            <span class="item-text">{{ status.name }}</span>
-          </li>
+          <button>
+            <li
+              v-for="(status, index) in statusStore.getStatuses"
+              class="item"
+              :key="status.id"
+              @click.stop="toggleItem(status.id)"
+            >
+              <input
+                type="checkbox"
+                class="checkbox"
+                v-model="taskStore.filterStatuses"
+                :value="status.name"
+              />
+              <span class="item-text">{{ status.name }}</span>
+            </li>
+          </button>
         </ul>
       </div>
       <div class="flex">
@@ -221,25 +220,25 @@ const clearFilter = () => {
                   <th
                     class="w-[18%] px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
-                    <div class="itbkk-status-sort flex">
+                    <div class="flex">
                       <p class="content-center">Status</p>
                       <div @click="cycleSortType" class="cursor-pointer">
                         <img
                           src="../assets/alphabeticalSorting.svg"
                           alt=""
-                          class="mx-5 w-5 content-center"
+                          class="itbkk-status-sort mx-5 w-5 content-center"
                           v-if="sortType === 'default'"
                         />
                         <img
                           src="../assets/alphabeticalSorting-green.svg"
                           alt=""
-                          class="mx-5 w-5 content-center"
+                          class="itbkk-status-sort mx-5 w-5 content-center"
                           v-if="sortType === 'ascending'"
                         />
                         <img
                           src="../assets/alphabeticalReverse.svg"
                           alt=""
-                          class="mx-5 w-5 content-center"
+                          class="itbkk-status-sort mx-5 w-5 content-center"
                           v-if="sortType === 'descending'"
                         />
                       </div>
@@ -271,19 +270,18 @@ const clearFilter = () => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || "Unassigned" }}
+                    {{ task.assignees || 'Unassigned' }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <div class="flex justify-between items-center text-center">
                       <StatusButton
-                        :statusColor="
-                          statusStore.getStatusColor(task.status.name)
-                        "
-                        :statusName="task.status.name"
+                        class="itbkk-status"
+                        :statusColor="statusStore.getStatusColor(task.status)"
+                        :statusName="task.status"
                       >
-                        {{ task.status.name }}
+                        {{ task.status }}
                       </StatusButton>
                       <div>
                         <div
@@ -316,7 +314,7 @@ const clearFilter = () => {
                                 @click="
                                   router.push({
                                     name: 'task-edit',
-                                    params: { id: task.id },
+                                    params: { id: task.id }
                                   })
                                 "
                               >
