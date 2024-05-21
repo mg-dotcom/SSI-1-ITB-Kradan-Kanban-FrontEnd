@@ -64,7 +64,7 @@ watch(
     const status = statusStore.getStatusById(newValue);
     const tasks = taskStore.getTasksByStatus(status.name);
     if (limitMaximumTask.value) {
-      isLimit.value = tasks.length >= maximumTask.value;
+      isLimit.value = tasks.length > maximumTask.value;
     }
   }
 );
