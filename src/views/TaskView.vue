@@ -123,7 +123,7 @@ const clearFilter = () => {
       >
     </div>
     <div class="flex justify-between py-6 px-28">
-      <div class="container itbkk-status-filter z-30">
+      <div class="itbkk-status-filter container z-30">
         <div
           class="select-btn"
           :class="showList ? 'open' : ''"
