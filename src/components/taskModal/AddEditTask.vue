@@ -38,7 +38,6 @@ const outputTask = ref({
 });
 
 const input = ref({});
-const isLimit = ref(false);
 onMounted(async () => {
   await statusStore.loadStatuses();
   const settingDetail = await statusStore.loadStatusSetting();
@@ -56,18 +55,6 @@ onMounted(async () => {
     selectedTask.value.statusId = statusStore.getStatuses[0].id;
   }
 });
-
-
-watch(
-  () => selectedTask.value.statusId,
-  (newValue) => {
-    const status = statusStore.getStatusById(newValue);
-    const tasks = taskStore.getTasksByStatus(status.name);
-    if (limitMaximumTask.value) {
-      isLimit.value = tasks.length > maximumTask.value;
-    }
-  }
-);
 
 watch(
   selectedTask,

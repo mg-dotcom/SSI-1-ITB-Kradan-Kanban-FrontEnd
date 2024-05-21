@@ -18,7 +18,7 @@ const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
 );
 
-const isLimit = ref(false);
+
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
 onMounted(async () => {
@@ -71,7 +71,7 @@ const transferTo = ref("");
       <submitButton
         class="itbkk-button-confirm"
         :buttonType="
-          transferTo === '' || isLimit? 'transfer-off' : 'transfer-on'
+          transferTo === '' ? 'transfer-off' : 'transfer-on'
         "
         @click="
           $emit(
@@ -81,9 +81,9 @@ const transferTo = ref("");
             transferTo
           )
         "
-        :disabled="transferTo === '' || isLimit"
+        :disabled="transferTo === '' "
         :class="
-          transferTo === '' || isLimit
+          transferTo === '' 
             ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "
