@@ -154,22 +154,20 @@ const clearFilter = () => {
         </div>
 
         <ul class="list-items" v-if="showList">
-          <button>
-            <li
-              v-for="(status, index) in statusStore.getStatuses"
-              class="item"
-              :key="status.id"
-              @click.stop="toggleItem(status.id)"
-            >
-              <input
-                type="checkbox"
-                class="checkbox"
-                v-model="taskStore.filterStatuses"
-                :value="status.name"
-              />
-              <span class="item-text">{{ status.name }}</span>
-            </li>
-          </button>
+          <li
+            v-for="(status, index) in statusStore.getStatuses"
+            class="item itbkk-status-choice"
+            :key="status.id"
+            @click.stop="toggleItem(status.id)"
+          >
+            <input
+              type="checkbox"
+              class="checkbox"
+              v-model="taskStore.filterStatuses"
+              :value="status.name"
+            />
+            <span class="item-text">{{ status.name }}</span>
+          </li>
         </ul>
       </div>
       <div class="flex">
