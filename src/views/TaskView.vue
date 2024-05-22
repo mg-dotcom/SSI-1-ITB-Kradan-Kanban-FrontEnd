@@ -1,23 +1,23 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
-import { initFlowbite, initDropdowns } from 'flowbite'
-import StatusButton from '../components/button/StatusButton.vue'
-import DeleteModal from '../components/confirmModal/DeleteTask.vue'
-import StatusSetting from '../components/confirmModal/StatusSetting.vue'
-import { useRouter, RouterView } from 'vue-router'
-import buttonSubmit from '../components/button/Button.vue'
-import { useTaskStore } from '../stores/TaskStore.js'
-import { useStatusStore } from '../stores/StatusStore.js'
-import { useSortStore } from '../stores/SortStore.js'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-const router = useRouter()
-const selectedId = ref('')
-const selectedIndex = ref(0)
-const taskStore = useTaskStore()
-const statusStore = useStatusStore()
-const sortStore = useSortStore()
-const sortTypes = ['default', 'ascending', 'descending']
-const sortType = ref('default')
+import { onMounted, reactive, ref, watch } from "vue";
+import { initFlowbite, initDropdowns } from "flowbite";
+import StatusButton from "../components/button/StatusButton.vue";
+import DeleteModal from "../components/confirmModal/DeleteTask.vue";
+import StatusSetting from "../components/confirmModal/StatusSetting.vue";
+import { useRouter, RouterView } from "vue-router";
+import buttonSubmit from "../components/button/Button.vue";
+import { useTaskStore } from "../stores/TaskStore.js";
+import { useStatusStore } from "../stores/StatusStore.js";
+import { useSortStore } from "../stores/SortStore.js";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+const router = useRouter();
+const selectedId = ref("");
+const selectedIndex = ref(0);
+const taskStore = useTaskStore();
+const statusStore = useStatusStore();
+const sortStore = useSortStore();
+const sortTypes = ["default", "ascending", "descending"];
+const sortType = ref("default");
 const openLimit = ref(false);
 
 onMounted(async () => {
@@ -97,8 +97,9 @@ const clearEachStatus = (statusName) => {
 };
 
 const clearFilter = () => {
-  taskStore.filterStatuses.length = 0
-}
+  taskStore.filterStatuses.length = 0;
+  showList.value = false;
+};
 
 const openLimitStatus = () => {
   openLimit.value = true;
@@ -108,9 +109,6 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask);
   openLimit.value = false;
   router.push({ name: "task" });
-};
-  taskStore.filterStatuses.length = 0;
-  showList.value = false;
 };
 </script>
 
