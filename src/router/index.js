@@ -21,16 +21,6 @@ const router = createRouter({
           name: 'task-detail',
           component: Detail
         },
-        {
-          path: ':id/edit',
-          name: 'task-edit',
-          component: AddEditTask
-        },
-        {
-          path: 'add',
-          name: 'task-add',
-          component: AddEditTask
-        }
       ]
     },
     {
@@ -39,7 +29,7 @@ const router = createRouter({
       component: StatusView,
       children: [
         {
-          path: 'add',
+          path: '/add',
           name: 'status-add',
           component: AddEditStatusModal
         },
@@ -53,6 +43,16 @@ const router = createRouter({
     {
       path: '/:notfound(.*)',
       redirect: '/task'
+    },
+    {
+      path: '/task/add',
+      name: 'task-add',
+      component: AddEditTask
+    },
+    {
+      path: '/task/:id/edit',
+      name: 'task-edit',
+      component: AddEditTask
     }
   ]
 })
