@@ -67,9 +67,6 @@ const showList = ref(false);
 
 watch(taskStore.filterStatuses, async () => {
   await taskStore.loadFilterTasks(taskStore.filterStatuses, sortType.value);
-  if (taskStore.filterStatuses.length === 0) {
-    showList.value = false;
-  }
 });
 
 const toggleItem = (id) => {
