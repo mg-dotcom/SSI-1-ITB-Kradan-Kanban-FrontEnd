@@ -151,7 +151,7 @@ const clearFilter = () => {
             {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
           </span>
         </div>
-        <span class="close-icon itbkk-filter-clear z-40" @click="clearFilter">
+        <span class="close-icon z-40" @click="clearFilter">
           <font-awesome-icon icon="fa-solid fa-xmark" />
         </span>
 
