@@ -1,101 +1,106 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue'
-import { initFlowbite, initDropdowns } from 'flowbite'
-import StatusButton from '../components/button/StatusButton.vue'
-import DeleteModal from '../components/confirmModal/DeleteTask.vue'
-import { useRouter, RouterView } from 'vue-router'
-import buttonSubmit from '../components/button/Button.vue'
-import { useTaskStore } from '../stores/TaskStore.js'
-import { useStatusStore } from '../stores/StatusStore.js'
-import { useSortStore } from '../stores/SortStore.js'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-const router = useRouter()
-const selectedId = ref('')
-const selectedIndex = ref(0)
-const taskStore = useTaskStore()
-const statusStore = useStatusStore()
-const sortStore = useSortStore()
-const sortTypes = ['default', 'ascending', 'descending']
-const sortType = ref('default')
+import { onMounted, reactive, ref, watch } from "vue";
+import { initFlowbite, initDropdowns } from "flowbite";
+import StatusButton from "../components/button/StatusButton.vue";
+import DeleteModal from "../components/confirmModal/DeleteTask.vue";
+import { useRouter, RouterView } from "vue-router";
+import buttonSubmit from "../components/button/Button.vue";
+import { useTaskStore } from "../stores/TaskStore.js";
+import { useStatusStore } from "../stores/StatusStore.js";
+import { useSortStore } from "../stores/SortStore.js";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+const router = useRouter();
+const selectedId = ref("");
+const selectedIndex = ref(0);
+const taskStore = useTaskStore();
+const statusStore = useStatusStore();
+const sortStore = useSortStore();
+const sortTypes = ["default", "ascending", "descending"];
+const sortType = ref("default");
 
 onMounted(async () => {
-  initFlowbite()
-  initDropdowns()
-  await taskStore.loadTasks()
-  await statusStore.loadStatuses()
-})
+  initFlowbite();
+  initDropdowns();
+  await taskStore.loadTasks();
+  await statusStore.loadStatuses();
+});
 
 const page = reactive({
-  task: true
-})
+  task: true,
+});
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
   delete: false,
-  limitStatus: false
-})
+  limitStatus: false,
+});
 
 const showOptionEditDelete = (taskId) => {
-  selectedId.value = taskId
-  popup.optionEditDelete = !popup.optionEditDelete
-}
+  selectedId.value = taskId;
+  popup.optionEditDelete = !popup.optionEditDelete;
+};
 
 const openDetail = (id) => {
-  popup.optionEditDelete = false
-  router.push({ name: 'task-detail', params: { id: id } })
-}
+  popup.optionEditDelete = false;
+  router.push({ name: "task-detail", params: { id: id } });
+};
 
 const openDelete = (id, index) => {
-  selectedId.value = id
-  selectedIndex.value = index
-  popup.delete = true
-}
+  selectedId.value = id;
+  selectedIndex.value = index;
+  popup.delete = true;
+};
 
 const cycleSortType = () => {
-  const currentIndex = sortTypes.indexOf(sortType.value)
-  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length]
-  taskStore.loadSortTasks(sortType.value)
-  sortStore.setSortType(sortType.value)
-}
-
-watch(taskStore.filterStatuses, async () => {
-  await taskStore.loadFilterTasks(taskStore.filterStatuses, sortType.value)
-})
+  const currentIndex = sortTypes.indexOf(sortType.value);
+  sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length];
+  taskStore.loadSortTasks(sortType.value);
+  sortStore.setSortType(sortType.value);
+};
 
 const toggleSelect = () => {
-  showList.value = !showList.value
-}
+  showList.value = true;
+};
 
-const showList = ref(false)
+const showList = ref(false);
+
+watch(taskStore.filterStatuses, async () => {
+  await taskStore.loadFilterTasks(taskStore.filterStatuses, sortType.value);
+  if (taskStore.filterStatuses.length === 0) {
+    showList.value = false;
+  }
+});
 
 const toggleItem = (id) => {
-  const listItems = document.querySelectorAll('.item')
-  const index = statusStore.getStatuses.findIndex((status) => status.id === id)
-  const selectedStatus = statusStore.getStatuses[index]
-  const listItem = listItems[index]
+  const listItems = document.querySelectorAll(".item");
+  const index = statusStore.getStatuses.findIndex((status) => status.id === id);
+  const selectedStatus = statusStore.getStatuses[index];
+  const listItem = listItems[index];
 
   if (taskStore.filterStatuses.includes(selectedStatus.name)) {
     taskStore.filterStatuses.splice(
       taskStore.filterStatuses.indexOf(selectedStatus.name),
       1
-    )
+    );
   } else {
-    taskStore.filterStatuses.push(selectedStatus.name)
-    listItem.classList.add('checked')
+    taskStore.filterStatuses.push(selectedStatus.name);
+    listItem.classList.add("checked");
   }
-}
+};
 
 const clearEachStatus = (statusName) => {
   taskStore.filterStatuses.splice(
     taskStore.filterStatuses.indexOf(statusName),
     1
-  )
-}
+  );
+  showList.value = false;
+};
 
 const clearFilter = () => {
-  taskStore.filterStatuses.length = 0
-}
+  taskStore.filterStatuses.length = 0;
+  showList.value = false;
+};
 </script>
 
 <template>
@@ -104,7 +109,7 @@ const clearFilter = () => {
     class="h-screen w-full"
     @click="
       () => {
-        showList = false
+        showList = false;
       }
     "
   >
@@ -126,7 +131,7 @@ const clearFilter = () => {
           :class="showList ? 'open' : ''"
           @click.stop="toggleSelect"
           :style="{
-            height: taskStore.filterStatuses.length > 2 ? 'auto' : '2.5rem'
+            height: taskStore.filterStatuses.length > 2 ? 'auto' : '2.5rem',
           }"
         >
           <StatusButton
@@ -146,12 +151,12 @@ const clearFilter = () => {
             v-if="taskStore.filterStatuses.length === 0"
           >
             Filter by
-            {{ statusStore.getStatuses.length > 1 ? 'Statuses' : 'Status' }}
-          </span>
-          <span class="close-icon itbkk-filter-clear z-40" @click="clearFilter">
-            <font-awesome-icon icon="fa-solid fa-xmark" />
+            {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
           </span>
         </div>
+        <span class="close-icon itbkk-filter-clear z-40" @click="clearFilter">
+          <font-awesome-icon icon="fa-solid fa-xmark" />
+        </span>
 
         <ul class="list-items" v-if="showList">
           <li
@@ -268,7 +273,7 @@ const clearFilter = () => {
                     class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
                     :class="!task.assignees ? 'italic text-gray-400' : ''"
                   >
-                    {{ task.assignees || 'Unassigned' }}
+                    {{ task.assignees || "Unassigned" }}
                   </td>
                   <td
                     class="itbkk-status px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
@@ -312,7 +317,7 @@ const clearFilter = () => {
                                 @click="
                                   router.push({
                                     name: 'task-edit',
-                                    params: { id: task.id }
+                                    params: { id: task.id },
                                   })
                                 "
                               >

@@ -37,7 +37,7 @@
   color: #333;
 }
 
-.select-btn .close-icon {
+.close-icon {
   display: flex;
   height: 21px;
   width: 21px;
@@ -49,10 +49,9 @@
   justify-content: center;
   transition: 0.3s;
   position: absolute;
-  right: 3px; /* Align to the right */
-  display: flex;
-  /* Align content to the end */
-  align-items: center;
+  right: 2px;
+  top: 10px;
+  cursor: pointer;
 }
 
 .close-icon:hover {
