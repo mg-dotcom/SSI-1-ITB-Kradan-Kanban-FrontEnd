@@ -151,8 +151,6 @@ export const useTaskStore = defineStore('TaskStore', {
     },
 
     transferTasksStatus(currentStatus, newStatus) {
-      console.log(currentStatus);
-      console.log(this.tasks);
       const tasksToUpdate = this.tasks.filter(
         (task) => task.status === currentStatus
       )

@@ -72,7 +72,6 @@ const transferTo = ref('')
         @click="
           $emit(
             'transferStatus',
-            props.currentStatus.name,
             props.currentStatus.id,
             transferTo
           )

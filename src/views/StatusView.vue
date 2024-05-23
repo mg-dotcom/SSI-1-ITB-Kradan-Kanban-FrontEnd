@@ -30,6 +30,7 @@ const openDeleteOrTransferModal = (id) => {
   currentStatus.value = statusStore.getStatusById(id);
   const haveTask = taskStore.getTasksByStatus(currentStatus.value.name);
   numberOfTasks.value = haveTask.length;
+  console.log(haveTask.length);
   if (haveTask.length > 0) {
     openTransfer.value = true;
   } else {
@@ -41,13 +42,15 @@ const deleteStatus = (id) => {
   statusStore.removeStatus(id);
   openDelete.value = false;
 };
-const transferStatus = async (currentStatus, currentStatusId, newStatusId) => {
-  taskStore.transferTasksStatus(currentStatus, newStatusId);
+const transferStatus = async (currentStatusId, newStatusId) => {
+
   await statusStore.transferStatus(
     currentStatusId,
     newStatusId,
     numberOfTasks.value
   );
+  
+  // taskStore.transferTasksStatus(currentStatus, newStatusId);
   openTransfer.value = false;
   router.push({ name: "status" });
 };

@@ -192,12 +192,13 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async transferStatus(currentId, newId, numberOfTasks) {
+      const taskStore = useTaskStore();
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${currentId}`,
         newId
       );
-
       const newStatus = this.statuses.find((status) => status.id === newId);
+      const currentStatus = this.statuses.find((status) => status.id === currentId);
       if (res.status >= 200 && res.status <= 299) {
         const index = this.statuses.findIndex(
           (status) => status.id === currentId
@@ -206,6 +207,7 @@ export const useStatusStore = defineStore("StatusStore", {
           return;
         } else {
           this.statuses.splice(index, 1);
+          taskStore.transferTasksStatus(currentStatus, newStatus);
           this.toast.add({
             severity: "success",
             summary: "Success",
