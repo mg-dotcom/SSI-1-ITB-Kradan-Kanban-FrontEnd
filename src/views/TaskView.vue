@@ -61,7 +61,7 @@ const cycleSortType = () => {
   sortStore.setSortType(sortType.value);
 };
 
-const toggleSelect = () => {
+const showSelectFilter = () => {
   showList.value = true;
 };
 
@@ -138,7 +138,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
         <div
           class="itbkk-status-filter select-btn"
           :class="showList ? 'open' : ''"
-          @click.stop="toggleSelect"
+          @click.stop="showSelectFilter"
           :style="{
             height: taskStore.filterStatuses.length > 2 ? 'auto' : '2.5rem',
           }"
