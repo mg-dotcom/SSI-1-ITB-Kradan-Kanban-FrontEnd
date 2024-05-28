@@ -171,13 +171,13 @@ export const useTaskStore = defineStore('TaskStore', {
         return sortTasks(this.tasks, sortType)
       }
     },
-    async loadFilterTasks(arrayStatusesId, sortType) {
-      if (arrayStatusesId.length === 0) {
+    async loadFilterTasks(arrayStatusesName, sortType) {
+      if (arrayStatusesName.length === 0) {
         await this.loadTasks()
       } else {
         const data = await fetchFilterTasks(
           `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-          arrayStatusesId
+          arrayStatusesName
         )
         this.tasks = data
       }
