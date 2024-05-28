@@ -37,7 +37,8 @@ const outputTask = ref({
   updatedOn: "",
 });
 
-const input = ref({});
+const originalTaskData = ref({});
+
 onMounted(async () => {
   await statusStore.loadStatuses();
   const settingDetail = await statusStore.loadStatusSetting();
@@ -50,7 +51,7 @@ onMounted(async () => {
     selectedTask.value.statusId = taskDetail.status.id;
     selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
     selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
-    input.value = { ...selectedTask.value };
+    originalTaskData.value = { ...selectedTask.value };
   } else if (mode == "add") {
     selectedTask.value.statusId = statusStore.getStatuses[0].id;
   }
@@ -69,10 +70,10 @@ watch(
     }
     if (mode === "edit") {
       if (
-        newValue.title !== input.value.title ||
-        newValue.description !== input.value.description ||
-        newValue.assignees !== input.value.assignees ||
-        newValue.statusId !== input.value.statusId
+        newValue.title !== originalTaskData.value.title ||
+        newValue.description !== originalTaskData.value.description ||
+        newValue.assignees !== originalTaskData.value.assignees ||
+        newValue.statusId !== originalTaskData.value.statusId
       ) {
         isChanged.value = true;
       } else {
