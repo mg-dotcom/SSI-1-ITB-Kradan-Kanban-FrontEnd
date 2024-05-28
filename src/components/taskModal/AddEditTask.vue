@@ -33,8 +33,6 @@ const outputTask = ref({
   description: "",
   assignees: "",
   statusId: 1,
-  createdOn: "",
-  updatedOn: "",
 });
 
 const originalTaskData = ref({});
