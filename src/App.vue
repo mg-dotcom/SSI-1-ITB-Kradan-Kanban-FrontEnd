@@ -3,7 +3,7 @@ import { RouterView } from "vue-router";
 </script>
 
 <template>
-  <div class="h-screen w-full">
+  <div class="min-h-screen w-full">
     <Toast class="itbkk-message" />
     <div
       class="header max-w-full h-[90px] bg-gradient-to-r from-blue to-lightblue"

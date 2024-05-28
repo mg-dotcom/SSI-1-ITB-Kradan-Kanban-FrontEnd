@@ -1,32 +1,32 @@
 <script setup>
-import ConfirmModal from './ConfirmModal.vue'
-import submitButton from '../button/Button.vue'
-import { onMounted, ref } from 'vue'
-import { useStatusStore } from '../../stores/StatusStore.js'
-defineEmits(['closeDelete', 'transferStatus'])
+import ConfirmModal from "./ConfirmModal.vue";
+import submitButton from "../button/Button.vue";
+import { onMounted, ref } from "vue";
+import { useStatusStore } from "../../stores/StatusStore.js";
+defineEmits(["closeDelete", "transferStatus"]);
 const props = defineProps({
   currentStatus: {
-    Type: Object
+    Type: Object,
   },
   numberOfTasks: {
-    Type: Number
-  }
-})
+    Type: Number,
+  },
+});
 
-const statusStore = useStatusStore()
+const statusStore = useStatusStore();
 const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
-)
+);
 
-const limitMaximumTask = ref(false)
-const maximumTask = ref(10)
+const limitMaximumTask = ref(false);
+const maximumTask = ref(10);
 onMounted(async () => {
-  const limitOfStatus = await statusStore.loadStatusSetting()
-  limitMaximumTask.value = limitOfStatus.limitMaximumTask
-  maximumTask.value = limitOfStatus.maximumTask
-})
+  const limitOfStatus = await statusStore.loadStatusSetting();
+  limitMaximumTask.value = limitOfStatus.limitMaximumTask;
+  maximumTask.value = limitOfStatus.maximumTask;
+});
 
-const transferTo = ref('')
+const transferTo = ref("");
 </script>
 
 <template>
@@ -69,13 +69,7 @@ const transferTo = ref('')
       <submitButton
         class="itbkk-button-confirm"
         :buttonType="transferTo === '' ? 'transfer-off' : 'transfer-on'"
-        @click="
-          $emit(
-            'transferStatus',
-            props.currentStatus.id,
-            transferTo
-          )
-        "
+        @click="$emit('transferStatus', props.currentStatus.id, transferTo)"
         :disabled="transferTo === ''"
         :class="
           transferTo === ''

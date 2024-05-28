@@ -24,15 +24,17 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
   <div
     class="itbkk-modal-setting fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
-    <div class="bg-white p-6 rounded-lg shadow-lg w-[38%]">
-      <div class="font-bold mb-4">
+    <div
+      class="bg-white p-6 rounded-lg shadow-lg xl:w-[40%] lg:w-[54%] md-vertical:w-[75%] md-vertical:m-auto mobile:m-8"
+    >
+      <div class="font-bold mb-4 md-vertical:text-base text-sm">
         <p>Status Settings</p>
       </div>
       <div class="title-line w-full h-px bg-gray-300 mb-4"></div>
       <div class="itbkk-message mb-6 break-all">
-        <p class="itbkk-massage">
-          Users can limit the number of task in a status by setting the <br />
-          Maximum tasks in each status (except "No Status" and "Done" status).
+        <p class="itbkk-massage md-vertical:text-base text-sm">
+          Users can limit the number of task in a status by setting the Maximum
+          tasks in each status (except "No Status" and "Done" status).
         </p>
         <div class="my-3">
           <label class="inline-flex items-center cursor-pointer">
@@ -43,14 +45,17 @@ defineEmits(["closeLimitStatus", "saveLimitStatus"]);
               class="itbkk-limit-task toggle toggle-success"
               checked
             />
-            <span class="ms-3 text-gray-900 dark:text-gray-300"
+            <span
+              class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
               >Limit tasks in this status</span
             >
           </label>
         </div>
 
         <div class="flex">
-          <p class="pr-5 content-center text-green-status font-bold">
+          <p
+            class="pr-5 content-center text-green-status font-bold md-vertical:text-base text-sm md-vertical:pr-5 mobile:pr-4"
+          >
             Maximum tasks
           </p>
           <input

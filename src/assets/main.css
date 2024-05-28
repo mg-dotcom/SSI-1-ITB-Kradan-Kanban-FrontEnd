@@ -70,13 +70,16 @@
   -webkit-animation-duration: 0.4s;
   -webkit-animation-fill-mode: both;
 }
+
 .list-items {
   position: absolute;
   max-width: 320px;
+  max-height: 300px;
+  overflow: auto;
   width: 100%;
   margin-top: 15px;
   border-radius: 8px;
-  padding: 16px;
+  padding: 12px;
   background-color: #fff;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   animation-name: fadeInDown;
@@ -87,14 +90,15 @@
   -webkit-animation-fill-mode: both;
   word-break: break-all;
 }
+
 .list-items .item {
   display: flex;
   align-items: center;
   list-style: none;
-  height: 50px;
+  height: 70px;
   cursor: pointer;
   transition: 0.3s;
-  padding: 0 15px;
+  padding: 0px 12px;
   border-radius: 8px;
 }
 .list-items .item:hover {

@@ -93,14 +93,17 @@ const save = async () => {
     const statusDetail = statusStore.getStatuses.find(
       (status) => status.id === selectedTask.value.statusId
     );
-    const statusCode=await taskStore.editTask(taskId, outputTask.value, statusDetail);
-    if(statusCode.status===200){
-      router.push({ name: "task"});
-      taskStore.filterStatuses.length = 0
-    }else{
+    const statusCode = await taskStore.editTask(
+      taskId,
+      outputTask.value,
+      statusDetail
+    );
+    if (statusCode.status === 200) {
+      router.push({ name: "task" });
+      taskStore.filterStatuses.length = 0;
+    } else {
       return;
     }
-      
   } else {
     outputTask.value = {
       title: selectedTask.value.title,
@@ -108,18 +111,16 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
-    const statusCode= await taskStore.addTask(outputTask.value);
-    if(statusCode.status===201){
+    const statusCode = await taskStore.addTask(outputTask.value);
+    if (statusCode.status === 201) {
       await taskStore.loadSortTasks(sortStore.getSortType);
-      taskStore.filterStatuses.length = 0
-      router.push({ name: "task"});
-    }else{
+      taskStore.filterStatuses.length = 0;
+      router.push({ name: "task" });
+    } else {
       return;
     }
-      
   }
 };
-
 </script>
 
 <template>
@@ -130,20 +131,21 @@ const save = async () => {
         <div>
           <span
             :class="{
-              'bg-red-200 text-red-800 dark:text-red-400 border border-red-400': limitMaximumTask === false,
-              'bg-green-200 text-green-800 dark:text-green-400 border border-green-400': limitMaximumTask === true,
+              'bg-red-200 text-red-800 dark:text-red-400 border border-red-400':
+                limitMaximumTask === false,
+              'bg-green-200 text-green-800 dark:text-green-400 border border-green-400':
+                limitMaximumTask === true,
             }"
-            class="text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700 "
-            >Limit  {{ limitMaximumTask ? "On" : "Off" }}</span
-            </span
+            class="text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700"
+            >Limit {{ limitMaximumTask ? "On" : "Off" }}</span
           >
         </div>
       </div>
     </template>
-    <div class="mb-4">
+    <div class="xl:mb-4 lg:mb-2 mb-2">
       <label
         for="default-input"
-        class="block mb-2 text-base font-semibold text-gray-900 dark:text-white"
+        class="block mb-2 text-base lg:text-base font-semibold text-gray-900 dark:text-white md-vertical:text-sm"
         >Title</label
       >
       <div class="px-3">
@@ -159,24 +161,28 @@ const save = async () => {
     <template #desc>
       <textarea
         maxlength="500"
-        class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-3/4"
+        class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full md-vertical:h-3/4 mobile:h-64"
         v-model.trim="selectedTask.description"
       ></textarea>
     </template>
     <template #assignees>
       <textarea
         maxlength="30"
-        class="itbkk-assignees block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-3/4"
+        class="itbkk-assignees block p-2.5 min-h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full mobile:h-28 md-vertical:h-3/4"
         v-model.trim="selectedTask.assignees"
       ></textarea>
     </template>
     <template #status>
-      <form class="px-3">
+      <form class="px-3 pr-5 itbkk-status-wrapper">
         <select
-          class="itbkk-status bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          class="itbkk-status bg-gray-50 border w-full border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           v-model="selectedTask.statusId"
         >
-          <option :value="status.id" v-for="status in statusStore.getStatuses">
+          <option
+            class="list-status"
+            :value="status.id"
+            v-for="status in statusStore.getStatuses"
+          >
             {{ status.name }}
           </option>
         </select>
@@ -184,7 +190,10 @@ const save = async () => {
     </template>
 
     <template #time>
-      <div class="pt-7" :class="mode == 'add' ? 'hidden' : 'visible'">
+      <div
+        class="xl:pt-2 lg:pt-3 pt-2"
+        :class="mode == 'add' ? 'hidden' : 'visible'"
+      >
         <span class="itbkk-timezone font-semibold">TimeZone</span> :
         {{ localTimeZone }} <br />
         <span class="itbkk-created-on font-semibold">Created On</span> :
@@ -211,7 +220,7 @@ const save = async () => {
         @click="save"
         :class="
           !isChanged || !selectedTask.title
-            ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
+            ? 'bg-gray-300  rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "
         >Save</buttonSubmit

@@ -110,6 +110,15 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   openLimit.value = false;
   router.push({ name: "task" });
 };
+
+import { onClickOutside } from "@vueuse/core";
+import { faMobile } from "@fortawesome/free-solid-svg-icons";
+
+const optionEditDelete = ref(null);
+
+onClickOutside(optionEditDelete, () => {
+  popup.optionEditDelete = false;
+});
 </script>
 
 <template>
@@ -123,8 +132,8 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
     "
   >
     <div
-      class="text-xl font-bold flex items-center text-blue pt-7 px-28"
-      @click="router.push({ name: 'task' })"
+      class="text-xl font-bold flex items-center text-blue pt-7 xl:px-32 lg:px-[72px] px-14 mobile:px-5"
+      @click="router.push({ name: 'task' }), (popup.optionEditDelete = false)"
     >
       <a
         class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
@@ -133,15 +142,18 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
         Home&nbsp;</a
       >
     </div>
-    <div class="flex justify-between py-6 px-28">
-      <div class="container z-30">
+    <div
+      class="flex justify-between py-6 xl:px-32 lg:px-[72px] md-vertical:px-12 mobile:px-2 gap-y-3 mobile:flex-col md-vertical:flex-row"
+      @click.self="popup.optionEditDelete = false"
+    >
+      <div class="container z-30 md-vertical:scale-95 mobile:scale-[87%]">
         <div
           class="itbkk-status-filter select-btn"
-          :class="showList ? 'open' : ''"
+          :class="[
+            showList ? 'open' : '',
+            taskStore.filterStatuses.length >= 2 ? 'h-auto' : 'h-[40px]',
+          ]"
           @click.stop="showSelectFilter"
-          :style="{
-            height: taskStore.filterStatuses.length > 2 ? 'auto' : '2.5rem',
-          }"
         >
           <StatusButton
             v-for="status in taskStore.filterStatuses"
@@ -169,7 +181,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 
         <ul class="list-items" v-if="showList">
           <li
-            v-for="(status, index) in statusStore.getStatuses"
+            v-for="status in statusStore.getStatuses"
             class="item itbkk-status-choice"
             :key="status.id"
             @click.stop="toggleItem(status.id)"
@@ -184,7 +196,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
           </li>
         </ul>
       </div>
-      <div class="flex">
+      <div class="flex px-4">
         <buttonSubmit
           buttonType="manage-status"
           class="itbkk-manage-status flex gap-x-2 justify-center items-center"
@@ -217,60 +229,64 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
     </div>
 
     <div
-      class="table lg:px-24 sm:px-10 overflow-hidden z-10"
+      class="table xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-4 mobile:px-5"
       v-if="page.task"
-      @click.self="closeList"
+      @click="closeList"
     >
       <div class="-my-1 mb-16 sm:-mx">
-        <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
+        <div
+          class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4"
+        >
           <div
-            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
+            class="shadow overflow-auto border-b border-gray-200 sm:rounded-lg"
           >
-            <table class="table-fixed w-full h-full">
+            <table class="w-full h-full md-vertical:table-fixed mobile:table">
               <thead class="bg-lightgray">
-                <tr class="">
+                <tr>
                   <th
-                    class="w-[5%] text-center bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="xl:w-[5%] lg:w-[7%] md-vertical:w-[8%] bg-lightgray border-b border-r border-gray-300 w-[7%]"
                   >
-                    <img
-                      src="../assets/addTaskIcon.svg"
-                      alt=""
-                      @click="router.push({ name: 'task-add' })"
-                      class="itbkk-button-add scale-95 hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
-                    />
+                    <div class="flex justify-center item-center">
+                      <img
+                        src="../assets/addTaskIcon.svg"
+                        alt="add-task-icon"
+                        @click="router.push({ name: 'task-add' })"
+                        class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
+                      />
+                    </div>
                   </th>
                   <th
-                    class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="xl:w-1/2 lg:w-[45%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Title
                   </th>
                   <th
-                    class="w-2/6 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="xl:w-2/6 lg:w-[22%] md-vertical:w-[28%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     Assignees
                   </th>
                   <th
-                    class="w-[18%] px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+                    class="xl:w-[18%] lg:w-[22%] md-vertical:w-[26%] md-vertical:px-6 py-3 px-2 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
                   >
                     <div class="flex">
                       <p class="content-center">Status</p>
-                      <div @click="cycleSortType" class="cursor-pointer">
+                      <div @click="cycleSortType" class="cursor-pointer ml-5">
                         <img
                           src="../assets/alphabeticalSorting.svg"
                           alt=""
-                          class="itbkk-status-sort mx-5 w-5 content-center"
+                          class="itbkk-status-sort w-5 mobile:w-4 content-center"
                           v-if="sortType === 'default'"
                         />
                         <img
                           src="../assets/alphabeticalSorting-green.svg"
                           alt=""
-                          class="itbkk-status-sort mx-5 w-5 content-center"
+                          class="itbkk-status-sort w-5 mobile:w-4 content-center"
                           v-if="sortType === 'ascending'"
                         />
                         <img
                           src="../assets/alphabeticalReverse.svg"
                           alt=""
-                          class="itbkk-status-sort mx-5 w-5 content-center"
+                          class="itbkk-status-sort w-5 mobile:w-4 content-center"
                           v-if="sortType === 'descending'"
                         />
                       </div>
@@ -288,7 +304,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                   :key="index"
                 >
                   <td
-                    class="text-center py-4 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                    class="text-center py-4 text-sm md-vertical:text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                   >
                     {{ index + 1 }}
                   </td>
@@ -305,11 +321,10 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                     {{ task.assignees || "Unassigned" }}
                   </td>
                   <td
-                    class="px-6 py-4 text-sm text-gray-600 border-b border-gray-300 break-all"
+                    class="px-6 py-4 md-vertical:px-6 mobile:px-1 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <div class="flex justify-between items-center text-center">
                       <StatusButton
-                        class=""
                         :statusColor="statusStore.getStatusColor(task.status)"
                         :statusName="task.status"
                       >
@@ -319,6 +334,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                         <div
                           class="itbkk-button-action inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
                           type="button"
+                          ref="optionEditDelete"
                           @click="showOptionEditDelete(task.id)"
                         >
                           <svg

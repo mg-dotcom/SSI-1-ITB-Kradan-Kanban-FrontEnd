@@ -24,9 +24,9 @@ const props = defineProps({
   <button
     :class="{
       'fancy-btn': true,
-      'bg-[#03CC0B] hover:bg-[#20ae27] transition-colors w-20 active:scale-[93%] active:transition-transform text-white':
+      'bg-[#03CC0B] hover:bg-[#20ae27] transition-colors   active:scale-[93%] active:transition-transform text-white':
         buttonType === 'ok',
-      'bg-gray-400 hover:bg-gray-500 transition-colors w-20 active:scale-[93%] active:transition-transform text-white':
+      'bg-gray-400 hover:bg-gray-500 transition-colors w-20  active:scale-[93%] active:transition-transform text-white':
         buttonType === 'cancel',
       ' group bg-[#03CC0B]  hover:shadow-md   font-bold duration-300 cursor-pointer active:scale-[93%] active:transition-transform text-white ':
         buttonType === 'add',
@@ -52,5 +52,48 @@ const props = defineProps({
   margin: 5px;
   border-radius: 8px;
   height: 35px;
+  text-align: center;
+  font-weight: bold;
+}
+
+@media (min-width: 1440px) {
+  .fancy-btn {
+    padding: 5px 10px;
+    margin: 5px;
+    border-radius: 8px;
+    height: 35px;
+    text-align: center;
+  }
+}
+
+@media (min-width: 1024px) {
+  /* Adjust the min-width as per your "lg" screen size */
+  .fancy-btn {
+    padding: 4px 10px;
+    margin: 3px;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 820px) {
+  /* Adjust the min-width as per your "lg" screen size */
+  .fancy-btn {
+    padding: 4px 10px;
+    margin: 3px;
+    border-radius: 8px;
+    font-size: 15px;
+  }
+}
+
+@media (min-width: 410px) {
+  /* Adjust the min-width as per your "lg" screen size */
+  .fancy-btn {
+    font-size: medium;
+    padding: 5px 10px;
+    margin: 3px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
 }
 </style>

@@ -26,9 +26,8 @@ module.exports = {
         header: "32px",
       },
       screens: {
-        mobile: "320px",
-        sm: "480px",
-        md: "768px",
+        mobile: "410px",
+        "md-vertical": "820px",
         lg: "1024px",
         xl: "1440px",
       },

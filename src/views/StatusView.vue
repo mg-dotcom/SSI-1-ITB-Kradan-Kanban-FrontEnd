@@ -43,14 +43,12 @@ const deleteStatus = (id) => {
   openDelete.value = false;
 };
 const transferStatus = async (currentStatusId, newStatusId) => {
-
   await statusStore.transferStatus(
     currentStatusId,
     newStatusId,
     numberOfTasks.value
   );
-  
-  // taskStore.transferTasksStatus(currentStatus, newStatusId);
+
   openTransfer.value = false;
   router.push({ name: "status" });
 };
@@ -68,8 +66,12 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 
 <template>
   <RouterView />
-  <div class="table lg:px-24 sm:px-10 overflow-hidden">
-    <div class="flex justify-between py-6 px-5">
+  <div
+    class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-4 mobile:px-5 overflow-hidden"
+  >
+    <div
+      class="flex justify-between py-6 md-vertical:px-6 mobile:px-0 md-vertical:flex-row mobile:flex-col gap-3"
+    >
       <div
         class="itbkk-button-home text-xl font-bold flex items-center text-blue"
       >
@@ -112,11 +114,13 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
       </div>
     </div>
     <div class="-my-2 mb-8 sm:-mx">
-      <div class="py-2 align-middle inline-block sm:px-6 lg:px-8">
+      <div
+        class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4 mobile:px-0 w-full"
+      >
         <div
           class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
         >
-          <table class="table-fixed w-full h-full">
+          <table class="w-full h-full md-vertical:table-fixed mobile:table">
             <thead class="bg-lightgray">
               <tr class="">
                 <th
@@ -144,7 +148,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                 <td class="border text-center" colspan="4">No Status</td>
               </tr>
               <tr
-                class="itbkk-item"
+                class="itbkk-item py-4"
                 v-if="statusStore.getStatuses.length > 0"
                 v-for="(status, index) in statusStore.getStatuses"
                 :key="index"
@@ -155,9 +159,10 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                   {{ index + 1 }}
                 </td>
                 <td
-                  class="itbkk-status-name text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                  class="itbkk-status-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                 >
                   <StatusButton
+                    class=""
                     :statusColor="status.statusColor"
                     :statusName="status.name"
                     >{{ status.name }}</StatusButton
@@ -174,7 +179,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                   }}
                 </td>
                 <td
-                  class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all"
+                  class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
                 >
                   <buttonSubmit
                     class="itbkk-button-edit"

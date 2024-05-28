@@ -1,10 +1,10 @@
 <script setup>
-import buttonSubmit from '../button/Button.vue'
-import { defineProps } from 'vue'
+import buttonSubmit from "../button/Button.vue";
+import { defineProps } from "vue";
 
 const props = defineProps({
-  selectedTask: Object
-})
+  selectedTask: Object,
+});
 </script>
 
 <template>
@@ -12,24 +12,26 @@ const props = defineProps({
     class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 itbkk-item z-50"
   >
     <div
-      class="bg-[#F2F2F2] sm:w-[75%] sm:h-[89%] md:w-[45%] md:h-[89%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg py-16 relative"
+      class="bg-[#F2F2F2] xl:w-[42%] rounded-lg lg:w-[55%] h-[85%] w-[65%] mobile:w-[80%] md-vertical:w-[65%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg xl:py-16 lg:py-12 py-12 relative"
     >
       <div
-        class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
+        class="font-bold lg:text-xl md-vertical:text-lg overflow-hidden whitespace-nowrap truncate w-full absolute xl:top-5 lg:top-2.5 px-3 top-2.5"
       >
         <slot name="title"></slot>
       </div>
 
       <div
-        class="bg-white w-full h-full border-b border-t border-[#CACACA] py-6 px-8"
+        class="bg-white w-full h-full border-b border-t border-[#CACACA] xl:py-6 px-5 lg:py-4 py-2 md-vertical:text-sm mobile:overflow-auto md-vertical:overflow-hidden overflow-hidden"
       >
-      <slot></slot>
+        <slot></slot>
 
-        <div class="w-full h-full flex justify-between">
+        <div
+          class="w-full h-full flex md-vertical:overflow-hidden md-vertical:flex-row md-vertical:justify-between mobile:flex-col"
+        >
           <div class="flex flex-col">
             <p class="font-semibold mb-2">Description</p>
             <div
-              class="lg:w-[350px] sm:w-[260px] h-full px-3 break-all"
+              class="xl:w-[350px] lg:w-[290px] sm:w-[260px] h-full px-3 break-all mb-2"
               :class="
                 !props.selectedTask.description ? 'italic text-gray-400' : ''
               "
@@ -40,24 +42,29 @@ const props = defineProps({
           <div class="flex flex-col">
             <p class="font-semibold mb-2">Assignees</p>
             <div
-              class="lg:w-[230px] sm:w-[200px] h-1/3 px-3 break-all"
+              class="xl:w-[230px] lg:w-[220px] md-vertical:mb-2 md-vertical:w-[218px] sm:w-[200px] md-vertical:h-1/3 px-3 lg:mb-2 mb-2 break-all"
               :class="
                 !props.selectedTask.assignees ? 'italic text-gray-400' : ''
               "
             >
               <slot name="assignees">Unassigned</slot>
             </div>
-            <p class="font-semibold mb-2">Status</p>
-            <div class="lg:w-[230px] sm:w-[200px]">
+
+            <div
+              class="lg:w-[236px] sm:w-[200px] w-[200px] md-vertical:w-[225px]"
+            >
+              <p class="font-semibold mb-2">Status</p>
               <slot name="status"> </slot>
             </div>
-            <div class="flex flex-col lg:w-[230px] sm:w-[200px] text-[13px]">
+            <div
+              class="flex flex-col lg:w-[230px] sm:w-[200px] xl:text-[13px] lg:text-[12px] text-[12px] md-vertical:m-0 mobile:m-3"
+            >
               <slot name="time"></slot>
             </div>
           </div>
         </div>
       </div>
-      <div class="absolute right-6 bottom-3">
+      <div class="absolute right-6 xl:bottom-3 lg:bottom-1.5 bottom-1">
         <slot name="button-left">
           <buttonSubmit></buttonSubmit>
         </slot>

@@ -22,7 +22,7 @@ const selectedId = defineEmits(["clear-status"]);
 <template>
   <div>
     <div
-      class="itbkk-status flex py-1 px-3 text-[13px] font-semibold rounded-full text-white sm:min-w-[120px] sm:w-fit md:min-w-[110px] md:w-fit lg:min-w-[160px] lg:w-fit xl:min-w-[135px] relative"
+      class="itbkk-status flex py-1 px-3 text-[13px] font-semibold rounded-full text-white sm:min-w-[120px] sm:w-fit md:min-w-[110px] md:w-fit lg:min-w-[125px] lg:w-fit xl:min-w-[135px] mobile:min-w-[110px] md-vertical:scale-95 mobile:scale-[75%] relative"
       :style="{ backgroundColor: statusColor }"
     >
       <span

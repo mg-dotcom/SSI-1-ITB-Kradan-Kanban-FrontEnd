@@ -111,16 +111,16 @@ const save = async () => {
     class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 itbkk-item z-50"
   >
     <div
-      class="itbkk-modal-status bg-[#F2F2F2] sm:w-[75%] sm:h-[89%] md:w-[45%] md:h-[85%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg py-16 relative"
+      class="itbkk-modal-status bg-[#F2F2F2] rounded-lg xl:w-[42%] lg:w-[55%] h-[85%] w-[65%] mobile:w-[80%] md-vertical:w-[65%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg xl:py-16 lg:py-12 py-12 relative"
     >
       <div
-        class="font-bold text-xl overflow-hidden whitespace-nowrap truncate w-full absolute top-5 px-3"
+        class="font-bold lg:text-xl md-vertical:text-lg overflow-hidden whitespace-nowrap truncate w-full absolute xl:top-5 lg:top-2.5 px-3 top-2.5 mobile:text-lg text-base"
       >
         {{ mode === "add" ? "Add Status" : "Edit Status" }}
       </div>
 
       <div
-        class="bg-white w-full h-full border-b border-t border-[#CACACA] py-6 px-8"
+        class="bg-white w-full h-full border-b border-t border-[#CACACA] xl:py-2 px-5 lg:py-3 py-2 mobile:overflow-auto md-vertical:overflow-hidden overflow-hidden"
       >
         <div class="w-full h-full">
           <div class="flex">
@@ -152,12 +152,12 @@ const save = async () => {
               <textarea
                 maxlength="200"
                 v-model.trim="inputStatus.description"
-                class="itbkk-status-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full h-52"
+                class="itbkk-status-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full xl:h-52 mobile:h-44 h-44"
               ></textarea>
             </div>
           </div>
-          <div class="text-sm" v-if="mode === 'edit'">
-            <div class="pt-5">
+          <div class="text-xs" v-if="mode === 'edit'">
+            <div class="md-vertical:m-0 py-5">
               <span class="itbkk-timezone font-semibold">TimeZone</span> :
               {{ localTimeZone }} <br />
               <span class="itbkk-created-on font-semibold">Created On</span> :
@@ -168,7 +168,7 @@ const save = async () => {
           </div>
         </div>
       </div>
-      <div class="absolute right-6 bottom-3">
+      <div class="absolute right-6 xl:bottom-3 lg:bottom-1.5 bottom-1">
         <buttonSubmit
           class="itbkk-button-cancel"
           buttonType="cancel"
