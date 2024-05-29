@@ -1,1 +1,0 @@
-Core Component Diagram: https://www.canva.com/design/DAGGiidmpC0/bnDx_szNeDgrbqkqnxOK2w/edit?utm_content=DAGGiidmpC0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton
