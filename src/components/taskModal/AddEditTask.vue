@@ -54,13 +54,22 @@ onMounted(async () => {
     selectedTask.value.statusId = statusStore.getStatuses[0].id;
   }
 });
+const limitExceed=ref(false)
 
 watch(
   selectedTask,
   (newValue) => {
+    if(newValue.title.length >100 || newValue.description?.length > 500 || newValue.assignees?.length > 30){
+      limitExceed.value=true
+      console.log('limit exceed');
+    }else{
+      limitExceed.value=false
+    }
     if (mode === "add") {
+    
       if (!newValue.title) {
         isChanged.value = false;
+        
       } else {
         isChanged.value = true;
         return;
@@ -121,6 +130,7 @@ const save = async () => {
     }
   }
 };
+
 </script>
 
 <template>
@@ -150,7 +160,6 @@ const save = async () => {
       >
       <div class="px-3">
         <input
-          maxlength="100"
           type="text"
           id="default-input"
           class="itbkk-title bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -160,14 +169,14 @@ const save = async () => {
     </div>
     <template #desc>
       <textarea
-        maxlength="500"
+        
         class="itbkk-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full md-vertical:h-3/4 mobile:h-64"
         v-model.trim="selectedTask.description"
       ></textarea>
     </template>
     <template #assignees>
       <textarea
-        maxlength="30"
+        
         class="itbkk-assignees block p-2.5 min-h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full mobile:h-28 md-vertical:h-3/4"
         v-model.trim="selectedTask.assignees"
       ></textarea>
@@ -215,11 +224,11 @@ const save = async () => {
     <template #button-right>
       <buttonSubmit
         class="itbkk-button-confirm w-20"
-        :buttonType="!isChanged || !selectedTask.title ? 'cancel' : 'ok'"
-        :disabled="!isChanged || !selectedTask.title"
+        :buttonType="!isChanged || !selectedTask.title || limitExceed===true ? 'cancel' : 'ok'"
+        :disabled="!isChanged || !selectedTask.title || limitExceed===true"
         @click="save"
         :class="
-          !isChanged || !selectedTask.title
+          !isChanged || !selectedTask.title || limitExceed===true
             ? 'bg-gray-300  rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
             : ''
         "

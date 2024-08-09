@@ -66,14 +66,37 @@ onMounted(async () => {
   }
 });
 
+const limitExceed=ref(false)
+
 watch(
   inputStatus,
   (newValue) => {
+    // const existingStatus = statusStore.statuses.find(
+    //     (status) => status.name === newValue.name
+    //   );
+    // if(existingStatus){
+    //   toast.add({
+    //       severity: "error",
+    //       summary: "Error",
+    //       detail: `Status with name "${newStatus.name}" already exists`,
+    //       life: 3000,
+    //     });
+    // }
+    
+    if(newValue.name.length >50 || newValue.description?.length > 200){
+      limitExceed.value=true
+    }else{
+      limitExceed.value=false
+    }
+
     if (mode === "add") {
+      
       if (!newValue.title) {
         isChanged.value = false;
+        
       } else {
         isChanged.value = true;
+        
         return;
       }
     }
@@ -129,7 +152,7 @@ const save = async () => {
               <div class="px-3">
                 <input
                   v-model.trim="inputStatus.name"
-                  maxlength="50"
+                  
                   type="text"
                   id="default-input"
                   class="itbkk-status-name bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -179,12 +202,12 @@ const save = async () => {
         <buttonSubmit
           class="itbkk-button-confirm"
           :buttonType="
-            inputStatus.name === '' || isChanged === true ? 'cancel' : 'ok'
+            inputStatus.name === '' || isChanged === true || limitExceed===true ? 'cancel' : 'ok'
           "
           @click="save"
-          :disabled="inputStatus.name === '' || isChanged === true"
+          :disabled="inputStatus.name === '' || isChanged === true || limitExceed===true"
           :class="
-            inputStatus.name === '' || isChanged === true
+            inputStatus.name === '' || isChanged === true || limitExceed===true
               ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
               : ''
           "
