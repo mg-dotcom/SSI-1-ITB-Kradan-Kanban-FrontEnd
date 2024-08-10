@@ -1,6 +1,6 @@
 <script setup>
 import buttonSubmit from "../button/Button.vue";
-import { onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
@@ -68,53 +68,79 @@ onMounted(async () => {
 
 const limitExceed=ref(false)
 
+// const existingStatus=ref(undefined)
 watch(
   inputStatus,
   (newValue) => {
-    // const existingStatus = statusStore.statuses.find(
+    // existingStatus.value= statusStore.statuses.find(
     //     (status) => status.name === newValue.name
     //   );
-    // if(existingStatus){
+    //   console.log(existingStatus.value);
+      
+    // if(existingStatus.value){
     //   toast.add({
     //       severity: "error",
     //       summary: "Error",
-    //       detail: `Status with name "${newStatus.name}" already exists`,
+    //       detail: `Status with name "${newValue.name}" already exists`,
     //       life: 3000,
     //     });
     // }
     
-    if(newValue.name.length >50 || newValue.description?.length > 200){
-      limitExceed.value=true
-    }else{
-      limitExceed.value=false
-    }
+    // if(newValue.name.length >50 || newValue.description?.length > 200){
+    //   limitExceed.value=true
+    // }else{
+    //   limitExceed.value=false
+    // }
+
+        // Check if name or description length exceeds limits
+        limitExceed.value = newValue.name.length > 50 || newValue.description?.length > 200;
 
     if (mode === "add") {
       
-      if (!newValue.title) {
-        isChanged.value = false;
+      // if (!newValue.title) {
+      //   isChanged.value = false;
         
-      } else {
-        isChanged.value = true;
+      // } else {
+      //   isChanged.value = true;
         
-        return;
-      }
+      //   return;
+      // }
+      isChanged.value = !!newValue.title;
     }
     if (mode === "edit") {
-      if (
-        newValue.name !== unEditedStatus.value.name ||
-        newValue.description !== unEditedStatus.value.description ||
-        (newValue.statusColor !== unEditedStatus.value.statusColor &&
-          newValue.name !== "")
-      ) {
-        isChanged.value = false;
-      } else {
-        isChanged.value = true;
-      }
+      // if (
+      //   newValue.name !== unEditedStatus.value.name ||
+      //   newValue.description !== unEditedStatus.value.description ||
+      //   (newValue.statusColor !== unEditedStatus.value.statusColor &&
+      //     newValue.name !== "")
+      // ) {
+      //   isChanged.value = false;
+      // } else {
+      //   isChanged.value = true;
+      // }
+      isChanged.value = !(
+        newValue.name === unEditedStatus.value.name &&
+        newValue.description === unEditedStatus.value.description &&
+        newValue.statusColor === unEditedStatus.value.statusColor
+      );
     }
   },
   { deep: true }
 );
+// Computed properties
+const isButtonDisabled = computed(() => {
+  return !inputStatus.value.name || isChanged.value || limitExceed.value;
+});
+
+const getButtonType = computed(() => {
+  return isButtonDisabled.value ? 'cancel' : 'ok';
+});
+
+const buttonClass = computed(() => {
+  return isButtonDisabled.value
+    ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
+    : '';
+});
 
 const save = async () => {
   if (mode === "edit") {
@@ -199,20 +225,30 @@ const save = async () => {
           >Cancel</buttonSubmit
         >
 
-        <buttonSubmit
+        <!-- <buttonSubmit
           class="itbkk-button-confirm"
           :buttonType="
             inputStatus.name === '' || isChanged === true || limitExceed===true ? 'cancel' : 'ok'
           "
           @click="save"
-          :disabled="inputStatus.name === '' || isChanged === true || limitExceed===true"
+          :disabled="inputStatus.name === '' || isChanged === true || limitExceed===true "
           :class="
-            inputStatus.name === '' || isChanged === true || limitExceed===true
+            inputStatus.name === '' || isChanged === true || limitExceed===true 
               ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
               : ''
           "
           >Save</buttonSubmit
-        >
+        > -->
+        <buttonSubmit
+  class="itbkk-button-confirm"
+  :buttonType="getButtonType"
+  @click="save"
+  :disabled="isButtonDisabled"
+  :class="buttonClass"
+>
+  Save
+</buttonSubmit>
+
       </div>
     </div>
   </div>
