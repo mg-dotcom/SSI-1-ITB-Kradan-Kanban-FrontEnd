@@ -113,10 +113,28 @@ const save = async () => {
         await statusStore.editStatus(inputStatus.value.id, inputStatus.value)
         router.go(-1)
     } else {
-        if (inputStatus.value.description === '')
-            inputStatus.value.description = null
+
+      const existingStatus = statusStore.statuses.find(
+        (status) => status.name === inputStatus.value.name
+      );
+      
+      if (existingStatus) {
+        toast.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: `Status with name "${inputStatus.value.name}" already exists`,
+          life: 3000
+        })
+        return
+      }else{
         await statusStore.addStatus(inputStatus.value)
         router.go(-1)
+      }
+      
+        // if (inputStatus.value.description === '')
+        //     inputStatus.value.description = null
+        // await statusStore.addStatus(inputStatus.value)
+        // router.go(-1)
     }
 }
 </script>

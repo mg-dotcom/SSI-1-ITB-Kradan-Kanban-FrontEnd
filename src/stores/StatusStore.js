@@ -142,12 +142,14 @@ export const useStatusStore = defineStore("StatusStore", {
           life: 3000,
         });
       } else if (existingStatus) {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: `Status with name "${newStatus.name}" already exists`,
-          life: 3000,
-        });
+        // this.toast.add({
+        //   severity: "error",
+        //   summary: "Error",
+        //   detail: `Status with name "${newStatus.name}" already exists`,
+        //   life: 3000,
+        // });
+        console.log('Status with name already exists');
+        
       } else {
         this.toast.add({
           severity: "error",
