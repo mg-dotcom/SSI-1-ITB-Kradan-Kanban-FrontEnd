@@ -15,6 +15,7 @@ const mode = route.name === "status-add" ? "add" : "edit";
 const inputStatus = ref({});
 const unEditedStatus = ref({});
 const isChanged = ref(false);
+const hasStatusName = ref(false);
 const statusId = Number(route.params.id);
 
 onMounted(async () => {
@@ -68,68 +69,28 @@ onMounted(async () => {
 
 const limitExceed=ref(false)
 
-// const existingStatus=ref(undefined)
 watch(
   inputStatus,
   (newValue) => {
-    // existingStatus.value= statusStore.statuses.find(
-    //     (status) => status.name === newValue.name
-    //   );
-    //   console.log(existingStatus.value);
-      
-    // if(existingStatus.value){
-    //   toast.add({
-    //       severity: "error",
-    //       summary: "Error",
-    //       detail: `Status with name "${newValue.name}" already exists`,
-    //       life: 3000,
-    //     });
-    // }
-    
-    // if(newValue.name.length >50 || newValue.description?.length > 200){
-    //   limitExceed.value=true
-    // }else{
-    //   limitExceed.value=false
-    // }
-
-        // Check if name or description length exceeds limits
         limitExceed.value = newValue.name.length > 50 || newValue.description?.length > 200;
 
     if (mode === "add") {
-      
-      // if (!newValue.title) {
-      //   isChanged.value = false;
-        
-      // } else {
-      //   isChanged.value = true;
-        
-      //   return;
-      // }
-      isChanged.value = !!newValue.title;
+      hasStatusName.value = !!newValue.name;
     }
     if (mode === "edit") {
-      // if (
-      //   newValue.name !== unEditedStatus.value.name ||
-      //   newValue.description !== unEditedStatus.value.description ||
-      //   (newValue.statusColor !== unEditedStatus.value.statusColor &&
-      //     newValue.name !== "")
-      // ) {
-      //   isChanged.value = false;
-      // } else {
-      //   isChanged.value = true;
-      // }
       isChanged.value = !(
         newValue.name === unEditedStatus.value.name &&
         newValue.description === unEditedStatus.value.description &&
         newValue.statusColor === unEditedStatus.value.statusColor
       );
+      
     }
   },
   { deep: true }
 );
 // Computed properties
 const isButtonDisabled = computed(() => {
-  return !inputStatus.value.name || isChanged.value || limitExceed.value;
+  return !inputStatus.value.name || (mode === 'add' && !hasStatusName.value) || (mode === 'edit' && !isChanged.value) || limitExceed.value;
 });
 
 const getButtonType = computed(() => {
@@ -199,7 +160,6 @@ const save = async () => {
             <p class="font-semibold mb-2">Description</p>
             <div class="px-3">
               <textarea
-                maxlength="200"
                 v-model.trim="inputStatus.description"
                 class="itbkk-status-description block p-2.5 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full xl:h-52 mobile:h-44 h-44"
               ></textarea>
