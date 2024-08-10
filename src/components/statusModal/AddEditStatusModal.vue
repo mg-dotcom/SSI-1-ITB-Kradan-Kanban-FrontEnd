@@ -74,10 +74,6 @@ watch(
     (newValue) => {
         limitExceed.value =
             newValue.name.length > 50 || newValue.description?.length > 200
-
-        if (mode === 'add') {
-            hasStatusName.value = !!newValue.name
-        }
         if (mode === 'edit') {
             isChanged.value = !(
                 newValue.name === unEditedStatus.value.name &&
@@ -92,15 +88,11 @@ watch(
 const isButtonDisabled = computed(() => {
     return (
         !inputStatus.value.name ||
-        (mode === 'add' && !hasStatusName.value) ||
         (mode === 'edit' && !isChanged.value) ||
         limitExceed.value
     )
 })
 
-const getButtonType = computed(() => {
-    return isButtonDisabled.value ? 'cancel' : 'ok'
-})
 
 const buttonClass = computed(() => {
     return isButtonDisabled.value
@@ -214,7 +206,7 @@ const save = async () => {
                 >
                 <buttonSubmit
                     class="itbkk-button-confirm"
-                    :buttonType="getButtonType"
+                    buttonType="ok"
                     @click="save"
                     :disabled="isButtonDisabled"
                     :class="buttonClass"
