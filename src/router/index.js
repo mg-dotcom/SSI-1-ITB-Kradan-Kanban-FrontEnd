@@ -3,7 +3,7 @@ import TaskView from '../views/TaskView.vue'
 import Detail from '../components/taskModal/Detail.vue'
 import AddEditTask from '../components/taskModal/AddEditTask.vue'
 import StatusView from '../views/StatusView.vue'
-import AddEditStatusModal from '../components/statusModal/AddEditStatusModal.vue'
+import AddEditStatus from '../components/statusModal/AddEditStatus.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -41,12 +41,12 @@ const router = createRouter({
         {
           path: 'add',
           name: 'status-add',
-          component: AddEditStatusModal
+          component: AddEditStatus
         },
         {
           path: ':id/edit',
           name: 'status-edit',
-          component: AddEditStatusModal
+          component: AddEditStatus
         }
       ]
     },

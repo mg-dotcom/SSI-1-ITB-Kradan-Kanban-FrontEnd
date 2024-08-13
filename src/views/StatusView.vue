@@ -10,11 +10,10 @@ import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import { ref } from "vue";
-import { useToast } from "primevue/usetoast";
 const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
-const toast = useToast();
+
 onMounted(async () => {
   await statusStore.loadStatuses();
   await taskStore.loadTasks();
@@ -189,36 +188,27 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                         params: { id: status.id },
                       })
                     "
-                    :buttonType="
+                    :button-type="
                       status.name === 'No Status' || status.name === 'Done'
-                        ? 'cancel'
+                        ? 'disabled'
                         : 'edit'
                     "
                     :disabled="
                       status.name === 'No Status' || status.name === 'Done'
                     "
-                    :class="
-                      status.name === 'No Status' || status.name === 'Done'
-                        ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
-                        : ''
-                    "
                     >Edit</buttonSubmit
                   >
                   <buttonSubmit
                     class="itbkk-button-delete"
-                    :buttonType="
+                    :button-type="
                       status.name === 'No Status' || status.name === 'Done'
-                        ? 'cancel'
+                        ? 'disabled'
                         : 'delete'
                     "
                     :disabled="
                       status.name === 'No Status' || status.name === 'Done'
                     "
-                    :class="
-                      status.name === 'No Status' || status.name === 'Done'
-                        ? 'bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled'
-                        : ''
-                    "
+                   
                     @click="openDeleteOrTransferModal(status.id)"
                   >
                     Delete
