@@ -1,71 +1,62 @@
 <script setup></script>
 
 <template>
-  <div
-    class="flex items-center justify-center min-h-screen bg-gray-100 font-nunito"
-  >
+  <div class="flex h-screen font-nunito items-center overflow-hidden">
+   <img src="../assets/w" alt="">
     <div
-      class="flex md:flex-row items-center justify-between max-w-5xlshadow-lg rounded-lg overflow-hidden"
+      class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-blue-status p-8 w-[50vw] h-full box-border"
     >
-      <!-- Left section with image and text -->
-      <div
-        class="w-full md:w-1/2 flex flex-col items-center justify-center bg-lightblue from-blue to-lightblue p-8"
-      >
-        <h2 class="text-2xl font-bold text-white mb-4">
-          School of Information Technology
+      <div>
+        <h2 class="text-4xl text-start font-bold text-white">
+          School of Information <br />
+          Technology .
         </h2>
-        <img
-          src="./assets/logInImg.svg"
-          alt="log-in img"
-          class="w-full h-auto object-cover rounded"
-        />
       </div>
 
-      <!-- Right section with login form -->
-      <div
-        class="w-full md:w-1/2 flex flex-col items-center justify-center p-8"
-      >
-        <h2 class="text-3xl font-bold text-gray-800 mb-4 font-nunito">
+      <div class="flex justify-center flex-1">
+        <img class="w-7/12" src="../assets/logInImg.svg" alt="" />
+      </div>
+      <div>
+        <h2 class="text-2xl text-end font-bold text-white opacity-20">SSI-1</h2>
+      </div>
+    </div>
+
+    <div
+      class="w-full lg:w-1/2 flex items-center justify-center font-nunito h-screen"
+    >
+      <div class="max-w-md w-full p-6 scale-105">
+        <h1 class="text-3xl font-bold mb-6 text-black text-center">
           Welcome to ITB-KK
-        </h2>
-        <form class="w-full max-w-sm">
-          <div class="mb-4">
-            <label
-              class="block text-gray-700 text-sm font-bold mb-2"
-              for="username"
+        </h1>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Username</label
             >
-              Username
-            </label>
             <input
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="username"
               type="text"
-              placeholder="Enter your username"
+              class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
-          <div class="mb-6">
-            <label
-              class="block text-gray-700 text-sm font-bold mb-2"
-              for="password"
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700"
+              >Password</label
             >
-              Password
-            </label>
             <input
-              class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
               type="password"
-              placeholder="Enter your password"
+              class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
-          <div class="flex items-center justify-between">
+          <div>
             <button
-              class="btn btn-neutral w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="button"
+              class="btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
             >
               Sign In
             </button>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   </div>
