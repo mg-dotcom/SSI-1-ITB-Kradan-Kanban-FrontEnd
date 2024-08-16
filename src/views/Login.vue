@@ -1,33 +1,13 @@
-<script setup></script>
+<script setup>
+import GradientLoginBg from "@/components/gradientLoginBg.vue";
+import { ref } from "vue";
+
+const isError = ref(false);
+</script>
 
 <template>
   <div class="flex h-screen font-nunito items-center overflow-hidden">
-    <svg
-      class="absolute inset-x-0 top-0 w-full h-full z-[-1]"
-      viewBox="0 0 100 10"
-    >
-      <defs>
-        <linearGradient id="gradient-top" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" style="stop-color: #ffffff; stop-opacity: 1" />
-          <stop offset="100%" style="stop-color: #58aafd; stop-opacity: 1" />
-        </linearGradient>
-      </defs>
-      <path fill="url(#gradient-top)" d="M0 0 H100 V100 H0 Z" />
-    </svg>
-
-    <svg
-      class="absolute inset-x-0 bottom-0 w-full h-full z-[-2]"
-      viewBox="0 0 100 10"
-    >
-      <defs>
-        <linearGradient id="gradient-bottom" x1="0%" y1="0%" x2="0%" y2="0%">
-          <stop offset="0%" style="stop-color: #58aafd; stop-opacity: 1" />
-          <stop offset="100%" style="stop-color: #ffffff; stop-opacity: 1" />
-        </linearGradient>
-      </defs>
-      <path fill="url(#gradient-bottom)" d="M0 0 H100 V100 H0 Z" />
-    </svg>
-
+    <GradientLoginBg />
     <div
       class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-sky-300 p-8 w-[50vw] h-full box-border"
     >
@@ -73,9 +53,32 @@
               class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
+          <div
+            class="flex gap-2 py-3 px-4 bg-rose-200 rounded popup"
+            v-show="isError"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6 shrink-0 stroke-current"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="#e65075"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <span class="text-[#e65075] font-medium"
+              >Incorrect username and password</span
+            >
+          </div>
           <div>
             <button
               class="btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              @click="isError = !isError"
             >
               Sign In
             </button>
