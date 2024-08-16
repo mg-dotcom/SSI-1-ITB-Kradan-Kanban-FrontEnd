@@ -9,7 +9,7 @@ import ToastService from "primevue/toastservice";
 import Toast from "primevue/toast";
 import ToggleButton from "primevue/togglebutton";
 import App from "./App.vue";
-import router from "./router";
+import router from "./router/page";
 import Button from "primevue/button";
 import Dialog from "primevue/dialog";
 import { library } from "@fortawesome/fontawesome-svg-core";

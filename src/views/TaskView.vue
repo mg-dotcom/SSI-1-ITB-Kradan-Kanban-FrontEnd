@@ -112,7 +112,6 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 };
 
 import { onClickOutside } from "@vueuse/core";
-import { faMobile } from "@fortawesome/free-solid-svg-icons";
 
 const optionEditDelete = ref(null);
 
