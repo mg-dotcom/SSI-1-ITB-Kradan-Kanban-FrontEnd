@@ -10,7 +10,6 @@ import { useTaskStore } from "../stores/TaskStore.js";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useSortStore } from "../stores/SortStore.js";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import Header from "../components/Header.vue";
 const router = useRouter();
 const selectedId = ref("");
 const selectedIndex = ref(0);
@@ -123,9 +122,8 @@ onClickOutside(optionEditDelete, () => {
 
 <template>
   <RouterView />
-  <Header />
   <div
-    class="h-screen w-full "
+    class="h-screen w-full"
     @click="
       () => {
         showList = false;
