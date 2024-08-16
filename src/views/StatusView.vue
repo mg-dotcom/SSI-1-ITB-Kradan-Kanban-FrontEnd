@@ -15,7 +15,7 @@ import Header from "../components/Header.vue";
 const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
-const toast = useToast();
+
 onMounted(async () => {
   await statusStore.loadStatuses();
   await taskStore.loadTasks();

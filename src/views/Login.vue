@@ -15,7 +15,6 @@
       <path fill="url(#gradient-top)" d="M0 0 H100 V100 H0 Z" />
     </svg>
 
-    <!-- Second SVG: Blue to White Gradient (Bottom to Top) -->
     <svg
       class="absolute inset-x-0 bottom-0 w-full h-full z-[-2]"
       viewBox="0 0 100 10"
@@ -28,8 +27,9 @@
       </defs>
       <path fill="url(#gradient-bottom)" d="M0 0 H100 V100 H0 Z" />
     </svg>
+
     <div
-      class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-blue-status p-8 w-[50vw] h-full box-border"
+      class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-sky-300 p-8 w-[50vw] h-full box-border"
     >
       <div>
         <h2 class="text-4xl text-start font-bold text-white">
