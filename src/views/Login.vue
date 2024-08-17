@@ -1,8 +1,14 @@
 <script setup>
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
 import { ref } from "vue";
-
+import { useUserStore } from "@/stores/UserStore";
+const userStore = useUserStore();
 const isError = ref(false);
+const username = ref("");
+const password = ref("");
+const signIn = () => {
+  userStore.signIn(username.value, password.value);
+};
 </script>
 
 <template>
@@ -35,21 +41,25 @@ const isError = ref(false);
 
         <div class="space-y-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="itbkk-username block text-sm font-medium text-gray-700"
               >Username</label
             >
             <input
               type="text"
+              v-model="username"
               class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
 
           <div>
-            <label class="block text-sm font-medium text-gray-700"
+            <label
+              class="itbkk-password block text-sm font-medium text-gray-700"
               >Password</label
             >
             <input
               type="password"
+              v-model="password"
               class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
@@ -71,14 +81,14 @@ const isError = ref(false);
                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span class="text-[#e65075] font-medium"
+            <span class="itbkk-message text-[#e65075] font-medium"
               >Incorrect username and password</span
             >
           </div>
           <div>
             <button
-              class="btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-              @click="isError = !isError"
+              class="itbkk-button-signin btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              @click="signIn"
             >
               Sign In
             </button>
