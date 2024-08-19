@@ -2,6 +2,7 @@
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
 import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
+
 const userStore = useUserStore();
 const isError = ref(false);
 const username = ref("");
@@ -19,8 +20,11 @@ const isFormValid = computed(
 );
 
 const signIn = async () => {
-  if (!isFormValid.value) {
+  // console.log(isFormValid.value);
+  
+  if (isFormValid.value) {
     isError.value = true;
+    console.log(isError.value);
     errorMessage.value =
       "Invalid input. Please check your username and password.";
     return;
@@ -40,6 +44,8 @@ const signIn = async () => {
     }
   }
 };
+// console.log(isError.value);
+
 </script>
 
 <template>

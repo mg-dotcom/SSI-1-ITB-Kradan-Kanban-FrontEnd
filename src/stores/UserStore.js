@@ -19,13 +19,19 @@ export const useUserStore = defineStore("UserStore", {
   },
   actions: {
     async login(user) {
-      const data = await fetch("http://localhost:8080/login", {
+      const response = await fetch("http://localhost:8080/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(user),
       });
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new Error("Unauthorized: Invalid username or password.");
+        }
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
       const res = await data.json();
       if (res.status === "success") {
         this.user = res.data.user;
