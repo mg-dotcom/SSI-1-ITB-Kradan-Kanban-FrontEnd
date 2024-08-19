@@ -19,7 +19,7 @@ export const useUserStore = defineStore("UserStore", {
   },
   actions: {
     async login(user) {
-      const data = await fetch("http://localhost:3000/api/auth/login", {
+      const data = await fetch("http://localhost:8080/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

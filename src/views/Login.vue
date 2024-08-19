@@ -1,13 +1,44 @@
 <script setup>
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 const userStore = useUserStore();
 const isError = ref(false);
 const username = ref("");
 const password = ref("");
-const signIn = () => {
-  userStore.signIn(username.value, password.value);
+const errorMessage = ref("");
+
+const isUsernameValid = computed(
+  () => username.value.length > 0 && username.value.length <= 50
+);
+const isPasswordValid = computed(
+  () => password.value.length > 0 && password.value.length <= 14
+);
+const isFormValid = computed(
+  () => isUsernameValid.value && isPasswordValid.value
+);
+
+const signIn = async () => {
+  if (!isFormValid.value) {
+    isError.value = true;
+    errorMessage.value =
+      "Invalid input. Please check your username and password.";
+    return;
+  }
+
+  try {
+    await userStore.login({
+      username: username.value,
+      password: password.value,
+    });
+  } catch (error) {
+    if (error.response && error.response.status === 400) {
+      isError.value = true;
+      errorMessage.value = "Incorrect username or password.";
+    } else {
+      console.error(error);
+    }
+  }
 };
 </script>
 
@@ -20,7 +51,7 @@ const signIn = () => {
       <div>
         <h2 class="text-4xl text-start font-bold text-white">
           School of Information <br />
-          Technology .
+          Technology.
         </h2>
       </div>
       <div class="flex justify-center flex-1">
@@ -87,11 +118,15 @@ const signIn = () => {
           </div>
           <div>
             <button
+              :disabled="!isFormValid"
               class="itbkk-button-signin btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
               @click="signIn"
             >
               Sign In
             </button>
+          </div>
+          <div v-if="isError" class="error-message">
+            {{ errorMessage }}
           </div>
         </div>
       </div>
