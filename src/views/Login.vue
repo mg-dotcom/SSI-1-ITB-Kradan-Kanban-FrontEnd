@@ -79,25 +79,27 @@ const signIn = async () => {
         <div class="space-y-4">
           <div>
             <label
-              class="itbkk-username block text-sm font-medium text-gray-700"
+              class="block text-sm font-medium text-gray-700"
               >Username</label
             >
             <input
               type="text"
               v-model="username"
-              class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+              maxlength="50"
+              class="itbkk-username mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
 
           <div>
             <label
-              class="itbkk-password block text-sm font-medium text-gray-700"
+              class="block text-sm font-medium text-gray-700"
               >Password</label
             >
             <input
               type="password"
               v-model="password"
-              class="mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+              maxlength="14"
+              class="itbkk-password mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
           <div
@@ -119,13 +121,14 @@ const signIn = async () => {
               />
             </svg>
             <span class="itbkk-message text-[#e65075] font-medium"
-              >Incorrect username and password</span
+              >Username or Password is incorrect</span
             >
           </div>
           <div>
             <button
               :disabled="!isFormValid"
               class="itbkk-button-signin btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              :class="{'disabled': !isFormValid, 'opacity-50 cursor-not-allowed': !isFormValid}"
               @click="signIn"
             >
               Sign In
