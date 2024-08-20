@@ -20,35 +20,20 @@ const isFormValid = computed(
 );
 
 const signIn = async () => {
-  // console.log(isFormValid.value);
-  
-  // if (isFormValid.value) {
-  //   isError.value = true;
-  //   console.log(isError.value);
-  //   errorMessage.value =
-  //     "Invalid input. Please check your username and password.";
-  //   return;
-  // }
-
-  // try {
-  //   await userStore.login({
-  //     username: username.value,
-  //     password: password.value,
-  //   });
-  // } catch (error) {
-  //   if (error.response && error.response.status === 400) {
-  //     isError.value = true;
-  //     errorMessage.value = "Incorrect username or password.";
-  //   } else {
-  //     console.error(error);
-  //   }
-  // }
-  userStore.login({
-    username: username.value,
-    password: password.value,
-  });
+  try {
+    await userStore.login({
+      username: username.value,
+      password: password.value,
+    });
+  } catch (error) {
+    if (error.message.includes("Unauthorized")) {
+      isError.value = true;
+      errorMessage.value = "Username or Password is incorrect.";    
+    } else {
+      console.error(error);
+    }
+  }
 };
-// console.log(isError.value);
 
 </script>
 
@@ -137,9 +122,6 @@ const signIn = async () => {
             >
               Sign In
             </button>
-          </div>
-          <div v-if="isError" class="error-message">
-            {{ errorMessage }}
           </div>
         </div>
       </div>
