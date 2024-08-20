@@ -10,8 +10,8 @@ const fetchUser = async (url, userLogin) => {
       }),
     });
   
-    if (!res.ok || res.status === 401) {
-      throw new Error(`HTTP error! Status: ${res.status}`);
+    if ([401].includes(res.status)) {
+      throw new Error("Username or Password is incorrect.");
     }
   
     const data = await res.json();

@@ -25,13 +25,10 @@ const signIn = async () => {
       username: username.value,
       password: password.value,
     });
-  } catch (error) {
-    if (error.message.includes("Unauthorized")) {
+  } catch (error) {{
       isError.value = true;
-      errorMessage.value = "Username or Password is incorrect.";    
-    } else {
-      console.error(error);
-    }
+      errorMessage.value = error.message;      
+    } 
   }
 };
 

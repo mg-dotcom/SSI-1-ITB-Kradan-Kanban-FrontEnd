@@ -33,7 +33,7 @@ export const useUserStore = defineStore("UserStore", {
           alert("Failed to login");
         }
       } catch (error) {
-        console.error(error);
+        throw new Error(error.message);
       }
     },
     async logout() {
