@@ -6,7 +6,7 @@
         class="header max-w-full h-[90px] bg-gradient-to-r from-blue to-lightblue"
     >
         <img
-            class="object-cover absolute right-0 max-w-max h-[90px]"
+            class="object-cover absolute left-10 max-w-max h-[90px]"
             src="/glass-overlay.png"
             alt=""
         />
