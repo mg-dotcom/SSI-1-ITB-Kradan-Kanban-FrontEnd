@@ -22,27 +22,31 @@ const isFormValid = computed(
 const signIn = async () => {
   // console.log(isFormValid.value);
   
-  if (isFormValid.value) {
-    isError.value = true;
-    console.log(isError.value);
-    errorMessage.value =
-      "Invalid input. Please check your username and password.";
-    return;
-  }
+  // if (isFormValid.value) {
+  //   isError.value = true;
+  //   console.log(isError.value);
+  //   errorMessage.value =
+  //     "Invalid input. Please check your username and password.";
+  //   return;
+  // }
 
-  try {
-    await userStore.login({
-      username: username.value,
-      password: password.value,
-    });
-  } catch (error) {
-    if (error.response && error.response.status === 400) {
-      isError.value = true;
-      errorMessage.value = "Incorrect username or password.";
-    } else {
-      console.error(error);
-    }
-  }
+  // try {
+  //   await userStore.login({
+  //     username: username.value,
+  //     password: password.value,
+  //   });
+  // } catch (error) {
+  //   if (error.response && error.response.status === 400) {
+  //     isError.value = true;
+  //     errorMessage.value = "Incorrect username or password.";
+  //   } else {
+  //     console.error(error);
+  //   }
+  // }
+  userStore.login({
+    username: username.value,
+    password: password.value,
+  });
 };
 // console.log(isError.value);
 
