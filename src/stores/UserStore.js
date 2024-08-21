@@ -25,16 +25,14 @@ export const useUserStore = defineStore('UserStore', {
         async login(user) {
             try {
                 const data = await fetchUser(
-                    'http://localhost:8080/api/auth/login',
+                    'http://localhost:8080/login',
                     user
                 )
-                console.log(data)
 
                 const decoded = jwtDecode(data.access_token)
-                console.log(decoded.name)
 
                 if (decoded) {
-                    this.token = data
+                    this.token = data.access_token
                     this.user = decoded
                     this.isLoggedIn = true
                 } else {

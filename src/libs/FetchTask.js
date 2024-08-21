@@ -1,20 +1,27 @@
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/UserStore'
-import { ref } from 'vue'
-
-const userStore = useUserStore()
-console.log(userStore.token);
-
 
 const fetchAllTasks = async (url) => {
-    const res = await fetch(`${url}`)
+    const res = await fetch(`${url}`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${useUserStore().token}`
+            
+    }})
     const data = await res.json()
     return data
 }
 
 const fetchTaskDetails = async (url, id) => {
     const router = useRouter()
-    const data = await fetch(`${url}/${id}`)
+    const data = await fetch(`${url}/${id}`,{
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${useUserStore().token}`
+            
+    }})
     if (!data.ok) {
         alert('The requested task does not exist')
         router.push('/')
@@ -28,7 +35,8 @@ const addTask = async (url, newTask) => {
     const res = await fetch(`${url}`, {
         method: 'POST',
         headers: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            'Authorization': `Bearer ${useUserStore().token}`
         },
         body: JSON.stringify({
             title: newTask.title,
@@ -42,7 +50,11 @@ const addTask = async (url, newTask) => {
 
 const deleteTask = async (url, id) => {
     const res = await fetch(`${url}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+            'content-type': 'application/json',
+            'Authorization': `Bearer ${useUserStore().token}`
+        }
     })
     return res
 }
@@ -51,7 +63,8 @@ const updatedTask = async (url, updatedTask, id) => {
     const res = await fetch(`${url}/${id}`, {
         method: 'PUT',
         headers: {
-            'content-type': 'application/json'
+            'content-type': 'application/json',
+            'Authorization': `Bearer ${useUserStore().token}`
         },
         body: JSON.stringify({
             title: updatedTask.title,
@@ -66,7 +79,13 @@ const updatedTask = async (url, updatedTask, id) => {
 const fetchFilterTasks = async (url, arr) => {
     const param = new URLSearchParams()
     param.append('filterStatuses', arr)
-    const res = await fetch(`${url}?${param.toString()}`)
+    const res = await fetch(`${url}?${param.toString()}`,{
+        method: 'GET',
+        headers: {
+            'content-type': 'application/json',
+            'Authorization': `Bearer ${useUserStore().token}`
+        },
+    })
     const data = await res.json()
     return data
 }

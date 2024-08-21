@@ -1,11 +1,24 @@
+import { useUserStore } from '@/stores/UserStore'
 const fetchAllStatus = async (url) => {
-  const res = await fetch(`${url}`);
+  const res = await fetch(`${url}`,{
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${useUserStore().token}`
+        
+}});
   const data = await res.json();
   return data;
 };
 
 const fetchStatusById = async (url, id) => {
-  const data = await fetch(`${url}/${id}`);
+  const data = await fetch(`${url}/${id}`,{
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${useUserStore().token}`
+        
+}});
   const res = await data.json();
   return res;
 };
@@ -13,6 +26,9 @@ const fetchStatusById = async (url, id) => {
 const deleteStatus = async (url, id) => {
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${useUserStore().token}`}
   });
   return res;
 };
@@ -22,6 +38,7 @@ const addStatus = async (url, newStatus) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
+      'Authorization': `Bearer ${useUserStore().token}`
     },
     body: JSON.stringify({
       name: newStatus.name,
@@ -37,6 +54,7 @@ const updateStatus = async (url, id, updatedStatus) => {
     method: "PUT",
     headers: {
       "content-type": "application/json",
+      'Authorization': `Bearer ${useUserStore().token}`
     },
     body: JSON.stringify({
       name: updatedStatus.name,
@@ -48,7 +66,13 @@ const updateStatus = async (url, id, updatedStatus) => {
 };
 
 const fetchStatusSetting = async (url) => {
-  const res = await fetch(`${url}/1/maximum-task`);
+  const res = await fetch(`${url}/1/maximum-task`,{
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${useUserStore().token}`
+        
+}});
   const data = await res.json();
   return data;
 };
@@ -58,6 +82,7 @@ const updateStatusSetting = async (url, updatedLimit) => {
     method: "PATCH",
     headers: {
       "content-type": "application/json",
+      'Authorization': `Bearer ${useUserStore().token}`
     },
     body: JSON.stringify({
       limitMaximumTask: updatedLimit,
