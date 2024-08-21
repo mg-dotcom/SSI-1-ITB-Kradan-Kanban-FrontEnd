@@ -2,7 +2,9 @@
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
 import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
+import { useRouter, RouterView } from "vue-router";
 
+const router = useRouter();
 const userStore = useUserStore();
 const isError = ref(false);
 const username = ref("");
@@ -19,7 +21,7 @@ const isFormValid = computed(
   () => isUsernameValid.value && isPasswordValid.value
 );
 
-const signIn = async () => {
+const signIn = async() => {
   try {
     await userStore.login({
       username: username.value,
@@ -30,6 +32,7 @@ const signIn = async () => {
       errorMessage.value = error.message;      
     } 
   }
+  router.push({ name: "task" });
 };
 
 </script>

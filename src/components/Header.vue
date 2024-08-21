@@ -1,4 +1,14 @@
-<script setup></script>
+<script setup>
+import { useUserStore } from '@/stores/UserStore'
+import { ref } from 'vue';
+
+const userStore = useUserStore()
+console.log('hi')
+
+const userData=ref(userStore.user)
+console.log(userData.value.name);
+
+</script>
 
 <template>
     <Toast class="itbkk-message" />
@@ -25,7 +35,9 @@
                             />
                         </div>
                     </div>
-                    <div class="text-black font-bold">Somchai Jaidee</div>
+                    <div class="text-black font-bold">
+                        {{ userData.name }}
+                    </div>
                 </div>
                 <div>
                     <button class="">
