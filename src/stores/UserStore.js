@@ -28,20 +28,21 @@ export const useUserStore = defineStore('UserStore', {
                     'http://localhost:8080/api/auth/login',
                     user
                 )
+                console.log(data)
 
                 const decoded = jwtDecode(data.access_token)
                 console.log(decoded.name)
 
                 if (decoded) {
-                  this.token = data;
-                  this.user = decoded;
-                  this.isLoggedIn = true;
+                    this.token = data
+                    this.user = decoded
+                    this.isLoggedIn = true
                 } else {
-                  alert("Failed to login");
+                    alert('Failed to login')
                 }
             } catch (error) {
-              console.log('error');
-              
+                console.log('error')
+
                 throw new Error(error.message)
             }
         },

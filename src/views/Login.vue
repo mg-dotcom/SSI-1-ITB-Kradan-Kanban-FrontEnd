@@ -27,12 +27,13 @@ const signIn = async() => {
       username: username.value,
       password: password.value,
     });
+    router.push({ name: "task" });
   } catch (error) {{
       isError.value = true;
       errorMessage.value = error.message;      
     } 
   }
-  router.push({ name: "task" });
+
 };
 
 </script>
