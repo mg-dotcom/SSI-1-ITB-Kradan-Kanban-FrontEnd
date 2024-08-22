@@ -4,7 +4,7 @@ import TaskView from "../views/TaskView.vue";
 import Detail from "../components/taskModal/Detail.vue";
 import AddEditTask from "../components/taskModal/AddEditTask.vue";
 import StatusView from "../views/StatusView.vue";
-import AddEditStatusModal from "../components/statusModal/AddEditStatusModal.vue";
+import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
