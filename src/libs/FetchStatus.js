@@ -1,6 +1,5 @@
 import { useUserStore } from '@/stores/UserStore'
 const fetchAllStatus = async (url) => {
-  useUserStore().initialize();
   const res = await fetch(`${url}`,{
     method: 'GET',
     headers: {
@@ -54,7 +53,6 @@ const updateStatus = async (url, id, updatedStatus) => {
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: {
-      "content-type": "application/json",
       'Authorization': `Bearer ${useUserStore().token}`
     },
     body: JSON.stringify({
@@ -63,6 +61,8 @@ const updateStatus = async (url, id, updatedStatus) => {
       statusColor: updatedStatus.statusColor,
     }),
   });
+  console.log(res);
+  
   return res;
 };
 

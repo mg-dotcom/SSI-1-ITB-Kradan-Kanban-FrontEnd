@@ -1,14 +1,17 @@
 <script setup>
 import { useUserStore } from '@/stores/UserStore'
 import { useRouter, RouterView } from "vue-router";
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 const router = useRouter();
 const userStore = useUserStore()
-console.log('hi')
-
 const userData=ref(userStore.user)
-console.log(userData.value.name);
+
+// Ensure the store is initialized (retrieve user data from the cookie if available)
+userStore.initialize();
+
+// Computed property to dynamically watch the user's name
+const userName = computed(() => userStore.user.name);
 
 const logout=()=>{
     userStore.logout();
@@ -43,14 +46,14 @@ const logout=()=>{
                         </div>
                     </div>
                     <div class="itbkk-fullname text-black font-bold">
-                        {{ userData.name }}
+                        {{ userName }}
                     </div>
                 </div>
                 <div>
                     <button class="logout-button" @click="logout">
                         <img
                             src="../assets/logoutIcon.svg"
-                            alt="logout ja bitch"
+                            alt="logout"
                             class="w-8"
                         />
                     </button>
