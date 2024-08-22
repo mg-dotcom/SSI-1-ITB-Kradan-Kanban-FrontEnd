@@ -132,7 +132,6 @@ onClickOutside(optionEditDelete, () => {
       }
     "
   >
-   <img src="../assets/gradientLoginBg.svg" alt="">
     <Header />
     <div
       class="text-xl font-bold flex items-center text-blue pt-7 xl:px-32 lg:px-[72px] px-14 mobile:px-5"
