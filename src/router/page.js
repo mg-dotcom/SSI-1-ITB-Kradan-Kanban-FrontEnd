@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useUserStore } from "@/stores/UserStore";
 import TaskView from "../views/TaskView.vue";
 import Detail from "../components/taskModal/Detail.vue";
 import AddEditTask from "../components/taskModal/AddEditTask.vue";
@@ -63,4 +64,16 @@ const router = createRouter({
   ],
 });
 
+router.beforeEach((to,_,next) => {
+  const userStore = useUserStore();
+  const isAuthenticated = !!userStore.getToken;
+
+  if (to.path !== '/login' && !isAuthenticated) {
+    next('/login');
+  } else if (to.path === '/login' && isAuthenticated) {
+    next('/task');
+  } else {
+    next();
+  }
+});
 export default router;
