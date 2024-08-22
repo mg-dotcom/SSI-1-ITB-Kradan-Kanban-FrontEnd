@@ -40,6 +40,7 @@ export const useUserStore = defineStore('UserStore', {
                     // Set the access token in a cookie with a 30-minute expiration
                     const expires = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
                     CookieUtil.set('access_token', this.token, expires)
+                    
                 } else {
                     alert('Failed to login')
                 }

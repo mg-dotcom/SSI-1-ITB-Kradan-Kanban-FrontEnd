@@ -1,12 +1,19 @@
 <script setup>
 import { useUserStore } from '@/stores/UserStore'
+import { useRouter, RouterView } from "vue-router";
 import { ref } from 'vue';
 
+const router = useRouter();
 const userStore = useUserStore()
 console.log('hi')
 
 const userData=ref(userStore.user)
 console.log(userData.value.name);
+
+const logout=()=>{
+    userStore.logout();
+    router.push({ name: "login" });
+}
 
 </script>
 
@@ -40,7 +47,7 @@ console.log(userData.value.name);
                     </div>
                 </div>
                 <div>
-                    <button class="">
+                    <button class="logout-button" @click="logout">
                         <img
                             src="../assets/logoutIcon.svg"
                             alt="logout ja bitch"
