@@ -1,44 +1,56 @@
-import "./assets/main.css";
-import { CAlert } from "@coreui/vue";
-import PrimeVue from "primevue/config";
-import "primevue/resources/themes/aura-light-green/theme.css";
-import "primevue/resources/primevue.min.css";
-import { createApp } from "vue";
-import { createPinia } from "pinia";
-import ToastService from "primevue/toastservice";
-import Toast from "primevue/toast";
-import ToggleButton from "primevue/togglebutton";
-import App from "./App.vue";
-import router from "./router";
-import Button from "primevue/button";
-import Dialog from "primevue/dialog";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { fas } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import './assets/main.css'
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config'
+import ToastService from 'primevue/toastservice'
+import Toast from 'primevue/toast'
+import ToggleButton from 'primevue/togglebutton'
+import Button from 'primevue/button'
+import Dialog from 'primevue/dialog'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import App from './App.vue'
+import router from './router/page'
+import { CAlert } from '@coreui/vue'
 
-const app = createApp(App);
-app.component("Toast", Toast);
+// Import PrimeVue theme and styles
+import 'primevue/resources/themes/aura-light-green/theme.css'
+import 'primevue/resources/primevue.min.css'
+
+// Import CoreUI styles
+import './assets/main.css'
+
+// Initialize FontAwesome library
+library.add(fas)
+
+// Create Vue app instance
+const app = createApp(App)
+
+// Register components globally
+app.component('Toast', Toast)
+app.component('CAlert', CAlert)
+app.component('ToggleButton', ToggleButton)
+app.component('Button', Button)
+app.component('Dialog', Dialog)
+app.component('fa', FontAwesomeIcon)
+
+// Use plugins
 app.use(PrimeVue, {
-  pt: {
-    toast: {
-      detail: {
-        class: "itbkk-message",
-      },
-      container: {
-        class: "shadow-md",
-      },
-    },
-  },
-});
-app.component("CAlert", CAlert);
-app.component("ToggleButton", ToggleButton);
-app.component("Button", Button);
-app.use(ToastService);
-app.component("Dialog", Dialog);
-app.use(createPinia());
-app.component("fa", FontAwesomeIcon);
-library.add(fas);
+    pt: {
+        toast: {
+            detail: {
+                class: 'itbkk-message'
+            },
+            container: {
+                class: 'shadow-md'
+            }
+        }
+    }
+})
+app.use(ToastService)
+app.use(createPinia())
+app.use(router)
 
-app.use(router);
-
-app.mount("#app");
+// Mount the app
+app.mount('#app')

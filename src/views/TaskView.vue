@@ -10,6 +10,7 @@ import { useTaskStore } from "../stores/TaskStore.js";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useSortStore } from "../stores/SortStore.js";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import Header from "../components/Header.vue";
 const router = useRouter();
 const selectedId = ref("");
 const selectedIndex = ref(0);
@@ -122,6 +123,7 @@ onClickOutside(optionEditDelete, () => {
 
 <template>
   <RouterView />
+
   <div
     class="h-screen w-full"
     @click="
@@ -130,6 +132,8 @@ onClickOutside(optionEditDelete, () => {
       }
     "
   >
+   <img src="../assets/gradientLoginBg.svg" alt="">
+    <Header />
     <div
       class="text-xl font-bold flex items-center text-blue pt-7 xl:px-32 lg:px-[72px] px-14 mobile:px-5"
       @click="router.push({ name: 'task' }), (popup.optionEditDelete = false)"

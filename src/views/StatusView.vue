@@ -10,6 +10,10 @@ import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import { ref } from "vue";
+
+import { useToast } from "primevue/usetoast";
+import Header from "../components/Header.vue";
+
 const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
@@ -65,6 +69,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 
 <template>
   <RouterView />
+  <Header />
   <div
     class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-4 mobile:px-5 overflow-hidden"
   >
