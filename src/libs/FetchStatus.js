@@ -53,6 +53,7 @@ const updateStatus = async (url, id, updatedStatus) => {
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: {
+      "content-type": "application/json",
       'Authorization': `Bearer ${useUserStore().token}`
     },
     body: JSON.stringify({
