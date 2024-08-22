@@ -1,5 +1,6 @@
 import { useUserStore } from '@/stores/UserStore'
 const fetchAllStatus = async (url) => {
+  useUserStore().initialize();
   const res = await fetch(`${url}`,{
     method: 'GET',
     headers: {
