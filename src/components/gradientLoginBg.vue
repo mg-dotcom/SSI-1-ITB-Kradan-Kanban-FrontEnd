@@ -2,7 +2,7 @@
 
 <template>
   <svg
-    class="absolute inset-x-0 top-0 w-full h-full z-[-1] bg-white"
+    class="absolute inset-x-0 w-full h-screen z-[-1] bg-white"
     viewBox="0 0 100 10"
   >
     <defs>

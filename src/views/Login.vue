@@ -1,15 +1,14 @@
 <script setup>
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { useRouter, RouterView } from "vue-router";
-
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 const router = useRouter();
 const userStore = useUserStore();
 const isError = ref(false);
 const username = ref("");
 const password = ref("");
-const errorMessage = ref("");
 
 const isUsernameValid = computed(
   () => username.value.length > 0 && username.value.length <= 50
@@ -21,28 +20,37 @@ const isFormValid = computed(
   () => isUsernameValid.value && isPasswordValid.value
 );
 
-const signIn = async() => {
+watch([username, password], () => {
+  if (isError.value) {
+    isError.value = false;
+  }
+});
+
+const showPassword = ref(false);
+const toggleShow = () => {
+  showPassword.value = !showPassword.value;
+};
+
+const signIn = async () => {
   try {
     await userStore.login({
       username: username.value,
       password: password.value,
     });
     router.push({ name: "task" });
-  } catch (error) {{
+  } catch (error) {
+    {
       isError.value = true;
-      errorMessage.value = error.message;      
-    } 
+    }
   }
-
 };
-
 </script>
 
 <template>
   <div class="flex h-screen font-nunito items-center overflow-hidden">
-    <GradientLoginBg />
+    <GradientLoginBg class="h-screen" />
     <div
-      class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-sky-300 p-8 w-[50vw] h-full box-border"
+      class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-sky-300 p-8 w-[50vw] box-border ml-7 h-[93%] rounded-lg"
     >
       <div>
         <h2 class="text-4xl text-start font-bold text-white">
@@ -68,33 +76,48 @@ const signIn = async() => {
 
         <div class="space-y-4">
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700"
               >Username</label
             >
+
             <input
               type="text"
               v-model="username"
               maxlength="50"
-              class="itbkk-username mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
+              class="itbkk-username mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-300"
             />
           </div>
 
           <div>
-            <label
-              class="block text-sm font-medium text-gray-700"
+            <label class="block text-sm font-medium text-gray-700"
               >Password</label
             >
-            <input
-              type="password"
-              v-model="password"
-              maxlength="14"
-              class="itbkk-password mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 transition-colors duration-300"
-            />
+            <div
+              class="flex mt-1 border rounded-md focus-within:ring-2 focus-within:ring-gray-300 focus-within:border-gray-300 transition-colors duration-300"
+            >
+              <input
+                :type="showPassword ? 'text' : 'password'"
+                v-model="password"
+                maxlength="14"
+                class="itbkk-password p-2 w-full z-0 rounded-l-md focus:outline-none transition-colors duration-300"
+              />
+              <div
+                class="flex items-center justify-center px-4 cursor-pointer z-50 bg-white rounded-r-md"
+                @click="toggleShow"
+              >
+                <FontAwesomeIcon
+                  class="w-5"
+                  :icon="
+                    showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'
+                  "
+                />
+              </div>
+            </div>
           </div>
+
           <div
             class="flex gap-2 py-3 px-4 bg-rose-200 rounded popup"
-            v-show="isError"
+            v-if="isError"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +141,9 @@ const signIn = async() => {
             <button
               :disabled="!isFormValid"
               class="itbkk-button-signin btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
-              :class="{'disabled': !isFormValid, 'opacity-50 cursor-not-allowed': !isFormValid}"
+              :class="{
+                'disabled opacity-50 cursor-not-allowed': !isFormValid,
+              }"
               @click="signIn"
             >
               Sign In
