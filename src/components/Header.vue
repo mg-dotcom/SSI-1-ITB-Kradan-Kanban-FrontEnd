@@ -42,7 +42,7 @@ const logout=()=>{
                             />
                         </div>
                     </div>
-                    <div class="text-black font-bold">
+                    <div class="itbkk-fullname text-black font-bold">
                         {{ userData.name }}
                     </div>
                 </div>
