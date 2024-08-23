@@ -4,6 +4,7 @@ import { defineStore } from 'pinia'
 import { fetchUser } from '../libs/FetchUser.js'
 import { jwtDecode } from 'jwt-decode'
 import { CookieUtil } from '../libs/CookieUtil.js'
+const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT
 
 export const useUserStore = defineStore('UserStore', {
     state: () => ({
@@ -26,7 +27,7 @@ export const useUserStore = defineStore('UserStore', {
         async login(user) {
             try {
                 const data = await fetchUser(
-                    'http://localhost:8080/login',
+                    `${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}`,
                     user
                 )
                 // initialize()
