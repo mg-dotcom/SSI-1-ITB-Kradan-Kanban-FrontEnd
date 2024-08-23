@@ -180,7 +180,6 @@ onClickOutside(optionEditDelete, () => {
         <span class="close-icon z-40" @click="clearFilter">
           <font-awesome-icon icon="fa-solid fa-xmark" />
         </span>
-
         <ul class="list-items" v-if="showList">
           <li
             v-for="status in statusStore.getStatuses"

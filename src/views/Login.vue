@@ -82,6 +82,7 @@ const signIn = async () => {
 
             <input
               type="text"
+              id="username"
               v-model="username"
               maxlength="50"
               class="itbkk-username mt-1 p-2 w-full border rounded-md focus:border-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 transition-colors duration-300"
@@ -98,6 +99,7 @@ const signIn = async () => {
               <input
                 :type="showPassword ? 'text' : 'password'"
                 v-model="password"
+                id="password"
                 maxlength="14"
                 class="itbkk-password p-2 w-full z-0 rounded-l-md focus:outline-none transition-colors duration-300"
               />
