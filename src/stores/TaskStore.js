@@ -61,6 +61,7 @@ export const useTaskStore = defineStore('TaskStore', {
         newTask
       )
       const addedData = await res.json()
+      
       const statusStore = useStatusStore()
       const status = statusStore.getStatusById(newTask.statusId)
       if (res.status >= 200 && res.status <= 299) {
@@ -118,6 +119,8 @@ export const useTaskStore = defineStore('TaskStore', {
         updatedTaskInput,
         id
       )
+      console.log(res);
+      
       const taskIndex = this.tasks.findIndex((task) => task.id === id)
       if (res.status >= 200 && res.status <= 299) {
         const updateData = await res.json()
