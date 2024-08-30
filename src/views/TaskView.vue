@@ -125,7 +125,7 @@ onClickOutside(optionEditDelete, () => {
   <RouterView />
 
   <div
-    class="h-screen w-full"
+    class="h-screen w-full bg-bgLightBlue"
     @click="
       () => {
         showList = false;

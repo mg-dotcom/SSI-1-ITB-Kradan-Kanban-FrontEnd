@@ -137,15 +137,13 @@
 
 .logout-icon {
   fill: #082f49; /* Initial icon color */
-  stroke: #082f49; /* Apply stroke color same as fill */
-  stroke-width: 9px; /* Adjust this value to increase line thickness */
-  transition: fill 0.3s ease, stroke 0.3s ease;
+  transition: fill 0.3s ease, stroke-width 0.3s ease, filter 0.3s ease;
 }
 
 .logout-btn:hover .logout-icon {
   fill: #ff4d4f; /* Change color on hover */
-  stroke: #ff4d4f; /* Apply stroke color same as fill */
-  stroke-width: 9px;
+  /* Apply stroke color same as fill */
+
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.4));
 }
 @keyframes fadeInUp {
