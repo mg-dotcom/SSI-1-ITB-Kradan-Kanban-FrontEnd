@@ -51,7 +51,7 @@ export const useUserStore = defineStore("UserStore", {
         throw new Error(error.message);
       }
     },
-    async logout() {
+    logout() {
       this.user = {};
       this.token = "";
       this.isLoggedIn = false;

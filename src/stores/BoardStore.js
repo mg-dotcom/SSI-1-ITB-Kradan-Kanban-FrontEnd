@@ -4,12 +4,14 @@ import {
   fetchBoardById,
   addBoard,
 } from "../libs/FetchBoard.js";
+import { useToast } from "primevue/usetoast";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
 export const useBoardStore = defineStore("BoardStore", {
   state: () => ({
     board: [],
+    toast: useToast(),
   }),
   getters: {
     getBoards() {
@@ -46,11 +48,17 @@ export const useBoardStore = defineStore("BoardStore", {
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
       );
-      if (res.status < 200 && res.status > 299) {
-        alert("Failed to add board");
+      if (res.status < 200 && res.status > 299 && res.status !== 401) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "There is a problem. Please try again later",
+          life: 3000,
+        });
       } else {
         this.board.push(newBoard);
       }
+
       return res;
     },
   },

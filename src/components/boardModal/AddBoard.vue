@@ -42,7 +42,8 @@ const saveBoard = async () => {
   if (res.status === 201) {
     router.push({ name: "board" });
   } else if (res.status === 401) {
-    alert("Board name is already exist");
+    userStore.logout();
+    router.push({ name: "login" });
   }
 };
 

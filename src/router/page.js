@@ -14,7 +14,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      redirect: "/login",
+      redirect: "/board",
     },
     {
       path: "/board",
@@ -82,6 +82,9 @@ const router = createRouter({
 router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
   const isAuthenticated = !!userStore.getToken;
+
+  console.log("Token:", userStore.getToken); // Debugging line
+  console.log("Is Authenticated:", isAuthenticated); // Debugging line
 
   if (to.path !== "/login" && !isAuthenticated) {
     next("/login");

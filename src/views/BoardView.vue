@@ -12,7 +12,6 @@ const boardStore = useBoardStore();
 const userStore = useUserStore();
 onMounted(async () => {
   await boardStore.loadBoards();
-  userStore.initialize();
 });
 
 const isEmojiPickerVisible = ref(false);
