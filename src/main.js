@@ -13,6 +13,7 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import App from "./App.vue";
 import router from "./router/page";
 import { CAlert } from "@coreui/vue";
+import EmojiPicker from "vue3-emoji-picker";
 
 // Import PrimeVue theme and styles
 import "primevue/resources/themes/aura-light-green/theme.css";
@@ -29,6 +30,7 @@ library.add(fas);
 const app = createApp(App);
 
 // Register components globally
+app.component("EmojiPicker", EmojiPicker);
 app.component("Toast", Toast);
 app.component("Password", Password);
 app.component("CAlert", CAlert);

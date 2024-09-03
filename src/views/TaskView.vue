@@ -4,7 +4,8 @@ import { initFlowbite, initDropdowns } from "flowbite";
 import StatusButton from "../components/button/StatusButton.vue";
 import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
-import { useRouter, RouterView } from "vue-router";
+import NavigateTitle from "@/components/navigateTitle.vue";
+import { useRouter, RouterView, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useTaskStore } from "../stores/TaskStore.js";
 import { useStatusStore } from "../stores/StatusStore.js";
@@ -12,6 +13,7 @@ import { useSortStore } from "../stores/SortStore.js";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import Header from "../components/Header.vue";
 const router = useRouter();
+const route = useRoute();
 const selectedId = ref("");
 const selectedIndex = ref(0);
 const taskStore = useTaskStore();
@@ -115,6 +117,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 import { onClickOutside } from "@vueuse/core";
 
 const optionEditDelete = ref(null);
+const currentPage = route.name;
 
 onClickOutside(optionEditDelete, () => {
   popup.optionEditDelete = false;
@@ -133,117 +136,114 @@ onClickOutside(optionEditDelete, () => {
     "
   >
     <Header />
-    <div
-      class="text-xl font-bold flex items-center text-blue pt-7 xl:px-32 lg:px-[72px] px-14 mobile:px-5"
-      @click="router.push({ name: 'task' }), (popup.optionEditDelete = false)"
-    >
-      <a
-        class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
-        @click="router.push({ name: 'task' })"
-      >
-        Home&nbsp;</a
-      >
-    </div>
-    <div
-      class="flex justify-between py-6 xl:px-32 lg:px-[72px] md-vertical:px-12 mobile:px-2 gap-y-3 mobile:flex-col md-vertical:flex-row"
-      @click.self="popup.optionEditDelete = false"
-    >
-      <div class="container z-30 md-vertical:scale-95 mobile:scale-[87%]">
-        <div
-          class="itbkk-status-filter select-btn"
-          :class="[
-            showList ? 'open' : '',
-            taskStore.filterStatuses.length >= 2 ? 'h-auto' : 'h-[40px]',
-          ]"
-          @click.stop="showSelectFilter"
-        >
-          <StatusButton
-            v-for="status in taskStore.filterStatuses"
-            :status-color="statusStore.getStatusColor(status)"
-            :status-name="status"
-            :key="status"
-            class="itbkk-filter-item"
-            :filterStatuses="taskStore.filterStatuses"
-            @clear-status="clearEachStatus"
-          >
-            <p>{{ status }}</p>
-          </StatusButton>
 
-          <span
-            class="text-gray-400"
-            v-if="taskStore.filterStatuses.length === 0"
+    <div
+      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
+    >
+      <NavigateTitle :currentPage="currentPage">
+        <template #navigate-home>Home</template>
+      </NavigateTitle>
+
+      <div
+        class="flex justify-between py-6 md-vertical:px-6 mobile:px-0 md-vertical:flex-row mobile:flex-col gap-3"
+        @click.self="popup.optionEditDelete = false"
+      >
+        <div class="container z-30 md-vertical:scale-95 mobile:scale-[87%]">
+          <div
+            class="itbkk-status-filter select-btn"
+            :class="[
+              showList ? 'open' : '',
+              taskStore.filterStatuses.length >= 2 ? 'h-auto' : 'h-[40px]',
+            ]"
+            @click.stop="showSelectFilter"
           >
-            Filter by
-            {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
+            <StatusButton
+              v-for="status in taskStore.filterStatuses"
+              :status-color="statusStore.getStatusColor(status)"
+              :status-name="status"
+              :key="status"
+              class="itbkk-filter-item"
+              :filterStatuses="taskStore.filterStatuses"
+              @clear-status="clearEachStatus"
+            >
+              <p>{{ status }}</p>
+            </StatusButton>
+
+            <span
+              class="text-gray-400"
+              v-if="taskStore.filterStatuses.length === 0"
+            >
+              Filter by
+              {{ statusStore.getStatuses.length > 1 ? "Statuses" : "Status" }}
+            </span>
+          </div>
+          <span class="close-icon z-40" @click="clearFilter">
+            <font-awesome-icon icon="fa-solid fa-xmark" />
           </span>
+          <ul class="list-items" v-if="showList">
+            <li
+              v-for="status in statusStore.getStatuses"
+              class="item itbkk-status-choice"
+              :key="status.id"
+              @click.stop="toggleItem(status.id)"
+            >
+              <input
+                type="checkbox"
+                class="checkbox"
+                v-model="taskStore.filterStatuses"
+                :value="status.name"
+              />
+              <span class="item-text">{{ status.name }}</span>
+            </li>
+          </ul>
         </div>
-        <span class="close-icon z-40" @click="clearFilter">
-          <font-awesome-icon icon="fa-solid fa-xmark" />
-        </span>
-        <ul class="list-items" v-if="showList">
-          <li
-            v-for="status in statusStore.getStatuses"
-            class="item itbkk-status-choice"
-            :key="status.id"
-            @click.stop="toggleItem(status.id)"
+        <div class="flex px-4">
+          <buttonSubmit
+            buttonType="manage-status"
+            class="itbkk-manage-status flex gap-x-2 justify-center items-center"
+            @click="router.push({ name: 'status' })"
           >
-            <input
-              type="checkbox"
-              class="checkbox"
-              v-model="taskStore.filterStatuses"
-              :value="status.name"
-            />
-            <span class="item-text">{{ status.name }}</span>
-          </li>
-        </ul>
-      </div>
-      <div class="flex px-4">
-        <buttonSubmit
-          buttonType="manage-status"
-          class="itbkk-manage-status flex gap-x-2 justify-center items-center"
-          @click="router.push({ name: 'status' })"
-        >
-          <img src="../assets/status-list.svg" alt="" class="w-5" />
-          Manage Status</buttonSubmit
-        >
-        <buttonSubmit
-          class="itbkk-status-setting"
-          button-type="add"
-          @click="openLimitStatus"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="23"
-            height="23"
-            viewBox="0 0 34 32"
-            fill="none"
+            <img src="../assets/status-list.svg" alt="" class="w-5" />
+            Manage Status</buttonSubmit
           >
-            <path
-              d="M28.52 26.8947H33M3.98667 16L1 16.0733M3.98667 16C3.98667 18.2092 5.89691 20 8.25333 20C10.6097 20 12.52 18.2092 12.52 16C12.52 13.7908 10.6097 12 8.25333 12C5.89691 12 3.98667 13.7908 3.98667 16ZM13.7449 16.0735H33M18.424 5.25207H1M33 5.25207H28.52M1 26.8947H18.424M27.4533 27C27.4533 29.2092 25.5431 31 23.1867 31C20.8302 31 18.92 29.2092 18.92 27C18.92 24.7908 20.8302 23 23.1867 23C25.5431 23 27.4533 24.7908 27.4533 27ZM27.4533 5C27.4533 7.20913 25.5431 9 23.1867 9C20.8302 9 18.92 7.20913 18.92 5C18.92 2.79087 20.8302 1 23.1867 1C25.5431 1 27.4533 2.79087 27.4533 5Z"
-              stroke="white"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
-          </svg>
-        </buttonSubmit>
+          <buttonSubmit
+            class="itbkk-status-setting"
+            button-type="add"
+            @click="openLimitStatus"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="23"
+              height="23"
+              viewBox="0 0 34 32"
+              fill="none"
+            >
+              <path
+                d="M28.52 26.8947H33M3.98667 16L1 16.0733M3.98667 16C3.98667 18.2092 5.89691 20 8.25333 20C10.6097 20 12.52 18.2092 12.52 16C12.52 13.7908 10.6097 12 8.25333 12C5.89691 12 3.98667 13.7908 3.98667 16ZM13.7449 16.0735H33M18.424 5.25207H1M33 5.25207H28.52M1 26.8947H18.424M27.4533 27C27.4533 29.2092 25.5431 31 23.1867 31C20.8302 31 18.92 29.2092 18.92 27C18.92 24.7908 20.8302 23 23.1867 23C25.5431 23 27.4533 24.7908 27.4533 27ZM27.4533 5C27.4533 7.20913 25.5431 9 23.1867 9C20.8302 9 18.92 7.20913 18.92 5C18.92 2.79087 20.8302 1 23.1867 1C25.5431 1 27.4533 2.79087 27.4533 5Z"
+                stroke="white"
+                stroke-width="2"
+                stroke-linecap="round"
+              />
+            </svg>
+          </buttonSubmit>
+        </div>
       </div>
-    </div>
 
-    <div
-      class="table xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-4 mobile:px-5"
-      v-if="page.task"
-      @click="closeList"
-    >
-      <div class="-my-1 mb-16 sm:-mx">
+      <!-- <div
+        class="table xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-4 mobile:px-5"
+        v-if="page.task"
+        @click="closeList"
+      > -->
+      <div class="-my-2 mb-8 sm:-mx">
         <div
-          class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4"
+          class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4 mobile:px-0 w-full"
         >
           <div
-            class="shadow overflow-auto border-b border-gray-200 sm:rounded-lg"
+            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
           >
             <table class="w-full h-full md-vertical:table-fixed mobile:table">
               <thead class="bg-lightgray">
-                <tr>
+                <tr class="">
                   <th
                     class="xl:w-[5%] lg:w-[7%] md-vertical:w-[8%] bg-lightgray border-b border-r border-gray-300 w-[7%]"
                   >

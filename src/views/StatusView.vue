@@ -1,6 +1,6 @@
 <script setup>
 import buttonSubmit from "../components/button/Button.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useTaskStore } from "../stores/TaskStore.js";
@@ -9,11 +9,12 @@ import StatusButton from "../components/button/StatusButton.vue";
 import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
+import NavigateTitle from "../components/navigateTitle.vue";
 import { ref } from "vue";
-
 import { useToast } from "primevue/usetoast";
 import Header from "../components/Header.vue";
 
+const route = useRoute();
 const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
@@ -65,6 +66,8 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   openLimit.value = false;
   router.push({ name: "status" });
 };
+
+const currentPage = route.name;
 </script>
 
 <template>
@@ -72,23 +75,16 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   <div class="h-screen w-full bg-bgLightBlue">
     <Header />
     <div
-      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-4 mobile:px-5 overflow-hidden"
+      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
       <div
-        class="flex justify-between py-6 md-vertical:px-6 mobile:px-0 md-vertical:flex-row mobile:flex-col gap-3"
+        class="flex justify-between mobile:px-0 py-6 md-vertical:flex-row mobile:flex-col gap-3"
       >
-        <div
-          class="itbkk-button-home text-xl font-bold flex items-center text-blue"
-        >
-          <a
-            class="relative opacity-65 after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
-            @click="router.push({ name: 'task' })"
-          >
-            Home&nbsp;</a
-          >
-          <p class="opacity-65">></p>
-          <a class="text-blue"> &nbsp;Task Status </a>
-        </div>
+        <NavigateTitle :currentPage="currentPage">
+          <template #navigate-home>Home</template>
+          <template #navigate-next>Task Status</template>
+        </NavigateTitle>
+
         <div class="flex">
           <buttonSubmit
             class="itbkk-button-add"

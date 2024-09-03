@@ -37,7 +37,7 @@ const signIn = async () => {
       username: username.value,
       password: password.value,
     });
-    router.push({ name: "task" });
+    router.push({ name: "board" });
   } catch (error) {
     {
       isError.value = true;

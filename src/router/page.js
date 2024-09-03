@@ -7,6 +7,7 @@ import StatusView from "../views/StatusView.vue";
 import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
+import AddBoard from "@/components/boardModal/AddBoard.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,7 +57,7 @@ const router = createRouter({
     },
     {
       path: "/:notfound(.*)",
-      redirect: "/task",
+      redirect: "/board",
     },
     {
       path: "/login",
@@ -67,20 +68,27 @@ const router = createRouter({
       path: "/board",
       name: "board",
       component: BoardView,
+      children: [
+        {
+          path: "add",
+          name: "board-add",
+          component: AddBoard,
+        },
+      ],
     },
   ],
 });
 
-// router.beforeEach((to,_,next) => {
-//   const userStore = useUserStore();
-//   const isAuthenticated = !!userStore.getToken;
+router.beforeEach((to, _, next) => {
+  const userStore = useUserStore();
+  const isAuthenticated = !!userStore.getToken;
 
-//   if (to.path !== '/login' && !isAuthenticated) {
-//     next('/login');
-//   } else if (to.path === '/login' && isAuthenticated) {
-//     next('/task');
-//   } else {
-//     next();
-//   }
-// });
+  if (to.path !== "/login" && !isAuthenticated) {
+    next("/login");
+  } else if (to.path === "/login" && isAuthenticated) {
+    next("/board");
+  } else {
+    next();
+  }
+});
 export default router;
