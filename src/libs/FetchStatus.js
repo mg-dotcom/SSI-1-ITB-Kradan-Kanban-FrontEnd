@@ -1,24 +1,24 @@
-import { useUserStore } from '@/stores/UserStore'
+import { useUserStore } from "@/stores/UserStore";
 const fetchAllStatus = async (url) => {
-  const res = await fetch(`${url}`,{
-    method: 'GET',
+  const res = await fetch(`${url}`, {
+    method: "GET",
     headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${useUserStore().token}`
-        
-}});
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${useUserStore().token}`,
+    },
+  });
   const data = await res.json();
   return data;
 };
 
 const fetchStatusById = async (url, id) => {
-  const data = await fetch(`${url}/${id}`,{
-    method: 'GET',
+  const data = await fetch(`${url}/${id}`, {
+    method: "GET",
     headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${useUserStore().token}`
-        
-}});
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${useUserStore().token}`,
+    },
+  });
   const res = await data.json();
   return res;
 };
@@ -27,8 +27,9 @@ const deleteStatus = async (url, id) => {
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
     headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${useUserStore().token}`}
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${useUserStore().token}`,
+    },
   });
   return res;
 };
@@ -38,7 +39,7 @@ const addStatus = async (url, newStatus) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      'Authorization': `Bearer ${useUserStore().token}`
+      Authorization: `Bearer ${useUserStore().token}`,
     },
     body: JSON.stringify({
       name: newStatus.name,
@@ -54,7 +55,7 @@ const updateStatus = async (url, id, updatedStatus) => {
     method: "PUT",
     headers: {
       "content-type": "application/json",
-      'Authorization': `Bearer ${useUserStore().token}`
+      Authorization: `Bearer ${useUserStore().token}`,
     },
     body: JSON.stringify({
       name: updatedStatus.name,
@@ -63,20 +64,8 @@ const updateStatus = async (url, id, updatedStatus) => {
     }),
   });
   console.log(res);
-  
-  return res;
-};
 
-const fetchStatusSetting = async (url) => {
-  const res = await fetch(`${url}/1/maximum-task`,{
-    method: 'GET',
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${useUserStore().token}`
-        
-}});
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const updateStatusSetting = async (url, updatedLimit) => {
@@ -84,7 +73,7 @@ const updateStatusSetting = async (url, updatedLimit) => {
     method: "PATCH",
     headers: {
       "content-type": "application/json",
-      'Authorization': `Bearer ${useUserStore().token}`
+      Authorization: `Bearer ${useUserStore().token}`,
     },
     body: JSON.stringify({
       limitMaximumTask: updatedLimit,
@@ -99,6 +88,5 @@ export {
   addStatus,
   updateStatus,
   deleteStatus,
-  fetchStatusSetting,
   updateStatusSetting,
 };

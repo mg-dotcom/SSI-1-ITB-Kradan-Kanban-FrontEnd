@@ -20,6 +20,9 @@ export const useBoardStore = defineStore("BoardStore", {
     getBoardById: (state) => (id) => {
       return state.board.find((board) => board.id === id);
     },
+    // getBoardSettings: (state) => (id) => {
+    //   return state.board.find((board) => board.id === id).settings;
+    // },
   },
   actions: {
     async loadBoards() {

@@ -8,6 +8,7 @@ import router from "@/router/page";
 
 const emojiPicker = ref(null);
 const boardStore = useBoardStore();
+const boardId = boardStore.getBoards[0]?.id;
 
 const toggleInputEmoji = () => {
   isEmojiPickerVisible.value = !isEmojiPickerVisible.value;
@@ -21,6 +22,10 @@ onMounted(async () => {
   boardTemplate.value.name = `${userStore.getUser.name}  personal board`;
   boardTemplate.value.emoji = "🙂";
   boardTemplate.value.color = "#DEDEDE";
+
+  if (boardStore.getBoards.length >= 1) {
+    router.push({ name: "board" });
+  }
 });
 
 const boardTemplate = ref({
@@ -38,12 +43,16 @@ const selectEmoji = (emoji) => {
 
 const saveBoard = async () => {
   const res = await boardStore.addBoard(boardTemplate.value);
+  const data = await res.json();
 
   if (res.status === 201) {
-    router.push({ name: "board" });
+    const newBoardId = data.id;
+    router.push({ name: "board-task", params: { id: newBoardId } });
   } else if (res.status === 401) {
     userStore.logout();
     router.push({ name: "login" });
+  } else {
+    router.push({ name: "board" });
   }
 };
 
@@ -133,7 +142,9 @@ onClickOutside(emojiPicker, () => {
             >Cancel</submitButton
           >
           <submitButton
-            buttonType="ok"
+            :class="{ 'cursor-not-allowed': boardStore.getBoards.length >= 1 }"
+            :buttonType="boardStore.getBoards.length >= 1 ? 'disabled' : 'ok'"
+            :disabled="boardStore.getBoards.length >= 1"
             class="itbkk-button-ok"
             @click="saveBoard"
             >Save</submitButton

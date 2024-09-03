@@ -5,12 +5,14 @@ import { useRouter, useRoute } from "vue-router";
 import { defineEmits, ref, onMounted, watch, computed } from "vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { useSortStore } from "../../stores/SortStore.js";
+import { useBoardStore } from "../../stores/BoardStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 const emit = defineEmits(["addNewTask", "editNewTask"]);
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
 const sortStore = useSortStore();
+const boardStore = useBoardStore();
 const router = useRouter();
 const route = useRoute();
 const taskId = Number(route.params.id);
@@ -35,13 +37,17 @@ const outputTask = ref({
   statusId: 1,
 });
 
+const boardId = route.params.id;
+
 const originalTaskData = ref({});
 
 onMounted(async () => {
   await statusStore.loadStatuses();
-  const settingDetail = await statusStore.loadStatusSetting();
-  limitMaximumTask.value = settingDetail.limitMaximumTask;
-  maximumTask.value = settingDetail.maximumTask;
+  const board = boardStore.getBoardById(boardId);
+  console.log(board);
+
+  limitMaximumTask.value = board.limitMaximumTask;
+  maximumTask.value = board.maximumTask;
 
   if (mode == "edit") {
     const taskDetail = await taskStore.loadTaskDetails(taskId);

@@ -6,7 +6,6 @@ import {
   addStatus,
   updateStatus,
   updateStatusSetting,
-  fetchStatusSetting,
 } from "../libs/FetchStatus.js";
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "./TaskStore.js";
@@ -40,17 +39,6 @@ export const useStatusStore = defineStore("StatusStore", {
         alert("Failed to fetch statuses");
       } else {
         this.statuses = data;
-      }
-    },
-
-    async loadStatusSetting() {
-      const data = await fetchStatusSetting(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
-      );
-      if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch statuses setting");
-      } else {
-        return data;
       }
     },
 
@@ -148,8 +136,7 @@ export const useStatusStore = defineStore("StatusStore", {
         //   detail: `Status with name "${newStatus.name}" already exists`,
         //   life: 3000,
         // });
-        console.log('Status with name already exists');
-        
+        console.log("Status with name already exists");
       } else {
         this.toast.add({
           severity: "error",
@@ -200,7 +187,9 @@ export const useStatusStore = defineStore("StatusStore", {
         newId
       );
       const newStatus = this.statuses.find((status) => status.id === newId);
-      const currentStatus = this.statuses.find((status) => status.id === currentId);
+      const currentStatus = this.statuses.find(
+        (status) => status.id === currentId
+      );
       if (res.status >= 200 && res.status <= 299) {
         const index = this.statuses.findIndex(
           (status) => status.id === currentId

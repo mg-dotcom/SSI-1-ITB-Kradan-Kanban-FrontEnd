@@ -75,7 +75,7 @@ const currentPage = route.name;
   <div class="h-screen w-full bg-bgLightBlue">
     <Header />
     <div
-      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
+      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
       <div
         class="flex justify-between mobile:px-0 py-6 md-vertical:flex-row mobile:flex-col gap-3"

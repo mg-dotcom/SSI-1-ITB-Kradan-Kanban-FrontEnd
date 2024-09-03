@@ -8,13 +8,14 @@ import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
+import { useBoardStore } from "@/stores/BoardStore";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: "/",
-      redirect: "/board",
+      redirect: "/board/:id",
     },
     {
       path: "/board",
@@ -28,14 +29,9 @@ const router = createRouter({
         },
         {
           path: ":id",
-          name: "board-detail",
+          name: "board-task",
           component: TaskView,
           children: [
-            {
-              path: "",
-              name: "task-list",
-              component: TaskView,
-            },
             {
               path: "task/add",
               name: "task-add",
@@ -79,17 +75,25 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
-  const isAuthenticated = !!userStore.getToken;
+  const boardStore = useBoardStore();
 
-  console.log("Token:", userStore.getToken); // Debugging line
-  console.log("Is Authenticated:", isAuthenticated); // Debugging line
+  // โหลด board อย่างไม่ประสานกัน
+  await boardStore.loadBoards();
+
+  console.log(boardStore.getBoards);
+
+  const isAuthenticated = !!userStore.getToken;
 
   if (to.path !== "/login" && !isAuthenticated) {
     next("/login");
   } else if (to.path === "/login" && isAuthenticated) {
-    next("/board");
+    if (boardStore.getBoards.length === 0) {
+      next("/board");
+    } else {
+      next(`/board/${boardStore.getBoards[0].id}`);
+    }
   } else {
     next();
   }

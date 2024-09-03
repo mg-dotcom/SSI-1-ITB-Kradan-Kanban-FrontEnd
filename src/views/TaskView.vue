@@ -138,7 +138,7 @@ onClickOutside(optionEditDelete, () => {
     <Header />
 
     <div
-      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
+      class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
       <NavigateTitle :currentPage="currentPage">
         <template #navigate-home>Home</template>
