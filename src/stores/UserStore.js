@@ -16,9 +16,6 @@ export const useUserStore = defineStore("UserStore", {
     getUser() {
       return this.user;
     },
-    getUserById(id) {
-      return this.user.find((user) => user.id === id);
-    },
     getToken() {
       return this.token;
     },

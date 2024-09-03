@@ -1,16 +1,13 @@
 <script setup>
-import { useUserStore } from "@/stores/UserStore";
 import { useRouter } from "vue-router";
-import { computed } from "vue";
+import { useUserStore } from "@/stores/UserStore";
+
+const userStore = useUserStore();
 
 const router = useRouter();
-const userStore = useUserStore();
 
 // Ensure the store is initialized (retrieve user data from the cookie if available)
 userStore.initialize();
-
-// Computed property to dynamically watch the user's name
-const userName = computed(() => userStore.user.name);
 
 const logout = () => {
   userStore.logout();
@@ -42,7 +39,7 @@ const logout = () => {
             </div>
           </div>
           <div class="itbkk-fullname text-sky-950 font-semibold mx-2">
-            {{ userName }}
+            {{ userStore.getUser.name }}
           </div>
         </div>
         <div class="flex justify-center items-center p-2 rounded-full">

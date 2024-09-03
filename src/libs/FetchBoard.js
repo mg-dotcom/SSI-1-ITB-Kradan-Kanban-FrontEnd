@@ -31,9 +31,9 @@ const addBoard = async (url, newBoard) => {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserStore().token}`,
     },
+
     body: JSON.stringify({
       name: newBoard.name,
-      user_oid: newBoard.user_oid,
       emoji: newBoard.emoji,
       color: newBoard.color,
     }),

@@ -1,25 +1,18 @@
 <script setup>
 import Header from "@/components/Header.vue";
 import { RouterView } from "vue-router";
-import AddBoard from "@/components/boardModal/AddBoard.vue";
 import NavigateTitle from "@/components/navigateTitle.vue";
 import { useBoardStore } from "@/stores/BoardStore";
-import { useUserStore } from "@/stores/UserStore";
 import { onMounted, ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
+import { useUserStore } from "@/stores/UserStore";
 import router from "@/router/page";
 
 const boardStore = useBoardStore();
 const userStore = useUserStore();
-
-const boardTemplate = ref({
-  name: "",
-  color: "#DEDEDE",
-  emoji: "🙂",
-});
-
 onMounted(async () => {
   await boardStore.loadBoards();
+  userStore.initialize();
 });
 
 const isEmojiPickerVisible = ref(false);
@@ -90,7 +83,7 @@ onClickOutside(emojiPicker, () => {
                     {{ board.name }}
                   </h3>
                   <p class="text-sm text-gray-500">
-                    {{ board.owner.name }}
+                    {{ userStore.getUser.name }}
                   </p>
                 </div>
               </div>

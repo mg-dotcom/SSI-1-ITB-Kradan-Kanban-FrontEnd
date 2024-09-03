@@ -17,54 +17,6 @@ const router = createRouter({
       redirect: "/login",
     },
     {
-      path: "/task",
-      name: "task",
-      component: TaskView,
-      children: [
-        {
-          path: ":id",
-          name: "task-detail",
-          component: Detail,
-        },
-        {
-          path: "add",
-          name: "task-add",
-          component: AddEditTask,
-        },
-        {
-          path: ":id/edit",
-          name: "task-edit",
-          component: AddEditTask,
-        },
-      ],
-    },
-    {
-      path: "/status",
-      name: "status",
-      component: StatusView,
-      children: [
-        {
-          path: "add",
-          name: "status-add",
-          component: AddEditStatusModal,
-        },
-        {
-          path: ":id/edit",
-          name: "status-edit",
-          component: AddEditStatusModal,
-        },
-      ],
-    },
-    {
-      path: "/:notfound(.*)",
-      redirect: "/board",
-    },
-    {
-      path: "/login",
-      name: "login",
-      component: Login,
-    },
-    {
       path: "/board",
       name: "board",
       component: BoardView,
@@ -74,7 +26,55 @@ const router = createRouter({
           name: "board-add",
           component: AddBoard,
         },
+        {
+          path: ":id",
+          name: "board-detail",
+          component: TaskView,
+          children: [
+            {
+              path: "",
+              name: "task-list",
+              component: TaskView,
+            },
+            {
+              path: "task/add",
+              name: "task-add",
+              component: AddEditTask,
+            },
+            {
+              path: "task/:task-id/edit",
+              name: "task-edit",
+              component: AddEditTask,
+            },
+          ],
+        },
+        {
+          path: ":id/status",
+          name: "board-status",
+          component: StatusView,
+          children: [
+            {
+              path: "add",
+              name: "status-add",
+              component: AddEditStatusModal,
+            },
+            {
+              path: ":status-id/edit",
+              name: "status-edit",
+              component: AddEditStatusModal,
+            },
+          ],
+        },
       ],
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: Login,
+    },
+    {
+      path: "/:notfound(.*)",
+      redirect: "/board",
     },
   ],
 });
@@ -91,4 +91,5 @@ router.beforeEach((to, _, next) => {
     next();
   }
 });
+
 export default router;

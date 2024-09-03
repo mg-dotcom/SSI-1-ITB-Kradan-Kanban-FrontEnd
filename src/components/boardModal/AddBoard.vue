@@ -1,20 +1,33 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import submitButton from "@/components/button/Button.vue";
+import { useBoardStore } from "@/stores/BoardStore";
+import { useUserStore } from "@/stores/UserStore";
 import { onClickOutside } from "@vueuse/core";
-import { defineProps } from "vue";
 import router from "@/router/page";
 
-const boardTemplate = ref({
-  name: "",
-  color: "#DEDEDE",
-  emoji: "🙂",
-});
 const emojiPicker = ref(null);
+const boardStore = useBoardStore();
 
 const toggleInputEmoji = () => {
   isEmojiPickerVisible.value = !isEmojiPickerVisible.value;
 };
+
+const userStore = useUserStore();
+
+onMounted(async () => {
+  await boardStore.loadBoards();
+
+  boardTemplate.value.name = `${userStore.getUser.name}  personal board`;
+  boardTemplate.value.emoji = "🙂";
+  boardTemplate.value.color = "#DEDEDE";
+});
+
+const boardTemplate = ref({
+  name: "",
+  emoji: "",
+  color: "",
+});
 
 const isEmojiPickerVisible = ref(false);
 
@@ -23,8 +36,14 @@ const selectEmoji = (emoji) => {
   isEmojiPickerVisible.value = false;
 };
 
-const saveBoard = () => {
-  console.log("Save board");
+const saveBoard = async () => {
+  const res = await boardStore.addBoard(boardTemplate.value);
+
+  if (res.status === 201) {
+    router.push({ name: "board" });
+  } else if (res.status === 401) {
+    alert("Board name is already exist");
+  }
 };
 
 onClickOutside(emojiPicker, () => {
@@ -34,6 +53,7 @@ onClickOutside(emojiPicker, () => {
 
 <template>
   <!-- Modal Add Board -->
+
   <div class="fixed inset-0 flex items-center justify-center z-10">
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div

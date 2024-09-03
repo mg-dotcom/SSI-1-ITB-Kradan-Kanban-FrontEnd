@@ -42,15 +42,16 @@ export const useBoardStore = defineStore("BoardStore", {
       }
     },
     async addBoard(newBoard) {
-      const data = await addBoard(
+      const res = await addBoard(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
       );
-      if (data.status < 200 && data.status > 299) {
+      if (res.status < 200 && res.status > 299) {
         alert("Failed to add board");
       } else {
         this.board.push(newBoard);
       }
+      return res;
     },
   },
 });
