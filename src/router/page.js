@@ -9,6 +9,7 @@ import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
+import { onMounted } from "vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -75,25 +76,14 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
-  const boardStore = useBoardStore();
-
-  // โหลด board อย่างไม่ประสานกัน
-  await boardStore.loadBoards();
-
-  console.log(boardStore.getBoards);
-
   const isAuthenticated = !!userStore.getToken;
 
   if (to.path !== "/login" && !isAuthenticated) {
     next("/login");
   } else if (to.path === "/login" && isAuthenticated) {
-    if (boardStore.getBoards.length === 0) {
-      next("/board");
-    } else {
-      next(`/board/${boardStore.getBoards[0].id}`);
-    }
+    next("/board");
   } else {
     next();
   }
