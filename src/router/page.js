@@ -8,8 +8,6 @@ import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
-import { useBoardStore } from "@/stores/BoardStore";
-import { onMounted } from "vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -39,7 +37,7 @@ const router = createRouter({
               component: AddEditTask,
             },
             {
-              path: "task/:task-id/edit",
+              path: "task/:taskId/edit",
               name: "task-edit",
               component: AddEditTask,
             },
@@ -56,7 +54,7 @@ const router = createRouter({
               component: AddEditStatusModal,
             },
             {
-              path: ":status-id/edit",
+              path: ":statusId/edit",
               name: "status-edit",
               component: AddEditStatusModal,
             },

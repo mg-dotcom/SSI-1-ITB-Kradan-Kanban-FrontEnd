@@ -22,11 +22,12 @@ const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
 const openLimit = ref(false);
+const boardId = route.params.id;
 
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
-  await taskStore.loadTasks();
+  await taskStore.loadTasks(boardId);
   await statusStore.loadStatuses();
 });
 
@@ -201,7 +202,7 @@ onClickOutside(optionEditDelete, () => {
           <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2 justify-center items-center"
-            @click="router.push({ name: 'status' })"
+            @click="router.push({ name: 'board-status' })"
           >
             <img src="../assets/status-list.svg" alt="" class="w-5" />
             Manage Status</buttonSubmit

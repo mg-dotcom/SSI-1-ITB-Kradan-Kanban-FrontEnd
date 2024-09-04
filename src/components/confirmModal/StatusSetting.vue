@@ -1,16 +1,22 @@
 <script setup>
 import submitButton from "../button/Button.vue";
-import { useStatusStore } from "../../stores/StatusStore.js";
+import { useRoute } from "vue-router";
+import { useBoardStore } from "../../stores/BoardStore.js";
 import { ref, onMounted } from "vue";
 
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
-const statusStore = useStatusStore();
+const boardStore = useBoardStore();
+
+const route = useRoute();
+
+const boardId = route.params.id;
 
 onMounted(async () => {
-  const settingDetail = await statusStore.loadStatusSetting();
-  limitMaximumTask.value = settingDetail.limitMaximumTask;
-  maximumTask.value = settingDetail.maximumTask;
+  await boardStore.loadBoards(boardId);
+  const board = boardStore.getBoardById(boardId);
+  limitMaximumTask.value = board.limitMaximumTask;
+  maximumTask.value = board.maximumTask;
 });
 
 const toggleLimitStatus = () => {

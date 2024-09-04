@@ -11,7 +11,6 @@ import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import NavigateTitle from "../components/navigateTitle.vue";
 import { ref } from "vue";
-import { useToast } from "primevue/usetoast";
 import Header from "../components/Header.vue";
 
 const route = useRoute();
@@ -19,9 +18,11 @@ const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
 
+const boardId = route.params.id;
+
 onMounted(async () => {
   await statusStore.loadStatuses();
-  await taskStore.loadTasks();
+  await taskStore.loadTasks(boardId);
 });
 
 const numberOfTasks = ref(0);

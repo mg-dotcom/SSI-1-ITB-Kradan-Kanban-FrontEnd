@@ -181,7 +181,7 @@ const save = async () => {
         <buttonSubmit
           class="itbkk-button-cancel"
           buttonType="cancel"
-          @click="router.push({ name: 'status' })"
+          @click="router.push({ name: 'board-status' })"
           >Cancel</buttonSubmit
         >
         <buttonSubmit

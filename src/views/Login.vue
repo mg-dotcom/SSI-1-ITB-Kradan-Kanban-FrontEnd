@@ -2,10 +2,12 @@
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
 import { ref, computed, watch } from "vue";
 import { useUserStore } from "@/stores/UserStore";
+import { useBoardStore } from "@/stores/BoardStore";
 import { useRouter, RouterView } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 const router = useRouter();
 const userStore = useUserStore();
+const boardStore = useBoardStore();
 const isError = ref(false);
 const username = ref("");
 const password = ref("");
@@ -37,7 +39,20 @@ const signIn = async () => {
       username: username.value,
       password: password.value,
     });
-    router.push({ name: "board" });
+    const user = userStore.getUser;
+    console.log(user);
+
+    const findBoardByUserOid = boardStore.findByOid(user.oid);
+      
+
+    if (findBoardByUserOid) {
+      router.push({
+        name: "board-task",
+        params: { id: findBoardByUserOid.id },
+      });
+    } else {
+      router.push({ name: "board" });
+    }
   } catch (error) {
     {
       isError.value = true;

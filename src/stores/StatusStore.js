@@ -9,7 +9,6 @@ import {
 } from "../libs/FetchStatus.js";
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "./TaskStore.js";
-
 const STATUS_ENDPOINT = import.meta.env.VITE_STATUS_ENDPOINT;
 
 export const useStatusStore = defineStore("StatusStore", {
@@ -42,6 +41,7 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
+    // FIXME: This function is not working as expected
     async editStatusSetting(updatedLimit, maximumTask) {
       const res = await updateStatusSetting(
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
