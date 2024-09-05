@@ -41,9 +41,8 @@ const signIn = async () => {
     });
     const user = userStore.getUser;
     console.log(user);
-
+    await boardStore.loadBoards();
     const findBoardByUserOid = boardStore.findByOid(user.oid);
-      
 
     if (findBoardByUserOid) {
       router.push({
