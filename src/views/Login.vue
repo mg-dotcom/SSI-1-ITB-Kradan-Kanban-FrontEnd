@@ -42,12 +42,11 @@ const signIn = async () => {
     const user = userStore.getUser;
     await boardStore.loadBoards();
     const findBoardByUserOid = boardStore.findByOid(user.oid);
-
-    if (findBoardByUserOid) {
-      boardStore.setCurrentBoard(findBoardByUserOid);
+    if (findBoardByUserOid.length) {
+      boardStore.setCurrentBoard(findBoardByUserOid[0]);
       router.push({
         name: "board-task",
-        params: { id: findBoardByUserOid.id },
+        params: { id: findBoardByUserOid[0].id },
       });
     } else {
       router.push({ name: "board" });

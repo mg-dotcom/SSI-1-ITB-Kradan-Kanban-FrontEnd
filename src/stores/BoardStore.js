@@ -62,7 +62,7 @@ export const useBoardStore = defineStore("BoardStore", {
       return res;
     },
     findByOid(oid) {
-      return this.board.find((board) => board.userOid === oid);
+      return this.board.filter((board) => board.userOid === oid);
     },
     setCurrentBoard(board) {
       this.selectedBoard = board;

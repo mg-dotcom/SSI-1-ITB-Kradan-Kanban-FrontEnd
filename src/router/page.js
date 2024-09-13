@@ -14,7 +14,7 @@ const router = createRouter({
   routes: [
     {
       path: "/",
-      redirect: "/board/:id",
+      redirect: "/board",
     },
     {
       path: "/board",
@@ -76,7 +76,7 @@ const router = createRouter({
 
 router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
-  const isAuthenticated = !!userStore.getToken;
+  const isAuthenticated = !!userStore.getIsLoggedIn;
 
   if (to.path !== "/login" && !isAuthenticated) {
     next("/login");
