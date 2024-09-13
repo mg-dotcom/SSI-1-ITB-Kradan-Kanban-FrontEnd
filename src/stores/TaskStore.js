@@ -9,12 +9,15 @@ import {
 } from "../libs/FetchTask.js";
 import { sortTasks } from "../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
+import { useBoardStore } from "./BoardStore.js";
 import { useStatusStore } from "./StatusStore.js";
+
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
 export const useTaskStore = defineStore("TaskStore", {
   state: () => ({
     toast: useToast(),
+    boardStore: useBoardStore(),
     tasks: [],
     sortType: "",
     filterStatuses: [],
@@ -56,6 +59,8 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async addTask(newTask) {
+      const boardId = this.boardStore.getSelectedBoard.id;
+
       const res = await addTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
         newTask
@@ -89,6 +94,8 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async deleteTask(id) {
+      const boardId = this.boardStore.getSelectedBoard.id;
+
       const res = await deleteTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
         id
@@ -113,6 +120,8 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async editTask(id, updatedTaskInput, statusDetails) {
+      const boardId = this.boardStore.getSelectedBoard.id;
+
       const res = await updatedTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
         updatedTaskInput,
@@ -161,8 +170,10 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async loadSortTasks(sortType) {
+      const boardId = this.boardStore.getSelectedBoard.id;
+
       const data = await fetchAllTasks(
-        `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`
       );
       if (data.status < 200 && data.status > 299) {
         //fetch data failed
@@ -172,17 +183,19 @@ export const useTaskStore = defineStore("TaskStore", {
         return sortTasks(this.tasks, sortType);
       }
     },
-    async loadFilterTasks(arrayStatusesName, sortType) {
-      if (arrayStatusesName.length === 0) {
-        await this.loadTasks();
-      } else {
-        const data = await fetchFilterTasks(
-          `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-          arrayStatusesName
-        );
-        this.tasks = data;
-      }
-      sortTasks(this.tasks, sortType);
-    },
+
+    //FIX: this function is not used
+    // async loadFilterTasks(arrayStatusesName, sortType) {
+    //   if (arrayStatusesName.length === 0) {
+    //     await this.loadTasks();
+    //   } else {
+    //     const data = await fetchFilterTasks(
+    //       `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
+    //       arrayStatusesName
+    //     );
+    //     this.tasks = data;
+    //   }
+    //   sortTasks(this.tasks, sortType);
+    // },
   },
 });

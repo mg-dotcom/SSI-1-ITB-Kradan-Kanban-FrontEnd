@@ -12,14 +12,14 @@ export const useBoardStore = defineStore("BoardStore", {
   state: () => ({
     board: [],
     toast: useToast(),
+    selectedBoard: {},
   }),
   getters: {
-    getBoards() {
-      return this.board;
-    },
+    getBoards: (state) => state.board,
     getBoardById: (state) => (id) => {
       return state.board.find((board) => board.id === id);
     },
+    getSelectedBoard: (state) => state.selectedBoard,
   },
   actions: {
     async loadBoards() {
@@ -62,9 +62,10 @@ export const useBoardStore = defineStore("BoardStore", {
       return res;
     },
     findByOid(oid) {
-      console.log(this.board);
-
       return this.board.find((board) => board.userOid === oid);
+    },
+    setCurrentBoard(board) {
+      this.selectedBoard = board;
     },
   },
 });

@@ -125,11 +125,11 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
-    const statusCode = await taskStore.addTask(outputTask.value);
+    const statusCode = await taskStore.addTask(outputTask.value, boardId);
     if (statusCode.status === 201) {
       await taskStore.loadSortTasks(sortStore.getSortType);
       taskStore.filterStatuses.length = 0;
-      router.push({ name: "task" });
+      router.push({ name: "board-task", params: { id: boardId } });
     } else {
       return;
     }
