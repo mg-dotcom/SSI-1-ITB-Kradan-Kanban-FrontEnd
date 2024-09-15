@@ -105,6 +105,7 @@ onClickOutside(emojiPicker, () => {
               <input
                 @click="toggleInputEmoji"
                 v-model="boardTemplate.emoji"
+                maxlength="1"
                 placeholder="Enter emoji"
                 type="text"
                 id="emoji"
@@ -125,6 +126,7 @@ onClickOutside(emojiPicker, () => {
           >
           <input
             v-model.trim="boardTemplate.name"
+            maxlength="120"
             type="text"
             id="name"
             class="itbkk-board-name w-full border rounded-md px-3 py-2 h-10"
@@ -142,9 +144,14 @@ onClickOutside(emojiPicker, () => {
             >Cancel</submitButton
           >
           <submitButton
-            :class="{ 'cursor-not-allowed': boardStore.getBoards.length >= 1 }"
-            :buttonType="boardStore.getBoards.length >= 1 ? 'disabled' : 'ok'"
-            :disabled="boardStore.getBoards.length >= 1"
+            :class="{
+              'cursor-not-allowed':
+                boardStore.getBoards.length >= 1 || !boardTemplate.name,
+            }"
+            :buttonType="
+              boardStore.getBoards.length >= 1 ? 'disabled' : boardTemplate.name ? 'ok': 'disabled'
+            "
+            :disabled="boardStore.getBoards.length >= 1 || !boardTemplate.name"
             class="itbkk-button-ok"
             @click="saveBoard"
             >Save</submitButton
