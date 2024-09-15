@@ -26,42 +26,49 @@ const router = createRouter({
           name: "board-add",
           component: AddBoard,
         },
+      ],
+    },
+    {
+      path: "/board/:id/task",
+      name: "board-task",
+      component: TaskView,
+      children: [
         {
-          path: ":id",
-          name: "board-task",
-          component: TaskView,
-          children: [
-            {
-              path: "task/add",
-              name: "task-add",
-              component: AddEditTask,
-            },
-            {
-              path: "task/:taskId/edit",
-              name: "task-edit",
-              component: AddEditTask,
-            },
-          ],
+          path: ":taskId",
+          name: "task-detail",
+          component: Detail,
         },
         {
-          path: ":id/status",
-          name: "board-status",
-          component: StatusView,
-          children: [
-            {
-              path: "add",
-              name: "status-add",
-              component: AddEditStatusModal,
-            },
-            {
-              path: ":statusId/edit",
-              name: "status-edit",
-              component: AddEditStatusModal,
-            },
-          ],
+          path: "add",
+          name: "task-add",
+          component: AddEditTask,
+        },
+        {
+          path: ":taskId/edit",
+          name: "task-edit",
+          component: AddEditTask,
         },
       ],
     },
+
+    {
+      path: "/board/:id/status",
+      name: "board-status",
+      component: StatusView,
+      children: [
+        {
+          path: "add",
+          name: "status-add",
+          component: AddEditStatusModal,
+        },
+        {
+          path: ":statusId/edit",
+          name: "status-edit",
+          component: AddEditStatusModal,
+        },
+      ],
+    },
+
     {
       path: "/login",
       name: "login",

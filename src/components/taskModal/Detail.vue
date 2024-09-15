@@ -12,9 +12,7 @@ const route = useRoute();
 const router = useRouter();
 const taskStore = useTaskStore();
 const statusStore = useStatusStore();
-
-const taskId = route.params.id;
-
+const taskId = route.params.taskId;
 const selectedTask = ref({});
 
 onMounted(async () => {

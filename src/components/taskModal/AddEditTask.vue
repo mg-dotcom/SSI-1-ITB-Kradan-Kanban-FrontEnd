@@ -15,7 +15,7 @@ const sortStore = useSortStore();
 const boardStore = useBoardStore();
 const router = useRouter();
 const route = useRoute();
-const taskId = Number(route.params.id);
+
 const isChanged = ref(false);
 const mode = route.name === "task-add" ? "add" : "edit";
 const limitMaximumTask = ref(false);
@@ -37,9 +37,9 @@ const outputTask = ref({
   statusId: 1,
 });
 
-const boardId = route.params.id;
-
 const originalTaskData = ref({});
+const boardId = route.params.id;
+const taskId = route.params.taskId;
 
 onMounted(async () => {
   await statusStore.loadStatuses();

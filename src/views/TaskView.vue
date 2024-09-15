@@ -22,6 +22,8 @@ const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
 const openLimit = ref(false);
+
+const boardStore = useBoardStore();
 const boardId = route.params.id;
 
 onMounted(async () => {
@@ -29,10 +31,6 @@ onMounted(async () => {
   initDropdowns();
   await taskStore.loadTasks(boardId);
   await statusStore.loadStatuses();
-});
-
-const page = reactive({
-  task: true,
 });
 
 const popup = reactive({
@@ -49,7 +47,7 @@ const showOptionEditDelete = (taskId) => {
 
 const openDetail = (id) => {
   popup.optionEditDelete = false;
-  router.push({ name: "task-detail", params: { id: id } });
+  router.push({ name: "task-detail", params: { taskId: id } });
 };
 
 const openDelete = (id, index) => {
@@ -116,6 +114,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 };
 
 import { onClickOutside } from "@vueuse/core";
+import { useBoardStore } from "@/stores/BoardStore";
 
 const optionEditDelete = ref(null);
 const currentPage = route.name;
@@ -123,6 +122,11 @@ const currentPage = route.name;
 onClickOutside(optionEditDelete, () => {
   popup.optionEditDelete = false;
 });
+
+const handleEditTask = () => {
+  popup.optionEditDelete = false;
+  router.push({ name: "task-edit", params: { taskId: selectedId.value } });
+};
 </script>
 
 <template>
@@ -326,11 +330,8 @@ onClickOutside(optionEditDelete, () => {
                     class="px-6 py-4 md-vertical:px-6 mobile:px-1 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <div class="flex justify-between items-center text-center">
-                      <StatusButton
-                        :statusColor="statusStore.getStatusColor(task.status)"
-                        :statusName="task.status"
-                      >
-                        {{ task.status }}
+                      <StatusButton :statusName="task.status.name">
+                        {{ task.status.name }}
                       </StatusButton>
                       <div>
                         <div
@@ -360,14 +361,7 @@ onClickOutside(optionEditDelete, () => {
                             <ul
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
                             >
-                              <li
-                                @click="
-                                  router.push({
-                                    name: 'task-edit',
-                                    params: { id: task.id },
-                                  })
-                                "
-                              >
+                              <li @click="handleEditTask">
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >

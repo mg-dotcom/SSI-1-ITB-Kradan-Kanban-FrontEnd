@@ -188,7 +188,7 @@ const currentPage = route.name;
                       @click="
                         router.push({
                           name: 'status-edit',
-                          params: { id: status.id },
+                          params: { statusId: status.id },
                         })
                       "
                       :button-type="

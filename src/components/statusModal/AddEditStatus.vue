@@ -15,7 +15,7 @@ const mode = route.name === "status-add" ? "add" : "edit";
 const inputStatus = ref({});
 const unEditedStatus = ref({});
 const isChanged = ref(false);
-const statusId = Number(route.params.id);
+const statusId = route.params.statusId;
 
 onMounted(async () => {
   if (statusId === 1) {
