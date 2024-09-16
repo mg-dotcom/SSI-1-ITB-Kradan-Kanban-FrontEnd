@@ -143,10 +143,16 @@ const handleEditTask = () => {
     "
   >
     <Header />
-   
+
     <div
       class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
+      <div
+        class="font-bold flex items-center text-black mx-44 text-center xl:text-2xl lg:text-3xl md:text-2xl sm:text-lg md-vertical:px-3 mobile:px-0"
+      >
+        {{ boardStore.getCurrentBoard.name }}
+      </div>
+
       <NavigateTitle :currentPage="currentPage">
         <template #navigate-home>Home</template>
       </NavigateTitle>
