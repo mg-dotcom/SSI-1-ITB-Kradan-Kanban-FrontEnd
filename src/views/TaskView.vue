@@ -148,7 +148,7 @@ const handleEditTask = () => {
       class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
       <div
-        class="font-bold flex items-center text-black mx-44 text-center xl:text-2xl lg:text-3xl md:text-2xl sm:text-lg md-vertical:px-3 mobile:px-0"
+        class="font-bold flex items-center justify-center text-black text-center xl:text-2xl lg:text-3xl md:text-2xl sm:text-lg md-vertical:px-3 mobile:px-0 py-5"
       >
         {{ boardStore.getCurrentBoard.name }}
       </div>
