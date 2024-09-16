@@ -3,7 +3,6 @@ const fetchUser = async (url, userLogin) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      
     },
     body: JSON.stringify({
       userName: userLogin.username,

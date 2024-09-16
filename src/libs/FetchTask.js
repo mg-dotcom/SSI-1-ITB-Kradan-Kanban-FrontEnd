@@ -14,7 +14,6 @@ const fetchAllTasks = async (url) => {
 }
 
 const fetchTaskDetails = async (url, id) => {
-    
     const router = useRouter()
     const data = await fetch(`${url}/${id}`,{
         method: 'GET',

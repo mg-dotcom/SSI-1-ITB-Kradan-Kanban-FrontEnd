@@ -9,88 +9,121 @@ import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
 
+const routes = [
+  {
+    path: "/",
+    redirect: "/board",
+    meta: { requireAuth: true }, // Meta field for auth check
+  },
+  {
+    path: "/board",
+    name: "board",
+    component: BoardView,
+    meta: { requireAuth: true },
+    children: [
+      {
+        path: "add",
+        name: "board-add",
+        component: AddBoard,
+      },
+    ],
+  },
+  {
+    path: "/board/:id/task",
+    name: "board-task",
+    component: TaskView,
+    meta: { requireAuth: true },
+    children: [
+      {
+        path: ":taskId",
+        name: "task-detail",
+        component: Detail,
+      },
+      {
+        path: "add",
+        name: "task-add",
+        component: AddEditTask,
+      },
+      {
+        path: ":taskId/edit",
+        name: "task-edit",
+        component: AddEditTask,
+      },
+    ],
+  },
+  {
+    path: "/board/:id/status",
+    name: "board-status",
+    component: StatusView,
+    meta: { requireAuth: true },
+    children: [
+      {
+        path: "add",
+        name: "status-add",
+        component: AddEditStatusModal,
+      },
+      {
+        path: ":statusId/edit",
+        name: "status-edit",
+        component: AddEditStatusModal,
+      },
+    ],
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: Login,
+  },
+  {
+    path: "/:notfound(.*)",
+    redirect: "/board",
+  },
+];
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: "/",
-      redirect: "/board",
-    },
-    {
-      path: "/board",
-      name: "board",
-      component: BoardView,
-      children: [
-        {
-          path: "add",
-          name: "board-add",
-          component: AddBoard,
-        },
-      ],
-    },
-    {
-      path: "/board/:id/task",
-      name: "board-task",
-      component: TaskView,
-      children: [
-        {
-          path: ":taskId",
-          name: "task-detail",
-          component: Detail,
-        },
-        {
-          path: "add",
-          name: "task-add",
-          component: AddEditTask,
-        },
-        {
-          path: ":taskId/edit",
-          name: "task-edit",
-          component: AddEditTask,
-        },
-      ],
-    },
-
-    {
-      path: "/board/:id/status",
-      name: "board-status",
-      component: StatusView,
-      children: [
-        {
-          path: "add",
-          name: "status-add",
-          component: AddEditStatusModal,
-        },
-        {
-          path: ":statusId/edit",
-          name: "status-edit",
-          component: AddEditStatusModal,
-        },
-      ],
-    },
-
-    {
-      path: "/login",
-      name: "login",
-      component: Login,
-    },
-    {
-      path: "/:notfound(.*)",
-      redirect: "/board",
-    },
-  ],
+  routes,
 });
 
-router.beforeEach((to, _, next) => {
+// Function to check if the token is expired
+function isTokenExpired(token) {
+  try {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    console.log(payload);
+
+    return payload.exp * 1000 < Date.now();
+    // Check expiration timestamp
+  } catch (e) {
+    return true; // If there's an issue decoding the token, treat it as expired
+  }
+}
+
+// Global navigation guard
+router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
+
+  // Retrieve the token from cookies or localStorage
+  const token = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith("token="));
+  const tokenValue = token ? token.split("=")[1] : null;
+
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
-  if (to.path !== "/login" && !isAuthenticated) {
+  // Check if the token is expired
+  if (tokenValue && isTokenExpired(tokenValue)) {
+    userStore.logout(); // Clear the user session or token
+    next("/login"); // Redirect to login
+  }
+  // If route requires auth and user is not authenticated, redirect to login
+  else if (to.meta.requireAuth && !isAuthenticated) {
     next("/login");
-  } else if (to.path === "/login" && isAuthenticated) {
+  }
+  // If user is authenticated and tries to access the login page, redirect to /board
+  else if (to.path === "/login" && isAuthenticated) {
     next("/board");
   } else {
-    next();
+    next(); // Allow navigation to the route
   }
 });
 
