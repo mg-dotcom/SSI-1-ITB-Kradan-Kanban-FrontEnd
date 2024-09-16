@@ -51,9 +51,11 @@ const saveBoard = async () => {
     const newBoardId = data.id;
     boardStore.setCurrentBoard(data);
     router.push({ name: "board-task", params: { id: newBoardId } });
-  } else if (res.status === 401) {
-    userStore.logout();
+  } else if (res.status === 400) {
+    console.log('401');
+    
     router.push({ name: "login" });
+    userStore.logout();
   } else {
     router.push({ name: "board" });
   }
@@ -129,7 +131,7 @@ onClickOutside(emojiPicker, () => {
           >
           <input
             v-model.trim="boardTemplate.name"
-            maxlength="120"
+
             type="text"
             id="name"
             class="itbkk-board-name w-full border rounded-md px-3 py-2 h-10"
