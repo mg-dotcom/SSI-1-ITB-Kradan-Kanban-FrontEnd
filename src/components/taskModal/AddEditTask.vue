@@ -42,7 +42,7 @@ const boardId = route.params.id;
 const taskId = route.params.taskId;
 
 onMounted(async () => {
-  await statusStore.loadStatuses();
+  await statusStore.loadStatuses(boardId);
   await boardStore.loadBoards(boardId);
   const board = boardStore.getBoardById(boardId);
 
@@ -124,7 +124,7 @@ const save = async () => {
 
     const res = await taskStore.addTask(outputTask.value);
     console.log(res);
-    
+
     if (res.status === 201) {
       await taskStore.loadSortTasks(sortStore.getSortType);
       taskStore.filterStatuses.length = 0;

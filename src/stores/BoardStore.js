@@ -26,6 +26,7 @@ export const useBoardStore = defineStore("BoardStore", {
       const data = await fetchAllBoards(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
       );
+
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch boards");
       } else {
@@ -37,6 +38,7 @@ export const useBoardStore = defineStore("BoardStore", {
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         id
       );
+
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch board");
       } else {

@@ -9,11 +9,14 @@ import {
 } from "../libs/FetchStatus.js";
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "./TaskStore.js";
+import { useBoardStore } from "./BoardStore.js";
 const STATUS_ENDPOINT = import.meta.env.VITE_STATUS_ENDPOINT;
+const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
 export const useStatusStore = defineStore("StatusStore", {
   state: () => ({
     toast: useToast(),
+    boardStore: useBoardStore(),
     statuses: [],
   }),
 
@@ -30,9 +33,9 @@ export const useStatusStore = defineStore("StatusStore", {
     },
   },
   actions: {
-    async loadStatuses() {
+    async loadStatuses(boardId) {
       const data = await fetchAllStatus(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`
       );
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch statuses");
@@ -99,8 +102,10 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async loadStatusDetail(id) {
+      const boardId = this.boardStore.getCurrentBoard.id;
       const data = await fetchStatusById(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
+
         id
       );
       if (data.status < 200 && data.status > 299) {
@@ -111,8 +116,9 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async addStatus(newStatus) {
+      const boardId = this.boardStore.getCurrentBoard.id;
       const res = await addStatus(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
         newStatus
       );
 
@@ -148,8 +154,9 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async editStatus(id, updatedStatus) {
+      const boardId = this.boardStore.getCurrentBoard.id;
       const res = await updateStatus(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
         id,
         updatedStatus
       );
@@ -227,8 +234,9 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async removeStatus(id) {
+      const boardId = this.boardStore.getCurrentBoard.id;
       const res = await deleteStatus(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
         id
       );
       if (res.status >= 200 && res.status <= 299) {

@@ -94,7 +94,7 @@ function isTokenExpired(token) {
     return payload.exp * 1000 < Date.now();
     // Check expiration timestamp
   } catch (e) {
-    return true; // If there's an issue decoding the token, treat it as expired
+    return true; // If there's~ an issue decoding the token, treat it as expired
   }
 }
 

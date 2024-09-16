@@ -30,7 +30,7 @@ onMounted(async () => {
   initFlowbite();
   initDropdowns();
   await taskStore.loadTasks(boardId);
-  await statusStore.loadStatuses();
+  await statusStore.loadStatuses(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
 });
@@ -143,8 +143,7 @@ const handleEditTask = () => {
     "
   >
     <Header />
-    {{ boardStore.getCurrentBoard }}
-
+   
     <div
       class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >

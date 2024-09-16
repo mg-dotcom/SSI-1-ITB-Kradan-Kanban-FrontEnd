@@ -23,7 +23,7 @@ const boardStore = useBoardStore();
 const boardId = route.params.id;
 
 onMounted(async () => {
-  await statusStore.loadStatuses();
+  await statusStore.loadStatuses(boardId);
   await taskStore.loadTasks(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
@@ -78,7 +78,7 @@ const currentPage = route.name;
   <RouterView />
   <div class="h-screen w-full bg-bgLightBlue">
     <Header />
-    {{ boardStore.getCurrentBoard }}
+  
     <div
       class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
