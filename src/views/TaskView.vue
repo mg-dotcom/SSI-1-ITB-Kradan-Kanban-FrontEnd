@@ -29,9 +29,10 @@ const boardId = route.params.id;
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
-  boardStore.setCurrentBoardId(boardId);
   await taskStore.loadTasks(boardId);
   await statusStore.loadStatuses();
+  const fetchedBoard = await boardStore.loadBoardById(boardId);
+  boardStore.setCurrentBoard(fetchedBoard);
 });
 
 const popup = reactive({
@@ -142,7 +143,7 @@ const handleEditTask = () => {
     "
   >
     <Header />
-    {{ boardStore.getSelectedBoard }}
+    {{ boardStore.getCurrentBoard }}
 
     <div
       class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"

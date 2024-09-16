@@ -12,14 +12,14 @@ export const useBoardStore = defineStore("BoardStore", {
   state: () => ({
     board: [],
     toast: useToast(),
-    selectedBoard: {},
+    currentBoard: {},
   }),
   getters: {
     getBoards: (state) => state.board,
     getBoardById: (state) => (id) => {
       return state.board.find((board) => board.id === id);
     },
-    getSelectedBoard: (state) => state.selectedBoard,
+    getCurrentBoard: (state) => state.currentBoard,
   },
   actions: {
     async loadBoards() {
@@ -41,6 +41,7 @@ export const useBoardStore = defineStore("BoardStore", {
         alert("Failed to fetch board");
       } else {
         this.board = data;
+        return data;
       }
     },
     async addBoard(newBoard) {
@@ -64,9 +65,8 @@ export const useBoardStore = defineStore("BoardStore", {
     findByOid(oid) {
       return this.board.filter((board) => board.userOid === oid);
     },
-    setCurrentBoardId(id) {
-      console.log(id);
-      this.selectedBoard = this.getBoardById(id);
+    setCurrentBoard(board) {
+      this.currentBoard = board;
     },
   },
 });

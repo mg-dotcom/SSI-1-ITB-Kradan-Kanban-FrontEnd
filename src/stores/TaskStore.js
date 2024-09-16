@@ -46,7 +46,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async loadTaskDetails(id) {
-      const boardId = this.boardStore.getSelectedBoard.id;
+      const boardId = this.boardStore.getCurrentBoard.id;
       console.log(id);
 
       const data = await fetchTaskDetails(
@@ -62,6 +62,8 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async addTask(newTask) {
+      const boardId = this.boardStore.getCurrentBoard.id;
+
       const res = await addTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
         newTask
@@ -95,7 +97,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async deleteTask(id) {
-      const boardId = this.boardStore.getSelectedBoard.id;
+      const boardId = this.boardStore.getCurrentBoard.id;
 
       const res = await deleteTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
@@ -121,7 +123,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async editTask(id, updatedTaskInput, statusDetails) {
-      const boardId = this.boardStore.getSelectedBoard.id;
+      const boardId = this.boardStore.getCurrentBoard.id;
 
       const res = await updatedTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
@@ -171,7 +173,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async loadSortTasks(sortType) {
-      const boardId = this.boardStore.getSelectedBoard.id;
+      const boardId = this.boardStore.getCurrentBoard.id;
 
       const data = await fetchAllTasks(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`

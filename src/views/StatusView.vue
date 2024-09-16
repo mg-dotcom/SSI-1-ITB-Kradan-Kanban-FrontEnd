@@ -25,6 +25,8 @@ const boardId = route.params.id;
 onMounted(async () => {
   await statusStore.loadStatuses();
   await taskStore.loadTasks(boardId);
+  const fetchedBoard = await boardStore.loadBoardById(boardId);
+  boardStore.setCurrentBoard(fetchedBoard);
 });
 
 const numberOfTasks = ref(0);
@@ -76,7 +78,7 @@ const currentPage = route.name;
   <RouterView />
   <div class="h-screen w-full bg-bgLightBlue">
     <Header />
-    {{ boardStore.getSelectedBoard }}
+    {{ boardStore.getCurrentBoard }}
     <div
       class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
