@@ -90,12 +90,6 @@ const isButtonDisabled = computed(() => {
   );
 });
 
-const buttonClass = computed(() => {
-  return isButtonDisabled.value
-    ? "bg-gray-300 px-4 py-2 rounded-md cursor-not-allowed opacity-50 transition-colors disabled hover:bg-gray-300"
-    : "";
-});
-
 const save = async () => {
   if (mode === "edit" && taskId !== undefined) {
     outputTask.value = {
@@ -112,8 +106,10 @@ const save = async () => {
       outputTask.value,
       statusDetail
     );
+
     if (statusCode.status === 200) {
-      router.push({ name: "task" });
+      router.push({ name: "board-task", params: { id: boardId } });
+      taskStore.loadTasks(boardId);
       taskStore.filterStatuses.length = 0;
     } else {
       return;
@@ -125,8 +121,11 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
-    const statusCode = await taskStore.addTask(outputTask.value, boardId);
-    if (statusCode.status === 201) {
+
+    const res = await taskStore.addTask(outputTask.value);
+    console.log(res);
+    
+    if (res.status === 201) {
       await taskStore.loadSortTasks(sortStore.getSortType);
       taskStore.filterStatuses.length = 0;
       router.push({ name: "board-task", params: { id: boardId } });

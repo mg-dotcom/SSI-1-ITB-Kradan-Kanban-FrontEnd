@@ -62,8 +62,6 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async addTask(newTask) {
-      const boardId = this.boardStore.getSelectedBoard.id;
-
       const res = await addTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
         newTask

@@ -29,6 +29,7 @@ const boardId = route.params.id;
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
+  boardStore.setCurrentBoardId(boardId);
   await taskStore.loadTasks(boardId);
   await statusStore.loadStatuses();
 });
@@ -141,6 +142,7 @@ const handleEditTask = () => {
     "
   >
     <Header />
+    {{ boardStore.getSelectedBoard }}
 
     <div
       class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
@@ -164,9 +166,9 @@ const handleEditTask = () => {
           >
             <StatusButton
               v-for="status in taskStore.filterStatuses"
-              :status-color="statusStore.getStatusColor(status)"
-              :status-name="status"
               :key="status"
+              :statusName="status"
+              :statusColor="statusStore.getStatusColor(status)"
               class="itbkk-filter-item"
               :filterStatuses="taskStore.filterStatuses"
               @clear-status="clearEachStatus"
@@ -330,7 +332,12 @@ const handleEditTask = () => {
                     class="px-6 py-4 md-vertical:px-6 mobile:px-1 text-sm text-gray-600 border-b border-gray-300 break-all"
                   >
                     <div class="flex justify-between items-center text-center">
-                      <StatusButton :statusName="task.status.name">
+                      <StatusButton
+                        :statusName="task.status.name"
+                        :statusColor="
+                          statusStore.getStatusColor(task.status.name)
+                        "
+                      >
                         {{ task.status.name }}
                       </StatusButton>
                       <div>

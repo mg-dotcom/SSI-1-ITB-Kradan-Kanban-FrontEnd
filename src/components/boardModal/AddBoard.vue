@@ -43,6 +43,8 @@ const selectEmoji = (emoji) => {
 
 const saveBoard = async () => {
   const res = await boardStore.addBoard(boardTemplate.value);
+  console.log(res);
+
   const data = await res.json();
 
   if (res.status === 201) {

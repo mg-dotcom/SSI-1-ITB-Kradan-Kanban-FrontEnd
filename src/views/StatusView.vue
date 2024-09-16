@@ -4,6 +4,7 @@ import { useRouter, useRoute } from "vue-router";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useTaskStore } from "../stores/TaskStore.js";
+import { useBoardStore } from "../stores/BoardStore.js";
 import { onMounted } from "vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { RouterView } from "vue-router";
@@ -17,6 +18,7 @@ const route = useRoute();
 const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
+const boardStore = useBoardStore();
 
 const boardId = route.params.id;
 
@@ -35,7 +37,6 @@ const openDeleteOrTransferModal = (id) => {
   currentStatus.value = statusStore.getStatusById(id);
   const haveTask = taskStore.getTasksByStatus(currentStatus.value.name);
   numberOfTasks.value = haveTask.length;
-  console.log(haveTask.length);
   if (haveTask.length > 0) {
     openTransfer.value = true;
   } else {
@@ -75,6 +76,7 @@ const currentPage = route.name;
   <RouterView />
   <div class="h-screen w-full bg-bgLightBlue">
     <Header />
+    {{ boardStore.getSelectedBoard }}
     <div
       class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
