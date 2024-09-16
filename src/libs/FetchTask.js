@@ -2,6 +2,7 @@ import { useRouter } from "vue-router";
 import { useUserStore } from "@/stores/UserStore";
 
 const fetchAllTasks = async (url) => {
+  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "GET",
     headers: {
@@ -9,32 +10,31 @@ const fetchAllTasks = async (url) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   const data = await res.json();
   return data;
 };
 
 const fetchTaskDetails = async (url, id) => {
   const router = useRouter();
-  const data = await fetch(`${url}/${id}`, {
+  const res = await fetch(`${url}/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
-
-  if (!data.ok) {
-    alert("The requested task does not exist");
-    router.push("/");
-    return;
+  if (res.status === 401) {
+    router.push("/login");
   }
-  const res = await data.json();
-  console.log(res);
-
-  return res;
+  const data = await res.json();
+  return data;
 };
 
 const addTask = async (url, newTask) => {
+  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -48,10 +48,14 @@ const addTask = async (url, newTask) => {
       status: newTask.statusId,
     }),
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   return res;
 };
 
 const deleteTask = async (url, id) => {
+  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
     headers: {
@@ -59,10 +63,14 @@ const deleteTask = async (url, id) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   return res;
 };
 
 const updatedTask = async (url, updatedTask, id) => {
+  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: {
@@ -76,10 +84,14 @@ const updatedTask = async (url, updatedTask, id) => {
       status: updatedTask.statusId,
     }),
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   return res;
 };
 
 const fetchFilterTasks = async (url, arr) => {
+  const router = useRouter();
   const param = new URLSearchParams();
   param.append("filterStatuses", arr);
   const res = await fetch(`${url}?${param.toString()}`, {
@@ -89,6 +101,9 @@ const fetchFilterTasks = async (url, arr) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   const data = await res.json();
   return data;
 };

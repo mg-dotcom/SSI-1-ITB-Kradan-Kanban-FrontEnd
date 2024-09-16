@@ -1,5 +1,8 @@
 import { useUserStore } from "@/stores/UserStore";
+import { useRouter } from "vue-router";
+
 const fetchAllStatus = async (url) => {
+  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "GET",
     headers: {
@@ -7,23 +10,31 @@ const fetchAllStatus = async (url) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   const data = await res.json();
   return data;
 };
 
 const fetchStatusById = async (url, id) => {
-  const data = await fetch(`${url}/${id}`, {
+  const router = useRouter();
+  const res = await fetch(`${url}/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
-  const res = await data.json();
-  return res;
+  if (res.status === 401) {
+    router.push("/login");
+  }
+  const data = await res.json();
+  return data;
 };
 
 const deleteStatus = async (url, id) => {
+  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
     headers: {
@@ -31,10 +42,14 @@ const deleteStatus = async (url, id) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   return res;
 };
 
 const addStatus = async (url, newStatus) => {
+  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -47,10 +62,14 @@ const addStatus = async (url, newStatus) => {
       statusColor: newStatus.statusColor,
     }),
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   return res;
 };
 
 const updateStatus = async (url, id, updatedStatus) => {
+  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: {
@@ -63,12 +82,15 @@ const updateStatus = async (url, id, updatedStatus) => {
       statusColor: updatedStatus.statusColor,
     }),
   });
-  console.log(res);
+  if (res.status === 401) {
+    router.push("/login");
+  }
 
   return res;
 };
 
 const updateStatusSetting = async (url, updatedLimit) => {
+  const router = useRouter();
   const res = await fetch(`${url}/1/maximum-task`, {
     method: "PATCH",
     headers: {
@@ -79,6 +101,9 @@ const updateStatusSetting = async (url, updatedLimit) => {
       limitMaximumTask: updatedLimit,
     }),
   });
+  if (res.status === 401) {
+    router.push("/login");
+  }
   return res;
 };
 

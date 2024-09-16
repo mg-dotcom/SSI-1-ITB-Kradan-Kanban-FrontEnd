@@ -85,45 +85,16 @@ const router = createRouter({
   routes,
 });
 
-// Function to check if the token is expired
-function isTokenExpired(token) {
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    console.log(payload);
-
-    return payload.exp * 1000 < Date.now();
-    // Check expiration timestamp
-  } catch (e) {
-    return true; // If there's~ an issue decoding the token, treat it as expired
-  }
-}
-
-// Global navigation guard
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
-
-  // Retrieve the token from cookies or localStorage
-  const token = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith("token="));
-  const tokenValue = token ? token.split("=")[1] : null;
-
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
-  // Check if the token is expired
-  if (tokenValue && isTokenExpired(tokenValue)) {
-    userStore.logout(); // Clear the user session or token
-    next("/login"); // Redirect to login
-  }
-  // If route requires auth and user is not authenticated, redirect to login
-  else if (to.meta.requireAuth && !isAuthenticated) {
+  if (to.path !== "/login" && !isAuthenticated) {
     next("/login");
-  }
-  // If user is authenticated and tries to access the login page, redirect to /board
-  else if (to.path === "/login" && isAuthenticated) {
+  } else if (to.path === "/login" && isAuthenticated) {
     next("/board");
   } else {
-    next(); // Allow navigation to the route
+    next();
   }
 });
 

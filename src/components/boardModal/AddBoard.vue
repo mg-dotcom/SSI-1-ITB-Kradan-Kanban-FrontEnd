@@ -67,7 +67,7 @@ onClickOutside(emojiPicker, () => {
 <template>
   <!-- Modal Add Board -->
 
-  <div class="fixed inset-0 flex items-center justify-center z-10">
+  <div class="itbkk-modal-new fixed inset-0 flex items-center justify-center z-10">
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div
       class="relative itbkk-board-modal max-w-2xl w-[600px] bg-white rounded-lg shadow-xl"
