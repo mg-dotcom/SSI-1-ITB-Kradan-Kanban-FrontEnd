@@ -47,6 +47,7 @@ const saveBoard = async () => {
 
   if (res.status === 201) {
     const newBoardId = data.id;
+    boardStore.setCurrentBoard(data);
     router.push({ name: "board-task", params: { id: newBoardId } });
   } else if (res.status === 401) {
     userStore.logout();
@@ -149,7 +150,11 @@ onClickOutside(emojiPicker, () => {
                 boardStore.getBoards.length >= 1 || !boardTemplate.name,
             }"
             :buttonType="
-              boardStore.getBoards.length >= 1 ? 'disabled' : boardTemplate.name ? 'ok': 'disabled'
+              boardStore.getBoards.length >= 1
+                ? 'disabled'
+                : boardTemplate.name
+                ? 'ok'
+                : 'disabled'
             "
             :disabled="boardStore.getBoards.length >= 1 || !boardTemplate.name"
             class="itbkk-button-ok"
