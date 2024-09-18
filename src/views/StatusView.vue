@@ -37,7 +37,11 @@ const openLimit = ref(false);
 
 const openDeleteOrTransferModal = (id) => {
   currentStatus.value = statusStore.getStatusById(id);
-  const haveTask = taskStore.getTasksByStatus(currentStatus.value.name);
+  
+  const haveTask = taskStore.tasks.filter(
+    (task) => task.status.name === currentStatus.value.name
+  );
+
   numberOfTasks.value = haveTask.length;
   if (haveTask.length > 0) {
     openTransfer.value = true;

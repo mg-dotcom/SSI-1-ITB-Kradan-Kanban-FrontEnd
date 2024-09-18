@@ -188,6 +188,8 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async transferStatus(currentId, newId, numberOfTasks) {
+      console.log(currentId, newId);
+      
       const taskStore = useTaskStore();
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${currentId}`,
@@ -220,7 +222,7 @@ export const useStatusStore = defineStore("StatusStore", {
           severity: "error",
           summary: "Error",
           detail: `Cannot transfer to "${newStatus.name}" status
-           since it will exceed the limit.  Please choose another status to transfer to.`,
+            since it will exceed the limit.  Please choose another status to transfer to.`,
           life: 3000,
         });
       } else {
@@ -234,6 +236,7 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async removeStatus(id) {
+      
       const boardId = this.boardStore.getCurrentBoard.id;
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,

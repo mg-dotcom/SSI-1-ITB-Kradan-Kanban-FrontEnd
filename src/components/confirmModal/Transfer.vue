@@ -3,6 +3,7 @@ import ConfirmModal from "./ConfirmModal.vue";
 import submitButton from "../button/Button.vue";
 import { onMounted, ref } from "vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
+import { useBoardStore } from "@/stores/BoardStore";
 defineEmits(["closeDelete", "transferStatus"]);
 const props = defineProps({
   currentStatus: {
@@ -12,7 +13,7 @@ const props = defineProps({
     Type: Number,
   },
 });
-
+const boardStore = useBoardStore();
 const statusStore = useStatusStore();
 const filteredStatuses = statusStore.getStatuses.filter(
   (status) => status.id !== props.currentStatus.id
@@ -21,7 +22,10 @@ const filteredStatuses = statusStore.getStatuses.filter(
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
 onMounted(async () => {
-  const limitOfStatus = await statusStore.loadStatusSetting();
+  // const limitOfStatus = await statusStore.loadStatusSetting();
+  console.log(boardStore.getCurrentBoard);
+  
+  const limitOfStatus = boardStore.getCurrentBoard;
   limitMaximumTask.value = limitOfStatus.limitMaximumTask;
   maximumTask.value = limitOfStatus.maximumTask;
 });
