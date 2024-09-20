@@ -8,12 +8,10 @@ import NavigateTitle from "@/components/navigateTitle.vue";
 import { useRouter, RouterView, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useTaskStore } from "../stores/TaskStore.js";
-import { useUserStore } from "../stores/UserStore.js";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useSortStore } from "../stores/SortStore.js";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import Header from "../components/Header.vue";
-
 const router = useRouter();
 const route = useRoute();
 const selectedId = ref("");
@@ -26,7 +24,6 @@ const sortType = ref("default");
 const openLimit = ref(false);
 
 const boardStore = useBoardStore();
-const userStore = useUserStore();
 const boardId = route.params.id;
 
 onMounted(async () => {

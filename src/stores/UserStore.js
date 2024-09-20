@@ -69,6 +69,5 @@ export const useUserStore = defineStore("UserStore", {
         this.isLoggedIn = true;
       }
     },
-    
   },
 });

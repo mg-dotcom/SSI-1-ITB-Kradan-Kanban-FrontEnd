@@ -8,7 +8,15 @@ const fetchAllTasks = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
+<<<<<<< HEAD
   return res;
+=======
+  if (res.status === 401) {
+    router.push("/login");
+  }
+  const data = await res.json();
+  return data;
+>>>>>>> parent of b4a34cf (401 fixing)
 };
 
 const fetchTaskDetails = async (url, id) => {
@@ -19,7 +27,15 @@ const fetchTaskDetails = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
+<<<<<<< HEAD
   return res;
+=======
+  if (res.status === 401) {
+    router.push("/login");
+  }
+  const data = await res.json();
+  return data;
+>>>>>>> parent of b4a34cf (401 fixing)
 };
 
 const addTask = async (url, newTask) => {
@@ -36,6 +52,12 @@ const addTask = async (url, newTask) => {
       status: newTask.statusId,
     }),
   });
+<<<<<<< HEAD
+=======
+  if (res.status === 401) {
+    router.push("/login");
+  }
+>>>>>>> parent of b4a34cf (401 fixing)
   return res;
 };
 
@@ -47,6 +69,12 @@ const deleteTask = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
+<<<<<<< HEAD
+=======
+  if (res.status === 401) {
+    router.push("/login");
+  }
+>>>>>>> parent of b4a34cf (401 fixing)
   return res;
 };
 
@@ -64,6 +92,12 @@ const updatedTask = async (url, updatedTask, id) => {
       status: updatedTask.statusId,
     }),
   });
+<<<<<<< HEAD
+=======
+  if (res.status === 401) {
+    router.push("/login");
+  }
+>>>>>>> parent of b4a34cf (401 fixing)
   return res;
 };
 
@@ -78,7 +112,13 @@ const fetchFilterTasks = async (url, arr) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
+<<<<<<< HEAD
 
+=======
+  if (res.status === 401) {
+    router.push("/login");
+  }
+>>>>>>> parent of b4a34cf (401 fixing)
   const data = await res.json();
   return data;
 };

@@ -1,4 +1,9 @@
+<<<<<<< HEAD
 import { useUserToken } from "../stores/UserStore.js";
+=======
+import router from "@/router/page.js";
+import { useUserStore } from "../stores/UserStore.js";
+>>>>>>> parent of b4a34cf (401 fixing)
 import { useRouter } from "vue-router";
 
 const fetchAllBoards = async (url) => {
@@ -10,8 +15,8 @@ const fetchAllBoards = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
+  if (res.status === 401) {
+    router.push("/login");
   }
   const data = await res.json();
   return data;
@@ -26,8 +31,8 @@ const fetchBoardById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
+  if (res.status === 401) {
+    router.push("/login");
   }
   const data = await res.json();
   return data;
@@ -48,8 +53,8 @@ const addBoard = async (url, newBoard) => {
       color: newBoard.color,
     }),
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
+  if (res.status === 401) {
+    router.push("/login");
   }
   return res;
 };

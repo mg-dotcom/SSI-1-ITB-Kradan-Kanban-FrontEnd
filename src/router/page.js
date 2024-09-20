@@ -8,13 +8,12 @@ import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
-import { CookieUtil } from "@/libs/CookieUtil";
-import { jwtDecode } from "jwt-decode";
 
 const routes = [
   {
     path: "/",
     redirect: "/board",
+    meta: { requireAuth: true }, // Meta field for auth check
   },
   {
     path: "/board",
@@ -25,7 +24,6 @@ const routes = [
       {
         path: "add",
         name: "board-add",
-        meta: { requireAuth: true },
         component: AddBoard,
       },
     ],
@@ -39,19 +37,16 @@ const routes = [
       {
         path: ":taskId",
         name: "task-detail",
-        meta: { requireAuth: true },
         component: Detail,
       },
       {
         path: "add",
         name: "task-add",
-        meta: { requireAuth: true },
         component: AddEditTask,
       },
       {
         path: ":taskId/edit",
         name: "task-edit",
-        meta: { requireAuth: true },
         component: AddEditTask,
       },
     ],
@@ -65,13 +60,11 @@ const routes = [
       {
         path: "add",
         name: "status-add",
-        meta: { requireAuth: true },
         component: AddEditStatusModal,
       },
       {
         path: ":statusId/edit",
         name: "status-edit",
-        meta: { requireAuth: true },
         component: AddEditStatusModal,
       },
     ],
@@ -92,6 +85,7 @@ const router = createRouter({
   routes,
 });
 
+<<<<<<< HEAD
 // Set up navigation guard
 router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
@@ -120,6 +114,16 @@ router.beforeEach((to, _, next) => {
       userStore.logout();
       return next("/login");
     }
+=======
+router.beforeEach((to, _, next) => {
+  const userStore = useUserStore();
+  const isAuthenticated = !!userStore.getIsLoggedIn;
+
+  if (to.path !== "/login" && !isAuthenticated) {
+    next("/login");
+  } else if (to.path === "/login" && isAuthenticated) {
+    next("/board");
+>>>>>>> parent of b4a34cf (401 fixing)
   } else {
     next();
   }
