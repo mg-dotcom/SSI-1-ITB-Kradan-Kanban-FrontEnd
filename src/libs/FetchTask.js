@@ -1,45 +1,33 @@
-import { useRouter } from "vue-router";
-import { useUserStore } from "@/stores/UserStore";
+import { useUserToken } from "@/stores/UserStore";
 
 const fetchAllTasks = async (url) => {
-  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
-  }
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const fetchTaskDetails = async (url, id) => {
-  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
-  }
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const addTask = async (url, newTask) => {
-  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
     body: JSON.stringify({
       title: newTask.title,
@@ -48,34 +36,26 @@ const addTask = async (url, newTask) => {
       status: newTask.statusId,
     }),
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
-  }
   return res;
 };
 
 const deleteTask = async (url, id) => {
-  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
     headers: {
       "content-type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
-  }
   return res;
 };
 
 const updatedTask = async (url, updatedTask, id) => {
-  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "PUT",
     headers: {
       "content-type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
     body: JSON.stringify({
       title: updatedTask.title,
@@ -84,26 +64,21 @@ const updatedTask = async (url, updatedTask, id) => {
       status: updatedTask.statusId,
     }),
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
-  }
   return res;
 };
 
+//FIXME: This function is cant fixed yet
 const fetchFilterTasks = async (url, arr) => {
-  const router = useRouter();
   const param = new URLSearchParams();
   param.append("filterStatuses", arr);
   const res = await fetch(`${url}?${param.toString()}`, {
     method: "GET",
     headers: {
       "content-type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (!res.ok) {
-    router.push({ name: "login" });
-  }
+
   const data = await res.json();
   return data;
 };

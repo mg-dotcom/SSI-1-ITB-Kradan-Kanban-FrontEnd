@@ -1,4 +1,4 @@
-import { useUserStore } from "../stores/UserStore.js";
+import { useUserToken } from "../stores/UserStore.js";
 import { useRouter } from "vue-router";
 
 const fetchAllBoards = async (url) => {
@@ -7,7 +7,7 @@ const fetchAllBoards = async (url) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
   });
   if (!res.ok) {
@@ -23,7 +23,7 @@ const fetchBoardById = async (url, id) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
   });
   if (!res.ok) {
@@ -39,7 +39,7 @@ const addBoard = async (url, newBoard) => {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      Authorization: `Bearer ${useUserStore().token}`,
+      Authorization: `Bearer ${useUserToken().value}`,
     },
 
     body: JSON.stringify({

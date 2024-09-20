@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import { useUserStore } from "@/stores/UserStore";
+import { useUserStore, useUserToken } from "@/stores/UserStore";
 import TaskView from "../views/TaskView.vue";
 import Detail from "../components/taskModal/Detail.vue";
 import AddEditTask from "../components/taskModal/AddEditTask.vue";
@@ -93,28 +93,35 @@ const router = createRouter({
 });
 
 // Set up navigation guard
-router.beforeEach((to, from, next) => {
+router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
-  const oldToken = userStore.getToken; // Retrieve the token from the store (Pinia or Vuex)
-  const newToken = CookieUtil.get("access_token"); // Retrieve the token from the cookie
+  const isAuthenticated = !!userStore.getIsLoggedIn;
+  const token = useUserToken().value;
 
-  if (newToken) {
-    const decodedToken = jwtDecode(newToken);
-    const isTokenExpired = CookieUtil.isExpired(decodedToken.exp);
+  if (token) {
+    try {
+      const decodedToken = jwtDecode(token);
+      const isTokenExpired = CookieUtil.isExpired(decodedToken.exp);
 
-    if (isTokenExpired || oldToken !== newToken || !oldToken || !decodedToken) {
-      userStore.logout();
+      if (isTokenExpired || !decodedToken || !isAuthenticated || !token) {
+        CookieUtil.unset("access_token");
+        userStore.logout();
+        return next({ name: "Login" });
+      }
+    } catch (error) {
+      console.error("Error decoding token:", error);
+      return next({ name: "Login" });
+    }
+  }
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isAuthenticated || !token) {
       CookieUtil.unset("access_token");
-      next("/login");
-    } else {
-      next();
+      userStore.logout();
+      return next("/login");
     }
   } else {
-    if (to.matched.some((record) => record.meta.requiresAuth)) {
-      next("/login");
-    } else {
-      next();
-    }
+    next();
   }
 });
 
