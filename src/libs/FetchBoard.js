@@ -1,9 +1,5 @@
-<<<<<<< HEAD
-import { useUserToken } from "../stores/UserStore.js";
-=======
 import router from "@/router/page.js";
-import { useUserStore } from "../stores/UserStore.js";
->>>>>>> parent of b4a34cf (401 fixing)
+import { useUserToken } from "../stores/UserStore.js";
 import { useRouter } from "vue-router";
 
 const fetchAllBoards = async (url) => {

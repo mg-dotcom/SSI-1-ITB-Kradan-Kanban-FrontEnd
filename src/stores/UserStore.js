@@ -1,9 +1,9 @@
 // stores/UserStore.js
-
 import { defineStore } from "pinia";
 import { fetchUser } from "../libs/FetchUser.js";
 import { jwtDecode } from "jwt-decode";
 import { CookieUtil } from "../libs/CookieUtil.js";
+import { computed, watch } from "vue";
 const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT;
 
 export const useUserStore = defineStore("UserStore", {
@@ -71,3 +71,17 @@ export const useUserStore = defineStore("UserStore", {
     },
   },
 });
+
+export const useUserToken = () => {
+  const userStore = useUserStore();
+
+  // Create a computed property for the token
+  const token = computed(() => CookieUtil.get("access_token") || "");
+
+  // Watch for changes to the cookie and update the store if necessary
+  watch(token, (newToken) => {
+    userStore.token = newToken;
+  });
+
+  return token;
+};

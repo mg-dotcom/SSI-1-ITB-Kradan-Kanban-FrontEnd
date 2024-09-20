@@ -85,36 +85,6 @@ const router = createRouter({
   routes,
 });
 
-<<<<<<< HEAD
-// Set up navigation guard
-router.beforeEach((to, _, next) => {
-  const userStore = useUserStore();
-  const isAuthenticated = !!userStore.getIsLoggedIn;
-  const token = useUserToken().value;
-
-  if (token) {
-    try {
-      const decodedToken = jwtDecode(token);
-      const isTokenExpired = CookieUtil.isExpired(decodedToken.exp);
-
-      if (isTokenExpired || !decodedToken || !isAuthenticated || !token) {
-        CookieUtil.unset("access_token");
-        userStore.logout();
-        return next({ name: "Login" });
-      }
-    } catch (error) {
-      console.error("Error decoding token:", error);
-      return next({ name: "Login" });
-    }
-  }
-
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (!isAuthenticated || !token) {
-      CookieUtil.unset("access_token");
-      userStore.logout();
-      return next("/login");
-    }
-=======
 router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
@@ -123,7 +93,6 @@ router.beforeEach((to, _, next) => {
     next("/login");
   } else if (to.path === "/login" && isAuthenticated) {
     next("/board");
->>>>>>> parent of b4a34cf (401 fixing)
   } else {
     next();
   }

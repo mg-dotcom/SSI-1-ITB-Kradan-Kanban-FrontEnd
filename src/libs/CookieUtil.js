@@ -26,11 +26,6 @@ class CookieUtil {
             cookieText += `;expires=${expires.toISOString()}`
         }
 
-<<<<<<< HEAD
-  static isExpired(exp) {
-    return Date.now() >= exp * 1000;
-  }
-=======
         document.cookie = cookieText
     }
     //to remove existing cookies, setting the cookie again—with the same path, domain, and secure options—and set its expiration date to some time in the past.
@@ -38,6 +33,5 @@ class CookieUtil {
         //set to a blank string and the expiration date set to January 1, 1970 (the value of a Date object initialized to 0 milliseconds).
         CookieUtil.set(name, '', new Date(0)) //or max-age=0
     }
->>>>>>> parent of b4a34cf (401 fixing)
 } //ending class
 export { CookieUtil }
