@@ -8,12 +8,13 @@ import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
+import { CookieUtil } from "@/libs/CookieUtil";
+import { jwtDecode } from "jwt-decode";
 
 const routes = [
   {
     path: "/",
     redirect: "/board",
-    meta: { requireAuth: true }, // Meta field for auth check
   },
   {
     path: "/board",
@@ -24,6 +25,7 @@ const routes = [
       {
         path: "add",
         name: "board-add",
+        meta: { requireAuth: true },
         component: AddBoard,
       },
     ],
@@ -37,16 +39,19 @@ const routes = [
       {
         path: ":taskId",
         name: "task-detail",
+        meta: { requireAuth: true },
         component: Detail,
       },
       {
         path: "add",
         name: "task-add",
+        meta: { requireAuth: true },
         component: AddEditTask,
       },
       {
         path: ":taskId/edit",
         name: "task-edit",
+        meta: { requireAuth: true },
         component: AddEditTask,
       },
     ],
@@ -60,11 +65,13 @@ const routes = [
       {
         path: "add",
         name: "status-add",
+        meta: { requireAuth: true },
         component: AddEditStatusModal,
       },
       {
         path: ":statusId/edit",
         name: "status-edit",
+        meta: { requireAuth: true },
         component: AddEditStatusModal,
       },
     ],
@@ -85,16 +92,29 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+// Set up navigation guard
+router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
-  const isAuthenticated = !!userStore.getIsLoggedIn;
+  const oldToken = userStore.getToken; // Retrieve the token from the store (Pinia or Vuex)
+  const newToken = CookieUtil.get("access_token"); // Retrieve the token from the cookie
 
-  if (to.path !== "/login" && !isAuthenticated) {
-    next("/login");
-  } else if (to.path === "/login" && isAuthenticated) {
-    next("/board");
+  if (newToken) {
+    const decodedToken = jwtDecode(newToken);
+    const isTokenExpired = CookieUtil.isExpired(decodedToken.exp);
+
+    if (isTokenExpired || oldToken !== newToken || !oldToken || !decodedToken) {
+      userStore.logout();
+      CookieUtil.unset("access_token");
+      next("/login");
+    } else {
+      next();
+    }
   } else {
-    next();
+    if (to.matched.some((record) => record.meta.requiresAuth)) {
+      next("/login");
+    } else {
+      next();
+    }
   }
 });
 

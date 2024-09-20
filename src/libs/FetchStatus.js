@@ -10,8 +10,8 @@ const fetchAllStatus = async (url) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   const data = await res.json();
   return data;
@@ -26,8 +26,8 @@ const fetchStatusById = async (url, id) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   const data = await res.json();
   return data;
@@ -42,8 +42,8 @@ const deleteStatus = async (url, id) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   return res;
 };
@@ -62,8 +62,8 @@ const addStatus = async (url, newStatus) => {
       statusColor: newStatus.statusColor,
     }),
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   return res;
 };
@@ -82,8 +82,8 @@ const updateStatus = async (url, id, updatedStatus) => {
       statusColor: updatedStatus.statusColor,
     }),
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
 
   return res;
@@ -101,8 +101,8 @@ const updateStatusSetting = async (url, updatedLimit) => {
       limitMaximumTask: updatedLimit,
     }),
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   return res;
 };

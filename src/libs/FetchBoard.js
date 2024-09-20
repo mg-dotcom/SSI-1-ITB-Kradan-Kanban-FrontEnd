@@ -1,4 +1,3 @@
-import router from "@/router/page.js";
 import { useUserStore } from "../stores/UserStore.js";
 import { useRouter } from "vue-router";
 
@@ -11,8 +10,8 @@ const fetchAllBoards = async (url) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   const data = await res.json();
   return data;
@@ -27,8 +26,8 @@ const fetchBoardById = async (url, id) => {
       Authorization: `Bearer ${useUserStore().token}`,
     },
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   const data = await res.json();
   return data;
@@ -49,8 +48,8 @@ const addBoard = async (url, newBoard) => {
       color: newBoard.color,
     }),
   });
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   return res;
 };

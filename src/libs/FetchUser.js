@@ -15,8 +15,8 @@ const fetchUser = async (url, userLogin) => {
   if ([401].includes(res.status)) {
     throw new Error("Username or Password is incorrect.");
   }
-  if (res.status === 401) {
-    router.push("/login");
+  if (!res.ok) {
+    router.push({ name: "login" });
   }
   const data = await res.json();
 
