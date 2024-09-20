@@ -1,4 +1,4 @@
-import router from "@/router/page.js";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
 import { useUserToken } from "../stores/UserStore.js";
 import { useRouter } from "vue-router";
 
@@ -12,7 +12,7 @@ const fetchAllBoards = async (url) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
   return data;
@@ -28,14 +28,13 @@ const fetchBoardById = async (url, id) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
   return data;
 };
 
 const addBoard = async (url, newBoard) => {
-  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -50,7 +49,7 @@ const addBoard = async (url, newBoard) => {
     }),
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   return res;
 };

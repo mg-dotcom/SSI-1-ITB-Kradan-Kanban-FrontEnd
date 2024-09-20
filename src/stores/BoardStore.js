@@ -6,6 +6,7 @@ import {
 } from "../libs/FetchBoard.js";
 import { useToast } from "primevue/usetoast";
 import router from "@/router/page";
+import { useUserStore } from "./UserStore.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -14,6 +15,7 @@ export const useBoardStore = defineStore("BoardStore", {
     board: [],
     toast: useToast(),
     currentBoard: {},
+    userStore: useUserStore(),
   }),
   getters: {
     getBoards: (state) => state.board,
@@ -49,20 +51,21 @@ export const useBoardStore = defineStore("BoardStore", {
     },
     async addBoard(newBoard) {
       const res = await addBoard(
-      `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
-      newBoard
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
+        newBoard
       );
-      if (res.status === 400) {
+      if (res.status === 401) {
         router.push({ name: "login" });
+        userStore.logout();
       } else if (res.status < 200 || res.status > 299) {
-      this.toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "There is a problem. Please try again later",
-        life: 3000,
-      });
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "There is a problem. Please try again later",
+          life: 3000,
+        });
       } else {
-      this.board.push(newBoard);
+        this.board.push(newBoard);
       }
 
       return res;

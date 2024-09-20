@@ -1,14 +1,15 @@
-// stores/UserStore.js
 import { defineStore } from "pinia";
 import { fetchUser } from "../libs/FetchUser.js";
 import { jwtDecode } from "jwt-decode";
 import { CookieUtil } from "../libs/CookieUtil.js";
 import { computed, watch } from "vue";
+
 const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT;
 
 export const useUserStore = defineStore("UserStore", {
   state: () => ({
     user: {},
+    userStore: useUserStore(),
     token: CookieUtil.get("access_token") || "",
     isLoggedIn: !!CookieUtil.get("access_token"),
   }),

@@ -1,7 +1,6 @@
-import { useRouter } from "vue-router";
+
 
 const fetchUser = async (url, userLogin) => {
-  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -16,7 +15,7 @@ const fetchUser = async (url, userLogin) => {
     throw new Error("Username or Password is incorrect.");
   }
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
 

@@ -1,4 +1,5 @@
 import { useUserToken } from "@/stores/UserStore";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
 
 const fetchAllTasks = async (url) => {
   const res = await fetch(`${url}`, {
@@ -9,7 +10,7 @@ const fetchAllTasks = async (url) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
   return data;
@@ -24,7 +25,7 @@ const fetchTaskDetails = async (url, id) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
   return data;
@@ -45,7 +46,7 @@ const addTask = async (url, newTask) => {
     }),
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   return res;
 };
@@ -59,7 +60,7 @@ const deleteTask = async (url, id) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   return res;
 };
@@ -79,7 +80,7 @@ const updatedTask = async (url, updatedTask, id) => {
     }),
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   return res;
 };
@@ -96,7 +97,7 @@ const fetchFilterTasks = async (url, arr) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
   return data;

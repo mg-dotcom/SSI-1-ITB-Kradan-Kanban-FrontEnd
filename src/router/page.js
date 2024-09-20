@@ -89,10 +89,8 @@ router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
-  if (to.path !== "/login" && !isAuthenticated) {
+  if (to.meta.requireAuth && !isAuthenticated) {
     next("/login");
-  } else if (to.path === "/login" && isAuthenticated) {
-    next("/board");
   } else {
     next();
   }

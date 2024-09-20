@@ -1,6 +1,6 @@
 import { ref } from "vue";
-
-
+import router from "@/router/page.js";
+import { useUserStore } from "@/stores/UserStore";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -17,5 +17,10 @@ const sortTasks = (tasks, sortType) => {
   }
 };
 
+export const handleAuthenticationClearAndRedirect = () => {
+  const userStore = useUserStore();
+  userStore.$reset();
+  router.push("/login");
+};
 
 export { formatDate, localTimeZone, sortTasks };

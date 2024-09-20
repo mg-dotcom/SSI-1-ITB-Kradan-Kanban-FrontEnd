@@ -1,4 +1,6 @@
 import { useUserToken } from "@/stores/UserStore";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
+import router from "@/router/page";
 
 const fetchAllStatus = async (url) => {
   const res = await fetch(`${url}`, {
@@ -9,7 +11,7 @@ const fetchAllStatus = async (url) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
   return data;
@@ -24,14 +26,13 @@ const fetchStatusById = async (url, id) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
   return data;
 };
 
 const deleteStatus = async (url, id) => {
-
   const res = await fetch(`${url}/${id}`, {
     method: "DELETE",
     headers: {
@@ -40,7 +41,7 @@ const deleteStatus = async (url, id) => {
     },
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   return res;
 };
@@ -59,7 +60,7 @@ const addStatus = async (url, newStatus) => {
     }),
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   return res;
 };
@@ -78,7 +79,7 @@ const updateStatus = async (url, id, updatedStatus) => {
     }),
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
 
   return res;
@@ -96,7 +97,7 @@ const updateStatusSetting = async (url, updatedLimit) => {
     }),
   });
   if (res.status === 401) {
-    router.push("/login");
+    handleAuthenticationClearAndRedirect();
   }
   return res;
 };
