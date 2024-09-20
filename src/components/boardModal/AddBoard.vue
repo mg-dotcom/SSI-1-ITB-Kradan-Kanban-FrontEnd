@@ -5,10 +5,10 @@ import { useBoardStore } from "@/stores/BoardStore";
 import { useUserStore } from "@/stores/UserStore";
 import { onClickOutside } from "@vueuse/core";
 import router from "@/router/page";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
 
 const emojiPicker = ref(null);
 const boardStore = useBoardStore();
-const boardId = boardStore.getBoards[0]?.id;
 
 const toggleInputEmoji = () => {
   isEmojiPickerVisible.value = !isEmojiPickerVisible.value;
@@ -42,20 +42,26 @@ const selectEmoji = (emoji) => {
 };
 
 const saveBoard = async () => {
-  const res = await boardStore.addBoard(boardTemplate.value);
-  console.log(res);
+  try {
+    const res = await boardStore.addBoard(boardTemplate.value);
 
-  const data = await res.json();
+    if (!res.ok) {
+      throw new Error(`Server responded with status ${res.status}`);
+    }
 
-  if (res.status === 201) {
-    const newBoardId = data.id;
-    boardStore.setCurrentBoard(data);
-    router.push({ name: "board-task", params: { id: newBoardId } });
-  } else if (res.status === 401) {
-    router.push({ name: "login" });
-    userStore.logout();
-  } else {
-    router.push({ name: "board" });
+    const data = await res.json();
+
+    if (res.status === 201) {
+      const newBoardId = data.id;
+      boardStore.setCurrentBoard(data);
+      router.push({ name: "board-task", params: { id: newBoardId } });
+    } else if (res.status === 401) {
+      handleAuthenticationClearAndRedirect();
+    } else {
+      router.push({ name: "board" });
+    }
+  } catch (error) {
+    handleAuthenticationClearAndRedirect();
   }
 };
 
@@ -67,7 +73,9 @@ onClickOutside(emojiPicker, () => {
 <template>
   <!-- Modal Add Board -->
 
-  <div class="itbkk-modal-new fixed inset-0 flex items-center justify-center z-10">
+  <div
+    class="itbkk-modal-new fixed inset-0 flex items-center justify-center z-10"
+  >
     <div class="absolute inset-0 bg-black opacity-50"></div>
     <div
       class="relative itbkk-board-modal max-w-2xl w-[600px] bg-white rounded-lg shadow-xl"

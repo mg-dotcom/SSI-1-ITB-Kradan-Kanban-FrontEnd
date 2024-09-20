@@ -43,7 +43,7 @@ const taskId = route.params.taskId;
 
 onMounted(async () => {
   await statusStore.loadStatuses(boardId);
-  await boardStore.loadBoards(boardId);
+  await boardStore.loadBoards();
   const board = boardStore.getBoardById(boardId);
 
   limitMaximumTask.value = board.limitMaximumTask;

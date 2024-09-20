@@ -13,7 +13,7 @@ const route = useRoute();
 const boardId = route.params.id;
 
 onMounted(async () => {
-  await boardStore.loadBoards(boardId);
+  await boardStore.loadBoards();
   const board = boardStore.getBoardById(boardId);
   limitMaximumTask.value = board.limitMaximumTask;
   maximumTask.value = board.maximumTask;

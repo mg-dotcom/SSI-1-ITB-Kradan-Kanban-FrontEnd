@@ -5,8 +5,8 @@ import {
   addBoard,
 } from "../libs/FetchBoard.js";
 import { useToast } from "primevue/usetoast";
-import router from "@/router/page";
 import { useUserStore } from "./UserStore.js";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -26,14 +26,20 @@ export const useBoardStore = defineStore("BoardStore", {
   },
   actions: {
     async loadBoards() {
-      const data = await fetchAllBoards(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
-      );
+      try {
+        const data = await fetchAllBoards(
+          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
+        );
 
-      if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch boards");
-      } else {
-        this.board = data;
+        if (data.status < 200 && data.status > 299) {
+          alert("Failed to fetch boards");
+        } else {
+          this.board = data;
+        }
+      } catch (error) {
+        console.log(error);
+
+        handleAuthenticationClearAndRedirect();
       }
     },
     async loadBoardById(id) {
@@ -55,8 +61,7 @@ export const useBoardStore = defineStore("BoardStore", {
         newBoard
       );
       if (res.status === 401) {
-        router.push({ name: "login" });
-        userStore.logout();
+        handleAuthenticationClearAndRedirect();
       } else if (res.status < 200 || res.status > 299) {
         this.toast.add({
           severity: "error",
