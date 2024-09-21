@@ -14,7 +14,7 @@ const fetchUser = async (url, userLogin) => {
   if ([401].includes(res.status)) {
     throw new Error("Username or Password is incorrect.");
   }
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();

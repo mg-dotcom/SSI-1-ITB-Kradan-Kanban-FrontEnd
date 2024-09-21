@@ -11,7 +11,7 @@ const fetchAllBoards = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
@@ -27,7 +27,7 @@ const fetchBoardById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
@@ -48,7 +48,7 @@ const addBoard = async (url, newBoard) => {
       color: newBoard.color,
     }),
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   return res;

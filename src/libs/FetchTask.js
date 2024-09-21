@@ -9,7 +9,7 @@ const fetchAllTasks = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
@@ -24,7 +24,7 @@ const fetchTaskDetails = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
@@ -45,7 +45,7 @@ const addTask = async (url, newTask) => {
       status: newTask.statusId,
     }),
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   return res;
@@ -59,7 +59,7 @@ const deleteTask = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   return res;
@@ -79,7 +79,7 @@ const updatedTask = async (url, updatedTask, id) => {
       status: updatedTask.statusId,
     }),
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   return res;
@@ -96,7 +96,7 @@ const fetchFilterTasks = async (url, arr) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();

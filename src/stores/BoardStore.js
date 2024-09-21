@@ -60,7 +60,7 @@ export const useBoardStore = defineStore("BoardStore", {
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
       );
-      if (res.status === 401) {
+      if (res.status === 401 || res.status === 404) {
         handleAuthenticationClearAndRedirect();
       } else if (res.status < 200 || res.status > 299) {
         this.toast.add({

@@ -10,7 +10,7 @@ const fetchAllStatus = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
@@ -25,7 +25,7 @@ const fetchStatusById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
@@ -40,7 +40,7 @@ const deleteStatus = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   return res;
@@ -59,7 +59,7 @@ const addStatus = async (url, newStatus) => {
       statusColor: newStatus.statusColor,
     }),
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   return res;
@@ -78,7 +78,7 @@ const updateStatus = async (url, id, updatedStatus) => {
       statusColor: updatedStatus.statusColor,
     }),
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
 
@@ -96,7 +96,7 @@ const updateStatusSetting = async (url, updatedLimit) => {
       limitMaximumTask: updatedLimit,
     }),
   });
-  if (res.status === 401) {
+  if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   }
   return res;

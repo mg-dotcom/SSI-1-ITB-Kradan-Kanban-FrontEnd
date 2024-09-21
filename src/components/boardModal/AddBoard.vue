@@ -55,7 +55,7 @@ const saveBoard = async () => {
       const newBoardId = data.id;
       boardStore.setCurrentBoard(data);
       router.push({ name: "board-task", params: { id: newBoardId } });
-    } else if (res.status === 401) {
+    } else if (res.status === 401 || res.status === 404) {
       handleAuthenticationClearAndRedirect();
     } else {
       router.push({ name: "board" });
