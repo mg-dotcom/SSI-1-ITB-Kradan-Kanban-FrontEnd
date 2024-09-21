@@ -45,6 +45,8 @@ onMounted(async () => {
   await statusStore.loadStatuses(boardId);
   await boardStore.loadBoards();
   const board = boardStore.getBoardById(boardId);
+  const fetchedBoard = await boardStore.loadBoardById(boardId);
+  boardStore.setCurrentBoard(fetchedBoard);
   console.log(board);
 
   limitMaximumTask.value = board.limitMaximumTask;

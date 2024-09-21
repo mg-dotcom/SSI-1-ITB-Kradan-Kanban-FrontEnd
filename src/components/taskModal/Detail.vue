@@ -7,16 +7,22 @@ import { useTaskStore } from "../../stores/TaskStore.js";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
+import { useBoardStore } from "../../stores/BoardStore.js";
 
 const route = useRoute();
 const router = useRouter();
 const taskStore = useTaskStore();
 const statusStore = useStatusStore();
+const boardStore = useBoardStore();
 const taskId = route.params.taskId;
+const boardId = route.params.id;
 const selectedTask = ref({});
 
 onMounted(async () => {
-  const taskDetail = await taskStore.loadTaskDetails(taskId);
+  const fetchedBoard = await boardStore.loadBoardById(boardId);
+  boardStore.setCurrentBoard(fetchedBoard);
+  const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
+
   selectedTask.value = taskDetail;
   selectedTask.value.status = taskDetail.status.name;
   selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
