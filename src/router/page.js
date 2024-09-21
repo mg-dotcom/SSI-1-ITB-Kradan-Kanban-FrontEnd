@@ -10,6 +10,7 @@ import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useTaskStore } from "@/stores/TaskStore";
+import { CookieUtil } from "@/libs/CookieUtil";
 
 const routes = [
   {
@@ -27,6 +28,11 @@ const routes = [
         path: "add", // No leading slash
         name: "board-add",
         component: AddBoard,
+      },
+      {
+        path: ":id", // No leading slash
+        name: "board-detail",
+        component: BoardView,
       },
     ],
   },
@@ -78,10 +84,6 @@ const routes = [
     name: "login",
     component: Login,
   },
-  {
-    path: "/:notFound(.*)",
-    redirect: "/board",
-  },
 ];
 
 const router = createRouter({
@@ -89,7 +91,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
 

@@ -52,7 +52,7 @@ onMounted(async () => {
   maximumTask.value = board.maximumTask;
 
   if (mode == "edit") {
-    const taskDetail = await taskStore.loadTaskDetails(taskId);
+    const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
     selectedTask.value = taskDetail;
     selectedTask.value.statusId = taskDetail.status.id;
     selectedTask.value.createdOn = formatDate(taskDetail.createdOn);

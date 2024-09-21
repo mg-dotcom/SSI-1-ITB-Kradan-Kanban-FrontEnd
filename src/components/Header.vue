@@ -6,8 +6,9 @@ const userStore = useUserStore();
 
 const router = useRouter();
 
-// Ensure the store is initialized (retrieve user data from the cookie if available)
 userStore.initialize();
+
+// Ensure the store is initialized (retrieve user data from the cookie if available)
 
 const logout = () => {
   userStore.logout();
