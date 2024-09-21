@@ -68,6 +68,7 @@ onClickOutside(emojiPicker, () => {
               v-else="boardStore.getBoards.length > 0"
               v-for="(board, index) in boardStore.getBoards"
               :key="index"
+              @click="router.push({ name: 'board-task', params: { id: board.id } })"
             >
               <div class="flex gap-x-5">
                 <div

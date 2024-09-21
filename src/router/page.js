@@ -27,7 +27,7 @@ const routes = [
         path: "add", // No leading slash
         name: "board-add",
         component: AddBoard,
-      },
+      }
     ],
   },
   {

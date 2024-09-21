@@ -22,6 +22,7 @@ const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
 const openLimit = ref(false);
+const boardVisibility = ref(false);
 
 const boardStore = useBoardStore();
 const boardId = route.params.id;
@@ -211,6 +212,19 @@ const handleEditTask = () => {
           </ul>
         </div>
         <div class="flex px-4">
+          <div class="my-3">
+            <label class="inline-flex items-center cursor-pointer">
+              <input
+                v-model="boardVisibility"
+                type="checkbox"
+                class="toggle toggle-success"
+              />
+              <span
+                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
+                >{{ boardVisibility ? 'Public' : 'Private' }}</span
+              >
+            </label>
+          </div>
           <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2 justify-center items-center"
