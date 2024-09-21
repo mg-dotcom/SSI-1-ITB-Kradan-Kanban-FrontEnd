@@ -29,41 +29,41 @@ const routes = [
     ],
   },
   {
-    path: "/board/:id/task",
+    path: "/board/:id",
     name: "board-task",
     component: TaskView,
     meta: { requireAuth: true },
     children: [
       {
-        path: ":taskId",
+        path: "/task/:taskId",
         name: "task-detail",
         component: Detail,
       },
       {
-        path: "add",
+        path: "/task/add",
         name: "task-add",
         component: AddEditTask,
       },
       {
-        path: ":taskId/edit",
+        path: "/task/:taskId/edit",
         name: "task-edit",
         component: AddEditTask,
       },
     ],
   },
   {
-    path: "/board/:id/status",
+    path: "/board/:id",
     name: "board-status",
     component: StatusView,
     meta: { requireAuth: true },
     children: [
       {
-        path: "add",
+        path: "/status/add",
         name: "status-add",
         component: AddEditStatusModal,
       },
       {
-        path: ":statusId/edit",
+        path: "/status/:statusId/edit",
         name: "status-edit",
         component: AddEditStatusModal,
       },
@@ -75,8 +75,8 @@ const routes = [
     component: Login,
   },
   {
-    path: "/:notfound(.*)",
-    redirect: "/board",
+    path: "/:notFound(.*)",
+    redirect: "/",
   },
 ];
 
