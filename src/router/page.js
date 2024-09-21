@@ -14,11 +14,7 @@ import { CookieUtil } from "@/libs/CookieUtil";
 import { useStatusStore } from "@/stores/StatusStore";
 
 const routes = [
-  {
-    path: "/",
-    redirect: "/board",
-    meta: { requireAuth: true }, // Meta field for auth check
-  },
+  ,
   {
     path: "/board",
     name: "board",
