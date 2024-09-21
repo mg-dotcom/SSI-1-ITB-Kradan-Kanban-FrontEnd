@@ -101,8 +101,8 @@ export const useStatusStore = defineStore("StatusStore", {
       }
     },
 
-    async loadStatusDetail(id) {
-      const boardId = this.boardStore.getCurrentBoard.id;
+    async loadStatusDetail(id, boardId) {
+      // const boardId = this.boardStore.getCurrentBoard.id;
       const data = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
 
@@ -189,7 +189,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async transferStatus(currentId, newId, numberOfTasks) {
       console.log(currentId, newId);
-      
+
       const taskStore = useTaskStore();
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${currentId}`,
@@ -236,7 +236,6 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async removeStatus(id) {
-      
       const boardId = this.boardStore.getCurrentBoard.id;
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,

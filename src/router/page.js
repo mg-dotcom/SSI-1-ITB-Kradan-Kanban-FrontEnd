@@ -11,6 +11,7 @@ import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useTaskStore } from "@/stores/TaskStore";
 import { CookieUtil } from "@/libs/CookieUtil";
+import { useStatusStore } from "@/stores/StatusStore";
 
 const routes = [
   {
@@ -84,6 +85,10 @@ const routes = [
     name: "login",
     component: Login,
   },
+  {
+    path: "/:pathMatch(.*)*", // This will catch all undefined routes
+    redirect: "/login", // Redirects to the login page
+  },
 ];
 
 const router = createRouter({
@@ -93,12 +98,19 @@ const router = createRouter({
 
 router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
+  const token = useUserToken().value;
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
   if (to.meta.requireAuth && !isAuthenticated) {
-    next("/login");
+    return next("/login");
   } else {
     next();
+  }
+
+  const boardStore = useBoardStore();
+
+  if (to.params.id) {
+    await boardStore.loadBoardById(to.params.id);
   }
 });
 
