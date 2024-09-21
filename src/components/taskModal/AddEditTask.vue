@@ -45,8 +45,10 @@ onMounted(async () => {
   await statusStore.loadStatuses(boardId);
   await boardStore.loadBoards();
   const board = boardStore.getBoardById(boardId);
+  console.log(board);
 
   limitMaximumTask.value = board.limitMaximumTask;
+
   maximumTask.value = board.maximumTask;
 
   if (mode == "edit") {

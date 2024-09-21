@@ -46,17 +46,22 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async loadTaskDetails(id) {
-      const boardId = this.boardStore.getCurrentBoard.id;
+      try {
+        const boardId = this.boardStore.getCurrentBoard.id;
 
-      const data = await fetchTaskDetails(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
-        id
-      );
-      if (data.status < 200 && data.status > 299) {
-        //fetch data failed
-        alert("Failed to fetch task details");
-      } else {
-        return data;
+        const data = await fetchTaskDetails(
+          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
+          id
+        );
+        if (data.status < 200 && data.status > 299) {
+          //fetch data failed
+          alert("Failed to fetch task details");
+        } else {
+          return data;
+        }
+      } catch (error) {
+        console.error("An error occurred while fetching task details:", error);
+        alert("An error occurred while fetching task details");
       }
     },
 

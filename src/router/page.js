@@ -8,6 +8,8 @@ import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
+import { useBoardStore } from "@/stores/BoardStore";
+import { useTaskStore } from "@/stores/TaskStore";
 
 const routes = [
   {
@@ -22,48 +24,50 @@ const routes = [
     meta: { requireAuth: true },
     children: [
       {
-        path: "add",
+        path: "add", // No leading slash
         name: "board-add",
         component: AddBoard,
       },
     ],
   },
   {
-    path: "/board/:id",
+    path: "/board/:id/task",
     name: "board-task",
     component: TaskView,
     meta: { requireAuth: true },
+
     children: [
       {
-        path: "/task/:taskId",
+        path: ":taskId", // No leading slash
         name: "task-detail",
         component: Detail,
       },
       {
-        path: "/task/add",
+        path: "add", // No leading slash
         name: "task-add",
         component: AddEditTask,
       },
       {
-        path: "/task/:taskId/edit",
+        path: ":taskId/edit", // No leading slash
         name: "task-edit",
         component: AddEditTask,
       },
     ],
   },
   {
-    path: "/board/:id",
+    path: "/board/:id/status",
     name: "board-status",
     component: StatusView,
     meta: { requireAuth: true },
+
     children: [
       {
-        path: "/status/add",
+        path: "add", // No leading slash
         name: "status-add",
         component: AddEditStatusModal,
       },
       {
-        path: "/status/:statusId/edit",
+        path: ":statusId/edit", // No leading slash
         name: "status-edit",
         component: AddEditStatusModal,
       },
@@ -76,7 +80,7 @@ const routes = [
   },
   {
     path: "/:notFound(.*)",
-    redirect: "/",
+    redirect: "/board",
   },
 ];
 
