@@ -1,7 +1,6 @@
 import { ref } from "vue";
 import router from "@/router/page.js";
 import { useUserStore } from "@/stores/UserStore";
-import { CookieUtil } from "./CookieUtil";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -20,7 +19,6 @@ const sortTasks = (tasks, sortType) => {
 
 export const handleAuthenticationClearAndRedirect = () => {
   const userStore = useUserStore();
-  CookieUtil.unset("access_token");
   userStore.$reset();
   router.push("/login");
 };

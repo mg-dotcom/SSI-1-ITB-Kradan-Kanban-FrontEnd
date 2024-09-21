@@ -19,6 +19,7 @@ const fetchAllBoards = async (url) => {
 };
 
 const fetchBoardById = async (url, id) => {
+  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "GET",
     headers: {

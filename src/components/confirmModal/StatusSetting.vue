@@ -6,17 +6,15 @@ import { ref, onMounted } from "vue";
 
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
+const boardStore = useBoardStore();
 
 const route = useRoute();
-const boardStore = useBoardStore();
 
 const boardId = route.params.id;
 
 onMounted(async () => {
   await boardStore.loadBoards();
   const board = boardStore.getBoardById(boardId);
-  const fetchedBoard = await boardStore.loadBoardById(boardId);
-  boardStore.setCurrentBoard(fetchedBoard);
   limitMaximumTask.value = board.limitMaximumTask;
   maximumTask.value = board.maximumTask;
 });

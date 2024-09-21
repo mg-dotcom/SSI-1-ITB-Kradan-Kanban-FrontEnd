@@ -5,24 +5,19 @@ import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
-import { useBoardStore } from "../../stores/BoardStore.js";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
 
 const statusStore = useStatusStore();
-const boardStore = useBoardStore();
 const mode = route.name === "status-add" ? "add" : "edit";
 const inputStatus = ref({});
 const unEditedStatus = ref({});
 const isChanged = ref(false);
 const statusId = route.params.statusId;
-const boardId = route.params.id;
 
 onMounted(async () => {
-  const fetchedBoard = await boardStore.loadBoardById(boardId);
-  boardStore.setCurrentBoard(fetchedBoard);
   if (statusId === 1) {
     toast.add({
       severity: "error",
@@ -33,7 +28,7 @@ onMounted(async () => {
     router.push({ name: "status" });
   }
 
-  if (statusId === 4) {
+  if (statusId === 7) {
     toast.add({
       severity: "error",
       summary: "Error",

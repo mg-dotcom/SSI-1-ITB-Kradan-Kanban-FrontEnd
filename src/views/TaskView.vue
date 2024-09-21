@@ -31,7 +31,6 @@ onMounted(async () => {
   initDropdowns();
   await taskStore.loadTasks(boardId);
   await statusStore.loadStatuses(boardId);
-  await boardStore.loadBoards();
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
 });

@@ -10,7 +10,6 @@ import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useTaskStore } from "@/stores/TaskStore";
-import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
 
 const routes = [
   {
@@ -28,11 +27,6 @@ const routes = [
         path: "add", // No leading slash
         name: "board-add",
         component: AddBoard,
-      },
-      {
-        path: ":id", // No leading slash
-        name: "board-detail",
-        component: BoardView,
       },
     ],
   },
@@ -84,10 +78,10 @@ const routes = [
     name: "login",
     component: Login,
   },
-  // {
-  //   path: "/:notFound(.*)",
-  //   redirect: "/board",
-  // },
+  {
+    path: "/:notFound(.*)",
+    redirect: "/board",
+  },
 ];
 
 const router = createRouter({
@@ -95,7 +89,7 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach((to, _, next) => {
   const userStore = useUserStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
@@ -103,34 +97,6 @@ router.beforeEach(async (to, _, next) => {
     next("/login");
   } else {
     next();
-  }
-
-  if (to.name === "board-detail" || to.name === "board-task") {
-    const boardStore = useBoardStore();
-    await boardStore.loadBoards();
-    const boardExists = await boardStore.loadBoardById(to.params.id);
-
-    if (!boardExists) {
-      handleAuthenticationClearAndRedirect();
-      next("/login");
-    }
-  }
-
-  if (
-    to.name === "task-detail" ||
-    to.name === "task-edit" ||
-    to.params.taskId
-  ) {
-    const boardStore = useBoardStore();
-    await boardStore.loadBoards();
-    const boardExists = await boardStore.loadBoardById(to.params.id);
-    const taskStore = useTaskStore();
-    const taskExists = await taskStore.loadTaskById(to.params.taskId);
-
-    if (!taskExists || !boardExists) {
-      handleAuthenticationClearAndRedirect();
-      next("/login");
-    }
   }
 });
 
