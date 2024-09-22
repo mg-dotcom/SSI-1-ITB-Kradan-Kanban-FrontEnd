@@ -154,6 +154,7 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async editStatus(id, updatedStatus) {
+      
       const boardId = this.boardStore.getCurrentBoard.id;
       const res = await updateStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
@@ -188,11 +189,11 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async transferStatus(currentId, newId, numberOfTasks) {
-      console.log(currentId, newId);
+      const boardId = this.boardStore.getCurrentBoard.id;
 
       const taskStore = useTaskStore();
       const res = await deleteStatus(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}/${currentId}`,
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses/${currentId}`,
         newId
       );
       const newStatus = this.statuses.find((status) => status.id === newId);
