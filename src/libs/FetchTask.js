@@ -97,6 +97,8 @@ const fetchFilterTasks = async (url, arr) => {
     },
   });
   if (res.status === 401 || res.status === 404) {
+    console.log('404');
+    
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();

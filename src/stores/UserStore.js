@@ -11,6 +11,7 @@ export const useUserStore = defineStore("UserStore", {
     user: {},
     userStore: useUserStore(),
     token: CookieUtil.get("access_token") || "",
+    refreshToken: CookieUtil.get("refresh_token") || "",
     isLoggedIn: !!CookieUtil.get("access_token"),
   }),
   getters: {
@@ -35,6 +36,7 @@ export const useUserStore = defineStore("UserStore", {
         // initialize()
         const decoded = jwtDecode(data.access_token);
         this.token = data.access_token;
+        this.refreshToken = data.refresh_token;
 
         if (decoded) {
           this.user = decoded;
@@ -98,15 +100,20 @@ export const checkTokenExpiration=async()=>{
   const userStore = useUserStore();
   const decoded = jwtDecode(userStore.token);
   if(decoded.exp < Date.now() / 1000) {
+    console.log('token expired');
+    
     //fetch refresh token return new access token
     try{
       
       const data=await fetchToken(`${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}/token`);
-      // userStore.token=data.access_token;
-      console.log(data);
-
-    }catch{
+      console.log('new token',data.access_token);
       
+      const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+      CookieUtil.set("access_token", data.access_token, expires);
+      userStore.token=data.access_token;
+      console.log(userStore.token);
+      
+    }catch{
       //if refresh token expired then logout
       userStore.logout();
     }
