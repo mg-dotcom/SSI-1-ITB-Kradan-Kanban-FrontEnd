@@ -7,6 +7,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
 import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
+import {checkTokenExpiration} from "./UserStore.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -43,6 +44,7 @@ export const useBoardStore = defineStore("BoardStore", {
       }
     },
     async loadBoardById(id) {
+      await checkTokenExpiration();
       const data = await fetchBoardById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         id
@@ -56,6 +58,7 @@ export const useBoardStore = defineStore("BoardStore", {
       }
     },
     async addBoard(newBoard) {
+      await checkTokenExpiration();
       const res = await addBoard(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
