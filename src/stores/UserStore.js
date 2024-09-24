@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { fetchUser } from "../libs/FetchUser.js";
+import { fetchUser,fetchToken } from "../libs/FetchUser.js";
 import { jwtDecode } from "jwt-decode";
 import { CookieUtil } from "../libs/CookieUtil.js";
 import { computed, watch } from "vue";
@@ -31,7 +31,7 @@ export const useUserStore = defineStore("UserStore", {
           `${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}`,
           user
         );
-
+        
         // initialize()
         const decoded = jwtDecode(data.access_token);
         this.token = data.access_token;
@@ -42,7 +42,9 @@ export const useUserStore = defineStore("UserStore", {
 
           // Set the access token in a cookie with a 30-minute expiration
           const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+          const refreshToken = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
           CookieUtil.set("access_token", this.token, expires);
+          CookieUtil.set("refresh_token", data.refresh_token, refreshToken);
         } else {
           alert("Failed to login");
         }
@@ -59,13 +61,16 @@ export const useUserStore = defineStore("UserStore", {
 
       // Remove the access token cookie when logging out
       CookieUtil.unset("access_token");
+      CookieUtil.unset("refresh_token");
     },
-    initialize() {
+
+    async initialize() {
       // Check if the token exists in the cookie during initialization
       const token = CookieUtil.get("access_token");
       if (token) {
         this.token = token;
         const decoded = jwtDecode(token);
+
         this.user = decoded;
         this.isLoggedIn = true;
       }
@@ -86,3 +91,24 @@ export const useUserToken = () => {
 
   return token;
 };
+
+export const checkTokenExpiration=async()=>{
+  console.log('check token expiration');
+  
+  const userStore = useUserStore();
+  const decoded = jwtDecode(userStore.token);
+  if(decoded.exp < Date.now() / 1000) {
+    //fetch refresh token return new access token
+    try{
+      
+      const data=await fetchToken(`${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}/token`);
+      // userStore.token=data.access_token;
+      console.log(data);
+
+    }catch{
+      
+      //if refresh token expired then logout
+      userStore.logout();
+    }
+  }
+}

@@ -1,4 +1,4 @@
-
+import { useUserToken } from "@/stores/UserStore";
 
 const fetchUser = async (url, userLogin) => {
   const res = await fetch(`${url}`, {
@@ -22,4 +22,29 @@ const fetchUser = async (url, userLogin) => {
   return data;
 };
 
-export { fetchUser };
+const fetchToken=async (url)=>{
+  console.log('fetchhhhhhhhhhhhhh');
+  
+  const res=await fetch(`${url}`,{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      Authorization: `Bearer ${useUserToken().value}`
+    },
+  });
+
+  if(res.status===401){
+    console.log('401');
+    console.log('reset authentication state and redirect to login page');
+  }else if(res.status===200){
+    console.log('200');
+    const data = await res.json();
+    return data;
+  }else{
+    console.log('show message "There is a problem. Please try again later."');
+    
+  }
+
+}
+
+export { fetchUser,fetchToken };

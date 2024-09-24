@@ -7,6 +7,7 @@ import { useStatusStore } from "../../stores/StatusStore.js";
 import { useSortStore } from "../../stores/SortStore.js";
 import { useBoardStore } from "../../stores/BoardStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
+import {checkTokenExpiration} from "../../stores/UserStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 const emit = defineEmits(["addNewTask", "editNewTask"]);
 const statusStore = useStatusStore();
@@ -42,6 +43,8 @@ const boardId = route.params.id;
 const taskId = route.params.taskId;
 
 onMounted(async () => {
+  console.log("mounted");
+  await checkTokenExpiration();
   await statusStore.loadStatuses(boardId);
   const board = await boardStore.loadBoardById(boardId);
   console.log(board);
