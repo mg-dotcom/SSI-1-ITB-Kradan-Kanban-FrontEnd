@@ -1,4 +1,5 @@
 import { useUserStore } from "@/stores/UserStore";
+import { useToast } from "primevue/usetoast";
 
 const fetchUser = async (url, userLogin) => {
   const res = await fetch(`${url}`, {
@@ -45,8 +46,12 @@ const fetchToken=async (url)=>{
     const data = await res.json();
     return data;
   }else{
-    console.log('show message "There is a problem. Please try again later."');
-    
+    useToast().add({
+      severity: "error",
+      summary: "Error",
+      detail: `show message "There is a problem. Please try again later.`,
+      life: 3000,
+    });
   }
 
 }

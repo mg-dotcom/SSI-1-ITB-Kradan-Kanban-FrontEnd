@@ -114,7 +114,7 @@ export const checkTokenExpiration=async()=>{
       console.log(userStore.token);
       
     }catch{
-      //if refresh token expired then logout
+      
       userStore.logout();
     }
   }
