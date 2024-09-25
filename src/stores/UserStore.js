@@ -59,6 +59,7 @@ export const useUserStore = defineStore("UserStore", {
     logout() {
       this.user = {};
       this.token = "";
+      this.refreshToken = "";
       this.isLoggedIn = false;
 
       // Remove the access token cookie when logging out
