@@ -1,5 +1,7 @@
 <script setup>
+import { computed } from "vue";
 import submitButton from "../button/Button.vue";
+
 
 const props = defineProps({
   visibilityType: {
@@ -8,11 +10,18 @@ const props = defineProps({
     validator:(value) => {
       return [
         "Private",
-        ""
-      ]
+        "Pubilc"
+      ].includes(value)
     }
   },
 });
+
+const visibilityDescription = computed(()=>{
+  if (props.visibilityType === "Private") {
+    return "In private, only the board owner can access/control the board.";
+  } else {
+    return 'In "Public" mode, everyone can view the board. Only the owner can control the board.';
+  }})
 </script>
 
 <template>
@@ -29,7 +38,7 @@ const props = defineProps({
         class="title-line w-full h-px bg-gray-300 mb-4 md-vertical:text-base text-sm"
       ></div>
       <div class="itbkk-message mb-6 break-all md-vertical:text-base text-sm">
-        <slot name="question"> In private, only board owner can access/control board. Do you want to change the visibility to Private? </slot>
+        <slot name="question"> {{ visibilityDescription }} </slot>
       </div>
       <div class="button-container flex justify-end">
         <slot name="button-left">
