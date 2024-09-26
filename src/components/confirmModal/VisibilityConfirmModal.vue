@@ -2,9 +2,15 @@
 import submitButton from "../button/Button.vue";
 
 const props = defineProps({
-  visibility: {
+  visibilityType: {
     type: String,
     required: true,
+    validator:(value) => {
+      return [
+        "Private",
+        ""
+      ]
+    }
   },
 });
 </script>
