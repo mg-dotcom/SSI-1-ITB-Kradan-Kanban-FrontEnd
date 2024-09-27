@@ -102,8 +102,9 @@ router.beforeEach(async (to, _, next) => {
 
   const boardStore = useBoardStore();
   const userStore = useUserStore();
+  const token = userStore.token;
   //board visibility public
-  if(boardStore.visibility){
+  if(boardStore.visibility&&token){
     console.log('public');
     if (to.params.id) {
       await boardStore.loadBoardById(to.params.id);

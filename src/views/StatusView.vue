@@ -5,6 +5,7 @@ import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useTaskStore } from "../stores/TaskStore.js";
 import { useBoardStore } from "../stores/BoardStore.js";
+import { useUserStore } from '@/stores/UserStore'
 import { onMounted,computed,ref } from "vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { RouterView } from "vue-router";
@@ -18,9 +19,10 @@ const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
 const boardStore = useBoardStore();
+const userStore = useUserStore()
 
 const boardId = route.params.id;
-const isPublic = computed(() => boardStore.visibility)
+const isPublic = computed(() => boardStore.visibility&&!userStore.isLoggedIn)
 
 onMounted(async () => {
   await statusStore.loadStatuses(boardId);
