@@ -54,7 +54,7 @@ const addBoard = async (url, newBoard) => {
   return res;
 };
 
-const patchBoard = async (url, newBoard) => {
+const patchBoardVisibility = async (url, newBoard) => {
   const res = await fetch(`${url}`, {
     method: "PATCH",
     headers: {
@@ -63,15 +63,17 @@ const patchBoard = async (url, newBoard) => {
     },
 
     body: JSON.stringify({
-      name: newBoard.name,
-      emoji: newBoard.emoji,
-      color: newBoard.color,
+      visibility: visibilityMode,
     }),
   });
+
   if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
+    router.push("/no-permission");
   }
+
   return res;
 };
 
-export { fetchAllBoards, fetchBoardById, addBoard };
+export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility };

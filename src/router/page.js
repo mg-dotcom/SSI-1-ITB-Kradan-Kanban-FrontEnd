@@ -12,6 +12,7 @@ import { useBoardStore } from "@/stores/BoardStore";
 import { useTaskStore } from "@/stores/TaskStore";
 import { CookieUtil } from "@/libs/CookieUtil";
 import { useStatusStore } from "@/stores/StatusStore";
+import AccessDenied from "@/views/AccessDenied.vue";
 
 const routes = [
   {
@@ -75,6 +76,11 @@ const routes = [
         component: AddEditStatusModal,
       },
     ],
+  },
+  {
+    path: "/no-permission",
+    name: "no-permission",
+    component: AccessDenied,
   },
   {
     path: "/login",

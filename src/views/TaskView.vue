@@ -435,6 +435,7 @@ const handleEditTask = () => {
       :selectedId="selectedId"
       :selectedIndex="selectedIndex"
       @closeDelete="popup.delete = false"
+      
       @confirmDeleteTask="popup.delete = false"
     ></DeleteModal>
     <StatusSetting
