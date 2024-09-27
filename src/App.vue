@@ -1,11 +1,11 @@
 <script setup>
 import { RouterView } from "vue-router";
-import VisibilityConfirmModal from './components/confirmModal/VisibilityConfirmModal.vue';
+import AccessDenied from "./views/AccessDenied.vue";
 </script>
 
 <template>
   <!-- <RouterView /> -->
-   <VisibilityConfirmModal />
+<AccessDenied />
 </template>
 
-<style ></style>
+<style></style>
