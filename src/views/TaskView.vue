@@ -301,6 +301,7 @@ const handleEditTask = () => {
                                     >
                                         <div
                                             class="flex justify-center item-center"
+                                            
                                         >
                                         
                                             <img
@@ -312,7 +313,6 @@ const handleEditTask = () => {
                                                     })
                                                 "
                                                 class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
-                                                
                                                 />
                                         </div>
                                     </th>

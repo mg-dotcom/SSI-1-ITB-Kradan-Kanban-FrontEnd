@@ -59,8 +59,11 @@ export const useUserStore = defineStore("UserStore", {
 
       // Remove the access token cookie when logging out
       CookieUtil.unset("access_token");
+      window.location.reload();
     },
     initialize() {
+      console.log('initialize');
+      
       // Check if the token exists in the cookie during initialization
       const token = CookieUtil.get("access_token");
       if (token) {

@@ -38,7 +38,7 @@ const routes = [
     path: "/board/:id/task",
     name: "board-task",
     component: TaskView,
-    meta: { requireAuth: true },
+    // meta: { requireAuth: true },
 
     children: [
       {
@@ -62,7 +62,7 @@ const routes = [
     path: "/board/:id/status",
     name: "board-status",
     component: StatusView,
-    meta: { requireAuth: true },
+    // meta: { requireAuth: true },
 
     children: [
       {
@@ -98,26 +98,43 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, from, next) => {
 
   const boardStore = useBoardStore();
   const userStore = useUserStore();
-  const token = userStore.token;
+  const isAuthenticated = userStore.getIsLoggedIn;
+  console.log('isAuthenticate',isAuthenticated);
+  
   //board visibility public
-  if(boardStore.visibility&&token){
-    console.log('public');
-    if (to.params.id) {
-      await boardStore.loadBoardById(to.params.id);
+  if(boardStore.visibility){
+    if(!isAuthenticated){
+      
+      if(to.name == "board-task"&&to.params.id){
+        console.log('here1');
+        return next(to.path);
+      }
+      else if(to.name == "board-status"&&to.params.id){
+        console.log('here2');
+        return next(to.path);
+      }
+      else if(to.name == "task-detail"&&to.params.id){
+        console.log('here3');
+        return next(to.path);
+      }
     }
   }
   //board visibility private
   else{
-    const token = userStore.token;
+    const token = useUserToken().value;
     //if user access board-task without login or board-status without login
+
     if(to.name == "board-task" && !token || to.name == "board-status" && !token || to.name =="task-detail" && !token){
       return next("/access-denied");
     }
-    //and owner can do any action in the board
+    if(!token && to.name !== 'login'){
+      return next("/login");
+    }
+
 }
 
 next();
