@@ -229,7 +229,7 @@ const save = async () => {
         :disabled="isButtonDisabled"
         @click="save"
         >Save</buttonSubmit
-      >
+      >                                                       
     </template>
   </ModalDetail>
 </template>

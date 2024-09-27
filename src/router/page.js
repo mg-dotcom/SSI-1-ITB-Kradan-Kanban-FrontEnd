@@ -12,6 +12,7 @@ import { useBoardStore } from "@/stores/BoardStore";
 import { useTaskStore } from "@/stores/TaskStore";
 import { CookieUtil } from "@/libs/CookieUtil";
 import { useStatusStore } from "@/stores/StatusStore";
+import AccessDenied from "@/views/AccessDenied.vue";
 
 const routes = [
   {
@@ -82,6 +83,11 @@ const routes = [
     component: Login,
   },
   {
+    path: "/access-denied",
+    name: "access-denied",
+    component: AccessDenied,
+  },
+  {
     path: "/:pathMatch(.*)*", // This will catch all undefined routes
     redirect: "/login", // Redirects to the login page
   },
@@ -93,21 +99,49 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, _, next) => {
-  const userStore = useUserStore();
-  const token = useUserToken().value;
-  const isAuthenticated = !!userStore.getIsLoggedIn;
-
-  if (to.meta.requireAuth && !isAuthenticated) {
-    return next("/login");
-  } else {
-    next();
-  }
 
   const boardStore = useBoardStore();
-
-  if (to.params.id) {
-    await boardStore.loadBoardById(to.params.id);
+  const userStore = useUserStore();
+  //board visibility public
+  if(boardStore.visibility){
+    console.log('public');
+    if (to.params.id) {
+      await boardStore.loadBoardById(to.params.id);
+    }
   }
+  //board visibility private
+  else{
+    const token = userStore.token;
+    //if user access board-task without login or board-status without login
+    if(to.name == "board-task" && !token || to.name == "board-status" && !token || to.name =="task-detail" && !token){
+      return next("/access-denied");
+    }
+    //and owner can do any action in the board
+}
+
+next();
 });
 
 export default router;
+
+
+
+  // const userStore = useUserStore();
+  // const token = useUserToken().value;
+  // const isAuthenticated = !!userStore.getIsLoggedIn;
+
+  // if (to.meta.requireAuth && !isAuthenticated) {
+  //   console.log('not authenticated');
+    
+  //   return next("/login");
+  // } else {
+  //   console.log('authenticated');
+    
+  //   next();
+  // }
+
+  // const boardStore = useBoardStore();
+
+  // if (to.params.id) {
+  //   await boardStore.loadBoardById(to.params.id);
+  // }

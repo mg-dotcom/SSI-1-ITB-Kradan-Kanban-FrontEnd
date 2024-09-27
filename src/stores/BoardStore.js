@@ -16,6 +16,7 @@ export const useBoardStore = defineStore("BoardStore", {
     toast: useToast(),
     currentBoard: {},
     userStore: useUserStore(),
+    visibility: true, //false = private, true = public
   }),
   getters: {
     getBoards: (state) => state.board,
