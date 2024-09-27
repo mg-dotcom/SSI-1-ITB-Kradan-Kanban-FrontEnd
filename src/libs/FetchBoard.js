@@ -54,4 +54,24 @@ const addBoard = async (url, newBoard) => {
   return res;
 };
 
+const patchBoard = async (url, newBoard) => {
+  const res = await fetch(`${url}`, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+
+    body: JSON.stringify({
+      name: newBoard.name,
+      emoji: newBoard.emoji,
+      color: newBoard.color,
+    }),
+  });
+  if (res.status === 401 || res.status === 404) {
+    handleAuthenticationClearAndRedirect();
+  }
+  return res;
+};
+
 export { fetchAllBoards, fetchBoardById, addBoard };

@@ -425,7 +425,7 @@ const handleEditTask = () => {
     </div>
     <VisibilityConfirmModal
       v-if="popup.boardVisibilityPopup"
-      :visibility-type="boardVisibility ? 'Privete' : 'Public'"
+      :visibility-type="boardVisibility ? 'Private' : 'Public'"
       @closeBoardVisibility="popup.boardVisibilityPopup = false"
       @changeBoardVisibility="confirmVisibilityChange"
     ></VisibilityConfirmModal>
