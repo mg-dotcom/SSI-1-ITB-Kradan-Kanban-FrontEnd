@@ -10,13 +10,10 @@ import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useTaskStore } from "@/stores/TaskStore";
+import { CookieUtil } from "@/libs/CookieUtil";
+import { useStatusStore } from "@/stores/StatusStore";
 
 const routes = [
-  {
-    path: "/",
-    redirect: "/board",
-    meta: { requireAuth: true }, // Meta field for auth check
-  },
   {
     path: "/board",
     name: "board",
@@ -27,7 +24,13 @@ const routes = [
         path: "add", // No leading slash
         name: "board-add",
         component: AddBoard,
-      }
+      },
+      
+      {
+        path: ":id", // No leading slash
+        name: "board-detail",
+        component: BoardView,
+      },
     ],
   },
   {
@@ -79,8 +82,8 @@ const routes = [
     component: Login,
   },
   {
-    path: "/:notFound(.*)",
-    redirect: "/board",
+    path: "/:pathMatch(.*)*", // This will catch all undefined routes
+    redirect: "/login", // Redirects to the login page
   },
 ];
 
@@ -89,14 +92,21 @@ const router = createRouter({
   routes,
 });
 
-router.beforeEach((to, _, next) => {
+router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
+  const token = useUserToken().value;
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
   if (to.meta.requireAuth && !isAuthenticated) {
-    next("/login");
+    return next("/login");
   } else {
     next();
+  }
+
+  const boardStore = useBoardStore();
+
+  if (to.params.id) {
+    await boardStore.loadBoardById(to.params.id);
   }
 });
 

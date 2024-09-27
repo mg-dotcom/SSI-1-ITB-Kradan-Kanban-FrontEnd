@@ -5,12 +5,14 @@ import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
+import { useBoardStore } from "../../stores/BoardStore.js";
 
 const router = useRouter();
 const route = useRoute();
 const toast = useToast();
 
 const statusStore = useStatusStore();
+const boardId = route.params.id;
 const mode = route.name === "status-add" ? "add" : "edit";
 const inputStatus = ref({});
 const unEditedStatus = ref({});
@@ -28,7 +30,7 @@ onMounted(async () => {
     router.push({ name: "status" });
   }
 
-  if (statusId === 7) {
+  if (statusId === 4) {
     toast.add({
       severity: "error",
       summary: "Error",
@@ -39,7 +41,10 @@ onMounted(async () => {
   }
 
   if (mode === "edit") {
-    const selectedStatus = await statusStore.loadStatusDetail(statusId);
+    const selectedStatus = await statusStore.loadStatusDetail(
+      statusId,
+      boardId
+    );
     if (!selectedStatus.id) {
       toast.add({
         severity: "error",
@@ -47,7 +52,10 @@ onMounted(async () => {
         detail: "An error has occurred, the status does not exist",
         life: 3000,
       });
-      router.push({ name: "status" });
+      router.push({
+        name: "board-status",
+        params: { id: boardId },
+      });
     }
     selectedStatus.description
       ? selectedStatus.description

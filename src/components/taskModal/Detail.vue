@@ -13,10 +13,11 @@ const router = useRouter();
 const taskStore = useTaskStore();
 const statusStore = useStatusStore();
 const taskId = route.params.taskId;
+const boardId = route.params.id;
 const selectedTask = ref({});
 
 onMounted(async () => {
-  const taskDetail = await taskStore.loadTaskDetails(taskId);
+  const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
   selectedTask.value = taskDetail;
   selectedTask.value.status = taskDetail.status.name;
   selectedTask.value.createdOn = formatDate(taskDetail.createdOn);

@@ -39,22 +39,27 @@ const signIn = async () => {
       username: username.value,
       password: password.value,
     });
+
     const user = userStore.getUser;
     await boardStore.loadBoards();
     const findBoardByUserOid = boardStore.findByOid(user.oid);
-    if (findBoardByUserOid.length) {
-      boardStore.setCurrentBoard(findBoardByUserOid[0]);
+
+    if (findBoardByUserOid.length > 0) {
+      const currentBoard = findBoardByUserOid[0];
+      boardStore.setCurrentBoard(currentBoard);
+
+      // Navigate to the specific task board
       router.push({
         name: "board-task",
-        params: { id: findBoardByUserOid[0].id },
+        params: { id: currentBoard.id },
       });
     } else {
+      // No boards found, navigate to general board view
       router.push({ name: "board" });
     }
   } catch (error) {
-    {
-      isError.value = true;
-    }
+    console.error("Login error:", error);
+    isError.value = true;
   }
 };
 </script>

@@ -43,16 +43,14 @@ const taskId = route.params.taskId;
 
 onMounted(async () => {
   await statusStore.loadStatuses(boardId);
-  await boardStore.loadBoards();
-  const board = boardStore.getBoardById(boardId);
+  const board = await boardStore.loadBoardById(boardId);
   console.log(board);
 
   limitMaximumTask.value = board.limitMaximumTask;
-
   maximumTask.value = board.maximumTask;
 
   if (mode == "edit") {
-    const taskDetail = await taskStore.loadTaskDetails(taskId);
+    const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
     selectedTask.value = taskDetail;
     selectedTask.value.statusId = taskDetail.status.id;
     selectedTask.value.createdOn = formatDate(taskDetail.createdOn);

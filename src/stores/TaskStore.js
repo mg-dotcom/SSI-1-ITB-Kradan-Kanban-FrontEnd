@@ -45,10 +45,8 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
 
-    async loadTaskDetails(id) {
+    async loadTaskDetails(id, boardId) {
       try {
-        const boardId = this.boardStore.getCurrentBoard.id;
-
         const data = await fetchTaskDetails(
           `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
           id
