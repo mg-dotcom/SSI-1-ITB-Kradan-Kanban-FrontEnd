@@ -5,13 +5,12 @@ import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useTaskStore } from "../stores/TaskStore.js";
 import { useBoardStore } from "../stores/BoardStore.js";
-import { onMounted } from "vue";
+import { onMounted,computed,ref } from "vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import NavigateTitle from "../components/navigateTitle.vue";
-import { ref } from "vue";
 import Header from "../components/Header.vue";
 
 const route = useRoute();
@@ -21,6 +20,7 @@ const taskStore = useTaskStore();
 const boardStore = useBoardStore();
 
 const boardId = route.params.id;
+const isPublic = computed(() => boardStore.visibility)
 
 onMounted(async () => {
   await statusStore.loadStatuses(boardId);
@@ -97,12 +97,14 @@ const currentPage = route.name;
         <div class="flex">
           <buttonSubmit
             class="itbkk-button-add"
+            :buttonType="isPublic ? 'disabled' : 'add'"
             buttonType="add"
             @click="router.push({ name: 'status-add' })"
             >+ Add Status</buttonSubmit
           >
           <buttonSubmit
             class="itbkk-status-setting"
+            
             button-type="add"
             @click="openLimitStatus"
           >
@@ -193,6 +195,7 @@ const currentPage = route.name;
                   >
                     <buttonSubmit
                       class="itbkk-button-edit"
+                      :class="{'cursor-not-allowed': isPublic}"
                       @click="
                         router.push({
                           name: 'status-edit',
@@ -211,6 +214,7 @@ const currentPage = route.name;
                     >
                     <buttonSubmit
                       class="itbkk-button-delete"
+                      :class="{'cursor-not-allowed': isPublic}"
                       :button-type="
                         status.name === 'No Status' || status.name === 'Done'
                           ? 'disabled'
