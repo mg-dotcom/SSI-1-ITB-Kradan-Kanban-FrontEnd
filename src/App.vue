@@ -1,10 +1,11 @@
 <script setup>
 import { RouterView } from "vue-router";
-
+import AccessDenied from "./views/AccessDenied.vue";
 </script>
 
 <template>
-  <RouterView />
+  <AccessDenied />
+  <!-- <RouterView /> -->
 </template>
 
 <style></style>

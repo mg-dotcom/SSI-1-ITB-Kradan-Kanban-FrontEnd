@@ -83,8 +83,8 @@ export const useBoardStore = defineStore("BoardStore", {
           newVisibility
         );
         console.log(`${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`);
-        if (false && res.status >= 200 && res.status < 300) {
-          // If successful, update the visibility in the store
+        if (res.status >= 200 && res.status < 300) {
+      
           this.currentBoard.visibility = newVisibility;
           this.toast.add({
             severity: "success",
