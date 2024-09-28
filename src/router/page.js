@@ -111,14 +111,17 @@ router.beforeEach(async (to, from, next) => {
       
       if(to.name == "board-task"&&to.params.id){
         console.log('here1');
+        await boardStore.loadBoardById(to.params.id);
         return next(to.path);
       }
       else if(to.name == "board-status"&&to.params.id){
         console.log('here2');
+        await boardStore.loadBoardById(to.params.id);
         return next(to.path);
       }
       else if(to.name == "task-detail"&&to.params.id){
         console.log('here3');
+        await boardStore.loadBoardById(to.params.id);
         return next(to.path);
       }
     }
