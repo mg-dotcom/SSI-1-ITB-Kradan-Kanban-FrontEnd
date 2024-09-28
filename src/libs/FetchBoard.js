@@ -53,27 +53,30 @@ const addBoard = async (url, newBoard) => {
   }
   return res;
 };
-
-const patchBoardVisibility = async (url, newBoard) => {
+const patchBoardVisibility = async (url, visibilityMode) => {
   const res = await fetch(`${url}`, {
     method: "PATCH",
     headers: {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,
     },
-
     body: JSON.stringify({
-      visibility: visibilityMode,
+      visibility: visibilityMode, 
     }),
   });
 
+ 
   if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
   } else if (res.status === 403) {
+    const router = useRouter(); // Move router inside function
     router.push("/no-permission");
+  } else if (res.status >= 400) {
+    alert("There is a problem. Please try again later.");
   }
 
   return res;
 };
+
 
 export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility };

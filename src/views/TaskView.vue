@@ -35,7 +35,8 @@ onMounted(async () => {
   boardStore.setCurrentBoard(fetchedBoard);
 });
 
-const confirmVisibilityChange = () => {
+const confirmVisibilityChange = async() => {
+  await boardStore.changeBoardVisibility(boardStore.getCurrentBoard.id, newVisibility.value);
   boardVisibility.value = !boardVisibility.value;
   popup.boardVisibilityPopup = false; 
 }

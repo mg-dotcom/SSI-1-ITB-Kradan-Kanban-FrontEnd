@@ -3,6 +3,7 @@ import {
   fetchAllBoards,
   fetchBoardById,
   addBoard,
+  patchBoardVisibility,
 } from "../libs/FetchBoard.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -74,6 +75,28 @@ export const useBoardStore = defineStore("BoardStore", {
       }
 
       return res;
+    },
+    async changeBoardVisibility(id, newVisibility) {
+      try {
+        const res = await patchBoardVisibility(
+          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`,
+          newVisibility
+        );
+  
+        if (res.status >= 200 && res.status < 300) {
+          // If successful, update the visibility in the store
+          this.currentBoard.visibility = newVisibility;
+          this.toast.add({
+            severity: "success",
+            summary: "Success",
+            detail: "Board visibility changed successfully!",
+            life: 3000,
+          });
+        }
+      } catch (error) {
+        console.error("Error changing board visibility:", error);
+        alert("There is a problem. Please try again later.");
+      }
     },
     findByOid(oid) {
       return this.board.filter((board) => board.userOid === oid);
