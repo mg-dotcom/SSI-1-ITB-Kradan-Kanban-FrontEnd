@@ -49,7 +49,7 @@ const visibilityDescription = computed(()=>{
         <slot name="button-right">
           <submitButton buttonType="ok"
           class="itbkk-button-confirm"
-          @click="$emit('changeBoardVisibility')"
+          @click="$emit('changeBoardVisibilityMode')"
           >Confirm</submitButton>
         </slot>
       </div>

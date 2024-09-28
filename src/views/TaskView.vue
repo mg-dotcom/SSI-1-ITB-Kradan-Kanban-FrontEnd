@@ -35,8 +35,14 @@ onMounted(async () => {
   boardStore.setCurrentBoard(fetchedBoard);
 });
 
+const boardVisibilityToString = () => {
+  return boardVisibility.value === false ? "Public" : "Private";
+}
+
 const confirmVisibilityChange = async() => {
-  await boardStore.changeBoardVisibility(boardStore.getCurrentBoard.id, newVisibility.value);
+  console.log(boardVisibilityToString().toUpperCase());
+
+  await boardStore.changeBoardVisibility(boardStore.getCurrentBoard.id, boardVisibilityToString().toUpperCase());
   boardVisibility.value = !boardVisibility.value;
   popup.boardVisibilityPopup = false; 
 }
@@ -428,7 +434,7 @@ const handleEditTask = () => {
       v-if="popup.boardVisibilityPopup"
       :visibility-type="boardVisibility ? 'Private' : 'Public'"
       @closeBoardVisibility="popup.boardVisibilityPopup = false"
-      @changeBoardVisibility="confirmVisibilityChange"
+      @changeBoardVisibilityMode="confirmVisibilityChange"
     ></VisibilityConfirmModal>
 
     <DeleteModal
