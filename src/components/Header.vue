@@ -78,7 +78,7 @@ onClickOutside(dropdownMenu, () => {
 
             <ul
               v-if="dropdownMenu"
-              class="absolute block shadow-lg bg-white py-2 z-[1000] min-w-full w-max rounded-lg max-h-96 overflow-auto"
+              class="absolute block shadow-lg text-sm bg-white py-2 z-[1000] min-w-full w-max rounded-lg max-h-96 overflow-auto"
             >
               <li
                 class="py-2.5 px-5 flex items-center hover:bg-gray-100 text-[#333] text-sm cursor-pointer"
@@ -102,8 +102,8 @@ onClickOutside(dropdownMenu, () => {
         <div class="login-btn" v-else>
           <button
             type="button"
-            @click="handleLogin"
-            class="px-5 py-2.5 bg-blue gap-x-1 text-sm font-medium text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 hover:shadow-md transition-all duration-300"
+            @click="router.push({ name: 'login' })"
+            class="px-4 py-2 bg-blue gap-x-1 text-sm font-medium text-white inline-flex items-center bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 hover:shadow-md transition-all duration-300"
           >
             Login
             <svg
