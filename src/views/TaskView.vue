@@ -24,7 +24,7 @@ const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
 const openLimit = ref(false);
-const boardVisibility = ref(false); // Actual state 1.true = "Private" 2.false = "Public"
+const boardVisibility = ref(false); // Actual state 1.false = "Private" 2.true = "Public"
 const boardStore = useBoardStore();
 const boardId = route.params.id;
 
