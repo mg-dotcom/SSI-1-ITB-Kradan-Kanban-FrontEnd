@@ -1,3 +1,4 @@
+import { handleResponseStatus } from "./libsUtil.js";
 
 
 const fetchUser = async (url, userLogin) => {
@@ -14,9 +15,7 @@ const fetchUser = async (url, userLogin) => {
   if ([401].includes(res.status)) {
     throw new Error("Username or Password is incorrect.");
   }
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+ handleResponseStatus(res)
   const data = await res.json();
 
   return data;

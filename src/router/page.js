@@ -26,7 +26,7 @@ const routes = [
         name: "board-add",
         component: AddBoard,
       },
-      
+
       {
         path: ":id", // No leading slash
         name: "board-detail",
@@ -38,7 +38,7 @@ const routes = [
     path: "/board/:id/task",
     name: "board-task",
     component: TaskView,
-    meta: { requireAuth: true },
+    // meta: { requireAuth: true },
 
     children: [
       {
@@ -62,8 +62,7 @@ const routes = [
     path: "/board/:id/status",
     name: "board-status",
     component: StatusView,
-    meta: { requireAuth: true },
-
+    // meta: { requireAuth: true },
     children: [
       {
         path: "add", // No leading slash
@@ -88,6 +87,11 @@ const routes = [
     component: Login,
   },
   {
+    path: "/access-denied",
+    name: "access-denied",
+    component: AccessDenied,
+  },
+  {
     path: "/:pathMatch(.*)*", // This will catch all undefined routes
     redirect: "/login", // Redirects to the login page
   },
@@ -100,19 +104,25 @@ const router = createRouter({
 
 router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
+  const boardStore = useBoardStore();
   const token = useUserToken().value;
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
-  if (to.meta.requireAuth && !isAuthenticated) {
-    return next("/login");
+  const boardId = to.params.id;
+
+  // Check if the board is public
+  const isPublicBoard = boardId
+    ? await boardStore.isPublicBoard(boardId)
+    : false;
+
+  console.log(isPublicBoard);
+
+  if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
+    console.log("User is not authenticated");
+    next({ name: "login" });
   } else {
+    console.log("User is not authenticated");
     next();
-  }
-
-  const boardStore = useBoardStore();
-
-  if (to.params.id) {
-    await boardStore.loadBoardById(to.params.id);
   }
 });
 

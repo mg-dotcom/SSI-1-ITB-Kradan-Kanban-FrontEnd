@@ -9,6 +9,7 @@ import { useRouter, RouterView, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useTaskStore } from "../stores/TaskStore.js";
 import { useStatusStore } from "../stores/StatusStore.js";
+import { useUserStore } from "@/stores/UserStore";
 import { useSortStore } from "../stores/SortStore.js";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import Header from "../components/Header.vue";
@@ -18,6 +19,7 @@ const selectedId = ref("");
 const selectedIndex = ref(0);
 const taskStore = useTaskStore();
 const statusStore = useStatusStore();
+const userStore = useUserStore();
 const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
@@ -25,6 +27,8 @@ const openLimit = ref(false);
 const boardVisibility = ref(false);  // Actual state 1.true = "Private" 2.false = "Public"
 const boardStore = useBoardStore();
 const boardId = route.params.id;
+
+const isPublic = computed(() => boardStore.visibility && !userStore.isLoggedIn);
 
 onMounted(async () => {
   initFlowbite();
@@ -274,7 +278,7 @@ const handleEditTask = () => {
         class="table xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-4 mobile:px-5"
         v-if="page.task"
         @click="closeList"
-      > -->
+        > -->
       <div class="-my-2 mb-8 sm:-mx">
         <div
           class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4 mobile:px-0 w-full"
@@ -292,7 +296,11 @@ const handleEditTask = () => {
                       <img
                         src="../assets/addTaskIcon.svg"
                         alt="add-task-icon"
-                        @click="router.push({ name: 'task-add' })"
+                        @click="
+                          router.push({
+                            name: 'task-add',
+                          })
+                        "
                         class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
                       />
                     </div>
@@ -399,25 +407,25 @@ const handleEditTask = () => {
                               popup.optionEditDelete && selectedId === task.id
                             "
                           >
-                            <ul
+                            <div
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
+                              :class="{ 'cursor-not-allowed': isPublic }"
                             >
-                              <li @click="handleEditTask">
+                              <div @click="handleEditTask">
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
                                   Edit
                                 </p>
-                              </li>
-
-                              <li @click="openDelete(task.id, index)">
+                              </div>
+                              <div @click="openDelete(task.id, index)">
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                 >
                                   Delete
                                 </p>
-                              </li>
-                            </ul>
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>

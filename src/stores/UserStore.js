@@ -48,7 +48,6 @@ export const useUserStore = defineStore("UserStore", {
         }
       } catch (error) {
         console.log("error");
-
         throw new Error(error.message);
       }
     },
@@ -59,6 +58,7 @@ export const useUserStore = defineStore("UserStore", {
 
       // Remove the access token cookie when logging out
       CookieUtil.unset("access_token");
+      // window.location.reload();
     },
     initialize() {
       // Check if the token exists in the cookie during initialization
@@ -77,7 +77,7 @@ export const useUserToken = () => {
   const userStore = useUserStore();
 
   // Create a computed property for the token
-  const token = computed(() => CookieUtil.get("access_token") || "");
+  const token = computed(() => CookieUtil.get("access_token") || null);
 
   // Watch for changes to the cookie and update the store if necessary
   watch(token, (newToken) => {

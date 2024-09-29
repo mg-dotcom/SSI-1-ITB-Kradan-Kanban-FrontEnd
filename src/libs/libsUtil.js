@@ -17,10 +17,21 @@ const sortTasks = (tasks, sortType) => {
   }
 };
 
+export function handleResponseStatus(res) {
+  if (res.status === 401 || res.status === 404) {
+    const userStore = useUserStore();
+    userStore.$reset();
+    router.push({ name: "login" });
+  } else if (res.status === 403) {
+    const userStore = useUserStore();
+    userStore.$reset();
+    router.push({ name: "access-denied" });
+  }
+}
+
 export const handleAuthenticationClearAndRedirect = () => {
   const userStore = useUserStore();
   userStore.$reset();
-  router.push("/login");
 };
 
 export { formatDate, localTimeZone, sortTasks };

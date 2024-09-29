@@ -1,5 +1,6 @@
 import { useUserToken } from "@/stores/UserStore";
-import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
+import { handleResponseStatus } from "./libsUtil.js";
+
 
 const fetchAllTasks = async (url) => {
   const res = await fetch(`${url}`, {
@@ -9,9 +10,7 @@ const fetchAllTasks = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+ handleResponseStatus(res)
   const data = await res.json();
   return data;
 };
@@ -24,9 +23,7 @@ const fetchTaskDetails = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+ handleResponseStatus(res)
   const data = await res.json();
   return data;
 };
@@ -45,9 +42,7 @@ const addTask = async (url, newTask) => {
       status: newTask.statusId,
     }),
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+ handleResponseStatus(res)
   return res;
 };
 
@@ -59,9 +54,7 @@ const deleteTask = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+ handleResponseStatus(res)
   return res;
 };
 
@@ -79,9 +72,7 @@ const updatedTask = async (url, updatedTask, id) => {
       status: updatedTask.statusId,
     }),
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+ handleResponseStatus(res)
   return res;
 };
 
@@ -96,9 +87,7 @@ const fetchFilterTasks = async (url, arr) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+ handleResponseStatus(res)
   const data = await res.json();
   return data;
 };

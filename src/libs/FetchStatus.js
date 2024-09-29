@@ -1,6 +1,5 @@
 import { useUserToken } from "@/stores/UserStore";
-import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
-import router from "@/router/page";
+import { handleResponseStatus } from "@/libs/libsUtil";
 
 const fetchAllStatus = async (url) => {
   const res = await fetch(`${url}`, {
@@ -10,10 +9,9 @@ const fetchAllStatus = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   const data = await res.json();
+
   return data;
 };
 
@@ -25,9 +23,7 @@ const fetchStatusById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   const data = await res.json();
   return data;
 };
@@ -40,9 +36,7 @@ const deleteStatus = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   return res;
 };
 
@@ -59,9 +53,7 @@ const addStatus = async (url, newStatus) => {
       statusColor: newStatus.statusColor,
     }),
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   return res;
 };
 
@@ -78,9 +70,7 @@ const updateStatus = async (url, id, updatedStatus) => {
       statusColor: updatedStatus.statusColor,
     }),
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
 
   return res;
 };
@@ -96,9 +86,7 @@ const updateStatusSetting = async (url, updatedLimit) => {
       limitMaximumTask: updatedLimit,
     }),
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   return res;
 };
 

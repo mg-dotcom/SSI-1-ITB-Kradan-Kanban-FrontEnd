@@ -1,9 +1,7 @@
-import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
 import { useUserToken } from "../stores/UserStore.js";
-import { useRouter } from "vue-router";
+import { handleResponseStatus } from "./libsUtil.js";
 
 const fetchAllBoards = async (url) => {
-  const router = useRouter();
   const res = await fetch(`${url}`, {
     method: "GET",
     headers: {
@@ -11,15 +9,12 @@ const fetchAllBoards = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   const data = await res.json();
   return data;
 };
 
 const fetchBoardById = async (url, id) => {
-  const router = useRouter();
   const res = await fetch(`${url}/${id}`, {
     method: "GET",
     headers: {
@@ -27,9 +22,7 @@ const fetchBoardById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   const data = await res.json();
   return data;
 };
@@ -48,9 +41,7 @@ const addBoard = async (url, newBoard) => {
       color: newBoard.color,
     }),
   });
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
+  handleResponseStatus(res);
   return res;
 };
 const patchBoardVisibility = async (url, visibilityMode) => {
