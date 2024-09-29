@@ -60,7 +60,7 @@ const patchBoardVisibility = async (url, visibilityMode) => {
     handleAuthenticationClearAndRedirect();
   } else if (res.status === 403) {
     const router = useRouter(); // Move router inside function
-    router.push("/no-permission");
+    router.push("/access-denied");
   } else if (res.status >= 400) {
     alert("There is a problem. Please try again later here.");
   }

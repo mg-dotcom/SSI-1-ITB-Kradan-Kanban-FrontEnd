@@ -24,7 +24,7 @@ const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
 const openLimit = ref(false);
-const boardVisibility = ref(false);  // Actual state 1.true = "Private" 2.false = "Public"
+const boardVisibility = ref(false); // Actual state 1.true = "Private" 2.false = "Public"
 const boardStore = useBoardStore();
 const boardId = route.params.id;
 
@@ -37,19 +37,23 @@ onMounted(async () => {
   await statusStore.loadStatuses(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
+  boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
 const boardVisibilityToString = () => {
   return boardVisibility.value === false ? "Public" : "Private";
-}
+};
 
-const confirmVisibilityChange = async() => {
+const confirmVisibilityChange = async () => {
   console.log(boardVisibilityToString().toUpperCase());
 
-  await boardStore.changeBoardVisibility(boardStore.getCurrentBoard.id, boardVisibilityToString().toUpperCase());
+  await boardStore.changeBoardVisibility(
+    boardStore.getCurrentBoard.id,
+    boardVisibilityToString().toUpperCase()
+  );
   boardVisibility.value = !boardVisibility.value;
-  popup.boardVisibilityPopup = false; 
-}
+  popup.boardVisibilityPopup = false;
+};
 
 const popup = reactive({
   addEdit: false,
@@ -235,7 +239,7 @@ const handleEditTask = () => {
                 v-model="boardVisibility"
                 type="checkbox"
                 class="toggle toggle-success"
-                @click.prevent="popup.boardVisibilityPopup =true"
+                @click.prevent="popup.boardVisibilityPopup = true"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -450,7 +454,6 @@ const handleEditTask = () => {
       :selectedId="selectedId"
       :selectedIndex="selectedIndex"
       @closeDelete="popup.delete = false"
-      
       @confirmDeleteTask="popup.delete = false"
     ></DeleteModal>
     <StatusSetting

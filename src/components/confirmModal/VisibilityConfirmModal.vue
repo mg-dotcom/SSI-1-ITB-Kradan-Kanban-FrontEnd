@@ -45,7 +45,7 @@ const visibilityDescription = computed(()=>{
           class="itbkk-button-cancel"
           @click="$emit('closeBoardVisibility')">Cancel</submitButton>
         </slot>
-
+        
         <slot name="button-right">
           <submitButton buttonType="ok"
           class="itbkk-button-confirm"

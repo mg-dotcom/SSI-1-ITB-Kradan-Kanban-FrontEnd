@@ -77,11 +77,6 @@ const routes = [
     ],
   },
   {
-    path: "/no-permission",
-    name: "no-permission",
-    component: AccessDenied,
-  },
-  {
     path: "/login",
     name: "login",
     component: Login,
