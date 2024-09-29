@@ -29,7 +29,7 @@ const boardVisibility = ref(false);
 const boardStore = useBoardStore();
 const boardId = route.params.id;
 
-const isPublic = computed(() => boardStore.visibility && !userStore.isLoggedIn);
+const isPublic = computed(() => boardStore.board.visibility === 'PUBLIC' && !userStore.isLoggedIn ? true : false);
 
 onMounted(async () => {
   initFlowbite();
@@ -38,6 +38,7 @@ onMounted(async () => {
   await statusStore.loadStatuses(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
+  
 });
 
 const popup = reactive({
@@ -288,7 +289,8 @@ const handleEditTask = () => {
                           })
                         "
                         class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
-                      />
+                        :class="{ 'cursor-not-allowed pointer-events-none': isPublic }"
+                        />
                     </div>
                   </th>
                   <th
@@ -395,9 +397,9 @@ const handleEditTask = () => {
                           >
                             <div
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
-                              :class="{ 'cursor-not-allowed': isPublic }"
+                              :class="{ 'cursor-not-allowed pointer-events-none': isPublic }"
                             >
-                              <div @click="handleEditTask">
+                            <div @click="handleEditTask">
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
