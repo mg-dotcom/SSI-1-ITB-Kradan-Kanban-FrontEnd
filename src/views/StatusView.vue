@@ -97,7 +97,7 @@ const currentPage = route.name;
         </NavigateTitle>
 
         <div class="flex">
-          <div class="tooltip" data-tip="You need to be board owner to perform this action.">
+          <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
             <buttonSubmit
             class="itbkk-button-add"
             :buttonType="isPublic ? 'disabled' : 'add'"
@@ -198,7 +198,7 @@ const currentPage = route.name;
                   <td
                     class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
                   >
-                    <div class="tooltip" data-tip="You need to be board owner to perform this action.">
+                    <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
                       <buttonSubmit
                       class="itbkk-button-edit"
                       :class="{ 'pointer-events-none': isPublic }"
@@ -219,7 +219,7 @@ const currentPage = route.name;
                       >Edit
                       </buttonSubmit>
                     </div>
-                    <div class="tooltip" data-tip="You need to be board owner to perform this action.">
+                    <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
                       <buttonSubmit
                       class="itbkk-button-delete"
                       :class="{ 'pointer-events-none': isPublic }"
