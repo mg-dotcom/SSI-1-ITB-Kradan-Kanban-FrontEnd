@@ -279,7 +279,7 @@ const handleEditTask = () => {
                   <th
                     class="xl:w-[5%] lg:w-[7%] md-vertical:w-[8%] bg-lightgray border-b border-r border-gray-300 w-[7%]"
                   >
-                    <div class="flex justify-center item-center">
+                    <div class="tooltip tooltip-right flex justify-center item-center" data-tip="You need to be the board owner to perform this action.">
                       <img
                         src="../assets/addTaskIcon.svg"
                         alt="add-task-icon"
@@ -396,22 +396,24 @@ const handleEditTask = () => {
                             "
                           >
                             <div
-                              class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
+                              class="has-tooltip py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
                               :class="{ 'cursor-not-allowed pointer-events-none': isPublic }"
+                              
                             >
-                            <div @click="handleEditTask">
+                              <div @click="handleEditTask" class="tooltip tooltip-bottom" data-tip="hello">
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                 >
                                   Edit
                                 </p>
                               </div>
-                              <div @click="openDelete(task.id, index)">
+                              <div @click="openDelete(task.id, index)" class="tooltip" data-tip="hello">
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                 >
                                   Delete
                                 </p>
+                                <!-- <span class='tooltip rounded shadow-lg p-1 bg-gray-100 text-red-500 -mt-8'>Some Nice Tooltip Text</span> -->
                               </div>
                             </div>
                           </div>
