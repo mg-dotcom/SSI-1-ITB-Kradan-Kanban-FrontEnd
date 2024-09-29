@@ -16,7 +16,6 @@ export const useBoardStore = defineStore("BoardStore", {
     toast: useToast(),
     currentBoard: {},
     userStore: useUserStore(),
-    visibility: true, //false = private, true = public
   }),
   getters: {
     getBoards: (state) => state.board,
@@ -24,7 +23,9 @@ export const useBoardStore = defineStore("BoardStore", {
     getBoardById: (state) => (id) => {
       return state.board.find((board) => board.id === id);
     },
-    getVisibility: (state) => state.visibility,
+    getVisibility: (state) => (id) => {
+      return state.board.find((board) => board.id === id).visibility;
+    },
   },
   actions: {
     async loadBoards() {
@@ -82,6 +83,12 @@ export const useBoardStore = defineStore("BoardStore", {
     },
     setCurrentBoard(board) {
       this.currentBoard = board;
+    },
+    async isPublicBoard(boardId) {
+      const board = await this.loadBoardById(boardId);
+      console.log(board);
+
+      return board.visibility === "PUBLIC";
     },
   },
 });

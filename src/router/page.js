@@ -63,7 +63,6 @@ const routes = [
     name: "board-status",
     component: StatusView,
     // meta: { requireAuth: true },
-
     children: [
       {
         path: "add", // No leading slash
@@ -104,24 +103,22 @@ router.beforeEach(async (to, _, next) => {
   const token = useUserToken().value;
   const isAuthenticated = !!userStore.getIsLoggedIn;
 
-  console.log("visibility: " + boardStore.visibility);
+  const boardId = to.params.id;
 
-  //redirect to login if not authenticated
-  if (to.meta.requireAuth && !isAuthenticated) {
-    if (boardStore.visibility === true) {
-      console.log("access denied");
-    }
+  // Check if the board is public
+  const isPublicBoard = boardId
+    ? await boardStore.isPublicBoard(boardId)
+    : false;
+
+  console.log(isPublicBoard);
+
+  if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
+    console.log("User is not authenticated");
+    next({ name: "login" });
   } else {
-    if (boardStore.visibility === true) {
-
-      next();
-    } else {
-      console.log("access denied");
-      next({ name: "access-denied" }); // Redirect to access denied page if the board is not visible
-    }
+    console.log("User is not authenticated");
+    next();
   }
-
-  next();
 });
 
 export default router;
