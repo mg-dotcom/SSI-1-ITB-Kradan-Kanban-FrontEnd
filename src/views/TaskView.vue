@@ -30,9 +30,6 @@ const boardStore = useBoardStore()
 const boardId = route.params.id
 
 const isPublic = computed(() => boardStore.visibility&&!userStore.isLoggedIn)
-console.log(userStore.isLoggedIn);
-
-console.log(isPublic.value)
 
 onMounted(async () => {
     initFlowbite()

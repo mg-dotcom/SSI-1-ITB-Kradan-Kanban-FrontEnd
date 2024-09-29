@@ -1,5 +1,13 @@
 <script setup>
+import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/UserStore";
+import { onMounted } from "vue";
 
+const userStore = useUserStore();
+
+onMounted(() => {
+  console.log("AccessDenied.vue mounted");
+});
 </script>
 
 <template>

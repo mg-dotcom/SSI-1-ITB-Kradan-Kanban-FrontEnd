@@ -13,7 +13,6 @@ userStore.initialize();
 const logout = () => {
   userStore.logout();
   console.log('logout');
-  
   router.push({ name: "login" });
 };
 </script>

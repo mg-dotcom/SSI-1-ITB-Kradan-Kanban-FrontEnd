@@ -24,6 +24,7 @@ export const useBoardStore = defineStore("BoardStore", {
     getBoardById: (state) => (id) => {
       return state.board.find((board) => board.id === id);
     },
+    getVisibility: (state) => state.visibility,
   },
   actions: {
     async loadBoards() {

@@ -14,6 +14,7 @@ const fetchAllStatus = async (url) => {
     handleAuthenticationClearAndRedirect();
   }
   const data = await res.json();
+
   return data;
 };
 
