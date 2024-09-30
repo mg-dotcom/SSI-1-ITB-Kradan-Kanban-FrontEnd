@@ -40,7 +40,6 @@ onMounted(async () => {
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
-  isPublic;
 });
 
 const isOwner = computed(() => boardStore.isBoardOwner);
@@ -442,6 +441,7 @@ const handleEditTask = () => {
                                 >
                                   Edit
                                 </p>
+                                
                               </div>
                               <div
                                 @click="
