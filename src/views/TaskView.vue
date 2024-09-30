@@ -237,7 +237,7 @@ const handleEditTask = () => {
           </ul>
         </div>
         <div class="flex px-4">
-          <div class="my-3">
+          <div class="itbkk-board-visibility my-3">
             <label class="inline-flex items-center cursor-pointer">
               <input
                 v-model="boardVisibility"

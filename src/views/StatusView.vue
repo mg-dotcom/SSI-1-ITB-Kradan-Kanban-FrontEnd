@@ -14,6 +14,7 @@ import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import NavigateTitle from "../components/navigateTitle.vue";
 import Header from "../components/Header.vue";
+import VisibilityConfirmModal from "../components/confirmModal/VisibilityConfirmModal.vue";
 
 const route = useRoute();
 const router = useRouter();

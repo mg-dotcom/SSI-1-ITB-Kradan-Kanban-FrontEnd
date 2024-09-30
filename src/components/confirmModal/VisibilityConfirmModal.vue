@@ -17,15 +17,15 @@ const props = defineProps({
 
 const visibilityDescription = computed(()=>{
   if (props.visibilityType === "Private") {
-    return "In private, only the board owner can access/control the board.";
+    return "Do you want to change board visibility to private?";
   } else {
-    return 'In "Public" mode, everyone can view the board. Only the owner can control the board.';
+    return 'Do you want to change board visibility to public?';
   }})
 </script>
 
 <template>
   <div
-    class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    class=" itbkk-modal-alert fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
     <div
       class="bg-white max-w p-6 rounded-lg shadow-lg md-vertical:m-auto mobile:m-8"
@@ -37,7 +37,7 @@ const visibilityDescription = computed(()=>{
         class="title-line w-full h-px bg-gray-300 mb-4 md-vertical:text-base text-sm"
       ></div>
       <div class="itbkk-message mb-6 break-all md-vertical:text-base text-sm">
-        <slot name="question"> {{ visibilityDescription }} </slot>
+        <slot name=" itbkk-message question"> {{ visibilityDescription }} </slot>
       </div>
       <div class="button-container flex justify-end">
         <slot name="button-left">
