@@ -3,7 +3,6 @@ import { useRouter } from "vue-router";
 
 import { useUserStore } from "@/stores/UserStore";
 import Header from "@/components/Header.vue";
-
 import { onMounted } from "vue";
 
 const userStore = useUserStore();
@@ -28,4 +27,4 @@ const router = useRouter();
   </div>
 </template>
 
-<style lang="scss" scoped></style>
+<style scoped></style>

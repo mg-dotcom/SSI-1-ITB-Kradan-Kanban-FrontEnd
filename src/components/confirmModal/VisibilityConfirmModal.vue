@@ -2,7 +2,6 @@
 import { computed } from "vue";
 import submitButton from "../button/Button.vue";
 
-
 const props = defineProps({
   visibilityType: {
     type: String,
@@ -10,7 +9,7 @@ const props = defineProps({
     validator:(value) => {
       return [
         "Private",
-        "Pubilc"
+        "Public"
       ].includes(value)
     }
   },
@@ -42,11 +41,16 @@ const visibilityDescription = computed(()=>{
       </div>
       <div class="button-container flex justify-end">
         <slot name="button-left">
-          <submitButton buttonType="cancel">Cancel</submitButton>
+          <submitButton buttonType="cancel"
+          class="itbkk-button-cancel"
+          @click="$emit('closeBoardVisibility')">Cancel</submitButton>
         </slot>
-
+        
         <slot name="button-right">
-          <submitButton buttonType="ok">Confirm</submitButton>
+          <submitButton buttonType="ok"
+          class="itbkk-button-confirm"
+          @click="$emit('changeBoardVisibilityMode')"
+          >Confirm</submitButton>
         </slot>
       </div>
     </div>

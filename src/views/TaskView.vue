@@ -24,8 +24,7 @@ const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
 const sortType = ref("default");
 const openLimit = ref(false);
-const boardVisibility = ref(false);
-
+const boardVisibility = ref(false); // Actual state 1.false = "Private" 2.true = "Public"
 const boardStore = useBoardStore();
 const boardId = route.params.id;
 
@@ -38,14 +37,30 @@ onMounted(async () => {
   await statusStore.loadStatuses(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
-  
+  boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
+
+const boardVisibilityToString = () => {
+  return boardVisibility.value === false ? "Public" : "Private";
+};
+
+const confirmVisibilityChange = async () => {
+  console.log(boardVisibilityToString().toUpperCase());
+
+  await boardStore.changeBoardVisibility(
+    boardStore.getCurrentBoard.id,
+    boardVisibilityToString().toUpperCase()
+  );
+  boardVisibility.value = !boardVisibility.value;
+  popup.boardVisibilityPopup = false;
+};
 
 const popup = reactive({
   addEdit: false,
   optionEditDelete: false,
   delete: false,
   limitStatus: false,
+  boardVisibilityPopup: false,
 });
 
 const showOptionEditDelete = (taskId) => {
@@ -123,6 +138,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 
 import { onClickOutside } from "@vueuse/core";
 import { useBoardStore } from "@/stores/BoardStore";
+import VisibilityConfirmModal from "@/components/confirmModal/VisibilityConfirmModal.vue";
 
 const optionEditDelete = ref(null);
 const currentPage = route.name;
@@ -223,6 +239,7 @@ const handleEditTask = () => {
                 v-model="boardVisibility"
                 type="checkbox"
                 class="toggle toggle-success"
+                @click.prevent="popup.boardVisibilityPopup = true"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -427,6 +444,12 @@ const handleEditTask = () => {
         </div>
       </div>
     </div>
+    <VisibilityConfirmModal
+      v-if="popup.boardVisibilityPopup"
+      :visibility-type="boardVisibility ? 'Private' : 'Public'"
+      @closeBoardVisibility="popup.boardVisibilityPopup = false"
+      @changeBoardVisibilityMode="confirmVisibilityChange"
+    ></VisibilityConfirmModal>
 
     <DeleteModal
       v-if="popup.delete"

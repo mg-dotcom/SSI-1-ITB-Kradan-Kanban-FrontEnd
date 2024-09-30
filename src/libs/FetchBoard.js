@@ -44,5 +44,29 @@ const addBoard = async (url, newBoard) => {
   handleResponseStatus(res);
   return res;
 };
+const patchBoardVisibility = async (url, visibilityMode) => {
+  const res = await fetch(`${url}`, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+    body: JSON.stringify({
+      visibility: visibilityMode, 
+    }),
+  });
 
-export { fetchAllBoards, fetchBoardById, addBoard };
+  if (res.status === 401 || res.status === 404) {
+    handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
+    const router = useRouter(); // Move router inside function
+    router.push("/access-denied");
+  } else if (res.status >= 400) {
+    alert("There is a problem. Please try again later here.");
+  }
+
+  return res;
+};
+
+
+export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility };
