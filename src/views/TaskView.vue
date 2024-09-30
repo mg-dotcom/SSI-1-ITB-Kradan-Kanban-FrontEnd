@@ -38,9 +38,10 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-const isOwner = () => {
-  return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid;
-};
+// const isOwner = computed(() => {
+//   return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid
+// };
+const isOwner = computed(() => boardStore.isBoardOwner);
 
 const boardVisibilityToString = () => {
   return boardVisibility.value === false ? "Public" : "Private";
@@ -260,7 +261,7 @@ const handleEditTask = () => {
           >
           <buttonSubmit
             @click.prevent="isOwner ? (openLimit = true) : null"
-            :class="{ 'tooltip tooltip-bottom': !isOwner }"
+            :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
             data-tip="You dont have permission"
             class="itbkk-status-setting"
             button-type="add"
@@ -303,16 +304,20 @@ const handleEditTask = () => {
                   >
                     <div
                       :disabled="!isOwner"
-                      :class="{ 'tooltip tooltip-bottom': !isOwner }"
+                      :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
                       data-tip="You dont have permission"
                     >
                       <img
                         src="../assets/addTaskIcon.svg"
                         alt="add-task-icon"
-                        @click.prevent="
+                        @click="
                           isOwner ? router.push({ name: 'task-add' }) : null
                         "
                         class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
+                        :class="{
+                          'disabled cursor-not-allowed pointer-events-none':
+                            !isOwner,
+                        }"
                       />
                     </div>
                   </th>
@@ -426,12 +431,15 @@ const handleEditTask = () => {
                                 @click.prevent="
                                   isOwner ? handleEditTask() : null
                                 "
-                                :class="{ 'tooltip tooltip-bottom ': !isOwner }"
+                                :class="{
+                                  'tooltip tooltip-bottom disabled': !isOwner,
+                                }"
                                 data-tip="You don't have permission"
                               >
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                  :class="{ 'opacity-50': !isOwner }"
+                                  :class="{ 'opacity-50 disabled': !isOwner }"
+                                  :disabled="!isOwner"
                                 >
                                   Edit
                                 </p>
@@ -440,12 +448,15 @@ const handleEditTask = () => {
                                 @click.prevent="
                                   !isOwner ? null : openDelete(task.id, index)
                                 "
-                                :class="{ 'tooltip tooltip-bottom ': !isOwner }"
+                                :class="{
+                                  'tooltip tooltip-bottom disabled': !isOwner,
+                                }"
                                 data-tip="You don't have permission"
                               >
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
-                                  :class="{ 'opacity-50': !isOwner }"
+                                  :class="{ 'opacity-50 disabled': !isOwner }"
+                                  :disabled="!isOwner"
                                 >
                                   Delete
                                 </p>

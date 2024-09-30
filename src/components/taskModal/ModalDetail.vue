@@ -12,7 +12,7 @@ const props = defineProps({
     class="fixed inset-0 flex justify-center items-center bg-black bg-opacity-75 itbkk-item z-50"
   >
     <div
-      class="bg-[#F2F2F2] xl:w-[42%] rounded-lg lg:w-[55%] h-[85%] w-[65%] mobile:w-[80%] md-vertical:w-[65%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg xl:py-16 lg:py-12 py-12 relative"
+      class="itbkk-modal-task bg-[#F2F2F2] xl:w-[42%] rounded-lg lg:w-[55%] h-[85%] w-[65%] mobile:w-[80%] md-vertical:w-[65%] shadow-lg overflow-hidden border-gray-500 sm:rounded-lg xl:py-16 lg:py-12 py-12 relative"
     >
       <div
         class="font-bold lg:text-xl md-vertical:text-lg overflow-hidden whitespace-nowrap truncate w-full absolute xl:top-5 lg:top-2.5 px-3 top-2.5"

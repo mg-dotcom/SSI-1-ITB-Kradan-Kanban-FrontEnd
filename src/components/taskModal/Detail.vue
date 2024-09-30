@@ -26,7 +26,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ModalDetail :selectedTask="selectedTask">
+  <ModalDetail :selectedTask="selectedTask" class="itbkk-modal-task">
     <template #title>
       <div :title="selectedTask.title" class="itbkk-title truncate">
         {{ selectedTask.title }}

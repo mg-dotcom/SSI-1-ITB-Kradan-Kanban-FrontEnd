@@ -124,13 +124,14 @@ const currentPage = route.name;
           <div class="my-3">
             <label
               class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
               data-tip="You don't have permission"
             >
               <input
                 v-model="boardVisibility"
                 type="checkbox"
                 class="itbkk-board-visibility toggle toggle-success"
+                :class="{ disabled: !isOwner }"
                 @click.prevent="popup.boardVisibilityPopup = true"
                 :disabled="!isOwner"
               />
@@ -147,7 +148,7 @@ const currentPage = route.name;
             <buttonSubmit
               class="itbkk-button-add"
               :buttonType="isPublic ? 'disabled' : 'add'"
-              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
               data-tip="You don't have permission"
               buttonType="add"
               @click.prevent="router.push({ name: 'status-add' })"
@@ -156,7 +157,7 @@ const currentPage = route.name;
             >
           </div>
           <buttonSubmit
-            :class="{ 'tooltip tooltip-bottom': !isOwner }"
+            :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
             data-tip="You dont have permission"
             class="itbkk-status-setting"
             button-type="add"
@@ -248,7 +249,7 @@ const currentPage = route.name;
                     class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
                   >
                     <div
-                      :class="{ 'tooltip tooltip-bottom': !isOwner }"
+                      :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
                       data-tip="You need to be the board owner to perform this action."
                     >
                       <buttonSubmit
@@ -267,25 +268,31 @@ const currentPage = route.name;
                             : 'edit'
                         "
                         :disabled="
-                          status.name === 'No Status' || status.name === 'Done'
+                          status.name === 'No Status' ||
+                          status.name === 'Done' ||
+                          !isOwner
                         "
                         >Edit
                       </buttonSubmit>
                     </div>
                     <div
-                      :class="{ 'tooltip tooltip-bottom': !isOwner }"
+                      :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
                       data-tip="You need to be the board owner to perform this action."
                     >
                       <buttonSubmit
                         class="itbkk-button-delete"
-                        :class="{ 'pointer-events-none': isPublic }"
+                        :class="{
+                          'pointer-events-none disabled': isPublic,
+                        }"
                         :button-type="
                           status.name === 'No Status' || status.name === 'Done'
                             ? 'disabled'
                             : 'delete'
                         "
                         :disabled="
-                          status.name === 'No Status' || status.name === 'Done'
+                          status.name === 'No Status' ||
+                          status.name === 'Done' ||
+                          !isOwner
                         "
                         @click.prevent="
                           isOwner ? openDeleteOrTransferModal(status.id) : null
