@@ -22,7 +22,7 @@ const boardStore = useBoardStore();
 const userStore = useUserStore()
 
 const boardId = route.params.id;
-const isPublic = computed(() => boardStore.visibility&&!userStore.isLoggedIn)
+const isPublic = computed(() => boardStore.board.visibility === 'PUBLIC' && !userStore.isLoggedIn ? true : false);
 
 onMounted(async () => {
   await statusStore.loadStatuses(boardId);
@@ -97,13 +97,16 @@ const currentPage = route.name;
         </NavigateTitle>
 
         <div class="flex">
-          <buttonSubmit
+          <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
+            <buttonSubmit
             class="itbkk-button-add"
             :buttonType="isPublic ? 'disabled' : 'add'"
+            :class="{ 'pointer-events-none': isPublic }"
             buttonType="add"
             @click="router.push({ name: 'status-add' })"
             >+ Add Status</buttonSubmit
           >
+          </div>
           <buttonSubmit
             class="itbkk-status-setting"
             
@@ -195,9 +198,10 @@ const currentPage = route.name;
                   <td
                     class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
                   >
-                    <buttonSubmit
+                    <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
+                      <buttonSubmit
                       class="itbkk-button-edit"
-                      :class="{'cursor-not-allowed': isPublic}"
+                      :class="{ 'pointer-events-none': isPublic }"
                       @click="
                         router.push({
                           name: 'status-edit',
@@ -212,11 +216,13 @@ const currentPage = route.name;
                       :disabled="
                         status.name === 'No Status' || status.name === 'Done'
                       "
-                      >Edit</buttonSubmit
-                    >
-                    <buttonSubmit
+                      >Edit
+                      </buttonSubmit>
+                    </div>
+                    <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
+                      <buttonSubmit
                       class="itbkk-button-delete"
-                      :class="{'cursor-not-allowed': isPublic}"
+                      :class="{ 'pointer-events-none': isPublic }"
                       :button-type="
                         status.name === 'No Status' || status.name === 'Done'
                           ? 'disabled'
@@ -229,6 +235,7 @@ const currentPage = route.name;
                     >
                       Delete
                     </buttonSubmit>
+                    </div>
                   </td>
                 </tr>
               </tbody>

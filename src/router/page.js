@@ -9,9 +9,6 @@ import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
-import { useTaskStore } from "@/stores/TaskStore";
-import { CookieUtil } from "@/libs/CookieUtil";
-import { useStatusStore } from "@/stores/StatusStore";
 import AccessDenied from "@/views/AccessDenied.vue";
 
 const routes = [
