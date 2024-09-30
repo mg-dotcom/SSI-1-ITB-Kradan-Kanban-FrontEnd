@@ -130,7 +130,8 @@ const currentPage = route.name;
               <input
                 v-model="boardVisibility"
                 type="checkbox"
-                class="toggle toggle-success"
+                class="itbkk-board-visibility toggle toggle-success"
+                :disabled="!isOwner"
                 @click.prevent="popup.boardVisibilityPopup = true"
               />
               <span

@@ -25,7 +25,7 @@ const visibilityDescription = computed(()=>{
 
 <template>
   <div
-    class=" itbkk-modal-alert fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
+    class="itbkk-modal-alert fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
   >
     <div
       class="bg-white max-w p-6 rounded-lg shadow-lg md-vertical:m-auto mobile:m-8"

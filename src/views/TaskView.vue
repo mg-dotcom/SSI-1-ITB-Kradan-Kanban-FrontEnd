@@ -237,12 +237,13 @@ const handleEditTask = () => {
           </ul>
         </div>
         <div class="flex px-4">
-          <div class="itbkk-board-visibility my-3">
+          <div class=" my-3" >
             <label class="inline-flex items-center cursor-pointer">
               <input
                 v-model="boardVisibility"
                 type="checkbox"
-                class="toggle toggle-success"
+                class="itbkk-board-visibility toggle toggle-success"
+                :disabled="!isOwner"
                 @click.prevent="popup.boardVisibilityPopup = true"
               />
               <span
@@ -314,7 +315,7 @@ const handleEditTask = () => {
                         "
                         class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
                         :class="{
-                          'cursor-not-allowed pointer-events-none': isPublic,
+                          'disabled cursor-not-allowed pointer-events-none': !isOwner,
                         }"
                       />
                     </div>
@@ -436,7 +437,7 @@ const handleEditTask = () => {
                               >
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white tooltip tooltip-bottom"
-                                  :class="{ 'opacity-50': !isOwner }"
+                                  :class="{ 'disabled opacity-50': !isOwner }"
                                   :disabled="!isOwner"
                                 >
                                   Edit
@@ -452,7 +453,7 @@ const handleEditTask = () => {
                               >
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
-                                  :class="{ 'opacity-50': !isOwner }"
+                                  :class="{ 'disabled opacity-50': !isOwner }"
                                   :disabled="!isOwner"
                                 >
                                   Delete
