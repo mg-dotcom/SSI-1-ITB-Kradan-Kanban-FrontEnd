@@ -31,7 +31,9 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-const isOwner = computed(() => boardStore.isBoardOwner);
+const isOwner = () => {
+  return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid;
+};
 
 const boardVisibilityToString = () => {
   return boardVisibility.value === false ? "Public" : "Private";
@@ -128,7 +130,7 @@ const currentPage = route.name;
               <input
                 v-model="boardVisibility"
                 type="checkbox"
-                class="toggle toggle-success"
+                class="itbkk-board-visibility toggle toggle-success"
                 @click.prevent="popup.boardVisibilityPopup = true"
                 :disabled="!isOwner"
               />
@@ -251,7 +253,13 @@ const currentPage = route.name;
                     >
                       <buttonSubmit
                         class="itbkk-button-edit"
-                        @click.prevent="isOwner ? router.push({name: 'status-edit',params: { statusId: status.id },}) : null
+                        @click.prevent="
+                          isOwner
+                            ? router.push({
+                                name: 'status-edit',
+                                params: { statusId: status.id },
+                              })
+                            : null
                         "
                         :button-type="
                           status.name === 'No Status' || status.name === 'Done'
@@ -279,7 +287,9 @@ const currentPage = route.name;
                         :disabled="
                           status.name === 'No Status' || status.name === 'Done'
                         "
-                        @click.prevent="isOwner ?openDeleteOrTransferModal(status.id) : null"
+                        @click.prevent="
+                          isOwner ? openDeleteOrTransferModal(status.id) : null
+                        "
                       >
                         Delete
                       </buttonSubmit>

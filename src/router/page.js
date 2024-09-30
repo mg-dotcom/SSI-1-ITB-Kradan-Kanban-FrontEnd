@@ -19,57 +19,48 @@ const routes = [
     meta: { requireAuth: true },
     children: [
       {
-        path: "add", // No leading slash
+        path: "add",
         name: "board-add",
         component: AddBoard,
       },
-
       {
-        path: ":id", // No leading slash
-        name: "board-detail",
-        component: BoardView,
-      },
-    ],
-  },
-  {
-    path: "/board/:id/task",
-    name: "board-task",
-    component: TaskView,
-    // meta: { requireAuth: true },
-
-    children: [
-      {
-        path: ":taskId", // No leading slash
-        name: "task-detail",
-        component: Detail,
-      },
-      {
-        path: "add", // No leading slash
-        name: "task-add",
-        component: AddEditTask,
+        path: ":id/task",
+        name: "board-task",
+        component: TaskView,
+        children: [
+          {
+            path: ":taskId",
+            name: "task-detail",
+            component: Detail,
+          },
+          {
+            path: "add",
+            name: "task-add",
+            component: AddEditTask,
+          },
+          {
+            path: ":taskId/edit",
+            name: "task-edit",
+            component: AddEditTask,
+          },
+        ],
       },
       {
-        path: ":taskId/edit", // No leading slash
-        name: "task-edit",
-        component: AddEditTask,
-      },
-    ],
-  },
-  {
-    path: "/board/:id/status",
-    name: "board-status",
-    component: StatusView,
-    // meta: { requireAuth: true },
-    children: [
-      {
-        path: "add", // No leading slash
-        name: "status-add",
-        component: AddEditStatusModal,
-      },
-      {
-        path: ":statusId/edit", // No leading slash
-        name: "status-edit",
-        component: AddEditStatusModal,
+        path: ":id/status",
+        name: "board-status",
+        component: StatusView,
+        children: [
+          {
+            path: "add",
+            name: "status-add",
+            component: AddEditStatusModal,
+          },
+          {
+            path: ":statusId/edit",
+            name: "status-edit",
+            component: AddEditStatusModal,
+          },
+        ],
       },
     ],
   },
@@ -84,8 +75,8 @@ const routes = [
     component: AccessDenied,
   },
   {
-    path: "/:pathMatch(.*)*", // This will catch all undefined routes
-    redirect: "/login", // Redirects to the login page
+    path: "/:pathMatch(.*)*", // Catch all undefined routes
+    redirect: "/login", // Redirect to the login page
   },
 ];
 

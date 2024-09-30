@@ -1,5 +1,6 @@
 import { useUserToken } from "../stores/UserStore.js";
 import { handleResponseStatus } from "./libsUtil.js";
+import { handleAuthenticationClearAndRedirect } from "./libsUtil.js";
 
 const fetchAllBoards = async (url) => {
   const res = await fetch(`${url}`, {
@@ -53,21 +54,19 @@ const patchBoardVisibility = async (url, visibilityMode) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
     body: JSON.stringify({
-      visibility: visibilityMode, 
+      visibility: visibilityMode,
     }),
   });
 
   if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
-  } else if (res.status === 403) {
-    const router = useRouter(); // Move router inside function
-    router.push("/access-denied");
-  } else if (res.status >= 400) {
-    alert("There is a problem. Please try again later here.");
+  }
+
+  if (res.status === 403) {
+    alert("you do not have permission");
   }
 
   return res;
 };
-
 
 export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility };

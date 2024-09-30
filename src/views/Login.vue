@@ -48,11 +48,7 @@ const signIn = async () => {
       const currentBoard = findBoardByUserOid[0];
       boardStore.setCurrentBoard(currentBoard);
 
-      // Navigate to the specific task board
-      router.push({
-        name: "board-task",
-        params: { id: currentBoard.id },
-      });
+      router.push({ name: "board-task", params: { id: currentBoard.id } });
     } else {
       // No boards found, navigate to general board view
       router.push({ name: "board" });

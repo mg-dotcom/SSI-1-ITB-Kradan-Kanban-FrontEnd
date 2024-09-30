@@ -38,7 +38,9 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-const isOwner = computed(() => boardStore.isBoardOwner);
+const isOwner = () => {
+  return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid;
+};
 
 const boardVisibilityToString = () => {
   return boardVisibility.value === false ? "Public" : "Private";
@@ -238,7 +240,7 @@ const handleEditTask = () => {
               <input
                 v-model="boardVisibility"
                 type="checkbox"
-                class="toggle toggle-success"
+                class="itbkk-board-visibility toggle toggle-success"
                 @click.prevent="popup.boardVisibilityPopup = true"
                 :disabled="!isOwner"
               />
@@ -462,6 +464,7 @@ const handleEditTask = () => {
       </div>
     </div>
     <VisibilityConfirmModal
+      class="itbkk-modal-alert"
       v-if="popup.boardVisibilityPopup"
       :visibility-type="boardVisibility ? 'Private' : 'Public'"
       @closeBoardVisibility="popup.boardVisibilityPopup = false"
