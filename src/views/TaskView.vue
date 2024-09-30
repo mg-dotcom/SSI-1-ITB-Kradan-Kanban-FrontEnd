@@ -28,10 +28,6 @@ const boardVisibility = ref(false); // Actual state 1.false = "Private" 2.true =
 const boardStore = useBoardStore();
 const boardId = route.params.id;
 
-const isPublic = computed(() => {
-  return boardStore.board.visibility === "PUBLIC" && !userStore.isLoggedIn;
-});
-
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
@@ -42,6 +38,9 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
+// const isOwner = computed(() => {
+//   return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid
+// };
 const isOwner = computed(() => boardStore.isBoardOwner);
 
 const boardVisibilityToString = () => {
@@ -128,10 +127,6 @@ const clearEachStatus = (statusName) => {
 const clearFilter = () => {
   taskStore.filterStatuses.length = 0;
   showList.value = false;
-};
-
-const openLimitStatus = () => {
-  openLimit.value = true;
 };
 
 const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
@@ -237,14 +232,18 @@ const handleEditTask = () => {
           </ul>
         </div>
         <div class="flex px-4">
-          <div class=" my-3" >
-            <label class="inline-flex items-center cursor-pointer">
+          <div class="my-3">
+            <label
+              class="inline-flex items-center cursor-pointer"
+              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              data-tip="You don't have permission"
+            >
               <input
                 v-model="boardVisibility"
                 type="checkbox"
                 class="itbkk-board-visibility toggle toggle-success"
-                :disabled="!isOwner"
                 @click.prevent="popup.boardVisibilityPopup = true"
+                :disabled="!isOwner"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -261,9 +260,11 @@ const handleEditTask = () => {
             Manage Status</buttonSubmit
           >
           <buttonSubmit
+            @click.prevent="isOwner ? (openLimit = true) : null"
+            :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
+            data-tip="You dont have permission"
             class="itbkk-status-setting"
             button-type="add"
-            @click="openLimitStatus"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -302,20 +303,20 @@ const handleEditTask = () => {
                     class="xl:w-[5%] lg:w-[7%] md-vertical:w-[8%] bg-lightgray border-b border-r border-gray-300 w-[7%]"
                   >
                     <div
-                      class="tooltip tooltip-right flex justify-center item-center"
-                      data-tip="You need to be the board owner to perform this action."
+                      :disabled="!isOwner"
+                      :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
+                      data-tip="You dont have permission"
                     >
                       <img
                         src="../assets/addTaskIcon.svg"
                         alt="add-task-icon"
                         @click="
-                          router.push({
-                            name: 'task-add',
-                          })
+                          isOwner ? router.push({ name: 'task-add' }) : null
                         "
                         class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
                         :class="{
-                          'disabled cursor-not-allowed pointer-events-none': !isOwner,
+                          'disabled cursor-not-allowed pointer-events-none':
+                            !isOwner,
                         }"
                       />
                     </div>
@@ -424,36 +425,37 @@ const handleEditTask = () => {
                           >
                             <div
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
-                              :class="{
-                                'cursor-not-allowed pointer-events-none':
-                                !isOwner,
-                              }"
-                              
+                              :disabled="!isOwner"
                             >
                               <div
-                                @click="handleEditTask"
-                                class="tooltip tooltip-bottom"
-                                data-tip="You dont have permission"
+                                @click.prevent="
+                                  isOwner ? handleEditTask() : null
+                                "
+                                :class="{
+                                  'tooltip tooltip-bottom disabled': !isOwner,
+                                }"
+                                data-tip="You don't have permission"
                               >
                                 <p
-                                  class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white tooltip tooltip-bottom"
-                                  :class="{ 'disabled opacity-50': !isOwner }"
+                                  class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                  :class="{ 'opacity-50 disabled': !isOwner }"
                                   :disabled="!isOwner"
                                 >
                                   Edit
                                 </p>
-                                
                               </div>
                               <div
-                                @click="
+                                @click.prevent="
                                   !isOwner ? null : openDelete(task.id, index)
                                 "
-                                class="tooltip tooltip-bottom"
-                                data-tip="You dont have permission"
+                                :class="{
+                                  'tooltip tooltip-bottom disabled': !isOwner,
+                                }"
+                                data-tip="You don't have permission"
                               >
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
-                                  :class="{ 'disabled opacity-50': !isOwner }"
+                                  :class="{ 'opacity-50 disabled': !isOwner }"
                                   :disabled="!isOwner"
                                 >
                                   Delete
@@ -473,6 +475,7 @@ const handleEditTask = () => {
       </div>
     </div>
     <VisibilityConfirmModal
+      class="itbkk-modal-alert"
       v-if="popup.boardVisibilityPopup"
       :visibility-type="boardVisibility ? 'Private' : 'Public'"
       @closeBoardVisibility="popup.boardVisibilityPopup = false"

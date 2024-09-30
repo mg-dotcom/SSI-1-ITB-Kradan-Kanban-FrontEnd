@@ -100,7 +100,7 @@ export const useBoardStore = defineStore("BoardStore", {
           this.toast.add({
             severity: "success",
             summary: "Success",
-            detail: "Board vฃisibility changed successfully!",
+            detail: "Board visibility changed successfully!",
             life: 3000,
           });
         }

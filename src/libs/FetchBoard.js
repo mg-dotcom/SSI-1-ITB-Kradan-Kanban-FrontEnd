@@ -1,6 +1,5 @@
 import { useUserToken } from "../stores/UserStore.js";
 import { handleResponseStatus } from "./libsUtil.js";
-import { useRouter } from "vue-router";
 import { handleAuthenticationClearAndRedirect } from "./libsUtil.js";
 
 const fetchAllBoards = async (url) => {
@@ -55,22 +54,19 @@ const patchBoardVisibility = async (url, visibilityMode) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
     body: JSON.stringify({
-      visibility: visibilityMode, 
+      visibility: visibilityMode,
     }),
   });
 
   if (res.status === 401 || res.status === 404) {
     handleAuthenticationClearAndRedirect();
-  } else if (res.status === 403) {
+  }
+
+  if (res.status === 403) {
     alert("you do not have permission");
-    // const router = useRouter(); // Move router inside function
-    // router.push("/access-denied");
-  } else if (res.status >= 400) {
-    alert("There is a problem. Please try again later here.");
   }
 
   return res;
 };
-
 
 export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility };

@@ -28,6 +28,9 @@ const routes = [
         path: ":id", // No leading slash
         name: "board-detail",
         component: BoardView,
+        redirect: (to) => {
+          return { name: "board-task", params: { id: to.params.id } }; // Redirect to tasks for this board
+        },
       },
     ],
   },
