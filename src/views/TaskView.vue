@@ -423,37 +423,33 @@ const handleEditTask = () => {
                           >
                             <div
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
-                              :class="{
-                                'cursor-not-allowed pointer-events-none':
-                                !isOwner,
-                              }"
-                              
+                              :disabled="!isOwner"
                             >
                               <div
-                                @click="handleEditTask"
-                                class="tooltip tooltip-bottom"
-                                data-tip="You dont have permission"
+                                @click.prevent="
+                                  isOwner ? handleEditTask() : null
+                                "
+                                :class="{ 'tooltip tooltip-bottom ': !isOwner }"
+                                data-tip="You don't have permission"
                               >
                                 <p
-                                  class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white tooltip tooltip-bottom"
+                                  class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                   :class="{ 'opacity-50': !isOwner }"
-                                  :disabled="!isOwner"
+
                                 >
                                   Edit
                                 </p>
-                                
                               </div>
                               <div
-                                @click="
+                                @click.prevent="
                                   !isOwner ? null : openDelete(task.id, index)
                                 "
-                                class="tooltip tooltip-bottom"
-                                data-tip="You dont have permission"
+                                :class="{ 'tooltip tooltip-bottom ': !isOwner }"
+                                data-tip="You don't have permission"
                               >
                                 <p
                                   class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                   :class="{ 'opacity-50': !isOwner }"
-                                  :disabled="!isOwner"
                                 >
                                   Delete
                                 </p>
