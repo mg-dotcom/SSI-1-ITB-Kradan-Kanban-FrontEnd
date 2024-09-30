@@ -16,8 +16,7 @@ const fetchUser = async (url, userLogin) => {
     throw new Error("Username or Password is incorrect.");
   }
  handleResponseStatus(res)
-  const data = await res.json();
-
+  const data = await res.json();  
   return data;
 };
 

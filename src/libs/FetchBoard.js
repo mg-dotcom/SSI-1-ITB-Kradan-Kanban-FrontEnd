@@ -24,6 +24,7 @@ const fetchBoardById = async (url, id) => {
   });
   handleResponseStatus(res);
   const data = await res.json();
+  console.log(data); // Check owner by Oid
   return data;
 };
 

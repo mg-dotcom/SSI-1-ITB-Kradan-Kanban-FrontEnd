@@ -1,12 +1,13 @@
 <script setup>
+
 import buttonSubmit from "../components/button/Button.vue";
 import { useRouter, useRoute } from "vue-router";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import { useStatusStore } from "../stores/StatusStore.js";
 import { useTaskStore } from "../stores/TaskStore.js";
 import { useBoardStore } from "../stores/BoardStore.js";
-import { useUserStore } from '@/stores/UserStore'
-import { onMounted,computed,ref } from "vue";
+import { useUserStore } from "@/stores/UserStore";
+import { onMounted, computed, ref , reactive} from "vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
@@ -19,16 +20,41 @@ const router = useRouter();
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
 const boardStore = useBoardStore();
-const userStore = useUserStore()
+const userStore = useUserStore();
 
 const boardId = route.params.id;
-const isPublic = computed(() => boardStore.board.visibility === 'PUBLIC' && !userStore.isLoggedIn ? true : false);
+
+const isPublic = computed(() => {
+  return boardStore.board.visibility === "PUBLIC" && !userStore.isLoggedIn;
+});
 
 onMounted(async () => {
   await statusStore.loadStatuses(boardId);
   await taskStore.loadTasks(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
+  boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
+});
+
+const isOwner = computed(() => boardStore.isBoardOwner);
+
+const boardVisibilityToString = () => {
+  return boardVisibility.value === false ? "Public" : "Private";
+};
+
+const confirmVisibilityChange = async () => {
+  console.log(boardVisibilityToString().toUpperCase());
+
+  await boardStore.changeBoardVisibility(
+    boardStore.getCurrentBoard.id,
+    boardVisibilityToString().toUpperCase()
+  );
+  boardVisibility.value = !boardVisibility.value;
+  popup.boardVisibilityPopup = false;
+};
+
+const popup = reactive({
+  boardVisibilityPopup: false,
 });
 
 const numberOfTasks = ref(0);
@@ -36,10 +62,11 @@ const currentStatus = ref("");
 const openDelete = ref(false);
 const openTransfer = ref(false);
 const openLimit = ref(false);
+const boardVisibility = ref(false); // Actual state 1.false = "Private" 2.true = "Public"
 
 const openDeleteOrTransferModal = (id) => {
   currentStatus.value = statusStore.getStatusById(id);
-  
+
   const haveTask = taskStore.tasks.filter(
     (task) => task.status.name === currentStatus.value.name
   );
@@ -84,7 +111,7 @@ const currentPage = route.name;
   <RouterView />
   <div class="h-screen w-full bg-bgLightBlue">
     <Header />
-  
+
     <div
       class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
@@ -97,19 +124,35 @@ const currentPage = route.name;
         </NavigateTitle>
 
         <div class="flex">
-          <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
-            <buttonSubmit
-            class="itbkk-button-add"
-            :buttonType="isPublic ? 'disabled' : 'add'"
-            :class="{ 'pointer-events-none': isPublic }"
-            buttonType="add"
-            @click="router.push({ name: 'status-add' })"
-            >+ Add Status</buttonSubmit
+          <div class="my-3">
+            <label class="inline-flex items-center cursor-pointer">
+              <input
+                v-model="boardVisibility"
+                type="checkbox"
+                class="toggle toggle-success"
+                @click.prevent="popup.boardVisibilityPopup = true"
+              />
+              <span
+                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
+                >{{ boardVisibility ? "Public" : "Private" }}</span
+              >
+            </label>
+          </div>
+          <div
+            :class="{ tooltip: isPublic }"
+            data-tip="You need to be the board owner to perform this action."
           >
+            <buttonSubmit
+              class="itbkk-button-add"
+              :buttonType="isPublic ? 'disabled' : 'add'"
+              :class="{ 'pointer-events-none': isPublic }"
+              buttonType="add"
+              @click="router.push({ name: 'status-add' })"
+              >+ Add Status</buttonSubmit
+            >
           </div>
           <buttonSubmit
             class="itbkk-status-setting"
-            
             button-type="add"
             @click="openLimitStatus"
           >
@@ -198,43 +241,49 @@ const currentPage = route.name;
                   <td
                     class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
                   >
-                    <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
+                    <div
+                      :class="{ tooltip: isPublic }"
+                      data-tip="You need to be the board owner to perform this action."
+                    >
                       <buttonSubmit
-                      class="itbkk-button-edit"
-                      :class="{ 'pointer-events-none': isPublic }"
-                      @click="
-                        router.push({
-                          name: 'status-edit',
-                          params: { statusId: status.id },
-                        })
-                      "
-                      :button-type="
-                        status.name === 'No Status' || status.name === 'Done'
-                          ? 'disabled'
-                          : 'edit'
-                      "
-                      :disabled="
-                        status.name === 'No Status' || status.name === 'Done'
-                      "
-                      >Edit
+                        class="itbkk-button-edit"
+                        :class="{ 'pointer-events-none': isPublic }"
+                        @click="
+                          router.push({
+                            name: 'status-edit',
+                            params: { statusId: status.id },
+                          })
+                        "
+                        :button-type="
+                          status.name === 'No Status' || status.name === 'Done'
+                            ? 'disabled'
+                            : 'edit'
+                        "
+                        :disabled="
+                          status.name === 'No Status' || status.name === 'Done'
+                        "
+                        >Edit
                       </buttonSubmit>
                     </div>
-                    <div :class="{tooltip:isPublic}" data-tip="You need to be the board owner to perform this action.">
-                      <buttonSubmit
-                      class="itbkk-button-delete"
-                      :class="{ 'pointer-events-none': isPublic }"
-                      :button-type="
-                        status.name === 'No Status' || status.name === 'Done'
-                          ? 'disabled'
-                          : 'delete'
-                      "
-                      :disabled="
-                        status.name === 'No Status' || status.name === 'Done'
-                      "
-                      @click="openDeleteOrTransferModal(status.id)"
+                    <div
+                      :class="{ tooltip: isPublic }"
+                      data-tip="You need to be the board owner to perform this action."
                     >
-                      Delete
-                    </buttonSubmit>
+                      <buttonSubmit
+                        class="itbkk-button-delete"
+                        :class="{ 'pointer-events-none': isPublic }"
+                        :button-type="
+                          status.name === 'No Status' || status.name === 'Done'
+                            ? 'disabled'
+                            : 'delete'
+                        "
+                        :disabled="
+                          status.name === 'No Status' || status.name === 'Done'
+                        "
+                        @click="openDeleteOrTransferModal(status.id)"
+                      >
+                        Delete
+                      </buttonSubmit>
                     </div>
                   </td>
                 </tr>
@@ -243,6 +292,13 @@ const currentPage = route.name;
           </div>
         </div>
       </div>
+      <VisibilityConfirmModal
+        v-if="popup.boardVisibilityPopup"
+        :visibility-type="boardVisibility ? 'Private' : 'Public'"
+        @closeBoardVisibility="popup.boardVisibilityPopup = false"
+        @changeBoardVisibilityMode="confirmVisibilityChange"
+      ></VisibilityConfirmModal>
+
       <DeleteStatus
         v-if="openDelete"
         :currentStatus="currentStatus"

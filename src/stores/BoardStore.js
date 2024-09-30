@@ -27,6 +27,14 @@ export const useBoardStore = defineStore("BoardStore", {
     getVisibility: (state) => (id) => {
       return state.board.find((board) => board.id === id).visibility;
     },
+    isBoardOwner: (state) => {
+      // Check if the user is logged in and if the current board exists
+      if (!state.userStore.isLoggedIn || !state.currentBoard) {
+        return false;
+      }
+      // Return true if the logged-in user is the owner of the current board
+      return state.userStore.user?.oid === state.currentBoard.owner?.oid;
+    }
   },
   actions: {
     async loadBoards() {
@@ -92,7 +100,7 @@ export const useBoardStore = defineStore("BoardStore", {
           this.toast.add({
             severity: "success",
             summary: "Success",
-            detail: "Board visibility changed successfully!",
+            detail: "Board vฃisibility changed successfully!",
             life: 3000,
           });
         }
