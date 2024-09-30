@@ -1,5 +1,4 @@
 <script setup>
-
 import buttonSubmit from "../components/button/Button.vue";
 import { useRouter, useRoute } from "vue-router";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
@@ -7,7 +6,7 @@ import { useStatusStore } from "../stores/StatusStore.js";
 import { useTaskStore } from "../stores/TaskStore.js";
 import { useBoardStore } from "../stores/BoardStore.js";
 import { useUserStore } from "@/stores/UserStore";
-import { onMounted, computed, ref , reactive} from "vue";
+import { onMounted, computed, ref, reactive } from "vue";
 import StatusButton from "../components/button/StatusButton.vue";
 import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
@@ -23,10 +22,6 @@ const boardStore = useBoardStore();
 const userStore = useUserStore();
 
 const boardId = route.params.id;
-
-const isPublic = computed(() => {
-  return boardStore.board.visibility === "PUBLIC" && !userStore.isLoggedIn;
-});
 
 onMounted(async () => {
   await statusStore.loadStatuses(boardId);
@@ -125,12 +120,17 @@ const currentPage = route.name;
 
         <div class="flex">
           <div class="my-3">
-            <label class="inline-flex items-center cursor-pointer">
+            <label
+              class="inline-flex items-center cursor-pointer"
+              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              data-tip="You don't have permission"
+            >
               <input
                 v-model="boardVisibility"
                 type="checkbox"
                 class="toggle toggle-success"
                 @click.prevent="popup.boardVisibilityPopup = true"
+                :disabled="!isOwner"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -145,16 +145,20 @@ const currentPage = route.name;
             <buttonSubmit
               class="itbkk-button-add"
               :buttonType="isPublic ? 'disabled' : 'add'"
-              :class="{ 'pointer-events-none': isPublic }"
+              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              data-tip="You don't have permission"
               buttonType="add"
-              @click="router.push({ name: 'status-add' })"
+              @click.prevent="router.push({ name: 'status-add' })"
+              :disabled="!isOwner"
               >+ Add Status</buttonSubmit
             >
           </div>
           <buttonSubmit
+            :class="{ 'tooltip tooltip-bottom': !isOwner }"
+            data-tip="You dont have permission"
             class="itbkk-status-setting"
             button-type="add"
-            @click="openLimitStatus"
+            @click.prevent="isOwner ? (openLimit = true) : null"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -242,17 +246,12 @@ const currentPage = route.name;
                     class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
                   >
                     <div
-                      :class="{ tooltip: isPublic }"
+                      :class="{ 'tooltip tooltip-bottom': !isOwner }"
                       data-tip="You need to be the board owner to perform this action."
                     >
                       <buttonSubmit
                         class="itbkk-button-edit"
-                        :class="{ 'pointer-events-none': isPublic }"
-                        @click="
-                          router.push({
-                            name: 'status-edit',
-                            params: { statusId: status.id },
-                          })
+                        @click.prevent="isOwner ? router.push({name: 'status-edit',params: { statusId: status.id },}) : null
                         "
                         :button-type="
                           status.name === 'No Status' || status.name === 'Done'
@@ -266,7 +265,7 @@ const currentPage = route.name;
                       </buttonSubmit>
                     </div>
                     <div
-                      :class="{ tooltip: isPublic }"
+                      :class="{ 'tooltip tooltip-bottom': !isOwner }"
                       data-tip="You need to be the board owner to perform this action."
                     >
                       <buttonSubmit
@@ -280,7 +279,7 @@ const currentPage = route.name;
                         :disabled="
                           status.name === 'No Status' || status.name === 'Done'
                         "
-                        @click="openDeleteOrTransferModal(status.id)"
+                        @click.prevent="isOwner ?openDeleteOrTransferModal(status.id) : null"
                       >
                         Delete
                       </buttonSubmit>
