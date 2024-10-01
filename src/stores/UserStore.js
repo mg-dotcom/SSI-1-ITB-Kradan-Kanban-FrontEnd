@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
-import { fetchUser,fetchToken } from "../libs/FetchUser.js";
+import { fetchUser, fetchToken } from "../libs/FetchUser.js";
+import { useRoute, useRouter } from "vue-router";
 import { jwtDecode } from "jwt-decode";
 import { CookieUtil } from "../libs/CookieUtil.js";
 import { computed, watch } from "vue";
@@ -32,7 +33,7 @@ export const useUserStore = defineStore("UserStore", {
           `${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}`,
           user
         );
-        
+
         // initialize()
         const decoded = jwtDecode(data.access_token);
         this.token = data.access_token;
@@ -64,7 +65,6 @@ export const useUserStore = defineStore("UserStore", {
       // Remove the access token cookie when logging out
       CookieUtil.unset("access_token");
       CookieUtil.unset("refresh_token");
-
     },
 
     async initialize() {
@@ -95,28 +95,32 @@ export const useUserToken = () => {
   return token;
 };
 
-export const checkTokenExpiration=async()=>{
-  console.log('check token expiration');
-  
+export const checkTokenExpiration = async () => {
   const userStore = useUserStore();
+
+  const route = useRoute();
+  const router = useRouter();
+
+  const boardId = route.params.id;
+  const isPublicBoard = boardId
+    ? await boardStore.isPublicBoard(boardId)
+    : false;
+
+  if (!userStore.token && !isPublicBoard) {
+    router.push({ name: "access-denied" });
+  }
+
   const decoded = jwtDecode(userStore.token);
-  if(decoded.exp < Date.now() / 1000) {
-    console.log('token expired');
-    
+
+  if (decoded.exp < Date.now() / 1000) {
     //fetch refresh token return new access token
-    try{
-      
-      const data=await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
-      console.log('new token',data.access_token);
-      
+    try {
+      const data = await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
       const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
       CookieUtil.set("access_token", data.access_token, expires);
-      userStore.token=data.access_token;
-      console.log(userStore.token);
-      
-    }catch{
-      
+      userStore.token = data.access_token;
+    } catch {
       userStore.logout();
     }
   }
-}
+};
