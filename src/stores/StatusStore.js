@@ -10,6 +10,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "./TaskStore.js";
 import { useBoardStore } from "./BoardStore.js";
+import {checkTokenExpiration} from "./UserStore.js";
 const STATUS_ENDPOINT = import.meta.env.VITE_STATUS_ENDPOINT;
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -34,6 +35,7 @@ export const useStatusStore = defineStore("StatusStore", {
   },
   actions: {
     async loadStatuses(boardId) {
+      await checkTokenExpiration();
       const data = await fetchAllStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`
       );
@@ -46,6 +48,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     // FIXME: This function is not working as expected
     async editStatusSetting(updatedLimit, maximumTask) {
+      await checkTokenExpiration();
       const res = await updateStatusSetting(
         `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
         updatedLimit
@@ -102,6 +105,7 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async loadStatusDetail(id, boardId) {
+      await checkTokenExpiration();
       // const boardId = this.boardStore.getCurrentBoard.id;
       const data = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
@@ -116,6 +120,7 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async addStatus(newStatus) {
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
       const res = await addStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
@@ -154,7 +159,7 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async editStatus(id, updatedStatus) {
-      
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
       const res = await updateStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
@@ -189,6 +194,7 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async transferStatus(currentId, newId, numberOfTasks) {
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
 
       const taskStore = useTaskStore();
@@ -237,6 +243,7 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async removeStatus(id) {
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,

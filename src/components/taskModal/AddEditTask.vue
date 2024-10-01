@@ -8,6 +8,7 @@ import { useSortStore } from "../../stores/SortStore.js";
 import { useBoardStore } from "../../stores/BoardStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
+import { checkTokenExpiration } from "@/stores/UserStore";
 const emit = defineEmits(["addNewTask", "editNewTask"]);
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
@@ -42,9 +43,9 @@ const boardId = route.params.id;
 const taskId = route.params.taskId;
 
 onMounted(async () => {
+  await checkTokenExpiration();
   await statusStore.loadStatuses(boardId);
   const board = await boardStore.loadBoardById(boardId);
-  console.log(board);
 
   limitMaximumTask.value = board.limitMaximumTask;
   maximumTask.value = board.maximumTask;

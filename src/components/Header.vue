@@ -7,11 +7,12 @@ import { onClickOutside } from "@vueuse/core";
 
 const route = useRoute();
 
-const userStore = useUserStore();
 
-const router = useRouter();
+const userStore = useUserStore()
 
-userStore.initialize();
+const router = useRouter()
+
+userStore.initialize()
 
 const logout = () => {
   userStore.logout();
@@ -131,7 +132,6 @@ onClickOutside(dropdownMenu, () => {
         </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style scoped></style>

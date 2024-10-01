@@ -11,6 +11,7 @@ import { sortTasks } from "../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
 import { useBoardStore } from "./BoardStore.js";
 import { useStatusStore } from "./StatusStore.js";
+import {checkTokenExpiration} from "./UserStore.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -35,6 +36,7 @@ export const useTaskStore = defineStore("TaskStore", {
   },
   actions: {
     async loadTasks(boardId) {
+      await checkTokenExpiration();
       const data = await fetchAllTasks(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`
       );
@@ -46,6 +48,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async loadTaskDetails(id, boardId) {
+      await checkTokenExpiration();
       try {
         const data = await fetchTaskDetails(
           `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
@@ -64,6 +67,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async addTask(newTask) {
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
 
       const res = await addTask(
@@ -99,6 +103,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async deleteTask(id) {
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
 
       const res = await deleteTask(
@@ -125,6 +130,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async editTask(id, updatedTaskInput, statusDetails) {
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
 
       const res = await updatedTask(
@@ -165,7 +171,8 @@ export const useTaskStore = defineStore("TaskStore", {
       return res;
     },
 
-    transferTasksStatus(currentStatus, newStatus) {
+    async transferTasksStatus(currentStatus, newStatus) {
+      await checkTokenExpiration();
       const tasksToUpdate = this.tasks.filter(
         (task) => task.status === currentStatus
       );
@@ -175,6 +182,7 @@ export const useTaskStore = defineStore("TaskStore", {
     },
 
     async loadSortTasks(sortType) {
+      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
 
       const data = await fetchAllTasks(
