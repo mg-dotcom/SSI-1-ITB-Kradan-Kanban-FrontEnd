@@ -8,7 +8,7 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
 import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
-import {checkTokenExpiration} from "./UserStore.js";
+import { checkTokenExpiration } from "./UserStore.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -35,7 +35,7 @@ export const useBoardStore = defineStore("BoardStore", {
       }
       // Return true if the logged-in user is the owner of the current board
       return state.userStore.user?.oid === state.currentBoard.owner?.oid;
-    }
+    },
   },
   actions: {
     async loadBoards() {
@@ -55,11 +55,11 @@ export const useBoardStore = defineStore("BoardStore", {
         handleAuthenticationClearAndRedirect();
       }
     },
-    async loadBoardById(id) {
-      await checkTokenExpiration();
+    async loadBoardById(boardId) {
+      await checkTokenExpiration(boardId);
       const data = await fetchBoardById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
-        id
+        boardId
       );
 
       if (data.status < 200 && data.status > 299) {
@@ -98,7 +98,6 @@ export const useBoardStore = defineStore("BoardStore", {
         );
         console.log(`${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`);
         if (res.status >= 200 && res.status < 300) {
-      
           this.currentBoard.visibility = newVisibility;
           this.toast.add({
             severity: "success",

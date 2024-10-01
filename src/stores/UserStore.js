@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { fetchUser, fetchToken } from "../libs/FetchUser.js";
+import { useBoardStore } from "./BoardStore.js";
 import { useRoute, useRouter } from "vue-router";
 import { jwtDecode } from "jwt-decode";
 import { CookieUtil } from "../libs/CookieUtil.js";
@@ -11,6 +12,7 @@ export const useUserStore = defineStore("UserStore", {
   state: () => ({
     user: {},
     userStore: useUserStore(),
+    boardStore: useBoardStore(),
     token: CookieUtil.get("access_token") || "",
     refreshToken: CookieUtil.get("refresh_token") || "",
     isLoggedIn: !!CookieUtil.get("access_token"),
@@ -94,26 +96,38 @@ export const useUserToken = () => {
 
   return token;
 };
+let isCheckingToken = false; // Flag to prevent recursion
 
-export const checkTokenExpiration = async () => {
+export const checkTokenExpiration = async (boardId) => {
+  if (isCheckingToken) return; // Prevent repeated calls
+  isCheckingToken = true;
+
   const userStore = useUserStore();
-
-  const route = useRoute();
+  const boardStore = useBoardStore();
   const router = useRouter();
 
-  const boardId = route.params.id;
+  console.log(boardId);
+
   const isPublicBoard = boardId
     ? await boardStore.isPublicBoard(boardId)
     : false;
 
-  if (!userStore.token && !isPublicBoard) {
-    router.push({ name: "access-denied" });
+  console.log(isPublicBoard);
+
+  if (!userStore.token) {
+    if (isPublicBoard) {
+      router.push({ name: "board-task", params: { id: boardId } });
+    } else {
+      router.push({ name: "access-denied" });
+      isCheckingToken = false; // Reset the flag
+      return;
+    }
   }
 
   const decoded = jwtDecode(userStore.token);
 
   if (decoded.exp < Date.now() / 1000) {
-    //fetch refresh token return new access token
+    // Fetch refresh token and return new access token
     try {
       const data = await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
       const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
@@ -123,4 +137,6 @@ export const checkTokenExpiration = async () => {
       userStore.logout();
     }
   }
+
+  isCheckingToken = false; // Reset the flag
 };
