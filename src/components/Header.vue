@@ -132,6 +132,7 @@ onClickOutside(dropdownMenu, () => {
         </div>
       </div>
     </div>
+    </div>
 </template>
 
 <style scoped></style>

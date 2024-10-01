@@ -25,9 +25,7 @@ const fetchUser = async (url, userLogin) => {
 
 const fetchToken=async (url)=>{
   console.log('fetchhhhhhhhhhhhhh');
-  console.log(useUserStore().refreshToken);
-  
-  
+
   const res=await fetch(`${url}`,{
     method:"POST",
     headers:{

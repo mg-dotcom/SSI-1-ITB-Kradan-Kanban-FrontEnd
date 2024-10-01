@@ -106,7 +106,7 @@ export const checkTokenExpiration=async()=>{
     //fetch refresh token return new access token
     try{
       
-      const data=await fetchToken(`${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}/token`);
+      const data=await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
       console.log('new token',data.access_token);
       
       const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
