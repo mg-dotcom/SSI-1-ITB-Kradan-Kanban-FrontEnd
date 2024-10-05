@@ -32,6 +32,7 @@ const showPassword = ref(false);
 const toggleShow = () => {
   showPassword.value = !showPassword.value;
 };
+const collabBoards = [];
 
 const signIn = async () => {
   try {
@@ -44,17 +45,17 @@ const signIn = async () => {
     await boardStore.loadBoards();
     const findBoardByUserOid = boardStore.findByOid(user.oid);
 
-    if (findBoardByUserOid.length > 0) {
+    // and no collab boards
+
+    if (!findBoardByUserOid.length === 1 && !collabBoards.length === 0) {
       const currentBoard = findBoardByUserOid[0];
       boardStore.setCurrentBoard(currentBoard);
-
       router.push({ name: "board-task", params: { id: currentBoard.id } });
     } else {
       // No boards found, navigate to general board view
       router.push({ name: "board" });
     }
   } catch (error) {
-    console.error("Login error:", error);
     isError.value = true;
   }
 };

@@ -54,7 +54,7 @@ export const useUserStore = defineStore("UserStore", {
           alert("Failed to login");
         }
       } catch (error) {
-        console.log("error");
+  
         throw new Error(error.message);
       }
     },
@@ -106,13 +106,12 @@ export const checkTokenExpiration = async (boardId) => {
   const boardStore = useBoardStore();
   const router = useRouter();
 
-  console.log(boardId);
+
 
   const isPublicBoard = boardId
     ? await boardStore.isPublicBoard(boardId)
     : false;
 
-  console.log(isPublicBoard);
 
   if (!userStore.token) {
     if (isPublicBoard) {

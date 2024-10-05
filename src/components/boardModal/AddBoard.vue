@@ -22,10 +22,6 @@ onMounted(async () => {
   boardTemplate.value.name = `${userStore.getUser.name}  personal board`;
   boardTemplate.value.emoji = "🙂";
   boardTemplate.value.color = "#DEDEDE";
-
-  if (boardStore.getBoards.length >= 1) {
-    router.push({ name: "board" });
-  }
 });
 
 const boardTemplate = ref({
@@ -49,16 +45,10 @@ const saveBoard = async () => {
       throw new Error(`Server responded with status ${res.status}`);
     }
 
-    const data = await res.json();
-
     if (res.status === 201) {
-      const newBoardId = data.id;
-      boardStore.setCurrentBoard(data);
-      router.push({ name: "board-task", params: { id: newBoardId } });
+      router.push({ name: "board" });
     } else if (res.status === 401 || res.status === 404) {
       handleAuthenticationClearAndRedirect();
-    } else {
-      router.push({ name: "board" });
     }
   } catch (error) {
     handleAuthenticationClearAndRedirect();
@@ -155,18 +145,7 @@ onClickOutside(emojiPicker, () => {
             >Cancel</submitButton
           >
           <submitButton
-            :class="{
-              'cursor-not-allowed':
-                boardStore.getBoards.length >= 1 || !boardTemplate.name,
-            }"
-            :buttonType="
-              boardStore.getBoards.length >= 1
-                ? 'disabled'
-                : boardTemplate.name
-                ? 'ok'
-                : 'disabled'
-            "
-            :disabled="boardStore.getBoards.length >= 1 || !boardTemplate.name"
+            buttonType="ok"
             class="itbkk-button-ok"
             @click="saveBoard"
             >Save</submitButton

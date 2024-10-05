@@ -11,7 +11,7 @@ import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import AccessDenied from "@/views/AccessDenied.vue";
 
-const routes = [
+const routes =  [
   {
     path: "/board",
     name: "board",
@@ -110,13 +110,9 @@ router.beforeEach(async (to, _, next) => {
     ? await boardStore.isPublicBoard(boardId)
     : false;
 
-  console.log(isPublicBoard);
-
   if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
-    console.log("User is not authenticated");
     next({ name: "login" });
   } else {
-    console.log("User is not authenticated");
     next();
   }
 });

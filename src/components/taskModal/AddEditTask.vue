@@ -124,7 +124,6 @@ const save = async () => {
     };
 
     const res = await taskStore.addTask(outputTask.value);
-    console.log(res);
 
     if (res.status === 201) {
       await taskStore.loadSortTasks(sortStore.getSortType);

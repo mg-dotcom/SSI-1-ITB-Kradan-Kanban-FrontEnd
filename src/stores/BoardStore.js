@@ -50,7 +50,6 @@ export const useBoardStore = defineStore("BoardStore", {
           this.board = data;
         }
       } catch (error) {
-        console.log(error);
 
         handleAuthenticationClearAndRedirect();
       }
@@ -96,7 +95,6 @@ export const useBoardStore = defineStore("BoardStore", {
           `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`,
           newVisibility
         );
-        console.log(`${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`);
         if (res.status >= 200 && res.status < 300) {
           this.currentBoard.visibility = newVisibility;
           this.toast.add({
@@ -119,7 +117,7 @@ export const useBoardStore = defineStore("BoardStore", {
     },
     async isPublicBoard(boardId) {
       const board = await this.loadBoardById(boardId);
-      console.log(board);
+
 
       return board.visibility === "PUBLIC";
     },

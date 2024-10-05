@@ -40,7 +40,7 @@ const boardVisibilityToString = () => {
 };
 
 const confirmVisibilityChange = async () => {
-  console.log(boardVisibilityToString().toUpperCase());
+
 
   await boardStore.changeBoardVisibility(
     boardStore.getCurrentBoard.id,

@@ -24,7 +24,6 @@ const fetchUser = async (url, userLogin) => {
 };
 
 const fetchToken=async (url)=>{
-  console.log('fetchhhhhhhhhhhhhh');
 
   const res=await fetch(`${url}`,{
     method:"POST",
@@ -33,14 +32,10 @@ const fetchToken=async (url)=>{
       Authorization: `Bearer ${useUserStore().refreshToken}`,
     },
   });
-  console.log('res',res);
   
 
   if(res.status===401){
-    console.log('401');
-    console.log('reset authentication state and redirect to login page');
   }else if(res.status===200){
-    console.log('200');
     const data = await res.json();
     return data;
   }else{

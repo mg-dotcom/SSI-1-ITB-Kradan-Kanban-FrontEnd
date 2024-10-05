@@ -65,7 +65,6 @@ const navigate = (content) => {
     "board-list": "board-status",
   };
 
-  console.log("Navigating to", content);
 
   const routeName = routes[content] || "home";
 

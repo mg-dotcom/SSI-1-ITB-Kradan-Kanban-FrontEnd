@@ -23,7 +23,6 @@ const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
 onMounted(async () => {
   // const limitOfStatus = await statusStore.loadStatusSetting();
-  console.log(boardStore.getCurrentBoard);
   
   const limitOfStatus = boardStore.getCurrentBoard;
   limitMaximumTask.value = limitOfStatus.limitMaximumTask;

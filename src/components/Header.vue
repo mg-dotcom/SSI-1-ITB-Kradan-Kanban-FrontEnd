@@ -7,12 +7,11 @@ import { onClickOutside } from "@vueuse/core";
 
 const route = useRoute();
 
+const userStore = useUserStore();
 
-const userStore = useUserStore()
+const router = useRouter();
 
-const router = useRouter()
-
-userStore.initialize()
+userStore.initialize();
 
 const logout = () => {
   userStore.logout();
@@ -56,7 +55,7 @@ onClickOutside(dropdownMenu, () => {
           <div class="relative w-max mx-auto">
             <button
               @click="toggleDropdown"
-              class="px-4 py-2 flex items-center rounded-full text-[#333] text-sm border bg-white bg-opacity-45 outline-none hover:bg-gray-100 duration-300"
+              class="itbkk-fullname px-4 py-2 flex items-center rounded-full text-[#333] text-sm border bg-white bg-opacity-45 outline-none hover:bg-gray-100 duration-300"
             >
               <img
                 src="https://readymadeui.com/profile_6.webp"
@@ -132,7 +131,7 @@ onClickOutside(dropdownMenu, () => {
         </div>
       </div>
     </div>
-    </div>
+  </div>
 </template>
 
 <style scoped></style>
