@@ -10,6 +10,7 @@ import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import AccessDenied from "@/views/AccessDenied.vue";
+import CollabView from "@/views/CollabView.vue";
 
 const routes = [
   {
@@ -19,18 +20,23 @@ const routes = [
     meta: { requireAuth: true },
     children: [
       {
-        path: "add", // No leading slash
+        path: "add", 
         name: "board-add",
         component: AddBoard,
       },
 
       {
-        path: ":id", // No leading slash
+        path: ":id", 
         name: "board-detail",
         component: BoardView,
         redirect: (to) => {
           return { name: "board-task", params: { id: to.params.id } }; // Redirect to tasks for this board
         },
+      },
+      {
+        path: ":id/collab", 
+        name: "board-collab",
+        component: CollabView,
       },
     ],
   },

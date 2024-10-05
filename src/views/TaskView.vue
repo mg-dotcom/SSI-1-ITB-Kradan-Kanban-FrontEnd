@@ -252,6 +252,12 @@ const handleEditTask = () => {
             </label>
           </div>
           <buttonSubmit
+            class="itbkk-manage-status flex gap-x-3 justify-center items-center bg-blue text-white font-bold py-2 px-4 rounded-lg"
+            @click="router.push({ name: 'board-collab' })"
+          >
+            Manage Collaborator</buttonSubmit
+          >
+          <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2 justify-center items-center"
             @click="router.push({ name: 'board-status' })"
