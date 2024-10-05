@@ -34,9 +34,9 @@ onClickOutside(emojiPicker, () => {
       <div
         class="content h-full flex flex-col py-6 xl:px-24 lg:px-10 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5"
       >
-        <NavigateTitle>
+        <!-- <NavigateTitle>
           <template #navigate-home> Board List </template>
-        </NavigateTitle>
+        </NavigateTitle> -->
         <div class="flex p-7">
           <div class="grid grid-cols-4 gap-8">
             <div

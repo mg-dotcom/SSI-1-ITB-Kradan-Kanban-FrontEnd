@@ -115,10 +115,11 @@ const currentPage = route.name;
       <div
         class="flex justify-between mobile:px-0 py-6 md-vertical:flex-row mobile:flex-col gap-3"
       >
-        <NavigateTitle :currentPage="currentPage">
+        <!-- <NavigateTitle :currentPage="currentPage">
           <template #navigate-home>Home</template>
           <template #navigate-next>Task Status</template>
-        </NavigateTitle>
+        </NavigateTitle> -->
+        <NavigateTitle :boardId="boardId"/>
 
         <div class="flex">
           <div class="my-3">

@@ -5,6 +5,7 @@ import StatusButton from "../components/button/StatusButton.vue";
 import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import NavigateTitle from "@/components/navigateTitle.vue";
+import Breadcrumb from 'primevue/breadcrumb';
 import { useRouter, RouterView, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useTaskStore } from "../stores/TaskStore.js";
@@ -150,6 +151,8 @@ const handleEditTask = () => {
   popup.optionEditDelete = false;
   router.push({ name: "task-edit", params: { taskId: selectedId.value } });
 };
+
+
 </script>
 
 <template>
@@ -174,9 +177,11 @@ const handleEditTask = () => {
         {{ boardStore.getCurrentBoard.name }}
       </div>
 
-      <NavigateTitle :currentPage="currentPage">
+      <!-- <NavigateTitle :currentPage="currentPage">
         <template #navigate-home>Home</template>
-      </NavigateTitle>
+      </NavigateTitle> -->
+      
+      <NavigateTitle :boardId="boardId"/>
 
       <div
         class="flex justify-between py-6 md-vertical:px-6 mobile:px-0 md-vertical:flex-row mobile:flex-col gap-3"
