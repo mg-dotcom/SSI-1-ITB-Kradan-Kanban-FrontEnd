@@ -28,7 +28,7 @@ watch(
 </script>
   
 <template>
-      <Breadcrumb :home="home" :model="items">
+      <Breadcrumb :home="home" :model="items" class="bg-bgLightBlue">
         <template #item="{ item, props }">
             <router-link v-if="item.routeName" v-slot="{ href, navigate }" :to="{name:item.routeName, params:item.params}" custom>
                 <a :href="href" v-bind="props.action" @click="navigate">

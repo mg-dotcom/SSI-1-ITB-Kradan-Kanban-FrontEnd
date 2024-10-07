@@ -5,8 +5,8 @@ import NavigateTitle from '@/components/navigateTitle.vue'
 import { useRouter, useRoute } from "vue-router";
 
 const route = useRoute();
-const currentPage = route.name;
-console.log(currentPage);
+const boardId = route.params.id;
+
 
 </script>
 
