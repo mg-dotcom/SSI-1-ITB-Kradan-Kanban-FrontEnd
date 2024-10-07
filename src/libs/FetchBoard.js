@@ -69,4 +69,17 @@ const patchBoardVisibility = async (url, visibilityMode) => {
   return res;
 };
 
-export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility };
+const fetchCollab = async (url) => {
+  const res = await fetch(`${url}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+  });
+  handleResponseStatus(res);
+  const data = await res.json();
+  return data;
+};
+
+export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility,fetchCollab };

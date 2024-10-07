@@ -1,11 +1,31 @@
 <script setup>
 import ConfirmModal from './ConfirmModal.vue'
 import submitButton from '../button/Button.vue'
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 
 defineEmits(['closeAddCollab', 'addCollab'])
 const email = ref('')
-const accessRight = ref('')
+const accessRight = ref('READ')
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const validateEmail=ref(false)
+watch(email, (newEmail) => {
+    console.log(newEmail)
+
+    if (!emailRegex.test(newEmail)) {
+        validateEmail.value = false
+        console.log('invalid email'); 
+
+        
+    }else{
+        validateEmail.value = true
+        console.log('valid email');
+    }
+    console.log(validateEmail.value);
+    
+})
+
+
 </script>
 
 <template>
@@ -22,23 +42,20 @@ const accessRight = ref('')
                     <input
                         type="text"
                         placeholder="Type here"
-                        class="input input-bordered w-full max-w-xs"
+                        class="input input-bordered w-full max-w-xs bg-white border-b-2 font-bold text-black"
                         v-model="email"
+                        maxlength="50"
                     />
                 </label>
-                <label class="form-control w-full max-w-xs">
-                    <div class="label">
+                <label class="form-control w-full max-w-xs bg-white">
+                    <div class="label" >
                         <span class="label-text"
                             >Access Right</span
                         >
                     </div>
-                    <select class="select select-bordered" v-model="accessRight">
-                        <option disabled selected>Pick one</option>
-                        <option>Star Wars</option>
-                        <option>Harry Potter</option>
-                        <option>Lord of the Rings</option>
-                        <option>Planet of the Apes</option>
-                        <option>Star Trek</option>
+                    <select class="select select-bordered bg-white border-b-2 font-bold text-black" v-model="accessRight" >
+                        <option>READ</option>
+                        <option>WRITE</option>
                     </select>
                 </label>
             </div>
@@ -49,7 +66,9 @@ const accessRight = ref('')
             >
         </template>
         <template #button-right>
-            <submitButton buttonType="add" class="itbkk-button-confirm" @click="$emit('addCollab',email,accessRight)">Add</submitButton>
+            <submitButton buttonType="add" class="itbkk-button-confirm" @click="$emit('addCollab',email,accessRight)" 
+            :button-type="validateEmail ? 'add' : 'cancel'" :disabled="!validateEmail" :class="{'disabled cursor-not-allowed':!validateEmail}"
+            >Add</submitButton>
         </template>
     </ConfirmModal>
 </template>
