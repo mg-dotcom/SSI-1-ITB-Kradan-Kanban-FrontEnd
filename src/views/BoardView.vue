@@ -3,10 +3,9 @@ import Header from "@/components/Header.vue";
 import { RouterView } from "vue-router";
 import NavigateTitle from "@/components/navigateTitle.vue";
 import { useBoardStore } from "@/stores/BoardStore";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useUserStore } from "@/stores/UserStore";
-import buttonSubmit from "@/components/button/Button.vue";
 import router from "@/router/page";
 
 const boardStore = useBoardStore();
@@ -27,6 +26,8 @@ const collab = ref({
   boardId: "",
   accessRight: "Write",
 });
+
+
 </script>
 
 <template>

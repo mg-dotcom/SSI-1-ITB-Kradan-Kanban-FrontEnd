@@ -29,12 +29,20 @@ export const useBoardStore = defineStore("BoardStore", {
       return state.board.find((board) => board.id === id).visibility;
     },
     isBoardOwner: (state) => {
-      // Check if the user is logged in and if the current board exists
       if (!state.userStore.isLoggedIn || !state.currentBoard) {
         return false;
       }
-      // Return true if the logged-in user is the owner of the current board
       return state.userStore.user?.oid === state.currentBoard.owner?.oid;
+    },
+    getPersonalBoard: (state) => {
+      return state.board.sort((a, b) => {
+        return new Date(b.createdOn) - new Date(a.createdOn);
+      });
+    },
+    getPublicBoard: (state) => {
+      return state.board.sort((a, b) => {
+        return new Date(b.addedOn) - new Date(a.addedOn);
+      });
     },
   },
   actions: {
@@ -50,7 +58,6 @@ export const useBoardStore = defineStore("BoardStore", {
           this.board = data;
         }
       } catch (error) {
-
         handleAuthenticationClearAndRedirect();
       }
     },
@@ -117,7 +124,6 @@ export const useBoardStore = defineStore("BoardStore", {
     },
     async isPublicBoard(boardId) {
       const board = await this.loadBoardById(boardId);
-
 
       return board.visibility === "PUBLIC";
     },
