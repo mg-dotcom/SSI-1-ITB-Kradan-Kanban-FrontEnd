@@ -39,9 +39,6 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-// const isOwner = computed(() => {
-//   return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid
-// };
 const isOwner = computed(() => boardStore.isBoardOwner);
 
 const boardVisibilityToString = () => {
@@ -259,6 +256,8 @@ const handleEditTask = () => {
           <buttonSubmit
             class="itbkk-manage-status flex gap-x-3 justify-center items-center bg-blue text-white font-bold py-2 px-4 rounded-lg"
             @click="router.push({ name: 'board-collab' })"
+            :disabled="!isOwner"
+            :class="{'disabled cursor-not-allowed bg-gray-300': !isOwner}"
           >
             Manage Collaborator</buttonSubmit
           >
@@ -266,6 +265,7 @@ const handleEditTask = () => {
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2 justify-center items-center"
             @click="router.push({ name: 'board-status' })"
+            
           >
             <img src="../assets/status-list.svg" alt="" class="w-5" />
             Manage Status</buttonSubmit

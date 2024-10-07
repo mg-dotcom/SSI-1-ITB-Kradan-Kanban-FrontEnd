@@ -149,20 +149,13 @@ export const useBoardStore = defineStore("BoardStore", {
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
         newCollab
       );
-      if (res.status === 401 || res.status === 404) {
+      if (res.status === 401) {
         handleAuthenticationClearAndRedirect();
-      } else if (res.status < 200 || res.status > 299) {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "There is a problem. Please try again later",
-          life: 3000,
-        });
-      } else {
+      } else if (res.status === 201) {
         this.collaborators.push(newCollab);
+      } else{
+        return res;
       }
-
-      return res;
     },
   },
 });

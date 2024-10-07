@@ -8,8 +8,10 @@ import { ref } from 'vue'
 import ConfirmModal from '@/components/confirmModal/ConfirmModal.vue'
 import SubmitButton from '@/components/button/Button.vue'
 import { useBoardStore } from '@/stores/BoardStore'
+import { useToast } from "primevue/usetoast";
 
 const boardStore = useBoardStore()
+const toast = useToast()
 const route = useRoute()
 const boardId = route.params.id
 const openAddCollabModal = ref(false)
@@ -18,7 +20,43 @@ const accessRight = ref('READ')
 
 const addCollab = (email, accessRight) => {
     console.log('addCollab', email, accessRight)
-    openAddCollabModal.value = false
+    const res=boardStore.addCollab(boardId, {email,accessRight})
+    if(res.status==403){
+        // alert('You do not have permission to add board collaborator.')
+        toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "You do not have permission to add board collaborator.",
+            life: 3000,
+        });
+        openAddCollabModal.value = false
+    }else if(res.status==404){
+        // alert('The user does not exists.')
+        toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "The user does not exists.",
+            life: 3000,
+        });
+    }else if(res.status==409){
+        // alert('The user is already the collaborator of this board.')
+        toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "The user is already the collaborator of this board.",
+            life: 3000,
+        });
+        openAddCollabModal.value = false
+    }else{
+        // alert('There is a problem. Please try again later.')
+        toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: "There is a problem. Please try again later.",
+            life: 3000,
+        });
+        openAddCollabModal.value = false
+    }
 }
 
 const removeCollab = () => {
