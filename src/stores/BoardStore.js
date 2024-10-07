@@ -125,6 +125,7 @@ export const useBoardStore = defineStore("BoardStore", {
 
       return board.visibility === "PUBLIC";
     },
+    //collaborators
     async loadCollab(boardId) {
       try {
         const data = await fetchCollab(
@@ -141,6 +142,27 @@ export const useBoardStore = defineStore("BoardStore", {
 
         handleAuthenticationClearAndRedirect();
       }
+    },
+    async addCollab(boardId,newCollab) {
+      await checkTokenExpiration();
+      const res = await addBoard(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
+        newCollab
+      );
+      if (res.status === 401 || res.status === 404) {
+        handleAuthenticationClearAndRedirect();
+      } else if (res.status < 200 || res.status > 299) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "There is a problem. Please try again later",
+          life: 3000,
+        });
+      } else {
+        this.collaborators.push(newCollab);
+      }
+
+      return res;
     },
   },
 });

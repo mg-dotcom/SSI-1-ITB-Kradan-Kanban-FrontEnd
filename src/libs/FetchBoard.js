@@ -82,4 +82,19 @@ const fetchCollab = async (url) => {
   return data;
 };
 
-export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility,fetchCollab };
+const addCollab = async (url,collaborator) => {
+  const res = await fetch(`${url}`, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+
+    body: JSON.stringify({
+      email: collaborator.email,
+      access_right: collaborator.access_right,
+    }),
+  });
+};
+
+export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility,fetchCollab,addCollab };

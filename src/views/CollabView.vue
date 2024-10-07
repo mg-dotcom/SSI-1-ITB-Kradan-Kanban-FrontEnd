@@ -7,7 +7,9 @@ import AddCollab from '@/components/confirmModal/AddCollab.vue'
 import { ref } from 'vue'
 import ConfirmModal from '@/components/confirmModal/ConfirmModal.vue'
 import SubmitButton from '@/components/button/Button.vue'
+import { useBoardStore } from '@/stores/BoardStore'
 
+const boardStore = useBoardStore()
 const route = useRoute()
 const boardId = route.params.id
 const openAddCollabModal = ref(false)
