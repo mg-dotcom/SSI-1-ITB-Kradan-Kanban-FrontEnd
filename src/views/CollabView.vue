@@ -3,10 +3,17 @@ import { RouterView } from 'vue-router'
 import Header from '@/components/Header.vue'
 import NavigateTitle from '@/components/navigateTitle.vue'
 import { useRouter, useRoute } from "vue-router";
+import AddCollab from '@/components/confirmModal/AddCollab.vue';
+import { ref } from 'vue';
 
 const route = useRoute();
 const boardId = route.params.id;
+const openAddCollabModal =ref(false);
 
+const addCollab = (email, accessRight) => {
+    console.log('addCollab', email, accessRight);
+    openAddCollabModal.value = false;
+}
 
 </script>
 
@@ -33,7 +40,8 @@ const boardId = route.params.id;
                 <div>
                     <button
                         class="itbkk-button-next bg-green-500 text-white font-bold py-2 px-4 rounded-lg"
-                    >
+                        @click="openAddCollabModal=true"
+                        >
                         Add Collaborator
                     </button>
                 </div>
@@ -124,6 +132,11 @@ const boardId = route.params.id;
                 </div>
             </div>
         </div>
+        <AddCollab
+        v-if="openAddCollabModal"
+            @closeAddCollab="openAddCollabModal=false"
+            @addCollab="addCollab"
+        ></AddCollab>
     </div>
 </template>
 
