@@ -1,47 +1,29 @@
-<template>
-  <div
-    ref="mySlot"
-    class="itbkk-button-home font-bold flex items-center text-blue xl:text-2xl lg:text-3xl md:text-2xl sm:text-lg md-vertical:px-3 mobile:px-0"
-    :class="{
-      'pt-6': props.currentPage === 'board-task',
-    }"
-  >
-    <a
-      class="relative after:bg-blue after:absolute after:h-[3px] after:w-0 after:bottom-0 after:left-0 hover:after:w-full after:transition-all after:duration-300 cursor-pointer"
-      :class="{ 'opacity-65': props.currentPage === 'board-status' }"
-      @click="handleHomeClick"
-    >
-      <slot name="navigate-home"></slot>
-    </a>
-    <div class="flex" v-show="props.currentPage === 'board-status'">
-      <div class="px-2">></div>
-      <div class="itbkk-button-next cursor-pointer" @click="handleNextClick">
-        <slot name="navigate-next"></slot>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
-const mySlot = ref(null);
-const router = useRouter();
+import Breadcrumb from 'primevue/breadcrumb';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
-  currentPage: String,
+  boardId: {
+    type: String,
+    default: ''
+  }
 });
 
-const handleHomeClick = () => {
-  const homeSlotElement = mySlot.value?.querySelector("a");
+// Define breadcrumb items
+const items = ref([]);
 
-  const homeContent = homeSlotElement.textContent
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "-");
-  navigate(homeContent);
-};
+// Watch for changes in boardId and update items accordingly
+watch(
+  () => props.boardId,
+  (newBoardId) => {
+    items.value = [
+      { label: 'Home', routeName: 'board-task', params: { id: newBoardId } },
+      { label: 'Status', routeName: 'board-status', params: { id: newBoardId } },
+      { label: 'Collaborator', routeName: 'board-collab', params: { id: newBoardId } }
+    ];
+  },
+  { immediate: true } // Trigger this watcher immediately when the component is mounted
+);
 
 const handleNextClick = () => {
   const nextSlotElement = mySlot.value?.querySelector(".itbkk-button-next");
@@ -71,3 +53,20 @@ const navigate = (content) => {
   router.push({ name: routeName });
 };
 </script>
+  
+<template>
+      <Breadcrumb :home="home" :model="items" class="bg-bgLightBlue">
+        <template #item="{ item, props }">
+            <router-link v-if="item.routeName" v-slot="{ href, navigate }" :to="{name:item.routeName, params:item.params}" custom>
+                <a :href="href" v-bind="props.action" @click="navigate">
+                    <span :class="[item.label, 'text-color']" />
+                    <span class="text-primary font-semibold">{{ item.label }}</span>
+                </a>
+            </router-link>
+        </template>
+      </Breadcrumb>
+</template>
+  
+<style scoped>
+
+</style>

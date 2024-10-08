@@ -4,6 +4,7 @@ import {
   fetchBoardById,
   addBoard,
   patchBoardVisibility,
+  fetchCollab,
 } from "../libs/FetchBoard.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -18,6 +19,7 @@ export const useBoardStore = defineStore("BoardStore", {
     toast: useToast(),
     currentBoard: {},
     userStore: useUserStore(),
+    collaborators: [],
   }),
   getters: {
     getBoards: (state) => state.board,
@@ -126,6 +128,38 @@ export const useBoardStore = defineStore("BoardStore", {
       const board = await this.loadBoardById(boardId);
 
       return board.visibility === "PUBLIC";
+    },
+    //collaborators
+    async loadCollab(boardId) {
+      try {
+        const data = await fetchCollab(
+          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`
+        );
+
+        if (data.status < 200 && data.status > 299) {
+          alert("Failed to fetch boards");
+        } else {
+          this.collaborators = data;
+        }
+      } catch (error) {
+        console.log(error);
+
+        handleAuthenticationClearAndRedirect();
+      }
+    },
+    async addCollab(boardId,newCollab) {
+      await checkTokenExpiration();
+      const res = await addBoard(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
+        newCollab
+      );
+      if (res.status === 401) {
+        handleAuthenticationClearAndRedirect();
+      } else if (res.status === 201) {
+        this.collaborators.push(newCollab);
+      } else{
+        return res;
+      }
     },
   },
 });

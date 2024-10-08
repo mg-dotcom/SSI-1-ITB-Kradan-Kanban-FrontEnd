@@ -5,6 +5,7 @@ import StatusButton from "../components/button/StatusButton.vue";
 import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import NavigateTitle from "@/components/navigateTitle.vue";
+import Breadcrumb from 'primevue/breadcrumb';
 import { useRouter, RouterView, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useTaskStore } from "../stores/TaskStore.js";
@@ -38,9 +39,6 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-// const isOwner = computed(() => {
-//   return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid
-// };
 const isOwner = computed(() => boardStore.isBoardOwner);
 
 const boardVisibilityToString = () => {
@@ -150,6 +148,8 @@ const handleEditTask = () => {
   popup.optionEditDelete = false;
   router.push({ name: "task-edit", params: { taskId: selectedId.value } });
 };
+
+
 </script>
 
 <template>
@@ -174,9 +174,11 @@ const handleEditTask = () => {
         {{ boardStore.getCurrentBoard.name }}
       </div>
 
-      <NavigateTitle :currentPage="currentPage">
+      <!-- <NavigateTitle :currentPage="currentPage">
         <template #navigate-home>Home</template>
-      </NavigateTitle>
+      </NavigateTitle> -->
+      
+      <NavigateTitle :boardId="boardId"/>
 
       <div
         class="flex justify-between py-6 md-vertical:px-6 mobile:px-0 md-vertical:flex-row mobile:flex-col gap-3"
@@ -252,9 +254,18 @@ const handleEditTask = () => {
             </label>
           </div>
           <buttonSubmit
+            class="itbkk-manage-status flex gap-x-3 justify-center items-center bg-blue text-white font-bold py-2 px-4 rounded-lg"
+            @click="router.push({ name: 'board-collab' })"
+            :disabled="!isOwner"
+            :class="{'disabled cursor-not-allowed bg-gray-300': !isOwner}"
+          >
+            Manage Collaborator</buttonSubmit
+          >
+          <buttonSubmit
             buttonType="manage-status"
             class="itbkk-manage-status flex gap-x-2 justify-center items-center"
             @click="router.push({ name: 'board-status' })"
+            
           >
             <img src="../assets/status-list.svg" alt="" class="w-5" />
             Manage Status</buttonSubmit
