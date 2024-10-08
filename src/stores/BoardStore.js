@@ -5,6 +5,9 @@ import {
   addBoard,
   patchBoardVisibility,
   fetchCollab,
+  addCollab,
+  deleteCollab,
+  updateAccessRight,
 } from "../libs/FetchBoard.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -129,6 +132,11 @@ export const useBoardStore = defineStore("BoardStore", {
 
       return board.visibility === "PUBLIC";
     },
+    async isOwner(boardId) {
+      const board = await this.loadBoardById(boardId);
+
+      return board.owner.oid === this.userStore.user.oid;
+    },
     //collaborators
     async loadCollab(boardId) {
       try {
@@ -147,9 +155,9 @@ export const useBoardStore = defineStore("BoardStore", {
         handleAuthenticationClearAndRedirect();
       }
     },
-    async addCollab(boardId,newCollab) {
+    async addCollab(boardId, newCollab) {
       await checkTokenExpiration();
-      const res = await addBoard(
+      const res = await addCollab(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
         newCollab
       );
@@ -157,7 +165,26 @@ export const useBoardStore = defineStore("BoardStore", {
         handleAuthenticationClearAndRedirect();
       } else if (res.status === 201) {
         this.collaborators.push(newCollab);
-      } else{
+      } else {
+        return res;
+      }
+    },
+    async updateAccessRight(boardId, collabId, collaborator) {
+      await checkTokenExpiration();
+      const res = await updateAccessRight(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabId}`,
+        collaborator
+      );
+      if (res.status === 401) {
+        handleAuthenticationClearAndRedirect();
+      } else if (res.status === 200) {
+        const index = this.collaborators.findIndex(
+          (collab) => collab.id === collabId
+        );
+        this.collaborators[index].access_right = collaborator.access_right;
+      } else {
         return res;
       }
     },

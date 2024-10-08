@@ -40,7 +40,7 @@ const props = defineProps({
         buttonType === 'transfer-on',
       'bg-gray-500 hover:bg-gray-600 transition-colors w-40 active:scale-[93%] active:transition-transform text-white':
         buttonType === 'transfer-off',
-      'bg-gray-400 px-4 py-2 rounded-md cursor-not-allowed opacity-50 disabled w-20  text-white hover:bg-gray-500 transition-colors active:scale-[93%] active:transition-transform' :
+      'bg-gray-400 px-4 py-2 rounded-md cursor-not-allowed opacity-50 disabled w-20  text-white hover:bg-gray-500 transition-colors active:scale-[93%] active:transition-transform':
         buttonType === 'disabled',
     }"
   >

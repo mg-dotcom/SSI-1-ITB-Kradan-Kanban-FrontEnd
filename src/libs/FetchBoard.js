@@ -81,9 +81,9 @@ const fetchCollab = async (url) => {
   return data;
 };
 
-const addCollab = async (url,collaborator) => {
+const addCollab = async (url, collaborator) => {
   const res = await fetch(`${url}`, {
-    method: "POST",
+    method: "PATCH",
     headers: {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,
@@ -94,6 +94,42 @@ const addCollab = async (url,collaborator) => {
       access_right: collaborator.access_right,
     }),
   });
+  return res;
 };
 
-export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility,fetchCollab,addCollab };
+const deleteCollab = async (url) => {
+  const res = await fetch(`${url}`, {
+    method: "DELETE",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+  });
+  return res;
+};
+
+const updateAccessRight = async (url, collaborator) => {
+  const res = await fetch(`${url}`, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+
+    body: JSON.stringify({
+      access_right: collaborator.access_right,
+    }),
+  });
+  return res;
+};
+
+export {
+  fetchAllBoards,
+  fetchBoardById,
+  addBoard,
+  patchBoardVisibility,
+  fetchCollab,
+  addCollab,
+  deleteCollab,
+  updateAccessRight,
+};
