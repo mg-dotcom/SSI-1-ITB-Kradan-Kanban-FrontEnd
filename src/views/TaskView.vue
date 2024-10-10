@@ -39,7 +39,10 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-const isOwner = computed(() => boardStore.isBoardOwner);
+// const board = await boardStore.loadBoardById(boardId);
+const isOwner = computed(() => {
+  return boardStore.getBoards.owner.oid === userStore.getUser.oid;
+});
 
 const boardVisibilityToString = () => {
   return boardVisibility.value === false ? "Public" : "Private";
@@ -254,9 +257,11 @@ const handleEditTask = () => {
             @click="router.push({ name: 'board-collab' })"
             :disabled="!isOwner"
             :class="{
-              'disabled cursor-not-allowed bg-gray-400 px-4 py-2 rounded-md  opacity-50   text-white hover:bg-gray-500 transition-colors active:scale-[93%] active:transition-transform':
+              'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
                 !isOwner,
+              'tooltip tooltip-bottom ': !isOwner,
             }"
+            data-tip="You don't have permission"
           >
             Manage Collaborator</buttonSubmit
           >
@@ -270,10 +275,14 @@ const handleEditTask = () => {
           >
           <buttonSubmit
             @click.prevent="isOwner ? (openLimit = true) : null"
-            :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
+            :disabled="!isOwner"
             data-tip="You dont have permission"
             class="itbkk-status-setting"
-            button-type="add"
+            :class="{
+              'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
+                !isOwner,
+              'tooltip tooltip-bottom ': !isOwner,
+            }"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

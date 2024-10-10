@@ -35,7 +35,6 @@ export const useUserStore = defineStore("UserStore", {
           `${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}`,
           user
         );
-
         // initialize()
         const decoded = jwtDecode(data.access_token);
         this.token = data.access_token;

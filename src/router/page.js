@@ -107,13 +107,16 @@ router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
   const boardStore = useBoardStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
-
   const boardId = to.params.id;
-  const isOwner = boardId ? await boardStore.isOwner(boardId) : false;
 
-  // Check if the board is public
+  userStore.initialize();
+
   const isPublicBoard = boardId
     ? await boardStore.isPublicBoard(boardId)
+    : false;
+
+  const isOwner = boardId
+    ? await boardStore.isBoardOwnerByRoute(boardId, userStore.getUser.oid)
     : false;
 
   if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {

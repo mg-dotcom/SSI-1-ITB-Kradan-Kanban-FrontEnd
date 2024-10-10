@@ -1,7 +1,6 @@
 <script setup>
 import ConfirmModal from "./ConfirmModal.vue";
 import submitButton from "../button/Button.vue";
-import { useRoute } from "vue-router";
 import { useBoardStore } from "@/stores/BoardStore";
 import { ref, watch, computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
@@ -10,7 +9,6 @@ defineEmits(["closeAddCollab", "addCollab"]);
 const userStore = useUserStore();
 const email = ref("");
 const accessRight = ref("READ");
-const route = useRoute();
 
 const ownerEmail = userStore.getUser.email;
 
@@ -28,8 +26,10 @@ watch(email, (newEmail) => {
 });
 
 const boardStore = useBoardStore();
-const isOwner = computed(() => boardStore.isBoardOwner);
 
+const isOwner = () => {
+  return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid;
+};
 </script>
 
 <template>

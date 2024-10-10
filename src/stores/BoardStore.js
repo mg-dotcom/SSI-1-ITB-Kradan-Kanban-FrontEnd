@@ -27,9 +27,6 @@ export const useBoardStore = defineStore("BoardStore", {
   getters: {
     getBoards: (state) => state.board,
     getCurrentBoard: (state) => state.currentBoard,
-    getBoardById: (state) => (id) => {
-      return state.board.find((board) => board.id === id);
-    },
     getVisibility: (state) => (id) => {
       return state.board.find((board) => board.id === id).visibility;
     },
@@ -129,13 +126,12 @@ export const useBoardStore = defineStore("BoardStore", {
     },
     async isPublicBoard(boardId) {
       const board = await this.loadBoardById(boardId);
-
       return board.visibility === "PUBLIC";
     },
-    async isOwner(boardId) {
+    async isBoardOwnerByRoute(boardId, userOid) {
       const board = await this.loadBoardById(boardId);
 
-      return board.owner.oid === this.userStore.user.oid;
+      return board.owner.oid === userOid;
     },
     //collaborators
     async loadCollab(boardId) {
@@ -148,6 +144,7 @@ export const useBoardStore = defineStore("BoardStore", {
           alert("Failed to fetch boards");
         } else {
           this.collaborators = data;
+          console.log(data);
         }
       } catch (error) {
         console.log(error);

@@ -67,13 +67,15 @@ const addCollab = async (email, accessRightValue) => {
 };
 
 const removeCollab = async () => {
-  const res = await boardStore.deleteCollab(boardId, collabId, collabName);
-  if (res.success) {
-    showToast("success", "Success", "Collaborator removed successfully!");
-    // Optionally, refresh the collaborators list here
-  } else {
-    showToast("error", "Error", "Failed to remove collaborator.");
-  }
+  console.log("Remove collaborator");
+
+  // const res = await boardStore.deleteCollab(boardId, collabId, collabName);
+  // if (res.success) {
+  //   showToast("success", "Success", "Collaborator removed successfully!");
+  //   // Optionally, refresh the collaborators list here
+  // } else {
+  //   showToast("error", "Error", "Failed to remove collaborator.");
+  // }
   openRemoveCollabModal.value = false;
 };
 
@@ -203,7 +205,16 @@ const handleAccessRightChange = (collabId) => {
                       <select
                         class="select select-bordered bg-white border-b-2 font-bold text-black"
                         v-model="accessRight"
-                      @click.prevent="(event) => handleAccessRight(collab.id, collab.email, collab.access_right, event.target.value, event)"
+                        @click.prevent="
+                          (event) =>
+                            handleAccessRight(
+                              collab.id,
+                              collab.email,
+                              collab.access_right,
+                              event.target.value,
+                              event
+                            )
+                        "
                       >
                         <option>READ</option>
                         <option>WRITE</option>
@@ -227,6 +238,8 @@ const handleAccessRightChange = (collabId) => {
         </div>
       </div>
     </div>
+
+    <!-- AddCollab -->
     <AddCollab
       v-if="openAddCollabModal"
       @closeAddCollab="openAddCollabModal = false"

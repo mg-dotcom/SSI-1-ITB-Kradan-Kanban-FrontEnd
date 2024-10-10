@@ -31,17 +31,15 @@ onMounted(async () => {
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-const isOwner = () => {
-  return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid;
-};
+const isOwner = computed(() => {
+  return boardStore.getBoards.owner.oid === userStore.getUser.oid;
+});
 
 const boardVisibilityToString = () => {
   return boardVisibility.value === false ? "Public" : "Private";
 };
 
 const confirmVisibilityChange = async () => {
-
-
   await boardStore.changeBoardVisibility(
     boardStore.getCurrentBoard.id,
     boardVisibilityToString().toUpperCase()
@@ -119,7 +117,7 @@ const currentPage = route.name;
           <template #navigate-home>Home</template>
           <template #navigate-next>Task Status</template>
         </NavigateTitle> -->
-        <NavigateTitle :boardId="boardId"/>
+        <NavigateTitle :boardId="boardId" />
 
         <div class="flex">
           <div class="my-3">
@@ -148,20 +146,25 @@ const currentPage = route.name;
           >
             <buttonSubmit
               class="itbkk-button-add"
-              :buttonType="isPublic ? 'disabled' : 'add'"
-              :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
               data-tip="You don't have permission"
-              buttonType="add"
+              :class="{
+                'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
+                  !isOwner,
+                'tooltip tooltip-bottom ': !isOwner,
+              }"
               @click.prevent="router.push({ name: 'status-add' })"
               :disabled="!isOwner"
               >+ Add Status</buttonSubmit
             >
           </div>
           <buttonSubmit
-            :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
             data-tip="You dont have permission"
             class="itbkk-status-setting"
-            button-type="add"
+            :class="{
+              'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
+                !isOwner,
+              'tooltip tooltip-bottom ': !isOwner,
+            }"
             @click.prevent="isOwner ? (openLimit = true) : null"
           >
             <svg
@@ -264,7 +267,9 @@ const currentPage = route.name;
                             : null
                         "
                         :button-type="
-                          status.name === 'No Status' || status.name === 'Done'
+                          status.name === 'No Status' ||
+                          status.name === 'Done' ||
+                          !isOwner
                             ? 'disabled'
                             : 'edit'
                         "
@@ -286,7 +291,9 @@ const currentPage = route.name;
                           'pointer-events-none disabled': isPublic,
                         }"
                         :button-type="
-                          status.name === 'No Status' || status.name === 'Done'
+                          status.name === 'No Status' ||
+                          status.name === 'Done' ||
+                          !isOwner
                             ? 'disabled'
                             : 'delete'
                         "
