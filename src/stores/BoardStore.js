@@ -128,11 +128,6 @@ export const useBoardStore = defineStore("BoardStore", {
       const board = await this.loadBoardById(boardId);
       return board.visibility === "PUBLIC";
     },
-    async isBoardOwnerByRoute(boardId, userOid) {
-      const board = await this.loadBoardById(boardId);
-
-      return board.owner.oid === userOid;
-    },
 
     //collaborators
     async loadCollab(boardId) {
@@ -182,6 +177,23 @@ export const useBoardStore = defineStore("BoardStore", {
       );
 
       if (res.status === 200) {
+        this.collaborators.splice(index, 1);
+      }
+
+      return res;
+    },
+    async leaveCollab(collabOid) {
+      await checkTokenExpiration();
+      const res = await deleteCollab(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`
+      );
+
+      if (res.status === 200) {
+        const index = this.collaborators.findIndex(
+          (collab) => collab.oid === this.userStore.user.oid
+        );
         this.collaborators.splice(index, 1);
       }
 

@@ -2,14 +2,19 @@
 import Header from "@/components/Header.vue";
 import { RouterView } from "vue-router";
 import NavigateTitle from "@/components/navigateTitle.vue";
+import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { computed, onMounted, ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useUserStore } from "@/stores/UserStore";
 import router from "@/router/page";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
+import { useToast } from "primevue/usetoast";
 
 const boardStore = useBoardStore();
 const userStore = useUserStore();
+const toast = useToast();
+const collabBoardName = ref("");
 
 const isEmojiPickerVisible = ref(false);
 const emojiPicker = ref(null);
@@ -18,14 +23,41 @@ onClickOutside(emojiPicker, () => {
   isEmojiPickerVisible.value = false;
 });
 
-onMounted(async () => {
-  await boardStore.loadBoards();
-});
+const leaveCollabModal = ref(false);
 
 const collab = ref({
   boardId: "",
   accessRight: "Write",
 });
+
+const handleLeaveCollab = (collabOid) => {
+  const collabBoard = boardStore.getCollaborators.find(
+    (collab) => collab.oid === collabOid
+  );
+  collabBoardName.value = collabBoard.name;
+  leaveCollabModal.value = true;
+};
+
+const confirmLeaveCollab = async () => {
+  leaveCollabModal.value = false;
+  try {
+    const res = await boardStore.leaveCollab(collab.oid);
+    if (res.status === 200 || res.status === 403 || res.status === 404) {
+      router.push({ name: "board" });
+    } else if (res.status === 401) {
+      handleAuthenticationClearAndRedirect();
+    } else {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: "There is a problem. Please try again later.",
+        life: 3000,
+      });
+    }
+  } catch (error) {
+    alert("There is a problem. Please try again later.");
+  }
+};
 </script>
 
 <template>
@@ -173,7 +205,7 @@ const collab = ref({
 
                     <button
                       class="itbkk-leave-board bg-red-500 hover:bg-red-600 rounded-md transition-colors px-2 active:scale-[93%] active:transition-transform text-white text-xs font-bold"
-                      @click.stop="leaveBoard(board.id)"
+                      @click.stop="handleLeaveCollab(collab.oid)"
                     >
                       LEAVE
                     </button>
@@ -186,5 +218,29 @@ const collab = ref({
       </div>
     </div>
   </div>
+  <ConfirmModal v-if="leaveCollabModal">
+    <template #title>
+      <p>Remove Collaborator</p>
+    </template>
+    <template #question>
+      <div>Do you want to leave "{{ collabBoardName }}" board?</div>
+    </template>
+    <template #button-left>
+      <SubmitButton
+        buttonType="cancel"
+        class="itbkk-button-cancel"
+        @click="leaveCollabModal = false"
+        >Cancel</SubmitButton
+      >
+    </template>
+    <template #button-right>
+      <SubmitButton
+        buttonType="delete"
+        class="itbkk-button-confirm"
+        @click="confirmLeaveCollab"
+        >Remove</SubmitButton
+      >
+    </template>
+  </ConfirmModal>
 </template>
 <style scoped></style>

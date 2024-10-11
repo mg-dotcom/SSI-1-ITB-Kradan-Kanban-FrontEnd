@@ -125,9 +125,10 @@ router.beforeEach(async (to, _, next) => {
 
   if (to.path.startsWith("/board")) {
     try {
+      userStore.initialize();
+      await boardStore.loadBoards(); // Load the boards
       if (boardId) {
         userStore.initialize();
-
         await boardStore.loadBoardById(boardId); // Load the board data
         await boardStore.loadCollab(boardId); // Load the collaborators
         await taskStore.loadTasks(boardId); // Load the tasks
@@ -138,6 +139,29 @@ router.beforeEach(async (to, _, next) => {
     }
   }
 
+  if (to.name === "task-add" || to.name === "task-edit") {
+    const isOwner = computed(() => {
+      const currentBoard = boardStore.getCurrentBoard;
+      const currentUser = userStore.getUser;
+
+      if (currentBoard?.owner && currentUser) {
+        return currentBoard.owner.oid === currentUser.oid;
+      }
+      return false;
+    });
+    if (isOwner.value) {
+      return next();
+    }
+    const hasAccessRight = computed(() => {
+      const collab = boardStore.getCollaborators?.find(
+        (c) => c.oid === userStore.getUser?.oid
+      );
+      return collab?.accessRight === "WRITE";
+    });
+    if (!hasAccessRight.value) {
+      return next({ name: "access-denied" });
+    }
+  }
   next();
 });
 
