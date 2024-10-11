@@ -46,6 +46,7 @@ export const useBoardStore = defineStore("BoardStore", {
         return new Date(b.addedOn) - new Date(a.addedOn);
       });
     },
+    getCollaborators: (state) => state.collaborators,
   },
   actions: {
     async loadBoards() {
@@ -148,7 +149,6 @@ export const useBoardStore = defineStore("BoardStore", {
         }
       } catch (error) {
         console.log(error);
-
         handleAuthenticationClearAndRedirect();
       }
     },

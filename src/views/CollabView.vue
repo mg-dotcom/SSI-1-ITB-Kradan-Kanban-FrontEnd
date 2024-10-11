@@ -4,7 +4,7 @@ import Header from "@/components/Header.vue";
 import NavigateTitle from "@/components/navigateTitle.vue";
 import { useRoute } from "vue-router";
 import AddCollab from "@/components/confirmModal/AddCollab.vue";
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import SubmitButton from "@/components/button/Button.vue";
 import { useBoardStore } from "@/stores/BoardStore";
@@ -12,71 +12,82 @@ import { useToast } from "primevue/usetoast";
 import { useUserStore } from "@/stores/UserStore";
 
 const boardStore = useBoardStore();
-const toast = useToast();
 const route = useRoute();
 const boardId = route.params.id;
 const openAddCollabModal = ref(false);
 const openRemoveCollabModal = ref(false);
-const accessRight = ref("READ");
-const addConfirmModal = ref(false);
-const oldAccessRight = ref("");
+const changeAcessRightModal = ref(false);
 const newAccessRight = ref("");
+const oldAccessRight = ref("");
+const name = ref("");
 const userStore = useUserStore();
 
-const collaborators = ref([
-  { id: 1, name: "John Doe", email: "john@example.com", access_right: "READ" },
-  {
-    id: 2,
-    name: "Jane Smith",
-    email: "jane@example.com",
-    access_right: "WRITE",
-  },
-]);
+onMounted(async () => {
+  await boardStore.loadCollab(boardId);
+});
 
 const isOwner = computed(() => {
   return boardStore.getBoards.owner.oid === userStore.getUser.oid;
 });
-
-const addCollab = async (email, accessRightValue) => {
-  // await boardStore.addCollab(boardId, email, accessRightValue);
-  openAddCollabModal.value = false;
-};
 
 const removeCollab = async () => {
   console.log("Remove collaborator");
   openRemoveCollabModal.value = false;
 };
 
-const confirmChangeAccessRight = async (collabId) => {
-  boardStore.updateAccessRight(boardId, collabId, accessRight.value);
+const handleAccessRightChange = (collabOid) => {
+  const updatedCollaborator = boardStore.getCollaborators.find(
+    (c) => c.oid === collabOid
+  );
+  name.value = updatedCollaborator.name;
+  newAccessRight.value = updatedCollaborator.accessRight;
 
-  if (res.status === 200) {
-    showToast(
-      "success",
-      "Success",
-      `Access right changed to ${accessRight.value}!`
-    );
-    addConfirmModal.value = false;
-  } else if (res.status === 401) {
-    showToast(
-      "error",
-      "Error",
-      "You must be logged in to perform this action."
-    );
-  } else if (res.status === 403) {
-    showToast(
-      "error",
-      "Error",
-      "You do not have permission to change collaborator access right."
-    );
-  } else {
-    showToast("error", "Error", "There is a problem. Please try again later.");
-  }
+  changeAcessRightModal.value = true;
 };
 
-// const handleAccessRightChange = (collabId) => {
-//   addConfirmModal.value = true; // Show modal
-// };
+const handleCancleAccessRightChange = () => {
+  const updatedCollaborator = boardStore.getCollaborators.find(
+    (c) => c.name === name.value
+  );
+  updatedCollaborator.accessRight = oldAccessRight.value;
+  changeAcessRightModal.value = false;
+};
+
+const confirmChangeAccessRight = () => {
+  // await boardStore.updateAccessRight(boardId, collabId, accessRight.value);
+
+  changeAcessRightModal.value = false;
+
+  // if (res.status === 200) {
+  //   showToast(
+  //     "success",
+  //     "Success",
+  //     `Access right changed to ${accessRight.value}!`
+  //   );
+  //   changeAcessRightModal.value = false;
+  // } else if (res.status === 401) {
+  //   showToast(
+  //     "error",
+  //     "Error",
+  //     "You must be logged in to perform this action."
+  //   );
+  // } else if (res.status === 403) {
+  //   showToast(
+  //     "error",
+  //     "Error",
+  //     "You do not have permission to change collaborator access right."
+  //   );
+  // } else {
+  //   showToast("error", "Error", "There is a problem. Please try again later.");
+  // }
+};
+
+watch(
+  () => boardStore.getCollaborators.map((c) => c.accessRight).join(" "), // Join access rights into a string
+  (newVal, oldVal) => {
+    oldAccessRight.value = oldVal;
+  }
+);
 </script>
 
 <template>
@@ -147,8 +158,7 @@ const confirmChangeAccessRight = async (collabId) => {
                 </tr>
                 <tr
                   class="itbkk-item py-4"
-                  v-if="true"
-                  v-for="(collab, index) in collaborators"
+                  v-for="(collab, index) in boardStore.getCollaborators"
                   :key="index"
                 >
                   <td
@@ -166,28 +176,20 @@ const confirmChangeAccessRight = async (collabId) => {
                   >
                     {{ collab.email }}
                   </td>
+
                   <td
                     class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all"
                   >
                     <label class="form-control w-full max-w-xs bg-white">
                       <select
                         class="select select-bordered bg-white border-b-2 font-bold text-black"
-                        v-model="accessRight"
+                        v-model="collab.accessRight"
                         :class="{ 'disabled cursor-not-allowed': !isOwner }"
                         :disabled="!isOwner"
-                        @click.prevent="
-                          (event) =>
-                            handleAccessRight(
-                              collab.id,
-                              collab.email,
-                              collab.access_right,
-                              event.target.value,
-                              event
-                            )
-                        "
+                        @change="handleAccessRightChange(collab.oid)"
                       >
-                        <option>READ</option>
-                        <option>WRITE</option>
+                        <option value="READ">READ</option>
+                        <option value="WRITE">WRITE</option>
                       </select>
                     </label>
                   </td>
@@ -209,34 +211,28 @@ const confirmChangeAccessRight = async (collabId) => {
       </div>
     </div>
 
-    <!-- AddCollab -->
-    <AddCollab
-      v-if="openAddCollabModal"
-      @closeAddCollab="openAddCollabModal = false"
-      @addCollab="addCollab"
-    ></AddCollab>
-
-    <ConfirmModal v-if="addConfirmModal">
+    <ConfirmModal v-if="changeAcessRightModal" class="itbkk-modal-alert">
       <template #title>
         <p>Change Access Right</p>
       </template>
       <template #question>
-        <div>
-          Do you want to change access right of
-          {{ oldAccessRight }} to {{ newAccessRight }}?
+        <div class="itbkk-message">
+          Do you want to change access right of "{{ name }}" to "{{
+            newAccessRight
+          }}"?
         </div>
       </template>
       <template #button-left>
         <SubmitButton
           buttonType="cancel"
           class="itbkk-button-cancel"
-          @click="addConfirmModal = false"
+          @click="handleCancleAccessRightChange"
           >Cancel</SubmitButton
         >
       </template>
       <template #button-right>
         <SubmitButton
-          buttonType="add"
+          buttonType="ok"
           class="itbkk-button-confirm"
           @click="confirmChangeAccessRight"
           >Confirm</SubmitButton

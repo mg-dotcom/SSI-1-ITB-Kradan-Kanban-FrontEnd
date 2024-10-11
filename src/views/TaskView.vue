@@ -255,12 +255,6 @@ const handleEditTask = () => {
           <buttonSubmit
             class="itbkk-manage-status flex gap-x-3 justify-center items-center bg-blue text-white font-bold py-2 px-4 rounded-lg"
             @click="router.push({ name: 'board-collab' })"
-            :disabled="!isOwner"
-            :class="{
-              'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
-                !isOwner,
-              'tooltip tooltip-bottom ': !isOwner,
-            }"
             data-tip="You don't have permission"
           >
             Manage Collaborator</buttonSubmit
