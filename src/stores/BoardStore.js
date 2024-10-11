@@ -153,17 +153,33 @@ export const useBoardStore = defineStore("BoardStore", {
       }
     },
     async addCollab(boardId, newCollab) {
-      await checkTokenExpiration();
-      const res = await addCollab(
+      await checkTokenExpiration(); // Ensure token is valid before making a request
+      const res = await fetch(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
-        newCollab
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`, // Use the correct authentication mechanism
+          },
+          body: JSON.stringify(newCollab),
+        }
       );
+
       if (res.status === 401) {
-        handleAuthenticationClearAndRedirect();
+        handleAuthenticationClearAndRedirect(); // Handle unauthorized case
+      } else if (res.status === 403) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail:
+            "You do not have permission to change collaborator access right.",
+          life: 3000,
+        });
       } else if (res.status === 201) {
-        this.collaborators.push(newCollab);
+        this.collaborators.push(newCollab); // Add the new collaborator to the list
       } else {
-        return res;
+        alert("There was an issue adding the collaborator. Please try again.");
       }
     },
     async updateAccessRight(boardId, collabId, collaborator) {

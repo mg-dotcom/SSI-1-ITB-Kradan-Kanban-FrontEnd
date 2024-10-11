@@ -15,11 +15,8 @@ const ownerEmail = userStore.getUser.email;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const validateEmail = ref(false);
 watch(email, (newEmail) => {
-  console.log(newEmail);
-
   if (!emailRegex.test(newEmail) || newEmail === ownerEmail) {
     validateEmail.value = false;
-    console.log("invalid email or email matches owner email");
   } else {
     validateEmail.value = true;
   }
@@ -27,9 +24,9 @@ watch(email, (newEmail) => {
 
 const boardStore = useBoardStore();
 
-const isOwner = () => {
-  return boardStore.getCurrentBoard.owner.oid === userStore.getUser.oid;
-};
+const isOwner = computed(() => {
+  return boardStore.getBoards.owner.oid === userStore.getUser.oid;
+});
 </script>
 
 <template>

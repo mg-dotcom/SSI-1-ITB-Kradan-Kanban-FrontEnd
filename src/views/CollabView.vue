@@ -4,11 +4,12 @@ import Header from "@/components/Header.vue";
 import NavigateTitle from "@/components/navigateTitle.vue";
 import { useRoute } from "vue-router";
 import AddCollab from "@/components/confirmModal/AddCollab.vue";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import SubmitButton from "@/components/button/Button.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useToast } from "primevue/usetoast";
+import { useUserStore } from "@/stores/UserStore";
 
 const boardStore = useBoardStore();
 const toast = useToast();
@@ -20,6 +21,7 @@ const accessRight = ref("READ");
 const addConfirmModal = ref(false);
 const oldAccessRight = ref("");
 const newAccessRight = ref("");
+const userStore = useUserStore();
 
 const collaborators = ref([
   { id: 1, name: "John Doe", email: "john@example.com", access_right: "READ" },
@@ -31,51 +33,17 @@ const collaborators = ref([
   },
 ]);
 
-const showToast = (severity, summary, detail) => {
-  toast.add({
-    severity,
-    summary,
-    detail,
-    life: 3000,
-  });
-};
+const isOwner = computed(() => {
+  return boardStore.getBoards.owner.oid === userStore.getUser.oid;
+});
 
 const addCollab = async (email, accessRightValue) => {
-  const res = await boardStore.addCollab(boardId, {
-    email: email,
-    accessRight: accessRightValue,
-  });
-
-  if (res.status === 403) {
-    showToast(
-      "error",
-      "Error",
-      "You do not have permission to add board collaborator."
-    );
-  } else if (res.status === 404) {
-    showToast("error", "Error", "The user does not exist.");
-  } else if (res.status === 409) {
-    showToast(
-      "error",
-      "Error",
-      "The user is already a collaborator of this board."
-    );
-  } else {
-    showToast("success", "Success", "Collaborator added successfully!");
-  }
+  // await boardStore.addCollab(boardId, email, accessRightValue);
   openAddCollabModal.value = false;
 };
 
 const removeCollab = async () => {
   console.log("Remove collaborator");
-
-  // const res = await boardStore.deleteCollab(boardId, collabId, collabName);
-  // if (res.success) {
-  //   showToast("success", "Success", "Collaborator removed successfully!");
-  //   // Optionally, refresh the collaborators list here
-  // } else {
-  //   showToast("error", "Error", "Failed to remove collaborator.");
-  // }
   openRemoveCollabModal.value = false;
 };
 
@@ -106,9 +74,9 @@ const confirmChangeAccessRight = async (collabId) => {
   }
 };
 
-const handleAccessRightChange = (collabId) => {
-  addConfirmModal.value = true; // Show modal
-};
+// const handleAccessRightChange = (collabId) => {
+//   addConfirmModal.value = true; // Show modal
+// };
 </script>
 
 <template>
@@ -205,6 +173,8 @@ const handleAccessRightChange = (collabId) => {
                       <select
                         class="select select-bordered bg-white border-b-2 font-bold text-black"
                         v-model="accessRight"
+                        :class="{ 'disabled cursor-not-allowed': !isOwner }"
+                        :disabled="!isOwner"
                         @click.prevent="
                           (event) =>
                             handleAccessRight(

@@ -115,17 +115,17 @@ router.beforeEach(async (to, _, next) => {
     ? await boardStore.isPublicBoard(boardId)
     : false;
 
-  const isOwner = boardId
-    ? await boardStore.isBoardOwnerByRoute(boardId, userStore.getUser.oid)
-    : false;
+  // const isOwner = boardId
+  //   ? await boardStore.isBoardOwnerByRoute(boardId, userStore.getUser.oid)
+  //   : false;
 
   if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
     return next({ name: "login" });
   }
 
-  if (!isOwner && to.name === "board-collab") {
-    return next({ name: "board-task", params: { id: boardId } });
-  }
+  // if (!isOwner && to.name === "board-collab") {
+  //   return next({ name: "board-task", params: { id: boardId } });
+  // }
 
   next();
 });

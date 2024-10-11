@@ -147,6 +147,7 @@ const currentPage = route.name;
             <buttonSubmit
               class="itbkk-button-add"
               data-tip="You don't have permission"
+              button-type="add"
               :class="{
                 'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
                   !isOwner,
