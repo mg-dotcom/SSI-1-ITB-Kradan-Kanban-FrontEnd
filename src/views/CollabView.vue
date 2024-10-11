@@ -10,6 +10,7 @@ import SubmitButton from "@/components/button/Button.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "@/stores/UserStore";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
 
 const boardStore = useBoardStore();
 const route = useRoute();
@@ -17,10 +18,16 @@ const boardId = route.params.id;
 const openAddCollabModal = ref(false);
 const openRemoveCollabModal = ref(false);
 const changeAcessRightModal = ref(false);
+const selectedCollabOid = ref("");
 const newAccessRight = ref("");
 const oldAccessRight = ref("");
 const name = ref("");
 const userStore = useUserStore();
+
+const showToast = (severity, summary, detail) => {
+  const toast = useToast();
+  toast.add({ severity, summary, detail }, { life: 3000 });
+};
 
 onMounted(async () => {
   await boardStore.loadCollab(boardId);
@@ -30,17 +37,14 @@ const isOwner = computed(() => {
   return boardStore.getBoards.owner.oid === userStore.getUser.oid;
 });
 
-const removeCollab = async () => {
-  console.log("Remove collaborator");
-  openRemoveCollabModal.value = false;
-};
-
 const handleAccessRightChange = (collabOid) => {
   const updatedCollaborator = boardStore.getCollaborators.find(
     (c) => c.oid === collabOid
   );
   name.value = updatedCollaborator.name;
   newAccessRight.value = updatedCollaborator.accessRight;
+  selectedCollabOid.value = collabOid;
+  console.log("selectedCollabOid", selectedCollabOid.value);
 
   changeAcessRightModal.value = true;
 };
@@ -53,33 +57,28 @@ const handleCancleAccessRightChange = () => {
   changeAcessRightModal.value = false;
 };
 
-const confirmChangeAccessRight = () => {
-  // await boardStore.updateAccessRight(boardId, collabId, accessRight.value);
+const confirmChangeAccessRight = async () => {
+  const res = await boardStore.updateAccessRight(
+    boardId,
+    selectedCollabOid.value,
+    newAccessRight.value
+  );
 
   changeAcessRightModal.value = false;
 
-  // if (res.status === 200) {
-  //   showToast(
-  //     "success",
-  //     "Success",
-  //     `Access right changed to ${accessRight.value}!`
-  //   );
-  //   changeAcessRightModal.value = false;
-  // } else if (res.status === 401) {
-  //   showToast(
-  //     "error",
-  //     "Error",
-  //     "You must be logged in to perform this action."
-  //   );
-  // } else if (res.status === 403) {
-  //   showToast(
-  //     "error",
-  //     "Error",
-  //     "You do not have permission to change collaborator access right."
-  //   );
-  // } else {
-  //   showToast("error", "Error", "There is a problem. Please try again later.");
-  // }
+  if (res.status === 200) {
+    changeAcessRightModal.value = false;
+  } else if (res.status === 401) {
+    handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
+    showToast(
+      "error",
+      "Error",
+      "You do not have permission to change collaborator access right."
+    );
+  } else {
+    showToast("error", "Error", "There is a problem. Please try again later.");
+  }
 };
 
 watch(

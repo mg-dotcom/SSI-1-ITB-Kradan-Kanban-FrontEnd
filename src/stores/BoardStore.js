@@ -182,24 +182,23 @@ export const useBoardStore = defineStore("BoardStore", {
         alert("There was an issue adding the collaborator. Please try again.");
       }
     },
-    async updateAccessRight(boardId, collabId, collaborator) {
+    async updateAccessRight(boardId, collabOid, collaborator) {
       await checkTokenExpiration();
       const res = await updateAccessRight(
         `${
           import.meta.env.VITE_BASE_URL
-        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabId}`,
+        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`,
         collaborator
       );
-      if (res.status === 401) {
-        handleAuthenticationClearAndRedirect();
-      } else if (res.status === 200) {
+
+      if (res.status === 200) {
         const index = this.collaborators.findIndex(
-          (collab) => collab.id === collabId
+          (collab) => collab.collaboratorOid === collabOid
         );
-        this.collaborators[index].access_right = collaborator.access_right;
-      } else {
-        return res;
+        this.collaborators[index].accessRight = collaborator.accessRight;
       }
+
+      return res;
     },
   },
 });
