@@ -32,16 +32,28 @@ const boardId = route.params.id;
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
-  await taskStore.loadTasks(boardId);
-  await statusStore.loadStatuses(boardId);
+
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
-// const board = await boardStore.loadBoardById(boardId);
+const hasAccessRight = computed(() => {
+  const collab = boardStore.getCollaborators?.find(
+    (c) => c.oid === userStore.getUser?.oid
+  );
+
+  return collab?.accessRight === "WRITE";
+});
+
 const isOwner = computed(() => {
-  return boardStore.getBoards.owner.oid === userStore.getUser.oid;
+  const currentBoard = boardStore.getCurrentBoard;
+  const currentUser = userStore.getUser;
+
+  if (currentBoard?.owner && currentUser) {
+    return currentBoard.owner.oid === currentUser.oid;
+  }
+  return false;
 });
 
 const boardVisibilityToString = () => {
@@ -139,7 +151,6 @@ import { useBoardStore } from "@/stores/BoardStore";
 import VisibilityConfirmModal from "@/components/confirmModal/VisibilityConfirmModal.vue";
 
 const optionEditDelete = ref(null);
-const currentPage = route.name;
 
 onClickOutside(optionEditDelete, () => {
   popup.optionEditDelete = false;
@@ -236,7 +247,7 @@ const handleEditTask = () => {
           <div class="my-3">
             <label
               class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              :class="{ 'tooltip tooltip-bottom': !isOwner && !hasAccessRight }"
               data-tip="You don't have permission"
             >
               <input
@@ -244,7 +255,7 @@ const handleEditTask = () => {
                 type="checkbox"
                 class="itbkk-board-visibility toggle toggle-success"
                 @click.prevent="popup.boardVisibilityPopup = true"
-                :disabled="!isOwner"
+                :disabled="!isOwner && !hasAccessRight"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -268,14 +279,17 @@ const handleEditTask = () => {
             Manage Status</buttonSubmit
           >
           <buttonSubmit
-            @click.prevent="isOwner ? (openLimit = true) : null"
-            :disabled="!isOwner"
+            @click.prevent="
+              isOwner && hasAccessRight ? (openLimit = true) : null
+            "
+            :disabled="!isOwner && !hasAccessRight"
             data-tip="You dont have permission"
+            button-type="add"
             class="itbkk-status-setting"
             :class="{
               'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
-                !isOwner,
-              'tooltip tooltip-bottom ': !isOwner,
+                !isOwner && !hasAccessRight,
+              'tooltip tooltip-bottom ': !isOwner && !hasAccessRight,
             }"
           >
             <svg
@@ -315,20 +329,25 @@ const handleEditTask = () => {
                     class="xl:w-[5%] lg:w-[7%] md-vertical:w-[8%] bg-lightgray border-b border-r border-gray-300 w-[7%]"
                   >
                     <div
-                      :disabled="!isOwner"
-                      :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
+                      :disabled="!isOwner && !hasAccessRight"
+                      :class="{
+                        'tooltip tooltip-bottom disabled':
+                          !isOwner && !hasAccessRight,
+                      }"
                       data-tip="You dont have permission"
                     >
                       <img
                         src="../assets/addTaskIcon.svg"
                         alt="add-task-icon"
                         @click="
-                          isOwner ? router.push({ name: 'task-add' }) : null
+                          isOwner || hasAccessRight
+                            ? router.push({ name: 'task-add' })
+                            : console.log('You dont have permission')
                         "
                         class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
                         :class="{
                           'disabled cursor-not-allowed pointer-events-none':
-                            !isOwner,
+                            !isOwner && !hasAccessRight,
                         }"
                       />
                     </div>
@@ -437,38 +456,50 @@ const handleEditTask = () => {
                           >
                             <div
                               class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
-                              :disabled="!isOwner"
+                              :disabled="!isOwner && !hasAccessRight"
                             >
                               <div
                                 @click.prevent="
-                                  isOwner ? handleEditTask() : null
+                                  isOwner || hasAccessRight
+                                    ? handleEditTask()
+                                    : null
                                 "
                                 :class="{
-                                  'tooltip tooltip-bottom disabled': !isOwner,
+                                  'tooltip tooltip-bottom disabled':
+                                    !isOwner && !hasAccessRight,
                                 }"
                                 data-tip="You don't have permission"
                               >
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                  :class="{ 'opacity-50 disabled': !isOwner }"
-                                  :disabled="!isOwner"
+                                  :class="{
+                                    'opacity-50 disabled':
+                                      !isOwner && !hasAccessRight,
+                                  }"
+                                  :disabled="!isOwner && !hasAccessRight"
                                 >
                                   Edit
                                 </p>
                               </div>
                               <div
                                 @click.prevent="
-                                  !isOwner ? null : openDelete(task.id, index)
+                                  isOwner || hasAccessRight
+                                    ? openDelete(task.id, index)
+                                    : null
                                 "
                                 :class="{
-                                  'tooltip tooltip-bottom disabled': !isOwner,
+                                  'tooltip tooltip-bottom disabled':
+                                    !isOwner && !hasAccessRight,
                                 }"
                                 data-tip="You don't have permission"
                               >
                                 <p
-                                  class="itbkk-button-delete block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
-                                  :class="{ 'opacity-50 disabled': !isOwner }"
-                                  :disabled="!isOwner"
+                                  class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
+                                  :class="{
+                                    'opacity-50 disabled':
+                                      !isOwner && !hasAccessRight,
+                                  }"
+                                  :disabled="!isOwner && !hasAccessRight"
                                 >
                                   Delete
                                 </p>

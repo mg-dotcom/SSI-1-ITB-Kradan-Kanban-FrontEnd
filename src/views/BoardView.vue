@@ -11,9 +11,6 @@ import router from "@/router/page";
 const boardStore = useBoardStore();
 const userStore = useUserStore();
 
-onMounted(async () => {
-  await boardStore.loadBoards();
-});
 
 const isEmojiPickerVisible = ref(false);
 const emojiPicker = ref(null);

@@ -5,7 +5,6 @@ import {
   addBoard,
   patchBoardVisibility,
   fetchCollab,
-  addCollab,
   deleteCollab,
   updateAccessRight,
 } from "../libs/FetchBoard.js";
@@ -134,8 +133,10 @@ export const useBoardStore = defineStore("BoardStore", {
 
       return board.owner.oid === userOid;
     },
+
     //collaborators
     async loadCollab(boardId) {
+      await checkTokenExpiration();
       try {
         const data = await fetchCollab(
           `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`
@@ -145,41 +146,10 @@ export const useBoardStore = defineStore("BoardStore", {
           alert("Failed to fetch boards");
         } else {
           this.collaborators = data;
-          console.log(data);
         }
       } catch (error) {
         console.log(error);
         handleAuthenticationClearAndRedirect();
-      }
-    },
-    async addCollab(boardId, newCollab) {
-      await checkTokenExpiration(); // Ensure token is valid before making a request
-      const res = await fetch(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Use the correct authentication mechanism
-          },
-          body: JSON.stringify(newCollab),
-        }
-      );
-
-      if (res.status === 401) {
-        handleAuthenticationClearAndRedirect(); // Handle unauthorized case
-      } else if (res.status === 403) {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail:
-            "You do not have permission to change collaborator access right.",
-          life: 3000,
-        });
-      } else if (res.status === 201) {
-        this.collaborators.push(newCollab); // Add the new collaborator to the list
-      } else {
-        alert("There was an issue adding the collaborator. Please try again.");
       }
     },
     async updateAccessRight(boardId, collabOid, collaborator) {
@@ -193,9 +163,26 @@ export const useBoardStore = defineStore("BoardStore", {
 
       if (res.status === 200) {
         const index = this.collaborators.findIndex(
-          (collab) => collab.collaboratorOid === collabOid
+          (collab) => collab.oid === collabOid
         );
         this.collaborators[index].accessRight = collaborator.accessRight;
+      }
+      return res;
+    },
+    async removeCollab(boardId, collabOid) {
+      await checkTokenExpiration();
+      const res = await deleteCollab(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`
+      );
+
+      const index = this.collaborators.findIndex(
+        (collab) => collab.oid === collabOid
+      );
+
+      if (res.status === 200) {
+        this.collaborators.splice(index, 1);
       }
 
       return res;

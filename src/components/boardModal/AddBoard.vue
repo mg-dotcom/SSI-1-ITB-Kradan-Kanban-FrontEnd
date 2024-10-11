@@ -17,8 +17,6 @@ const toggleInputEmoji = () => {
 const userStore = useUserStore();
 
 onMounted(async () => {
-  await boardStore.loadBoards();
-
   boardTemplate.value.name = `${userStore.getUser.name}  personal board`;
   boardTemplate.value.emoji = "🙂";
   boardTemplate.value.color = "#DEDEDE";

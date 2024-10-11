@@ -24,25 +24,30 @@ const oldAccessRight = ref("");
 const name = ref("");
 const userStore = useUserStore();
 
-const showToast = (severity, summary, detail) => {
-  const toast = useToast();
-  toast.add({ severity, summary, detail }, { life: 3000 });
-};
+const toast = useToast();
 
-onMounted(async () => {
-  await boardStore.loadCollab(boardId);
+const hasAccessRight = computed(() => {
+  const collab = boardStore.getCollaborators?.find(
+    (c) => c.oid === userStore.getUser?.oid
+  );
+
+  return collab?.accessRight === "WRITE";
 });
 
 const isOwner = computed(() => {
-  return boardStore.getBoards.owner.oid === userStore.getUser.oid;
+  const currentBoard = boardStore.getCurrentBoard;
+  const currentUser = userStore.getUser;
+
+  if (currentBoard?.owner && currentUser) {
+    return currentBoard.owner.oid === currentUser.oid;
+  }
+  return false;
 });
 
 const handleAccessRightChange = (collabOid) => {
-  const updatedCollaborator = boardStore.getCollaborators.find(
-    (c) => c.oid === collabOid
-  );
-  name.value = updatedCollaborator.name;
-  newAccessRight.value = updatedCollaborator.accessRight;
+  const collab = boardStore.getCollaborators.find((c) => c.oid === collabOid);
+  name.value = collab.name;
+  newAccessRight.value = collab.accessRight;
   selectedCollabOid.value = collabOid;
   console.log("selectedCollabOid", selectedCollabOid.value);
 
@@ -50,10 +55,8 @@ const handleAccessRightChange = (collabOid) => {
 };
 
 const handleCancleAccessRightChange = () => {
-  const updatedCollaborator = boardStore.getCollaborators.find(
-    (c) => c.name === name.value
-  );
-  updatedCollaborator.accessRight = oldAccessRight.value;
+  const collab = boardStore.getCollaborators.find((c) => c.name === name.value);
+  collab.accessRight = oldAccessRight.value;
   changeAcessRightModal.value = false;
 };
 
@@ -64,20 +67,24 @@ const confirmChangeAccessRight = async () => {
     newAccessRight.value
   );
 
-  changeAcessRightModal.value = false;
-
   if (res.status === 200) {
     changeAcessRightModal.value = false;
   } else if (res.status === 401) {
     handleAuthenticationClearAndRedirect();
   } else if (res.status === 403) {
-    showToast(
-      "error",
-      "Error",
-      "You do not have permission to change collaborator access right."
-    );
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You do not have permission to change collaborator access right.",
+      life: 3000,
+    });
   } else {
-    showToast("error", "Error", "There is a problem. Please try again later.");
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "There is a problem. Please try again later.",
+      life: 3000,
+    });
   }
 };
 
@@ -87,6 +94,44 @@ watch(
     oldAccessRight.value = oldVal;
   }
 );
+
+const handleRemoveCollab = (collabOid) => {
+  const collab = boardStore.getCollaborators.find((c) => c.oid === collabOid);
+  name.value = collab.name;
+  selectedCollabOid.value = collabOid;
+  openRemoveCollabModal.value = true;
+};
+
+const confirmRemoveCollab = async () => {
+  const res = await boardStore.removeCollab(boardId, selectedCollabOid.value);
+
+  if (res.status === 200) {
+    openRemoveCollabModal.value = false;
+  } else if (res.status === 401) {
+    handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You do not have permission to remove collaborator.",
+      life: 3000,
+    });
+  } else if (res.status === 404) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: `${name.value} is not a collaborator.`,
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "There is a problem. Please try again later.",
+      life: 3000,
+    });
+  }
+};
 </script>
 
 <template>
@@ -183,8 +228,11 @@ watch(
                       <select
                         class="select select-bordered bg-white border-b-2 font-bold text-black"
                         v-model="collab.accessRight"
-                        :class="{ 'disabled cursor-not-allowed': !isOwner }"
-                        :disabled="!isOwner"
+                        :class="{
+                          'disabled cursor-not-allowed':
+                            !isOwner && !hasAccessRight,
+                        }"
+                        :disabled="!isOwner && !hasAccessRight"
                         @change="handleAccessRightChange(collab.oid)"
                       >
                         <option value="READ">READ</option>
@@ -198,7 +246,7 @@ watch(
                     <SubmitButton
                       buttonType="delete"
                       class="itbkk-button-confirm"
-                      @click="openRemoveCollabModal = true"
+                      @click="handleRemoveCollab(collab.oid)"
                       >Remove</SubmitButton
                     >
                   </td>
@@ -244,7 +292,7 @@ watch(
         <p>Remove Collaborator</p>
       </template>
       <template #question>
-        <div>Do you want to remove this collaborator from the board?</div>
+        <div>Do you want to remove "{{ name }}" from the board?</div>
       </template>
       <template #button-left>
         <SubmitButton
@@ -258,7 +306,7 @@ watch(
         <SubmitButton
           buttonType="delete"
           class="itbkk-button-confirm"
-          @click="removeCollab"
+          @click="confirmRemoveCollab"
           >Remove</SubmitButton
         >
       </template>

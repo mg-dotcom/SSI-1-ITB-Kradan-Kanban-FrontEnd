@@ -44,7 +44,6 @@ const taskId = route.params.taskId;
 
 onMounted(async () => {
   await checkTokenExpiration();
-  await statusStore.loadStatuses(boardId);
   const board = await boardStore.loadBoardById(boardId);
 
   limitMaximumTask.value = board.limitMaximumTask;
@@ -229,7 +228,7 @@ const save = async () => {
         :disabled="isButtonDisabled"
         @click="save"
         >Save</buttonSubmit
-      >                                                       
+      >
     </template>
   </ModalDetail>
 </template>

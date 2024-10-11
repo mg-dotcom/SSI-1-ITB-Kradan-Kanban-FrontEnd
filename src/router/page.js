@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useRoute } from "vue-router";
 import { computed } from "vue";
-import { useUserStore, useUserToken } from "@/stores/UserStore";
+import { useUserStore } from "@/stores/UserStore";
+import { useStatusStore } from "@/stores/StatusStore";
+import { useBoardStore } from "@/stores/BoardStore";
+import { useTaskStore } from "@/stores/TaskStore";
 import TaskView from "../views/TaskView.vue";
 import Detail from "../components/taskModal/Detail.vue";
 import AddEditTask from "../components/taskModal/AddEditTask.vue";
@@ -10,7 +13,6 @@ import AddEditStatusModal from "../components/statusModal/AddEditStatus.vue";
 import Login from "../views/Login.vue";
 import BoardView from "@/views/BoardView.vue";
 import AddBoard from "@/components/boardModal/AddBoard.vue";
-import { useBoardStore } from "@/stores/BoardStore";
 import AccessDenied from "@/views/AccessDenied.vue";
 import CollabView from "@/views/CollabView.vue";
 
@@ -106,6 +108,8 @@ const router = createRouter({
 router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
   const boardStore = useBoardStore();
+  const taskStore = useTaskStore();
+  const statusStore = useStatusStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
   const boardId = to.params.id;
 
@@ -115,17 +119,22 @@ router.beforeEach(async (to, _, next) => {
     ? await boardStore.isPublicBoard(boardId)
     : false;
 
-  // const isOwner = boardId
-  //   ? await boardStore.isBoardOwnerByRoute(boardId, userStore.getUser.oid)
-  //   : false;
-
   if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
     return next({ name: "login" });
   }
 
-  // if (!isOwner && to.name === "board-collab") {
-  //   return next({ name: "board-task", params: { id: boardId } });
-  // }
+  if (to.path.startsWith("/board")) {
+    try {
+      if (boardId) {
+        await boardStore.loadBoardById(boardId); // Load the board data
+        await boardStore.loadCollab(boardId); // Load the collaborators
+        await taskStore.loadTasks(boardId); // Load the tasks
+        await statusStore.loadStatuses(boardId); // Load the statuses
+      }
+    } catch (error) {
+      console.error("Error loading board-related data:", error);
+    }
+  }
 
   next();
 });

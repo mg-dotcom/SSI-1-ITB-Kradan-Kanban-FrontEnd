@@ -24,15 +24,27 @@ const userStore = useUserStore();
 const boardId = route.params.id;
 
 onMounted(async () => {
-  await statusStore.loadStatuses(boardId);
-  await taskStore.loadTasks(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
+const hasAccessRight = computed(() => {
+  const collab = boardStore.getCollaborators?.find(
+    (c) => c.oid === userStore.getUser?.oid
+  );
+
+  return collab?.accessRight === "WRITE";
+});
+
 const isOwner = computed(() => {
-  return boardStore.getBoards.owner.oid === userStore.getUser.oid;
+  const currentBoard = boardStore.getCurrentBoard;
+  const currentUser = userStore.getUser;
+
+  if (currentBoard?.owner && currentUser) {
+    return currentBoard.owner.oid === currentUser.oid;
+  }
+  return false;
 });
 
 const boardVisibilityToString = () => {
@@ -98,8 +110,6 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   openLimit.value = false;
   router.push({ name: "status" });
 };
-
-const currentPage = route.name;
 </script>
 
 <template>
@@ -123,16 +133,15 @@ const currentPage = route.name;
           <div class="my-3">
             <label
               class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
+              :class="{ 'tooltip tooltip-bottom': !isOwner && !hasAccessRight }"
               data-tip="You don't have permission"
             >
               <input
                 v-model="boardVisibility"
                 type="checkbox"
                 class="itbkk-board-visibility toggle toggle-success"
-                :class="{ disabled: !isOwner }"
                 @click.prevent="popup.boardVisibilityPopup = true"
-                :disabled="!isOwner"
+                :disabled="!isOwner && !hasAccessRight"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -150,23 +159,27 @@ const currentPage = route.name;
               button-type="add"
               :class="{
                 'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
-                  !isOwner,
-                'tooltip tooltip-bottom ': !isOwner,
+                  !isOwner && !hasAccessRight,
+                'tooltip tooltip-bottom ': !isOwner && !hasAccessRight,
               }"
               @click.prevent="router.push({ name: 'status-add' })"
-              :disabled="!isOwner"
+              :disabled="!isOwner && !hasAccessRight"
               >+ Add Status</buttonSubmit
             >
           </div>
+
           <buttonSubmit
             data-tip="You dont have permission"
             class="itbkk-status-setting"
+            button-type="add"
             :class="{
               'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
-                !isOwner,
-              'tooltip tooltip-bottom ': !isOwner,
+                !isOwner && !hasAccessRight,
+              'tooltip tooltip-bottom ': !isOwner && !hasAccessRight,
             }"
-            @click.prevent="isOwner ? (openLimit = true) : null"
+            @click.prevent="
+              isOwner || hasAccessRight ? (openLimit = true) : null
+            "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -254,13 +267,16 @@ const currentPage = route.name;
                     class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
                   >
                     <div
-                      :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
+                      :class="{
+                        'tooltip tooltip-bottom disabled':
+                          !isOwner && !hasAccessRight,
+                      }"
                       data-tip="You need to be the board owner to perform this action."
                     >
                       <buttonSubmit
                         class="itbkk-button-edit"
                         @click.prevent="
-                          isOwner
+                          isOwner || hasAccessRight
                             ? router.push({
                                 name: 'status-edit',
                                 params: { statusId: status.id },
@@ -270,20 +286,23 @@ const currentPage = route.name;
                         :button-type="
                           status.name === 'No Status' ||
                           status.name === 'Done' ||
-                          !isOwner
+                          (!isOwner && !hasAccessRight)
                             ? 'disabled'
                             : 'edit'
                         "
                         :disabled="
                           status.name === 'No Status' ||
                           status.name === 'Done' ||
-                          !isOwner
+                          (!isOwner && !hasAccessRight)
                         "
                         >Edit
                       </buttonSubmit>
                     </div>
                     <div
-                      :class="{ 'tooltip tooltip-bottom disabled': !isOwner }"
+                      :class="{
+                        'tooltip tooltip-bottom disabled':
+                          !isOwner && !hasAccessRight,
+                      }"
                       data-tip="You need to be the board owner to perform this action."
                     >
                       <buttonSubmit
@@ -294,17 +313,19 @@ const currentPage = route.name;
                         :button-type="
                           status.name === 'No Status' ||
                           status.name === 'Done' ||
-                          !isOwner
+                          (!isOwner && !hasAccessRight)
                             ? 'disabled'
                             : 'delete'
                         "
                         :disabled="
                           status.name === 'No Status' ||
                           status.name === 'Done' ||
-                          !isOwner
+                          (!isOwner && !hasAccessRight)
                         "
                         @click.prevent="
-                          isOwner ? openDeleteOrTransferModal(status.id) : null
+                          isOwner || hasAccessRight
+                            ? openDeleteOrTransferModal(status.id)
+                            : null
                         "
                       >
                         Delete
