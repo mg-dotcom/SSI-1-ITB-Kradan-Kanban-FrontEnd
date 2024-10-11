@@ -23,8 +23,15 @@ const newAccessRight = ref("");
 const oldAccessRight = ref("");
 const name = ref("");
 const userStore = useUserStore();
+const boardVisibility = ref(false);
 
 const toast = useToast();
+
+onMounted(async () => {
+  const fetchedBoard = await boardStore.loadBoardById(boardId);
+  boardStore.setCurrentBoard(fetchedBoard);
+  boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
+});
 
 const hasAccessRight = computed(() => {
   const collab = boardStore.getCollaborators?.find(
@@ -43,6 +50,9 @@ const isOwner = computed(() => {
   }
   return false;
 });
+
+console.log("isOwner", isOwner.value);
+console.log("hasAccessRight", hasAccessRight.value);
 
 const handleAccessRightChange = (collabOid) => {
   const collab = boardStore.getCollaborators.find((c) => c.oid === collabOid);
@@ -148,7 +158,26 @@ const confirmRemoveCollab = async () => {
         class="flex justify-between mobile:px-0 py-6 md-vertical:flex-row mobile:flex-col gap-3"
       >
         <NavigateTitle :boardId="boardId" />
-        <div>
+        <div class="flex gap">
+          <div class="my-3 mr-2">
+            <label
+              class="inline-flex items-center cursor-pointer"
+              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              data-tip="You need to be board owner to perform this action."
+            >
+              <input
+                v-model="boardVisibility"
+                type="checkbox"
+                class="itbkk-board-visibility toggle toggle-success"
+                @click.prevent="popup.boardVisibilityPopup = true"
+                :disabled="!isOwner"
+              />
+              <span
+                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
+                >{{ boardVisibility ? "Public" : "Private" }}</span
+              >
+            </label>
+          </div>
           <button
             class="itbkk-button-next bg-green-500 text-white font-bold py-2 px-4 rounded-lg"
             @click="openAddCollabModal = true"
@@ -244,8 +273,15 @@ const confirmRemoveCollab = async () => {
                     class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all"
                   >
                     <SubmitButton
-                      buttonType="delete"
-                      class="itbkk-button-confirm"
+                      :buttonType="
+                        isOwner || hasAccessRight ? 'delete' : 'disabled'
+                      "
+                      data-tip="You need to be board owner or has write access to perform this action."
+                      :class="{
+                        'disabled cursor-not-allowed bg-gray-300 tooltip tooltip-bottom':
+                          !isOwner && !hasAccessRight,
+                      }"
+                      :disabled="!isOwner && !hasAccessRight"
                       @click="handleRemoveCollab(collab.oid)"
                       >Remove</SubmitButton
                     >

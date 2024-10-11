@@ -126,6 +126,8 @@ router.beforeEach(async (to, _, next) => {
   if (to.path.startsWith("/board")) {
     try {
       if (boardId) {
+        userStore.initialize();
+
         await boardStore.loadBoardById(boardId); // Load the board data
         await boardStore.loadCollab(boardId); // Load the collaborators
         await taskStore.loadTasks(boardId); // Load the tasks

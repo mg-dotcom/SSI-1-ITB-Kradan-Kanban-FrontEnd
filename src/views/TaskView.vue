@@ -244,18 +244,18 @@ const handleEditTask = () => {
           </ul>
         </div>
         <div class="flex px-4">
-          <div class="my-3">
+          <div class="my-3 mr-2">
             <label
               class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom': !isOwner && !hasAccessRight }"
-              data-tip="You don't have permission"
+              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              data-tip="You need to be board owner to perform this action."
             >
               <input
                 v-model="boardVisibility"
                 type="checkbox"
                 class="itbkk-board-visibility toggle toggle-success"
                 @click.prevent="popup.boardVisibilityPopup = true"
-                :disabled="!isOwner && !hasAccessRight"
+                :disabled="!isOwner"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -289,7 +289,8 @@ const handleEditTask = () => {
             :class="{
               'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
                 !isOwner && !hasAccessRight,
-              'tooltip tooltip-bottom ': !isOwner && !hasAccessRight,
+              'tooltip tooltip-bottom hover:cursor-not-allowed':
+                !isOwner && !hasAccessRight,
             }"
           >
             <svg
@@ -315,14 +316,16 @@ const handleEditTask = () => {
         v-if="page.task"
         @click="closeList"
         > -->
-      <div class="-my-2 mb-8 sm:-mx">
+      <div class="-my-2 mb-8 sm:-mx z-0">
         <div
           class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4 mobile:px-0 w-full"
         >
           <div
-            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
+            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg z-10"
           >
-            <table class="w-full h-full md-vertical:table-fixed mobile:table">
+            <table
+              class="w-full h-full md-vertical:table-fixed mobile:table z-10"
+            >
               <thead class="bg-lightgray">
                 <tr class="">
                   <th
@@ -331,10 +334,10 @@ const handleEditTask = () => {
                     <div
                       :disabled="!isOwner && !hasAccessRight"
                       :class="{
-                        'tooltip tooltip-bottom disabled':
+                        'tooltip tooltip-bottom disabled cursor-not-allowed active:scale-[93%]':
                           !isOwner && !hasAccessRight,
                       }"
-                      data-tip="You dont have permission"
+                      data-tip="You need to be board owner or has write access to perform this action"
                     >
                       <img
                         src="../assets/addTaskIcon.svg"
@@ -342,7 +345,7 @@ const handleEditTask = () => {
                         @click="
                           isOwner || hasAccessRight
                             ? router.push({ name: 'task-add' })
-                            : console.log('You dont have permission')
+                            : null
                         "
                         class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
                         :class="{
@@ -465,15 +468,15 @@ const handleEditTask = () => {
                                     : null
                                 "
                                 :class="{
-                                  'tooltip tooltip-bottom disabled':
+                                  'tooltip tooltip-bottom disabled cursor-not-allowed':
                                     !isOwner && !hasAccessRight,
                                 }"
-                                data-tip="You don't have permission"
+                                data-tip="You need to be board owner or has write access to perform this action"
                               >
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                                   :class="{
-                                    'opacity-50 disabled':
+                                    'opacity-50 disabled cursor-not-allowed':
                                       !isOwner && !hasAccessRight,
                                   }"
                                   :disabled="!isOwner && !hasAccessRight"
@@ -488,15 +491,15 @@ const handleEditTask = () => {
                                     : null
                                 "
                                 :class="{
-                                  'tooltip tooltip-bottom disabled':
+                                  'tooltip tooltip-bottom disabled cursor-not-allowed':
                                     !isOwner && !hasAccessRight,
                                 }"
-                                data-tip="You don't have permission"
+                                data-tip="You need to be board owner or has write access to perform this action"
                               >
                                 <p
                                   class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
                                   :class="{
-                                    'opacity-50 disabled':
+                                    'opacity-50 disabled cursor-not-allowed':
                                       !isOwner && !hasAccessRight,
                                   }"
                                   :disabled="!isOwner && !hasAccessRight"

@@ -11,12 +11,15 @@ import router from "@/router/page";
 const boardStore = useBoardStore();
 const userStore = useUserStore();
 
-
 const isEmojiPickerVisible = ref(false);
 const emojiPicker = ref(null);
 
 onClickOutside(emojiPicker, () => {
   isEmojiPickerVisible.value = false;
+});
+
+onMounted(async () => {
+  await boardStore.loadBoards();
 });
 
 const collab = ref({

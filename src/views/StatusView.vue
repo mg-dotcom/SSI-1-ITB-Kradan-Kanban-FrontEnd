@@ -130,18 +130,18 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
         <NavigateTitle :boardId="boardId" />
 
         <div class="flex">
-          <div class="my-3">
+          <div class="my-3 mr-2">
             <label
               class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom': !isOwner && !hasAccessRight }"
-              data-tip="You don't have permission"
+              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              data-tip="You need to be board owner to perform this action."
             >
               <input
                 v-model="boardVisibility"
                 type="checkbox"
                 class="itbkk-board-visibility toggle toggle-success"
                 @click.prevent="popup.boardVisibilityPopup = true"
-                :disabled="!isOwner && !hasAccessRight"
+                :disabled="!isOwner"
               />
               <span
                 class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
@@ -155,7 +155,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
           >
             <buttonSubmit
               class="itbkk-button-add"
-              data-tip="You don't have permission"
+              data-tip="You need to be board owner or has write access to perform this action."
               button-type="add"
               :class="{
                 'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
@@ -271,7 +271,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                         'tooltip tooltip-bottom disabled':
                           !isOwner && !hasAccessRight,
                       }"
-                      data-tip="You need to be the board owner to perform this action."
+                      data-tip="You need to be board owner or has write access to perform this action."
                     >
                       <buttonSubmit
                         class="itbkk-button-edit"
@@ -303,7 +303,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                         'tooltip tooltip-bottom disabled':
                           !isOwner && !hasAccessRight,
                       }"
-                      data-tip="You need to be the board owner to perform this action."
+                      data-tip="You need to be board owner or has write access to perform this action."
                     >
                       <buttonSubmit
                         class="itbkk-button-delete"
