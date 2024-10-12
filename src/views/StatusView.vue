@@ -8,6 +8,7 @@ import { useBoardStore } from "../stores/BoardStore.js";
 import { useUserStore } from "@/stores/UserStore";
 import { onMounted, computed, ref, reactive } from "vue";
 import StatusButton from "../components/button/StatusButton.vue";
+import { useCollabStore } from "../stores/CollabStore";
 import { RouterView } from "vue-router";
 import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
@@ -17,6 +18,7 @@ import Header from "../components/Header.vue";
 const route = useRoute();
 const router = useRouter();
 const statusStore = useStatusStore();
+const collabStore = useCollabStore();
 const taskStore = useTaskStore();
 const boardStore = useBoardStore();
 const userStore = useUserStore();
@@ -30,7 +32,7 @@ onMounted(async () => {
 });
 
 const hasAccessRight = computed(() => {
-  const collab = boardStore.getCollaborators?.find(
+  const collab = collabStore.getCollaborators?.find(
     (c) => c.oid === userStore.getUser?.oid
   );
 
@@ -160,26 +162,33 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
               :class="{
                 'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
                   !isOwner && !hasAccessRight,
-                'tooltip tooltip-bottom ': !isOwner && !hasAccessRight,
+                'tooltip tooltip-bottom hover:cursor-not-allowed':
+                  !isOwner && !hasAccessRight,
               }"
-              @click.prevent="router.push({ name: 'status-add' })"
+              @click.prevent="
+                isOwner && hasAccessRight
+                  ? router.push({ name: 'status-add' })
+                  : null
+              "
               :disabled="!isOwner && !hasAccessRight"
               >+ Add Status</buttonSubmit
             >
           </div>
 
           <buttonSubmit
+            @click.prevent="
+              isOwner && hasAccessRight ? (openLimit = true) : null
+            "
+            :disabled="!isOwner && !hasAccessRight"
             data-tip="You dont have permission"
-            class="itbkk-status-setting"
             button-type="add"
+            class="itbkk-status-setting"
             :class="{
               'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
                 !isOwner && !hasAccessRight,
-              'tooltip tooltip-bottom ': !isOwner && !hasAccessRight,
+              'tooltip tooltip-bottom hover:cursor-not-allowed':
+                !isOwner && !hasAccessRight,
             }"
-            @click.prevent="
-              isOwner || hasAccessRight ? (openLimit = true) : null
-            "
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

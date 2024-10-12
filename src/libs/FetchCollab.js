@@ -2,7 +2,7 @@ import { useUserToken } from "../stores/UserStore.js";
 import { handleResponseStatus } from "./libsUtil.js";
 import { handleAuthenticationClearAndRedirect } from "./libsUtil.js";
 
-const fetchAllBoards = async (url) => {
+const fetchCollab = async (url) => {
   const res = await fetch(`${url}`, {
     method: "GET",
     headers: {
@@ -15,57 +15,46 @@ const fetchAllBoards = async (url) => {
   return data;
 };
 
-const fetchBoardById = async (url, id) => {
-  const res = await fetch(`${url}/${id}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${useUserToken().value}`,
-    },
-  });
-  handleResponseStatus(res);
-  const data = await res.json();
-  return data;
-};
-
-const addBoard = async (url, newBoard) => {
-  const res = await fetch(`${url}`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      Authorization: `Bearer ${useUserToken().value}`,
-    },
-
-    body: JSON.stringify({
-      name: newBoard.name,
-      emoji: newBoard.emoji,
-      color: newBoard.color,
-    }),
-  });
-  handleResponseStatus(res);
-  return res;
-};
-const patchBoardVisibility = async (url, visibilityMode) => {
+const addCollab = async (url, collaborator) => {
   const res = await fetch(`${url}`, {
     method: "PATCH",
     headers: {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,
     },
+
     body: JSON.stringify({
-      visibility: visibilityMode,
+      email: collaborator.email,
+      access_right: collaborator.access_right,
     }),
   });
-
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
-
-  if (res.status === 403) {
-    alert("you do not have permission");
-  }
-
   return res;
 };
 
-export { fetchAllBoards, fetchBoardById, addBoard, patchBoardVisibility };
+const deleteCollab = async (url) => {
+  const res = await fetch(`${url}`, {
+    method: "DELETE",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+  });
+  return res;
+};
+
+const updateAccessRight = async (url, collaborator) => {
+  const res = await fetch(`${url}`, {
+    method: "PATCH",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+
+    body: JSON.stringify({
+      access_right: collaborator.access_right,
+    }),
+  });
+  return res;
+};
+
+export { fetchCollab, addCollab, deleteCollab, updateAccessRight };

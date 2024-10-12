@@ -5,7 +5,7 @@ import StatusButton from "../components/button/StatusButton.vue";
 import DeleteModal from "../components/confirmModal/DeleteTask.vue";
 import StatusSetting from "../components/confirmModal/StatusSetting.vue";
 import NavigateTitle from "@/components/navigateTitle.vue";
-import Breadcrumb from "primevue/breadcrumb";
+import { useCollabStore } from "@/stores/CollabStore";
 import { useRouter, RouterView, useRoute } from "vue-router";
 import buttonSubmit from "../components/button/Button.vue";
 import { useTaskStore } from "../stores/TaskStore.js";
@@ -20,6 +20,7 @@ const selectedId = ref("");
 const selectedIndex = ref(0);
 const taskStore = useTaskStore();
 const statusStore = useStatusStore();
+const collabStore = useCollabStore();
 const userStore = useUserStore();
 const sortStore = useSortStore();
 const sortTypes = ["default", "ascending", "descending"];
@@ -39,7 +40,7 @@ onMounted(async () => {
 });
 
 const hasAccessRight = computed(() => {
-  const collab = boardStore.getCollaborators?.find(
+  const collab = collabStore.getCollaborators?.find(
     (c) => c.oid === userStore.getUser?.oid
   );
 

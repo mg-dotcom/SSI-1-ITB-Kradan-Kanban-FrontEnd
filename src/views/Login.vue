@@ -32,7 +32,6 @@ const showPassword = ref(false);
 const toggleShow = () => {
   showPassword.value = !showPassword.value;
 };
-const collabBoards = [];
 
 const signIn = async () => {
   try {
@@ -41,18 +40,17 @@ const signIn = async () => {
       password: password.value,
     });
 
-    const user = userStore.getUser;
     await boardStore.loadBoards();
-    const findBoardByUserOid = boardStore.findByOid(user.oid);
+    const user = userStore.getUser;
+    const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
+    const collabBoards = boardStore.getCollabBoard;
+    console.log(boardByUserOid);
 
-    // and no collab boards
-
-    if (!findBoardByUserOid.length === 1 && !collabBoards.length === 0) {
-      const currentBoard = findBoardByUserOid[0];
+    if (boardByUserOid.length === 1 && collabBoards.length === 0) {
+      const currentBoard = boardByUserOid[0];
       boardStore.setCurrentBoard(currentBoard);
       router.push({ name: "board-task", params: { id: currentBoard.id } });
     } else {
-      // No boards found, navigate to general board view
       router.push({ name: "board" });
     }
   } catch (error) {

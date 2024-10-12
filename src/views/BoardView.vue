@@ -2,6 +2,7 @@
 import Header from "@/components/Header.vue";
 import { RouterView } from "vue-router";
 import NavigateTitle from "@/components/navigateTitle.vue";
+import submitButton from "@/components/button/Button.vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import { useBoardStore } from "@/stores/BoardStore";
 import { computed, onMounted, ref } from "vue";
@@ -10,12 +11,13 @@ import { useUserStore } from "@/stores/UserStore";
 import router from "@/router/page";
 import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
 import { useToast } from "primevue/usetoast";
+import { useCollabStore } from "@/stores/CollabStore";
 
 const boardStore = useBoardStore();
+const collabStore = useCollabStore();
 const userStore = useUserStore();
 const toast = useToast();
 const collabBoardName = ref("");
-
 const isEmojiPickerVisible = ref(false);
 const emojiPicker = ref(null);
 
@@ -31,17 +33,18 @@ const collab = ref({
 });
 
 const handleLeaveCollab = (collabOid) => {
-  const collabBoard = boardStore.getCollaborators.find(
+  const collabBoard = boardStore.getCollabBoard.find(
     (collab) => collab.oid === collabOid
   );
-  collabBoardName.value = collabBoard.name;
+
+  collabBoardName.value = collabBoard.boardName;
   leaveCollabModal.value = true;
 };
 
 const confirmLeaveCollab = async () => {
   leaveCollabModal.value = false;
   try {
-    const res = await boardStore.leaveCollab(collab.oid);
+    const res = await collabStore.leaveCollab(collab.oid);
     if (res.status === 200 || res.status === 403 || res.status === 404) {
       router.push({ name: "board" });
     } else if (res.status === 401) {
@@ -101,7 +104,7 @@ const confirmLeaveCollab = async () => {
           <!-- v-for="(board, index) in boards" -->
           <div
             class="itbkk-personal-item w-80 h-28 flex justify-between p-2 bg-white rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
-            v-for="(board, index) in boardStore.getBoards"
+            v-for="(board, index) in boardStore.getPersonalBoard()"
             :key="index"
             @click="
               router.push({ name: 'board-task', params: { id: board.id } })
@@ -158,19 +161,22 @@ const confirmLeaveCollab = async () => {
           <div class="grid grid-cols-4 gap-32 p-7 pb-20">
             <div
               class="itbkk-collab-item w-80 h-28 flex justify-between p-2 bg-white rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
-              v-for="(board, index) in boardStore.getBoards"
+              v-for="(collab, index) in boardStore.getCollabBoard()"
               :key="index"
               @click="
-                router.push({ name: 'board-task', params: { id: board.id } })
+                router.push({
+                  name: 'board-task',
+                  params: { id: collab.boardId },
+                })
               "
             >
               <div class="flex gap-x-5">
                 <div
                   class="w-32 h-full rounded-md flex items-center justify-center"
-                  :style="{ backgroundColor: board.color }"
+                  :style="{ backgroundColor: collab.color }"
                 >
                   <div class="text-2xl text-white">
-                    {{ board.emoji }}
+                    {{ collab.emoji }}
                   </div>
                 </div>
                 <div class="flex flex-col justify-between">
@@ -178,7 +184,7 @@ const confirmLeaveCollab = async () => {
                     <h3
                       class="itbkk-board-name text-lg font-semibold leading-tight"
                     >
-                      {{ board.name }}
+                      {{ collab.boardName }}
                     </h3>
                     <div class="flex items-center">
                       <p
@@ -188,9 +194,9 @@ const confirmLeaveCollab = async () => {
                         <span
                           :class="{
                             'text-[#0096FF] font-semibold':
-                              collab.accessRight === 'Read',
+                              collab.accessRight === 'READ',
                             'text-green-500 font-semibold':
-                              collab.accessRight === 'Write',
+                              collab.accessRight === 'WRITE',
                           }"
                           >{{ collab.accessRight }}</span
                         >
@@ -200,7 +206,7 @@ const confirmLeaveCollab = async () => {
 
                   <div class="flex justify-between">
                     <p class="itbkk-owner-name text-sm text-gray-500">
-                      {{ userStore.getUser.name }}
+                      {{ collab.ownerName }}
                     </p>
 
                     <button
@@ -226,19 +232,19 @@ const confirmLeaveCollab = async () => {
       <div>Do you want to leave "{{ collabBoardName }}" board?</div>
     </template>
     <template #button-left>
-      <SubmitButton
+      <submitButton
         buttonType="cancel"
         class="itbkk-button-cancel"
         @click="leaveCollabModal = false"
-        >Cancel</SubmitButton
+        >Cancel</submitButton
       >
     </template>
     <template #button-right>
-      <SubmitButton
+      <submitButton
         buttonType="delete"
         class="itbkk-button-confirm"
         @click="confirmLeaveCollab"
-        >Remove</SubmitButton
+        >Remove</submitButton
       >
     </template>
   </ConfirmModal>

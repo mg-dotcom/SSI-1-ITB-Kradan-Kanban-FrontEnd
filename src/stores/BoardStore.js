@@ -4,9 +4,6 @@ import {
   fetchBoardById,
   addBoard,
   patchBoardVisibility,
-  fetchCollab,
-  deleteCollab,
-  updateAccessRight,
 } from "../libs/FetchBoard.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -21,7 +18,6 @@ export const useBoardStore = defineStore("BoardStore", {
     toast: useToast(),
     currentBoard: {},
     userStore: useUserStore(),
-    collaborators: [],
   }),
   getters: {
     getBoards: (state) => state.board,
@@ -35,17 +31,6 @@ export const useBoardStore = defineStore("BoardStore", {
       }
       return state.userStore.user?.oid === state.currentBoard.owner?.oid;
     },
-    getPersonalBoard: (state) => {
-      return state.board.sort((a, b) => {
-        return new Date(b.createdOn) - new Date(a.createdOn);
-      });
-    },
-    getPublicBoard: (state) => {
-      return state.board.sort((a, b) => {
-        return new Date(b.addedOn) - new Date(a.addedOn);
-      });
-    },
-    getCollaborators: (state) => state.collaborators,
   },
   actions: {
     async loadBoards() {
@@ -75,6 +60,20 @@ export const useBoardStore = defineStore("BoardStore", {
       } else {
         this.board = data;
         return data;
+      }
+    },
+    getPersonalBoard() {
+      if (Array.isArray(this.board.personalBoard)) {
+        return this.board.personalBoard.sort(
+          (a, b) => new Date(a.createdOn) - new Date(b.createdOn)
+        );
+      }
+    },
+    getCollabBoard() {
+      if (Array.isArray(this.board.collabsBoard)) {
+        return this.board.collabsBoard.sort(
+          (a, b) => new Date(a.addedOn) - new Date(b.addedOn)
+        );
       }
     },
     async addBoard(newBoard) {
@@ -118,8 +117,8 @@ export const useBoardStore = defineStore("BoardStore", {
         alert("There is a problem. Please try again later.");
       }
     },
-    findByOid(oid) {
-      return this.board.filter((board) => board.userOid === oid);
+    findPersonalBoardByOid(oid) {
+      return this.board.personalBoard.filter((board) => board.userOid === oid);
     },
     setCurrentBoard(board) {
       this.currentBoard = board;
@@ -127,77 +126,6 @@ export const useBoardStore = defineStore("BoardStore", {
     async isPublicBoard(boardId) {
       const board = await this.loadBoardById(boardId);
       return board.visibility === "PUBLIC";
-    },
-
-    //collaborators
-    async loadCollab(boardId) {
-      await checkTokenExpiration();
-      try {
-        const data = await fetchCollab(
-          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`
-        );
-
-        if (data.status < 200 && data.status > 299) {
-          alert("Failed to fetch boards");
-        } else {
-          this.collaborators = data;
-        }
-      } catch (error) {
-        console.log(error);
-        handleAuthenticationClearAndRedirect();
-      }
-    },
-    async updateAccessRight(boardId, collabOid, collaborator) {
-      await checkTokenExpiration();
-      const res = await updateAccessRight(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`,
-        collaborator
-      );
-
-      if (res.status === 200) {
-        const index = this.collaborators.findIndex(
-          (collab) => collab.oid === collabOid
-        );
-        this.collaborators[index].accessRight = collaborator.accessRight;
-      }
-      return res;
-    },
-    async removeCollab(boardId, collabOid) {
-      await checkTokenExpiration();
-      const res = await deleteCollab(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`
-      );
-
-      const index = this.collaborators.findIndex(
-        (collab) => collab.oid === collabOid
-      );
-
-      if (res.status === 200) {
-        this.collaborators.splice(index, 1);
-      }
-
-      return res;
-    },
-    async leaveCollab(collabOid) {
-      await checkTokenExpiration();
-      const res = await deleteCollab(
-        `${
-          import.meta.env.VITE_BASE_URL
-        }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`
-      );
-
-      if (res.status === 200) {
-        const index = this.collaborators.findIndex(
-          (collab) => collab.oid === this.userStore.user.oid
-        );
-        this.collaborators.splice(index, 1);
-      }
-
-      return res;
     },
   },
 });

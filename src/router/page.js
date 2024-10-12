@@ -4,6 +4,7 @@ import { computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { useStatusStore } from "@/stores/StatusStore";
 import { useBoardStore } from "@/stores/BoardStore";
+import { useCollabStore } from "@/stores/CollabStore";
 import { useTaskStore } from "@/stores/TaskStore";
 import TaskView from "../views/TaskView.vue";
 import Detail from "../components/taskModal/Detail.vue";
@@ -108,6 +109,7 @@ const router = createRouter({
 router.beforeEach(async (to, _, next) => {
   const userStore = useUserStore();
   const boardStore = useBoardStore();
+  const collabStore = useCollabStore();
   const taskStore = useTaskStore();
   const statusStore = useStatusStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
@@ -126,11 +128,13 @@ router.beforeEach(async (to, _, next) => {
   if (to.path.startsWith("/board")) {
     try {
       userStore.initialize();
-      await boardStore.loadBoards(); // Load the boards
+      if (to.name === "board") {
+        await boardStore.loadBoards();
+      }
       if (boardId) {
         userStore.initialize();
         await boardStore.loadBoardById(boardId); // Load the board data
-        await boardStore.loadCollab(boardId); // Load the collaborators
+        await collabStore.loadCollab(boardId); // Load the collaborators
         await taskStore.loadTasks(boardId); // Load the tasks
         await statusStore.loadStatuses(boardId); // Load the statuses
       }
@@ -153,9 +157,10 @@ router.beforeEach(async (to, _, next) => {
       return next();
     }
     const hasAccessRight = computed(() => {
-      const collab = boardStore.getCollaborators?.find(
+      const collab = collabStore.getCollaborators?.find(
         (c) => c.oid === userStore.getUser?.oid
       );
+
       return collab?.accessRight === "WRITE";
     });
     if (!hasAccessRight.value) {

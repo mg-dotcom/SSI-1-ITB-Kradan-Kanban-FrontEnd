@@ -8,6 +8,7 @@ import { ref, computed, watch, onMounted } from "vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import SubmitButton from "@/components/button/Button.vue";
 import { useBoardStore } from "@/stores/BoardStore";
+import { useCollabStore } from "@/stores/CollabStore";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "@/stores/UserStore";
 import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
@@ -24,6 +25,7 @@ const oldAccessRight = ref("");
 const name = ref("");
 const userStore = useUserStore();
 const boardVisibility = ref(false);
+const collabStore = useCollabStore();
 
 const toast = useToast();
 
@@ -34,7 +36,7 @@ onMounted(async () => {
 });
 
 const hasAccessRight = computed(() => {
-  const collab = boardStore.getCollaborators?.find(
+  const collab = collabStore.getCollaborators?.find(
     (c) => c.oid === userStore.getUser?.oid
   );
 
@@ -55,7 +57,7 @@ console.log("isOwner", isOwner.value);
 console.log("hasAccessRight", hasAccessRight.value);
 
 const handleAccessRightChange = (collabOid) => {
-  const collab = boardStore.getCollaborators.find((c) => c.oid === collabOid);
+  const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
   newAccessRight.value = collab.accessRight;
   selectedCollabOid.value = collabOid;
@@ -65,13 +67,15 @@ const handleAccessRightChange = (collabOid) => {
 };
 
 const handleCancleAccessRightChange = () => {
-  const collab = boardStore.getCollaborators.find((c) => c.name === name.value);
+  const collab = collabStore.getCollaborators.find(
+    (c) => c.name === name.value
+  );
   collab.accessRight = oldAccessRight.value;
   changeAcessRightModal.value = false;
 };
 
 const confirmChangeAccessRight = async () => {
-  const res = await boardStore.updateAccessRight(
+  const res = await collabStore.updateAccessRight(
     boardId,
     selectedCollabOid.value,
     newAccessRight.value
@@ -99,14 +103,14 @@ const confirmChangeAccessRight = async () => {
 };
 
 watch(
-  () => boardStore.getCollaborators.map((c) => c.accessRight).join(" "), // Join access rights into a string
+  () => collabStore.getCollaborators.map((c) => c.accessRight).join(" "), // Join access rights into a string
   (newVal, oldVal) => {
     oldAccessRight.value = oldVal;
   }
 );
 
 const handleRemoveCollab = (collabOid) => {
-  const collab = boardStore.getCollaborators.find((c) => c.oid === collabOid);
+  const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
   selectedCollabOid.value = collabOid;
   openRemoveCollabModal.value = true;
@@ -231,7 +235,7 @@ const confirmRemoveCollab = async () => {
                 </tr>
                 <tr
                   class="itbkk-item py-4"
-                  v-for="(collab, index) in boardStore.getCollaborators"
+                  v-for="(collab, index) in collabStore.getCollaborators"
                   :key="index"
                 >
                   <td
