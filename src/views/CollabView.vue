@@ -4,7 +4,7 @@ import Header from "@/components/Header.vue";
 import NavigateTitle from "@/components/navigateTitle.vue";
 import { useRoute } from "vue-router";
 import AddCollab from "@/components/confirmModal/AddCollab.vue";
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import SubmitButton from "@/components/button/Button.vue";
 import { useBoardStore } from "@/stores/BoardStore";
@@ -33,12 +33,11 @@ const toast = useToast();
 
 onMounted(async () => {
   const fetchedBoard = await boardStore.loadBoardById(boardId);
+  await collabStore.loadCollab(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
 
   boardName.value = fetchedBoard.name;
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
-
-  console.log(collabStore.getCollaborators);
 });
 
 const isOwner = computed(() => {
@@ -52,18 +51,22 @@ const isOwner = computed(() => {
 });
 
 const handleAccessRightChange = (collabOid) => {
+  console.log(collabOid);
+  console.log(collabStore.getCollaborators);
+
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
+
   name.value = collab.name;
   newAccessRight.value = collab.accessRight;
+
   selectedCollabOid.value = collabOid;
-  console.log("selectedCollabOid", selectedCollabOid.value);
 
   changeAcessRightModal.value = true;
 };
 
 const saveOriginalAccessRight = (collab) => {
+  selectedCollabOid.value = collab.oid;
   oldAccessRight.value = collab.accessRight;
-  collab.tempAccessRight = collab.accessRight;
 };
 
 const handleCancleAccessRightChange = () => {
@@ -75,6 +78,8 @@ const handleCancleAccessRightChange = () => {
 };
 
 const confirmChangeAccessRight = async () => {
+  console.log(selectedCollabOid.value);
+
   const res = await collabStore.updateAccessRight(
     boardId,
     selectedCollabOid.value,
@@ -111,14 +116,23 @@ const confirmChangeAccessRight = async () => {
 const handleRemoveCollab = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
+  console.log(collabOid);
+
   selectedCollabOid.value = collabOid;
+
   openRemoveCollabModal.value = true;
 };
 
 const confirmRemoveCollab = async () => {
-  const res = await boardStore.removeCollab(boardId, selectedCollabOid.value);
+  const res = await collabStore.removeCollab(boardId, selectedCollabOid.value);
 
   if (res.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Collaborator removed successfully!",
+      life: 3000,
+    });
     openRemoveCollabModal.value = false;
   } else if (res.status === 401) {
     handleAuthenticationClearAndRedirect();
