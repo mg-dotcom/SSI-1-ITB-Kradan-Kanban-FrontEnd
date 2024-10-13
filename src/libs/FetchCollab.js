@@ -42,7 +42,7 @@ const deleteCollab = async (url) => {
   return res;
 };
 
-const updateAccessRight = async (url, collaborator) => {
+const updateAccessRight = async (url, accessRight) => {
   const res = await fetch(`${url}`, {
     method: "PATCH",
     headers: {
@@ -51,7 +51,7 @@ const updateAccessRight = async (url, collaborator) => {
     },
 
     body: JSON.stringify({
-      access_right: collaborator.access_right,
+      accessRight: accessRight,
     }),
   });
   return res;

@@ -51,20 +51,20 @@ export const useCollabStore = defineStore("CollabStore", {
       }
       return res;
     },
-    async updateAccessRight(boardId, collabOid, collaborator) {
+    async updateAccessRight(boardId, collabOid, accessRight) {
       await checkTokenExpiration();
       const res = await updateAccessRight(
         `${
           import.meta.env.VITE_BASE_URL
         }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`,
-        collaborator
+        accessRight
       );
 
       if (res.status === 200) {
         const index = this.collaborators.findIndex(
           (collab) => collab.oid === collabOid
         );
-        this.collaborators[index].accessRight = collaborator.accessRight;
+        this.collaborators[index].accessRight = accessRight;
       }
       return res;
     },

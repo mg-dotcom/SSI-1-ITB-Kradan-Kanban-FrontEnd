@@ -61,9 +61,14 @@ const handleAccessRightChange = (collabOid) => {
   changeAcessRightModal.value = true;
 };
 
+const saveOriginalAccessRight = (collab) => {
+  oldAccessRight.value = collab.accessRight;
+  collab.tempAccessRight = collab.accessRight;
+};
+
 const handleCancleAccessRightChange = () => {
   const collab = collabStore.getCollaborators.find(
-    (c) => c.name === name.value
+    (c) => c.oid === selectedCollabOid.value
   );
   collab.accessRight = oldAccessRight.value;
   changeAcessRightModal.value = false;
@@ -77,6 +82,12 @@ const confirmChangeAccessRight = async () => {
   );
 
   if (res.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Collaborator access right changed successfully!",
+      life: 3000,
+    });
     changeAcessRightModal.value = false;
   } else if (res.status === 401) {
     handleAuthenticationClearAndRedirect();
@@ -96,13 +107,6 @@ const confirmChangeAccessRight = async () => {
     });
   }
 };
-
-watch(
-  () => collabStore.getCollaborators.map((c) => c.accessRight).join(" "), // Join access rights into a string
-  (newVal, oldVal) => {
-    oldAccessRight.value = oldVal;
-  }
-);
 
 const handleRemoveCollab = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
@@ -298,6 +302,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
                           'disabled cursor-not-allowed': !isOwner,
                         }"
                         :disabled="!isOwner"
+                        @focus="saveOriginalAccessRight(collab)"
                         @change="handleAccessRightChange(collab.oid)"
                       >
                         <option value="READ">READ</option>
