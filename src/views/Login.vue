@@ -44,7 +44,6 @@ const signIn = async () => {
     const user = userStore.getUser;
     const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
     const collabBoards = boardStore.getCollabBoard;
-    console.log(boardByUserOid);
 
     if (boardByUserOid.length === 1 && collabBoards.length === 0) {
       const currentBoard = boardByUserOid[0];

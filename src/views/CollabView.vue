@@ -12,6 +12,7 @@ import { useCollabStore } from "@/stores/CollabStore";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "@/stores/UserStore";
 import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
+import buttonSubmit from "@/components/button/Button.vue";
 
 const boardStore = useBoardStore();
 const route = useRoute();
@@ -26,12 +27,15 @@ const name = ref("");
 const userStore = useUserStore();
 const boardVisibility = ref(false);
 const collabStore = useCollabStore();
+const boardName = ref("");
 
 const toast = useToast();
 
 onMounted(async () => {
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
+
+  boardName.value = fetchedBoard.name;
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 
@@ -155,13 +159,20 @@ const confirmRemoveCollab = async () => {
     <div
       class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
     >
-      <div class="flex justify-center text-black text-2xl font-semibold">
+      <div
+        class="font-bold flex flex-col items-center justify-center text-black text-center xl:text-2xl lg:text-3xl md:text-2xl sm:text-lg md-vertical:px-3 mobile:px-0 py-5"
+      >
         Collaborator Management
+        <div class="itbkk-board-name text-lg font-medium mt-2 text-gray-700">
+          {{ boardName }}
+        </div>
       </div>
+
       <div
         class="flex justify-between mobile:px-0 py-6 md-vertical:flex-row mobile:flex-col gap-3"
       >
         <NavigateTitle :boardId="boardId" />
+
         <div class="flex gap">
           <div class="my-3 mr-2">
             <label
@@ -182,12 +193,25 @@ const confirmRemoveCollab = async () => {
               >
             </label>
           </div>
-          <button
-            class="itbkk-button-next bg-green-500 text-white font-bold py-2 px-4 rounded-lg"
-            @click="openAddCollabModal = true"
+
+          <div
+            :class="{ tooltip: isPublic }"
+            data-tip="You need to be board owner to perform this action."
           >
-            Add Collaborator
-          </button>
+            <buttonSubmit
+              class="itbkk-collaborator-add"
+              data-tip="You need to be board owner to perform this action."
+              button-type="add"
+              :class="{
+                'disabled cursor-not-allowed bg-gray-300 px-4 py-2 rounded-md   text-white hover:bg-gray-400 transition-colors active:scale-[93%] active:transition-transform ':
+                  !isOwner,
+                'tooltip tooltip-bottom hover:cursor-not-allowed': !isOwner,
+              }"
+              @click.prevent="isOwner ? (openAddCollabModal = true) : null"
+              :disabled="!isOwner"
+              >+ Add Collaborator</buttonSubmit
+            >
+          </div>
         </div>
       </div>
       <div class="-my-2 mb-8 sm:-mx">
@@ -244,28 +268,28 @@ const confirmRemoveCollab = async () => {
                     {{ index + 1 }}
                   </td>
                   <td
-                    class="itbkk-status-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                    class="itbkk-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                   >
                     {{ collab.name }}
                   </td>
                   <td
-                    class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all"
+                    class="itbkk-email text-sm border-b border-r border-gray-300 break-all"
                   >
                     {{ collab.email }}
                   </td>
 
                   <td
-                    class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all"
+                    class="itbkk-access-right text-sm border-b border-r border-gray-300 break-all"
                   >
                     <label class="form-control w-full max-w-xs bg-white">
                       <select
+                        data-tip="You need to be board owner to perform this action."
                         class="select select-bordered bg-white border-b-2 font-bold text-black"
                         v-model="collab.accessRight"
                         :class="{
-                          'disabled cursor-not-allowed':
-                            !isOwner && !hasAccessRight,
+                          'disabled cursor-not-allowed': !isOwner,
                         }"
-                        :disabled="!isOwner && !hasAccessRight"
+                        :disabled="!isOwner"
                         @change="handleAccessRightChange(collab.oid)"
                       >
                         <option value="READ">READ</option>
@@ -274,19 +298,19 @@ const confirmRemoveCollab = async () => {
                     </label>
                   </td>
                   <td
-                    class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all"
+                    class="itbkk-collab-remove text-sm border-b border-r border-gray-300 break-all"
                   >
                     <SubmitButton
-                      :buttonType="
-                        isOwner || hasAccessRight ? 'delete' : 'disabled'
-                      "
-                      data-tip="You need to be board owner or has write access to perform this action."
+                      :buttonType="isOwner ? 'delete' : 'disabled'"
+                      data-tip="You need to be board owner to perform this action."
                       :class="{
                         'disabled cursor-not-allowed bg-gray-300 tooltip tooltip-bottom':
-                          !isOwner && !hasAccessRight,
+                          !isOwner,
                       }"
-                      :disabled="!isOwner && !hasAccessRight"
-                      @click="handleRemoveCollab(collab.oid)"
+                      :disabled="!isOwner"
+                      @click.prevent="
+                        isOwner ? handleRemoveCollab(collab.oid) : null
+                      "
                       >Remove</SubmitButton
                     >
                   </td>
@@ -327,12 +351,14 @@ const confirmRemoveCollab = async () => {
       </template>
     </ConfirmModal>
 
-    <ConfirmModal v-if="openRemoveCollabModal">
+    <ConfirmModal v-if="openRemoveCollabModal" class="itbkk-modal-alert">
       <template #title>
         <p>Remove Collaborator</p>
       </template>
       <template #question>
-        <div>Do you want to remove "{{ name }}" from the board?</div>
+        <div class="itbkk-message">
+          Do you want to remove "{{ name }}" from the board?
+        </div>
       </template>
       <template #button-left>
         <SubmitButton
