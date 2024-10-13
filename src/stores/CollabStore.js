@@ -3,6 +3,7 @@ import {
   fetchCollab,
   deleteCollab,
   updateAccessRight,
+  addCollab,
 } from "../libs/FetchCollab.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -30,12 +31,25 @@ export const useCollabStore = defineStore("CollabStore", {
           alert("Failed to fetch boards");
         } else {
           this.collaborators = data;
-          console.log(this.collaborators);
         }
       } catch (error) {
         console.log(error);
         handleAuthenticationClearAndRedirect();
       }
+    },
+    async addCollab(boardId, newCollab) {
+      await checkTokenExpiration();
+      const res = await addCollab(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
+        newCollab
+      );
+      if (res.status === 401) {
+        handleAuthenticationClearAndRedirect();
+      } else if (res.status === 201) {
+        const data = await res.json();
+        this.collaborators.push(data);
+      }
+      return res;
     },
     async updateAccessRight(boardId, collabOid, collaborator) {
       await checkTokenExpiration();

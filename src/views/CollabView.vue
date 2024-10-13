@@ -37,14 +37,8 @@ onMounted(async () => {
 
   boardName.value = fetchedBoard.name;
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
-});
 
-const hasAccessRight = computed(() => {
-  const collab = collabStore.getCollaborators?.find(
-    (c) => c.oid === userStore.getUser?.oid
-  );
-
-  return collab?.accessRight === "WRITE";
+  console.log(collabStore.getCollaborators);
 });
 
 const isOwner = computed(() => {
@@ -56,9 +50,6 @@ const isOwner = computed(() => {
   }
   return false;
 });
-
-console.log("isOwner", isOwner.value);
-console.log("hasAccessRight", hasAccessRight.value);
 
 const handleAccessRightChange = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
@@ -150,6 +141,43 @@ const confirmRemoveCollab = async () => {
     });
   }
 };
+
+const confirmAddCollab = async (email, accessRightValue) => {
+  const res = await collabStore.addCollab(boardId, {
+    email: email,
+    accessRight: accessRightValue,
+  });
+  if (res.status === 403) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You do not have permission to add board collaborator.",
+      life: 3000,
+    });
+  } else if (res.status === 404) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "The user does not exist.",
+      life: 3000,
+    });
+  } else if (res.status === 409) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "The user is already a collaborator of this board.",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Collaborator added successfully!",
+      life: 3000,
+    });
+  }
+  openAddCollabModal.value = false;
+};
 </script>
 
 <template>
@@ -174,26 +202,6 @@ const confirmRemoveCollab = async () => {
         <NavigateTitle :boardId="boardId" />
 
         <div class="flex gap">
-          <div class="my-3 mr-2">
-            <label
-              class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom': !isOwner }"
-              data-tip="You need to be board owner to perform this action."
-            >
-              <input
-                v-model="boardVisibility"
-                type="checkbox"
-                class="itbkk-board-visibility toggle toggle-success"
-                @click.prevent="popup.boardVisibilityPopup = true"
-                :disabled="!isOwner"
-              />
-              <span
-                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
-                >{{ boardVisibility ? "Public" : "Private" }}</span
-              >
-            </label>
-          </div>
-
           <div
             :class="{ tooltip: isPublic }"
             data-tip="You need to be board owner to perform this action."
@@ -252,8 +260,8 @@ const confirmRemoveCollab = async () => {
                 </tr>
               </thead>
               <tbody class="bg-white">
-                <tr v-if="false">
-                  <td class="border text-center" colspan="4">
+                <tr v-if="collabStore.getCollaborators <= 0">
+                  <td class="border text-center" colspan="5">
                     No collaborator found
                   </td>
                 </tr>
@@ -297,6 +305,7 @@ const confirmRemoveCollab = async () => {
                       </select>
                     </label>
                   </td>
+
                   <td
                     class="itbkk-collab-remove text-sm border-b border-r border-gray-300 break-all"
                   >
@@ -321,6 +330,12 @@ const confirmRemoveCollab = async () => {
         </div>
       </div>
     </div>
+
+    <AddCollab
+      v-if="openAddCollabModal"
+      @closeAddCollab="openAddCollabModal = false"
+      @addCollab="confirmAddCollab"
+    ></AddCollab>
 
     <ConfirmModal v-if="changeAcessRightModal" class="itbkk-modal-alert">
       <template #title>

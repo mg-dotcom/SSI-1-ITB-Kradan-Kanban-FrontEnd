@@ -166,7 +166,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                   !isOwner && !hasAccessRight,
               }"
               @click.prevent="
-                isOwner && hasAccessRight
+                isOwner || hasAccessRight
                   ? router.push({ name: 'status-add' })
                   : null
               "
@@ -177,7 +177,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
 
           <buttonSubmit
             @click.prevent="
-              isOwner && hasAccessRight ? (openLimit = true) : null
+              isOwner || hasAccessRight ? (openLimit = true) : null
             "
             :disabled="!isOwner && !hasAccessRight"
             data-tip="You dont have permission"

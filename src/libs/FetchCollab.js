@@ -17,7 +17,7 @@ const fetchCollab = async (url) => {
 
 const addCollab = async (url, collaborator) => {
   const res = await fetch(`${url}`, {
-    method: "PATCH",
+    method: "POST",
     headers: {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,
@@ -25,7 +25,7 @@ const addCollab = async (url, collaborator) => {
 
     body: JSON.stringify({
       email: collaborator.email,
-      access_right: collaborator.access_right,
+      accessRight: collaborator.accessRight,
     }),
   });
   return res;

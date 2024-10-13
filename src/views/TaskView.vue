@@ -281,7 +281,7 @@ const handleEditTask = () => {
           >
           <buttonSubmit
             @click.prevent="
-              isOwner && hasAccessRight ? (openLimit = true) : null
+              isOwner || hasAccessRight ? (openLimit = true) : null
             "
             :disabled="!isOwner && !hasAccessRight"
             data-tip="You dont have permission"
