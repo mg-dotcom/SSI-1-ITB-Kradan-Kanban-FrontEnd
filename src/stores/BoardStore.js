@@ -43,6 +43,7 @@ export const useBoardStore = defineStore("BoardStore", {
           alert("Failed to fetch boards");
         } else {
           this.board = data;
+          console.log(this.board);
         }
       } catch (error) {
         handleAuthenticationClearAndRedirect();
@@ -67,6 +68,8 @@ export const useBoardStore = defineStore("BoardStore", {
         return this.board.personalBoard.sort(
           (a, b) => new Date(a.createdOn) - new Date(b.createdOn)
         );
+      } else {
+        return [];
       }
     },
     getCollabBoard() {
@@ -74,6 +77,8 @@ export const useBoardStore = defineStore("BoardStore", {
         return this.board.collabsBoard.sort(
           (a, b) => new Date(a.addedOn) - new Date(b.addedOn)
         );
+      } else {
+        return [];
       }
     },
     async addBoard(newBoard) {

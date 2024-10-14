@@ -18,7 +18,7 @@ export const useCollabStore = defineStore("CollabStore", {
     collaborators: [],
   }),
   getters: {
-    getCollaborators: (state) => state.collaborators,
+    getCollaborators: (state) => state.collaborators.collaborators,
   },
   actions: {
     async loadCollab(boardId) {
@@ -31,7 +31,8 @@ export const useCollabStore = defineStore("CollabStore", {
         if (data.status < 200 && data.status > 299) {
           alert("Failed to fetch boards");
         } else {
-          this.collaborators = data;
+          this.collaborators.collaborators = data;
+          console.log(this.collaborators.collaborators);
         }
       } catch (error) {
         console.log(error);
@@ -50,9 +51,7 @@ export const useCollabStore = defineStore("CollabStore", {
         handleAuthenticationClearAndRedirect();
       } else if (res.status === 201) {
         const data = await res.json();
-        console.log(data);
-
-        this.collaborators.push(data);
+        this.collaborators.collaborators.push(data);
       }
       return res;
     },
@@ -69,7 +68,7 @@ export const useCollabStore = defineStore("CollabStore", {
         const index = this.collaborators.findIndex(
           (collab) => collab.oid === collabOid
         );
-        this.collaborators[index].accessRight = accessRight;
+        this.collaborators.collaborators[index].accessRight = accessRight;
       }
       return res;
     },
@@ -81,12 +80,12 @@ export const useCollabStore = defineStore("CollabStore", {
         }${BOARD_ENDPOINT}/${boardId}/collabs/${collabOid}`
       );
 
-      const index = this.collaborators.findIndex(
+      const index = this.collaborators.collaborators.findIndex(
         (collab) => collab.oid === collabOid
       );
 
       if (res.status === 200) {
-        this.collaborators.splice(index, 1);
+        this.collaborators.collaborators.splice(index, 1);
       }
 
       return res;
@@ -107,6 +106,23 @@ export const useCollabStore = defineStore("CollabStore", {
         boardStore.getCollabBoard().splice(index, 1);
       }
       return res;
+    },
+    checkAccessRight() {
+      const userStore = useUserStore();
+      const collabArr = this.collaborators.collaborators;
+      if (Array.isArray(collabArr)) {
+        const collab = collabArr.find(
+          (collab) => collab.oid === userStore.getUser.oid
+        );
+        if (collab) {
+          console.log("Collaborator found:", collab);
+        } else {
+          console.log("No matching collaborator found.");
+        }
+      } else {
+        console.error("getCollaborators did not return an array:", collabArr);
+        return [];
+      }
     },
   },
 });

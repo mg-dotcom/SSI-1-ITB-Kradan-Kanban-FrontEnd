@@ -170,7 +170,7 @@ const confirmLeaveCollab = async () => {
           </div>
           <div class="grid grid-cols-4 gap-32 p-7 pb-20">
             <div
-              v-if="boardStore.getCollabBoard().length === 0"
+              v-if="boardStore.getCollabBoard().length <= 0"
               class="empty-collab-board bg-white w-80 h-28 flex items-center justify-center rounded-md border border-solid border-gray-300"
             >
               <div class="text-center">
