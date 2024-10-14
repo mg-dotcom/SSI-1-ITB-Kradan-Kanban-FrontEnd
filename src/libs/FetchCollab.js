@@ -39,6 +39,8 @@ const deleteCollab = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
+  console.log(res);
+
   return res;
 };
 

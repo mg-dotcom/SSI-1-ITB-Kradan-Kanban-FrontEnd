@@ -115,8 +115,6 @@ router.beforeEach(async (to, _, next) => {
   const isAuthenticated = !!userStore.getIsLoggedIn;
   const boardId = to.params.id;
 
-  userStore.initialize();
-
   const isPublicBoard = boardId
     ? await boardStore.isPublicBoard(boardId)
     : false;
@@ -129,7 +127,7 @@ router.beforeEach(async (to, _, next) => {
     try {
       userStore.initialize();
       if (to.name === "board") {
-        await boardStore.loadBoards();
+        await boardStore.loadBoards(); // Load the boards
       }
       if (boardId) {
         userStore.initialize();

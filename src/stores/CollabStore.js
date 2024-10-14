@@ -9,6 +9,7 @@ import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
 import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
 import { checkTokenExpiration } from "./UserStore.js";
+import { useBoardStore } from "./BoardStore.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -90,7 +91,8 @@ export const useCollabStore = defineStore("CollabStore", {
 
       return res;
     },
-    async leaveCollab(collabOid) {
+    async leaveCollab(boardId, collabOid) {
+      const boardStore = useBoardStore();
       await checkTokenExpiration();
       const res = await deleteCollab(
         `${
@@ -99,10 +101,10 @@ export const useCollabStore = defineStore("CollabStore", {
       );
 
       if (res.status === 200) {
-        const index = this.collaborators.findIndex(
-          (collab) => collab.oid === this.userStore.user.oid
-        );
-        this.collaborators.splice(index, 1);
+        const index = boardStore
+          .getCollabBoard()
+          .findIndex((collab) => collab.oid === collabOid);
+        boardStore.getCollabBoard().splice(index, 1);
       }
       return res;
     },

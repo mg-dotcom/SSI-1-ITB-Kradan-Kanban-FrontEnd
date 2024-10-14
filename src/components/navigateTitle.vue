@@ -17,6 +17,10 @@ watch(
   () => props.boardId,
   (newBoardId) => {
     items.value = [
+      {
+        label: "Board",
+        routeName: "board",
+      },
       { label: "Home", routeName: "board-task", params: { id: newBoardId } },
       {
         label: "Status",

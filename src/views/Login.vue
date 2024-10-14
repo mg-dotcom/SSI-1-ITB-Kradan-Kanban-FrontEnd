@@ -43,7 +43,7 @@ const signIn = async () => {
     await boardStore.loadBoards();
     const user = userStore.getUser;
     const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
-    const collabBoards = boardStore.getCollabBoard;
+    const collabBoards = boardStore.getCollabBoard();
 
     if (boardByUserOid.length === 1 && collabBoards.length === 0) {
       const currentBoard = boardByUserOid[0];

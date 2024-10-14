@@ -92,7 +92,8 @@ export const useBoardStore = defineStore("BoardStore", {
           life: 3000,
         });
       } else {
-        this.board.push(newBoard);
+        const data = await res.json();
+        this.board.personalBoard.push(data);
       }
 
       return res;

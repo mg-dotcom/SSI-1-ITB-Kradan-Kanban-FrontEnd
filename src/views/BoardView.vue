@@ -2,6 +2,7 @@
 import Header from "@/components/Header.vue";
 import { RouterView } from "vue-router";
 import NavigateTitle from "@/components/navigateTitle.vue";
+import { useRoute } from "vue-router";
 import submitButton from "@/components/button/Button.vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import { useBoardStore } from "@/stores/BoardStore";
@@ -13,13 +14,16 @@ import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
 import { useToast } from "primevue/usetoast";
 import { useCollabStore } from "@/stores/CollabStore";
 
+const route = useRoute();
 const boardStore = useBoardStore();
 const collabStore = useCollabStore();
 const userStore = useUserStore();
 const toast = useToast();
 const collabBoardName = ref("");
 const isEmojiPickerVisible = ref(false);
+const selectedCollabOid = ref("");
 const emojiPicker = ref(null);
+const selectedBoardId = ref("");
 
 onClickOutside(emojiPicker, () => {
   isEmojiPickerVisible.value = false;
@@ -27,25 +31,30 @@ onClickOutside(emojiPicker, () => {
 
 const leaveCollabModal = ref(false);
 
-const collab = ref({
-  boardId: "",
-  accessRight: "Write",
-});
-
-const handleLeaveCollab = (collabOid) => {
-  const collabBoard = boardStore.getCollabBoard.find(
-    (collab) => collab.oid === collabOid
-  );
-
+const handleLeaveCollab = (collabBoardId, collabOid) => {
+  const collabBoard = boardStore
+    .getCollabBoard()
+    .find((collab) => collab.boardId === collabBoardId);
+  selectedBoardId.value = collabBoard.boardId;
+  selectedCollabOid.value = collabOid;
   collabBoardName.value = collabBoard.boardName;
   leaveCollabModal.value = true;
 };
 
 const confirmLeaveCollab = async () => {
-  leaveCollabModal.value = false;
   try {
-    const res = await collabStore.leaveCollab(collab.oid);
+    const res = await collabStore.leaveCollab(
+      selectedBoardId.value,
+      selectedCollabOid.value
+    );
+
     if (res.status === 200 || res.status === 403 || res.status === 404) {
+      toast.add({
+        severity: "success",
+        summary: "Success",
+        detail: "You have left the board.",
+        life: 3000,
+      });
       router.push({ name: "board" });
     } else if (res.status === 401) {
       handleAuthenticationClearAndRedirect();
@@ -60,6 +69,7 @@ const confirmLeaveCollab = async () => {
   } catch (error) {
     alert("There is a problem. Please try again later.");
   }
+  leaveCollabModal.value = false;
 };
 </script>
 
@@ -160,6 +170,20 @@ const confirmLeaveCollab = async () => {
           </div>
           <div class="grid grid-cols-4 gap-32 p-7 pb-20">
             <div
+              v-if="boardStore.getCollabBoard().length === 0"
+              class="empty-collab-board bg-white w-80 h-28 flex items-center justify-center rounded-md border border-solid border-gray-300"
+            >
+              <div class="text-center">
+                <p class="text-xl font-semibold text-gray-400">
+                  No Collaborative Boards Found
+                </p>
+                <p class="text-sm text-gray-400">
+                  You don't have any collaborative boards yet.
+                </p>
+              </div>
+            </div>
+
+            <div
               class="itbkk-collab-item w-80 h-28 flex justify-between p-2 bg-white rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
               v-for="(collab, index) in boardStore.getCollabBoard()"
               :key="index"
@@ -211,7 +235,9 @@ const confirmLeaveCollab = async () => {
 
                     <button
                       class="itbkk-leave-board bg-red-500 hover:bg-red-600 rounded-md transition-colors px-2 active:scale-[93%] active:transition-transform text-white text-xs font-bold"
-                      @click.stop="handleLeaveCollab(collab.oid)"
+                      @click.stop="
+                        handleLeaveCollab(collab.boardId, collab.oid)
+                      "
                     >
                       LEAVE
                     </button>
