@@ -1,6 +1,7 @@
 import { useUserToken } from "../stores/UserStore.js";
 import { handleResponseStatus } from "./libsUtil.js";
 import { handleAuthenticationClearAndRedirect } from "./libsUtil.js";
+import { checkTokenExpiration } from "@/stores/UserStore.js";
 
 const fetchAllBoards = async (url) => {
   const res = await fetch(`${url}`, {
@@ -23,7 +24,7 @@ const fetchBoardById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
+  await checkTokenExpiration(id);
   const data = await res.json();
   return data;
 };

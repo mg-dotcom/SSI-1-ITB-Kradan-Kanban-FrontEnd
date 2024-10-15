@@ -34,6 +34,7 @@ export const useBoardStore = defineStore("BoardStore", {
   },
   actions: {
     async loadBoards() {
+      await checkTokenExpiration();
       try {
         const data = await fetchAllBoards(
           `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
@@ -104,6 +105,7 @@ export const useBoardStore = defineStore("BoardStore", {
       return res;
     },
     async changeBoardVisibility(id, newVisibility) {
+      await checkTokenExpiration();
       try {
         const res = await patchBoardVisibility(
           `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`,
@@ -130,10 +132,12 @@ export const useBoardStore = defineStore("BoardStore", {
       this.currentBoard = board;
     },
     async isPublicBoard(boardId) {
+      await checkTokenExpiration();
       const board = await this.loadBoardById(boardId);
       return board.visibility === "PUBLIC";
     },
     async checkIsOwner(boardId) {
+      await checkTokenExpiration();
       await this.loadBoards();
       const board = this.board.personalBoard.find(
         (board) => board.id === boardId
