@@ -117,7 +117,8 @@ const confirmLeaveCollab = async () => {
             v-for="(board, index) in boardStore.getPersonalBoard()"
             :key="index"
             @click="
-              router.push({ name: 'board-task', params: { id: board.id } })
+              router.push({ name: 'board-task', params: { id: board.id } }),
+                boardStore.setCurrentBoard(board)
             "
           >
             <div class="flex gap-x-5">

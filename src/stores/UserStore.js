@@ -53,7 +53,6 @@ export const useUserStore = defineStore("UserStore", {
           alert("Failed to login");
         }
       } catch (error) {
-  
         throw new Error(error.message);
       }
     },
@@ -80,6 +79,9 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
   },
+  checkPermission() {
+    
+  },
 });
 
 export const useUserToken = () => {
@@ -105,12 +107,9 @@ export const checkTokenExpiration = async (boardId) => {
   const boardStore = useBoardStore();
   const router = useRouter();
 
-
-
   const isPublicBoard = boardId
     ? await boardStore.isPublicBoard(boardId)
     : false;
-
 
   if (!userStore.token) {
     if (isPublicBoard) {

@@ -141,30 +141,40 @@ router.beforeEach(async (to, _, next) => {
     }
   }
 
-  if (to.name === "task-add" || to.name === "task-edit") {
+  if (
+    to.name === "task-add" ||
+    to.name === "task-edit" ||
+    to.name === "status-add" ||
+    to.name === "status-edit"
+  ) {
+    const boardOwner = await boardStore.checkIsOwner(boardId);
+    console.log("boardOwner", boardOwner);
+
     const isOwner = computed(() => {
-      const currentBoard = boardStore.getCurrentBoard;
+      const currentBoard = boardOwner;
       const currentUser = userStore.getUser;
+      console.log("currentBoard", currentBoard);
+      console.log("currentUser", currentUser);
 
-      if (currentBoard?.owner && currentUser) {
-        return currentBoard.owner.oid === currentUser.oid;
-      }
-      return false;
+      return currentBoard.userOid === currentUser.oid;
     });
-    if (isOwner.value) {
-      return next();
-    }
-    const hasAccessRight = computed(() => {
-      const collab = collabStore.getCollaborators?.find(
-        (c) => c.oid === userStore.getUser?.oid
-      );
 
+    console.log("isOwner", isOwner.value);
+
+    if (isOwner.value) {
+      return next(); // If the user is the owner, allow access
+    }
+
+    const hasAccessRight = computed(() => {
+      const collab = collabStore.findCollabBoardByOid(userStore.getUser?.oid);
       return collab?.accessRight === "WRITE";
     });
+
     if (!hasAccessRight.value) {
       return next({ name: "access-denied" });
     }
   }
+
   next();
 });
 

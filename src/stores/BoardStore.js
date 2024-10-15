@@ -133,5 +133,12 @@ export const useBoardStore = defineStore("BoardStore", {
       const board = await this.loadBoardById(boardId);
       return board.visibility === "PUBLIC";
     },
+    async checkIsOwner(boardId) {
+      await this.loadBoards();
+      const board = this.board.personalBoard.find(
+        (board) => board.id === boardId
+      );
+      return board;
+    },
   },
 });

@@ -35,7 +35,6 @@ const hasAccessRight = computed(() => {
   const collab = collabStore.getCollaborators?.find(
     (c) => c.oid === userStore.getUser?.oid
   );
-
   return collab?.accessRight === "WRITE";
 });
 
