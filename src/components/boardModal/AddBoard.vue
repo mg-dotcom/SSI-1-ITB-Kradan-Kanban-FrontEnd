@@ -50,7 +50,7 @@ const saveBoard = async () => {
     }
 
     if (res.status === 201) {
-      if (boardByUserOid.length === 1 && collabBoards.length === 0) {
+      if (boardByUserOid.length === 1) {
         const currentBoard = boardByUserOid[0];
         boardStore.setCurrentBoard(currentBoard);
         router.push({ name: "board-task", params: { id: currentBoard.id } });

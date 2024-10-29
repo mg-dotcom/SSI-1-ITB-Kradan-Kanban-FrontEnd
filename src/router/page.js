@@ -147,20 +147,10 @@ router.beforeEach(async (to, _, next) => {
     to.name === "status-add" ||
     to.name === "status-edit"
   ) {
-    const boardOwner = await boardStore.checkIsOwner(boardId);
+    const boardOwner = await boardStore.checkIsOwner(boardId); // Returns true if the user is the owner
 
-    const isOwner = computed(() => {
-      const currentBoard = boardOwner;
-      const currentUser = userStore.getUser;
-      console.log("currentBoard", currentBoard);
-      console.log("currentUser", currentUser);
-
-      return currentBoard.userOid === currentUser.oid;
-    });
-
-    console.log("isOwner", isOwner.value);
-
-    if (isOwner.value) {
+    if (boardOwner) {
+      console.log("isOwner", boardOwner);
       return next(); // If the user is the owner, allow access
     }
 
