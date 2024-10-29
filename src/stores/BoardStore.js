@@ -139,10 +139,8 @@ export const useBoardStore = defineStore("BoardStore", {
     async checkIsOwner(boardId) {
       await checkTokenExpiration();
       await this.loadBoards();
-      const board = this.board.personalBoard.find(
-        (board) => board.id === boardId
-      );
-      return board;
+      // Check if board with boardId exists in personalBoard
+      return this.board.personalBoard.some((board) => board.id === boardId);
     },
   },
 });

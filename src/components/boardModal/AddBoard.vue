@@ -40,12 +40,23 @@ const saveBoard = async () => {
   try {
     const res = await boardStore.addBoard(boardTemplate.value);
 
+    await boardStore.loadBoards();
+    const user = userStore.getUser;
+    const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
+    const collabBoards = boardStore.getCollabBoard();
+
     if (!res.ok) {
       throw new Error(`Server responded with status ${res.status}`);
     }
 
     if (res.status === 201) {
-      router.push({ name: "board" });
+      if (boardByUserOid.length === 1 && collabBoards.length === 0) {
+        const currentBoard = boardByUserOid[0];
+        boardStore.setCurrentBoard(currentBoard);
+        router.push({ name: "board-task", params: { id: currentBoard.id } });
+      } else {
+        router.push({ name: "board" });
+      }
     } else if (res.status === 401 || res.status === 404) {
       handleAuthenticationClearAndRedirect();
     }

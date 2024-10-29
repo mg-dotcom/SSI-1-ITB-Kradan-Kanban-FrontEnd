@@ -21,6 +21,7 @@ export function handleResponseStatus(res) {
   if (res.status === 401 || res.status === 404) {
     const userStore = useUserStore();
     userStore.$reset();
+    alert("Session expired. Please login again.");
     router.push({ name: "login" });
   } else if (res.status === 403) {
     const userStore = useUserStore();

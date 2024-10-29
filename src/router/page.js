@@ -148,7 +148,6 @@ router.beforeEach(async (to, _, next) => {
     to.name === "status-edit"
   ) {
     const boardOwner = await boardStore.checkIsOwner(boardId);
-    console.log("boardOwner", boardOwner);
 
     const isOwner = computed(() => {
       const currentBoard = boardOwner;
