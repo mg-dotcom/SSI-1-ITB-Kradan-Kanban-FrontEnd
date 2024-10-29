@@ -150,8 +150,7 @@ router.beforeEach(async (to, _, next) => {
     const boardOwner = await boardStore.checkIsOwner(boardId); // Returns true if the user is the owner
 
     if (boardOwner) {
-      console.log("isOwner", boardOwner);
-      return next(); // If the user is the owner, allow access
+      return next(); 
     }
 
     const hasAccessRight = computed(() => {
