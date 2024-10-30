@@ -114,14 +114,12 @@ router.beforeEach(async (to, _, next) => {
   const statusStore = useStatusStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
   const boardId = to.params.id;
-  
-  // Log the boardId to see if it is being set correctly
+  // Log route params to debug the boardId
+  console.log("Route params in beforeEach:", to.params);
   console.log("Board ID in beforeEach:", boardId);
 
-  // Check if we can determine if the board is public
+  // Check if the boardId is defined
   const isPublicBoard = boardId ? await boardStore.isPublicBoard(boardId) : false;
-
-  // Log the public board status after the check
   console.log("isPublicBoard in beforeEach after calling store:", isPublicBoard);
     
   // Authentication check: allow access to public boards even if not authenticated
