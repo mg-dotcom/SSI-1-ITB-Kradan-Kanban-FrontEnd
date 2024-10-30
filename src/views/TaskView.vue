@@ -37,6 +37,7 @@ onMounted(async () => {
 
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
+  
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
 });
 

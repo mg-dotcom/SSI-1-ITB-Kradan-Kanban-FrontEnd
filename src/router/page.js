@@ -123,6 +123,11 @@ router.beforeEach(async (to, _, next) => {
     return next({ name: "login" });
   }
 
+  if (condition) {
+    
+  }
+  
+
   if (to.path.startsWith("/board")) {
     try {
       userStore.initialize();
