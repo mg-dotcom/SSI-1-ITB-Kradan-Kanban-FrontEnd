@@ -134,7 +134,7 @@ export const useBoardStore = defineStore("BoardStore", {
     async isPublicBoard(boardId) {
       await checkTokenExpiration();
       const board = await this.loadBoardById(boardId);
-      return board.visibility === "PUBLIC";
+      return board?.visibility === "PUBLIC"; 
     },
     async checkIsOwner(boardId) {
       await checkTokenExpiration(); // Ensure token is valid before checking

@@ -114,48 +114,45 @@ router.beforeEach(async (to, _, next) => {
   const statusStore = useStatusStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
   const boardId = to.params.id;
+  
+  // Log the boardId to see if it is being set correctly
+  console.log("Board ID in beforeEach:", boardId);
 
-  const isPublicBoard = boardId
-    ? await boardStore.isPublicBoard(boardId)
-    : false;
+  // Check if we can determine if the board is public
+  const isPublicBoard = boardId ? await boardStore.isPublicBoard(boardId) : false;
 
+  // Log the public board status after the check
+  console.log("isPublicBoard in beforeEach after calling store:", isPublicBoard);
+    
+  // Authentication check: allow access to public boards even if not authenticated
   if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
     return next({ name: "login" });
   }
 
-  if (condition) {
-    
-  }
-  
-
+  // Load data for board routes
   if (to.path.startsWith("/board")) {
     try {
-      userStore.initialize();
       if (to.name === "board") {
-        await boardStore.loadBoards(); // Load the boards
+        await boardStore.loadBoards(); // Load the boards list
       }
       if (boardId) {
-        userStore.initialize();
-        await boardStore.loadBoardById(boardId); // Load the board data
-        await collabStore.loadCollab(boardId); // Load the collaborators
-        await taskStore.loadTasks(boardId); // Load the tasks
-        await statusStore.loadStatuses(boardId); // Load the statuses
+        await boardStore.loadBoardById(boardId); // Load specific board data
+        await collabStore.loadCollab(boardId); // Load collaborators
+        await taskStore.loadTasks(boardId); // Load tasks
+        await statusStore.loadStatuses(boardId); // Load statuses
       }
     } catch (error) {
       console.error("Error loading board-related data:", error);
     }
   }
 
+  // Permission check for task and status modifications
   if (
-    to.name === "task-add" ||
-    to.name === "task-edit" ||
-    to.name === "status-add" ||
-    to.name === "status-edit"
+    ["task-add", "task-edit", "status-add", "status-edit"].includes(to.name)
   ) {
-    const boardOwner = await boardStore.checkIsOwner(boardId); // Returns true if the user is the owner
-
+    const boardOwner = await boardStore.checkIsOwner(boardId);
     if (boardOwner) {
-      return next(); 
+      return next();
     }
 
     const hasAccessRight = computed(() => {
