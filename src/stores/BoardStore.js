@@ -134,22 +134,18 @@ export const useBoardStore = defineStore("BoardStore", {
     async isPublicBoard(boardId) {
       await checkTokenExpiration();
       const board = await this.loadBoardById(boardId);
-      return board?.visibility === "PUBLIC"; 
+      return board?.visibility === "PUBLIC";
     },
     async checkIsOwner(boardId) {
-      await checkTokenExpiration(); // Ensure token is valid before checking
-
-      // Load boards only if necessary
+      await checkTokenExpiration();
       if (!this.board.personalBoard || this.board.personalBoard.length === 0) {
         await this.loadBoards();
       }
 
-      // Check if the board with the given boardId exists in the personalBoard list
       const board = this.board.personalBoard.find(
         (board) => board.id === boardId
       );
 
-      // Return true if board is found, otherwise false
       return board !== undefined;
     },
   },

@@ -96,8 +96,8 @@ const routes = [
     component: AccessDenied,
   },
   {
-    path: "/:pathMatch(.*)*", // This will catch all undefined routes
-    redirect: "/login", // Redirects to the login page
+    path: "/:pathMatch(.*)*",
+    redirect: "/login",
   },
 ];
 
@@ -114,37 +114,27 @@ router.beforeEach(async (to, _, next) => {
   const statusStore = useStatusStore();
   const isAuthenticated = !!userStore.getIsLoggedIn;
   const boardId = to.params.id;
-  // Log route params to debug the boardId
-  console.log("Route params in beforeEach:", to.params);
-  console.log("Board ID in beforeEach:", boardId);
 
-  // Check if the boardId is defined
-  const isPublicBoard = boardId ? await boardStore.isPublicBoard(boardId) : false;
-  console.log("isPublicBoard in beforeEach after calling store:", isPublicBoard);
-    
-  // Authentication check: allow access to public boards even if not authenticated
   if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
     return next({ name: "login" });
   }
 
-  // Load data for board routes
   if (to.path.startsWith("/board")) {
     try {
       if (to.name === "board") {
-        await boardStore.loadBoards(); // Load the boards list
+        await boardStore.loadBoards();
       }
       if (boardId) {
-        await boardStore.loadBoardById(boardId); // Load specific board data
-        await collabStore.loadCollab(boardId); // Load collaborators
-        await taskStore.loadTasks(boardId); // Load tasks
-        await statusStore.loadStatuses(boardId); // Load statuses
+        await boardStore.loadBoardById(boardId);
+        await collabStore.loadCollab(boardId);
+        await taskStore.loadTasks(boardId);
+        await statusStore.loadStatuses(boardId);
       }
     } catch (error) {
       console.error("Error loading board-related data:", error);
     }
   }
 
-  // Permission check for task and status modifications
   if (
     ["task-add", "task-edit", "status-add", "status-edit"].includes(to.name)
   ) {
@@ -162,7 +152,6 @@ router.beforeEach(async (to, _, next) => {
       return next({ name: "access-denied" });
     }
   }
-
   next();
 });
 
