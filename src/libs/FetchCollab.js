@@ -28,6 +28,7 @@ const addCollab = async (url, collaborator) => {
       accessRight: collaborator.accessRight,
     }),
   });
+  handleResponseStatus(res);
   return res;
 };
 
@@ -40,7 +41,7 @@ const deleteCollab = async (url) => {
     },
   });
   console.log(res);
-
+  handleResponseStatus(res);
   return res;
 };
 
@@ -56,6 +57,7 @@ const updateAccessRight = async (url, accessRight) => {
       accessRight: accessRight,
     }),
   });
+  handleResponseStatus(res);
   return res;
 };
 

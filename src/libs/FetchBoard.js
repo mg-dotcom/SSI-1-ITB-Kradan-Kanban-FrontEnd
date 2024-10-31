@@ -25,6 +25,7 @@ const fetchBoardById = async (url, id) => {
     },
   });
   await checkTokenExpiration(id);
+  handleResponseStatus(res);
   const data = await res.json();
   return data;
 };
