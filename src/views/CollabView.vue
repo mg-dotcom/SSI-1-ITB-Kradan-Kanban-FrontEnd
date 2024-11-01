@@ -195,8 +195,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
     });
   }
   openAddCollabModal.value = false;
-};
-</script>
+};</script>
 
 <template>
   <RouterView />

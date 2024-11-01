@@ -81,7 +81,7 @@ export const useBoardStore = defineStore("BoardStore", {
     },
 
     async addBoard(newBoard) {
-      await checkTokenExpiration();
+      // await checkTokenExpiration();
       const res = await addBoard(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard

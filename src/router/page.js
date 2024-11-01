@@ -148,7 +148,12 @@ router.beforeEach(async (to, _, next) => {
       return collab?.accessRight === "WRITE";
     });
 
-    if (!hasAccessRight.value) {
+    const hasToken = computed(()=>{
+      const userToken = userStore.getToken();
+      return !!userToken;
+    })
+
+    if (!hasAccessRight.value || !hasToken) {
       return next({ name: "access-denied" });
     }
   }
