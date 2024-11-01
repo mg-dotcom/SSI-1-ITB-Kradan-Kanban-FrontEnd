@@ -165,7 +165,10 @@ const confirmAddCollab = async (email, accessRightValue) => {
     email: email,
     accessRight: accessRightValue,
   });
-  if (res.status === 403) {
+  if (res.status === 401) {
+    handleAuthenticationClearAndRedirect();
+  }
+  else if (res.status === 403) {
     toast.add({
       severity: "error",
       summary: "Error",

@@ -28,7 +28,8 @@ const addCollab = async (url, collaborator) => {
       accessRight: collaborator.accessRight,
     }),
   });
-  handleResponseStatus(res);
+// handleResponseStatus(res);
+//  handleAddCollabResponseStatus(res);
   return res;
 };
 
