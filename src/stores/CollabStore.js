@@ -34,7 +34,6 @@ export const useCollabStore = defineStore("CollabStore", {
           this.collaborators = data;
         }
       } catch (error) {
-        console.log(error);
         handleAuthenticationClearAndRedirect();
       }
     },

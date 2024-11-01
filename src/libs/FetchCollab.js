@@ -1,6 +1,5 @@
 import { useUserToken } from "../stores/UserStore.js";
 import { handleResponseStatus } from "./libsUtil.js";
-import { handleAuthenticationClearAndRedirect } from "./libsUtil.js";
 
 const fetchCollab = async (url) => {
   const res = await fetch(`${url}`, {
@@ -28,8 +27,6 @@ const addCollab = async (url, collaborator) => {
       accessRight: collaborator.accessRight,
     }),
   });
-// handleResponseStatus(res);
-//  handleAddCollabResponseStatus(res);
   return res;
 };
 
@@ -41,7 +38,6 @@ const deleteCollab = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  console.log(res);
   handleResponseStatus(res);
   return res;
 };

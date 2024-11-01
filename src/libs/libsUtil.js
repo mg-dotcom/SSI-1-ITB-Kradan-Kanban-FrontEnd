@@ -33,7 +33,8 @@ export function handleResponseStatus(res) {
 export const handleAuthenticationClearAndRedirect = () => {
   const userStore = useUserStore();
   userStore.$reset();
-  +router.push({ name: "login" });
+  alert("Session expired. Please login again.");
+  router.push({ name: "login" });
 };
 
 export { formatDate, localTimeZone, sortTasks };

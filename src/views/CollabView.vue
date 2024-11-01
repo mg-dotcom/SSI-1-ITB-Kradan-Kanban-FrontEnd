@@ -51,9 +51,6 @@ const isOwner = computed(() => {
 });
 
 const handleAccessRightChange = (collabOid) => {
-  console.log(collabOid);
-  console.log(collabStore.getCollaborators);
-
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
 
   name.value = collab.name;
@@ -78,8 +75,6 @@ const handleCancleAccessRightChange = () => {
 };
 
 const confirmChangeAccessRight = async () => {
-  console.log(selectedCollabOid.value);
-
   const res = await collabStore.updateAccessRight(
     boardId,
     selectedCollabOid.value,

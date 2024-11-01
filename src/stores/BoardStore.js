@@ -35,19 +35,15 @@ export const useBoardStore = defineStore("BoardStore", {
   actions: {
     async loadBoards() {
       await checkTokenExpiration();
-      try {
-        const data = await fetchAllBoards(
-          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
-        );
+      const data = await fetchAllBoards(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
+      );
 
-        if (data.status < 200 && data.status > 299) {
-          alert("Failed to fetch boards");
-        } else {
-          this.board = data;
-          console.log(this.board);
-        }
-      } catch (error) {
-        handleAuthenticationClearAndRedirect();
+      if (data.status < 200 && data.status > 299) {
+        alert("Failed to fetch boards");
+      } else {
+        this.board = data;
+        console.log(this.board);
       }
     },
     async loadBoardById(boardId) {
@@ -88,9 +84,7 @@ export const useBoardStore = defineStore("BoardStore", {
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
       );
-      if (res.status === 401 || res.status === 404) {
-        handleAuthenticationClearAndRedirect();
-      } else if (res.status < 200 || res.status > 299) {
+      if (res.status < 200 || res.status > 299) {
         this.toast.add({
           severity: "error",
           summary: "Error",
