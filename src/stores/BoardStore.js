@@ -80,27 +80,15 @@ export const useBoardStore = defineStore("BoardStore", {
       }
     },
     async addBoard(newBoard) {
-      await checkTokenExpiration();
+      // await checkTokenExpiration();
       const res = await addBoard(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
       );
-      console.log(res.status);
-      
-      if (res.status === 401 || res.status === 404) {
-        handleAuthenticationClearAndRedirect();
-      } else if (res.status < 200 || res.status > 299) {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "There is a problem. Please try again later",
-          life: 3000,
-        });
-      } else {
-        const data = await res.json();
-        this.board.personalBoard.push(data);
-      }
 
+      //handle in vue
+      const data = await res.json();
+      this.board.personalBoard.push(data);
       return res;
     },
     async changeBoardVisibility(id, newVisibility) {

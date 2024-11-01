@@ -38,16 +38,11 @@ export const useCollabStore = defineStore("CollabStore", {
       }
     },
     async addCollab(boardId, newCollab) {
-      console.log(newCollab);
-
-      await checkTokenExpiration();
       const res = await addCollab(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
         newCollab
       );
-      if (res.status === 401) {
-        handleAuthenticationClearAndRedirect();
-      } else if (res.status === 201) {
+      if (res.status === 201) {
         const data = await res.json();
         this.collaborators.push(data);
       }

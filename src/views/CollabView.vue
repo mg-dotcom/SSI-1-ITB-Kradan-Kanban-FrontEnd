@@ -161,8 +161,8 @@ const confirmAddCollab = async (email, accessRightValue) => {
     accessRight: accessRightValue,
   });
   if (res.status === 401) {
-    handleAuthenticationClearAndRedirect();}
-  else if (res.status === 403) {
+    handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
     toast.add({
       severity: "error",
       summary: "Error",
@@ -192,8 +192,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
     });
   }
   openAddCollabModal.value = false;
-};
-</script>
+};</script>
 
 <template>
   <RouterView />

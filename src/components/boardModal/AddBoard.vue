@@ -37,7 +37,6 @@ const selectEmoji = (emoji) => {
 };
 
 const saveBoard = async () => {
-  try {
     const res = await boardStore.addBoard(boardTemplate.value);
 
     await boardStore.loadBoards();
@@ -57,14 +56,8 @@ const saveBoard = async () => {
       } else {
         router.push({ name: "board" });
       }
-    } else if (res.status === 401 || res.status === 404) {
-      handleAuthenticationClearAndRedirect();
     }
-  } catch (error) {
-    console.log(error);
-
-    handleAuthenticationClearAndRedirect();
-  }
+ 
 };
 
 onClickOutside(emojiPicker, () => {
