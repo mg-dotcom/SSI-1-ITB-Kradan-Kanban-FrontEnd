@@ -35,37 +35,10 @@ export const useBoardStore = defineStore("BoardStore", {
   actions: {
     async loadBoards() {
       await checkTokenExpiration();
-<<<<<<< Updated upstream
       const data = await fetchAllBoards(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
       );
 
-=======
-      // try {
-      //   const res = await fetchAllBoards(
-      //     `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
-      //   );
-        
-
-      //   if (data.status < 200 && data.status > 299) {
-      //     alert("Failed to fetch boards");
-      //   } else {
-      //     this.board = data;
-      //     console.log(this.board);
-      //   }
-      // } catch (error) {
-      //   console.log('here');
-      //   console.log(data);
-        
-      //   handleResponseStatus(data);
-      //   // handleAuthenticationClearAndRedirect();
-      // }
-      const data = await fetchAllBoards(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
-      );
-      
-
->>>>>>> Stashed changes
       if (data.status < 200 && data.status > 299) {
         alert("Failed to fetch boards");
       } else {
@@ -112,15 +85,11 @@ export const useBoardStore = defineStore("BoardStore", {
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
       );
-<<<<<<< Updated upstream
-      if (res.status < 200 || res.status > 299) {
-=======
       console.log(res.status);
       
       if (res.status === 401 || res.status === 404) {
         handleAuthenticationClearAndRedirect();
       } else if (res.status < 200 || res.status > 299) {
->>>>>>> Stashed changes
         this.toast.add({
           severity: "error",
           summary: "Error",
