@@ -10,8 +10,12 @@ const fetchAllBoards = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
+
+  
   handleResponseStatus(res);
   const data = await res.json();
+  console.log(data);
+  
   return data;
 };
 
@@ -42,7 +46,7 @@ const addBoard = async (url, newBoard) => {
       color: newBoard.color,
     }),
   });
-  handleResponseStatus(res);
+  // handleResponseStatus(res);
   return res;
 };
 const patchBoardVisibility = async (url, visibilityMode) => {
