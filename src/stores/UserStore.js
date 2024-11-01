@@ -113,7 +113,7 @@ export const checkTokenExpiration = async (boardId) => {
 
   if (!userStore.token) {
     if (isPublicBoard) {
-      router.push({ name: "board-task", params: { id: boardId } });
+      return;
     } else {
       router.push({ name: "access-denied" });
       isCheckingToken = false; // Reset the flag

@@ -9,9 +9,7 @@ const fetchCollab = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const addCollab = async (url, collaborator) => {
@@ -38,7 +36,6 @@ const deleteCollab = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
   return res;
 };
 
@@ -54,7 +51,6 @@ const updateAccessRight = async (url, accessRight) => {
       accessRight: accessRight,
     }),
   });
-  handleResponseStatus(res);
   return res;
 };
 

@@ -33,7 +33,6 @@ const boardId = route.params.id;
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
-  console.log(boardStore.getCurrentBoard);
 
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);

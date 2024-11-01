@@ -9,10 +9,7 @@ const fetchAllStatus = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
-  const data = await res.json();
-
-  return data;
+  return res;
 };
 
 const fetchStatusById = async (url, id) => {
@@ -23,9 +20,7 @@ const fetchStatusById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const deleteStatus = async (url, id) => {
@@ -53,7 +48,6 @@ const addStatus = async (url, newStatus) => {
       statusColor: newStatus.statusColor,
     }),
   });
-  handleResponseStatus(res);
   return res;
 };
 
@@ -70,8 +64,6 @@ const updateStatus = async (url, id, updatedStatus) => {
       statusColor: updatedStatus.statusColor,
     }),
   });
-  handleResponseStatus(res);
-
   return res;
 };
 
@@ -86,7 +78,7 @@ const updateStatusSetting = async (url, updatedLimit) => {
       limitMaximumTask: updatedLimit,
     }),
   });
-  handleResponseStatus(res);
+
   return res;
 };
 

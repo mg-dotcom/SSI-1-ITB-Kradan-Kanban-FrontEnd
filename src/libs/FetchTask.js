@@ -1,7 +1,6 @@
 import { useUserToken } from "@/stores/UserStore";
 import { handleResponseStatus } from "./libsUtil.js";
 
-
 const fetchAllTasks = async (url) => {
   const res = await fetch(`${url}`, {
     method: "GET",
@@ -10,9 +9,7 @@ const fetchAllTasks = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
- handleResponseStatus(res)
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const fetchTaskDetails = async (url, id) => {
@@ -23,9 +20,7 @@ const fetchTaskDetails = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
- handleResponseStatus(res)
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const addTask = async (url, newTask) => {
@@ -42,7 +37,6 @@ const addTask = async (url, newTask) => {
       status: newTask.statusId,
     }),
   });
- handleResponseStatus(res)
   return res;
 };
 
@@ -54,7 +48,6 @@ const deleteTask = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
- handleResponseStatus(res)
   return res;
 };
 
@@ -72,7 +65,6 @@ const updatedTask = async (url, updatedTask, id) => {
       status: updatedTask.statusId,
     }),
   });
- handleResponseStatus(res)
   return res;
 };
 
@@ -87,7 +79,7 @@ const fetchFilterTasks = async (url, arr) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
- handleResponseStatus(res)
+  handleResponseStatus(res);
   const data = await res.json();
   return data;
 };

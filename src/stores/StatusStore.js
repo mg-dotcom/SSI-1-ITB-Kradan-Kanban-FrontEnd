@@ -10,7 +10,8 @@ import {
 import { useToast } from "primevue/usetoast";
 import { useTaskStore } from "./TaskStore.js";
 import { useBoardStore } from "./BoardStore.js";
-import {checkTokenExpiration} from "./UserStore.js";
+import { checkTokenExpiration } from "./UserStore.js";
+import { handleResponseStatus } from "@/libs/libsUtil.js";
 const STATUS_ENDPOINT = import.meta.env.VITE_STATUS_ENDPOINT;
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -35,15 +36,13 @@ export const useStatusStore = defineStore("StatusStore", {
   },
   actions: {
     async loadStatuses(boardId) {
-      await checkTokenExpiration();
-      const data = await fetchAllStatus(
+      await checkTokenExpiration(boardId);
+      const res = await fetchAllStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`
       );
-      if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch statuses");
-      } else {
-        this.statuses = data;
-      }
+      handleResponseStatus(res);
+      const data = await res.json();
+      this.statuses = data;
     },
 
     // FIXME: This function is not working as expected
@@ -105,23 +104,21 @@ export const useStatusStore = defineStore("StatusStore", {
     },
 
     async loadStatusDetail(id, boardId) {
-      await checkTokenExpiration();
+      await checkTokenExpiration(boardId);
       // const boardId = this.boardStore.getCurrentBoard.id;
-      const data = await fetchStatusById(
+      const res = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
-
         id
       );
-      if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch statuses");
-      } else {
-        return data;
-      }
+      handleResponseStatus(res);
+      const data = await res.json();
+      return data;
     },
 
     async addStatus(newStatus) {
-      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
+
       const res = await addStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
         newStatus
@@ -141,26 +138,21 @@ export const useStatusStore = defineStore("StatusStore", {
           life: 3000,
         });
       } else if (existingStatus) {
-        // this.toast.add({
-        //   severity: "error",
-        //   summary: "Error",
-        //   detail: `Status with name "${newStatus.name}" already exists`,
-        //   life: 3000,
-        // });
-
-      } else {
         this.toast.add({
           severity: "error",
           summary: "Error",
-          detail: `An error has occurred, the status could not be added.`,
+          detail: `Status with name "${newStatus.name}" already exists`,
           life: 3000,
         });
+      } else {
+        handleResponseStatus(res);
       }
     },
 
     async editStatus(id, updatedStatus) {
-      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
+
       const res = await updateStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
         id,
@@ -183,23 +175,27 @@ export const useStatusStore = defineStore("StatusStore", {
           detail: `The status has been updated`,
           life: 3000,
         });
-      } else {
+      } else if (res.status === 404) {
         this.toast.add({
           severity: "error",
           summary: "Error",
           detail: `An error has occurred, the status does not exist.`,
           life: 3000,
         });
+      } else {
+        handleResponseStatus(res);
       }
     },
 
     async transferStatus(currentId, newId, numberOfTasks) {
-      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
 
       const taskStore = useTaskStore();
       const res = await deleteStatus(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses/${currentId}`,
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/statuses/${currentId}`,
         newId
       );
       const newStatus = this.statuses.find((status) => status.id === newId);
@@ -232,19 +228,22 @@ export const useStatusStore = defineStore("StatusStore", {
             since it will exceed the limit.  Please choose another status to transfer to.`,
           life: 3000,
         });
-      } else {
+      } else if (res.status === 404) {
         this.toast.add({
           severity: "error",
           summary: "Error",
           detail: `An error has occurred, the status does not exist.`,
           life: 3000,
         });
+      } else {
+        handleResponseStatus(res);
       }
     },
 
     async removeStatus(id) {
-      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
+
       const res = await deleteStatus(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
         id
@@ -262,13 +261,15 @@ export const useStatusStore = defineStore("StatusStore", {
             life: 3000,
           });
         }
-      } else {
+      } else if (res.status === 404) {
         this.toast.add({
           severity: "error",
           summary: "Error",
           detail: `An error has occurred, the status does not exist.`,
           life: 3000,
         });
+      } else {
+        handleResponseStatus(res);
       }
     },
   },

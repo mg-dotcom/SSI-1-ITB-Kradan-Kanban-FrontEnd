@@ -42,33 +42,30 @@ const handleLeaveCollab = (collabBoardId, collabOid) => {
 };
 
 const confirmLeaveCollab = async () => {
-  try {
-    const res = await collabStore.leaveCollab(
-      selectedBoardId.value,
-      selectedCollabOid.value
-    );
+  const res = await collabStore.leaveCollab(
+    selectedBoardId.value,
+    selectedCollabOid.value
+  );
 
-    if (res.status === 200 || res.status === 403 || res.status === 404) {
-      toast.add({
-        severity: "success",
-        summary: "Success",
-        detail: "You have left the board.",
-        life: 3000,
-      });
-      router.push({ name: "board" });
-    } else if (res.status === 401) {
-      handleAuthenticationClearAndRedirect();
-    } else {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "There is a problem. Please try again later.",
-        life: 3000,
-      });
-    }
-  } catch (error) {
-    alert("There is a problem. Please try again later.");
+  if (res.status === 200 || res.status === 403 || res.status === 404) {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "You have left the board.",
+      life: 3000,
+    });
+    router.push({ name: "board" });
+  } else if (res.status === 401) {
+    handleAuthenticationClearAndRedirect();
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "There is a problem. Please try again later.",
+      life: 3000,
+    });
   }
+
   leaveCollabModal.value = false;
 };
 </script>

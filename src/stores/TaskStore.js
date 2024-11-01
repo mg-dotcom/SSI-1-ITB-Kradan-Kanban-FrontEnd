@@ -5,13 +5,13 @@ import {
   deleteTask,
   fetchTaskDetails,
   updatedTask,
-  fetchFilterTasks,
 } from "../libs/FetchTask.js";
 import { sortTasks } from "../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
 import { useBoardStore } from "./BoardStore.js";
 import { useStatusStore } from "./StatusStore.js";
-import {checkTokenExpiration} from "./UserStore.js";
+import { checkTokenExpiration } from "./UserStore.js";
+import { handleResponseStatus } from "../libs/libsUtil.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
@@ -36,34 +36,24 @@ export const useTaskStore = defineStore("TaskStore", {
   },
   actions: {
     async loadTasks(boardId) {
-      await checkTokenExpiration();
-      const data = await fetchAllTasks(
+      await checkTokenExpiration(boardId);
+      const res = await fetchAllTasks(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`
       );
-      if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch tasks");
-      } else {
-        this.tasks = data;
-      }
+      handleResponseStatus(res);
+      const data = await res.json();
+      this.tasks = data;
     },
 
     async loadTaskDetails(id, boardId) {
-      await checkTokenExpiration();
-      try {
-        const data = await fetchTaskDetails(
-          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
-          id
-        );
-        if (data.status < 200 && data.status > 299) {
-          //fetch data failed
-          alert("Failed to fetch task details");
-        } else {
-          return data;
-        }
-      } catch (error) {
-        console.error("An error occurred while fetching task details:", error);
-        alert("An error occurred while fetching task details");
-      }
+      await checkTokenExpiration(boardId);
+      const res = await fetchTaskDetails(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
+        id
+      );
+      handleResponseStatus(res);
+      const data = await res.json();
+      return data;
     },
 
     async addTask(newTask) {
@@ -92,19 +82,14 @@ export const useTaskStore = defineStore("TaskStore", {
           life: 3000,
         });
       } else {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: `An error has occurred, the task could not be added.`,
-          life: 3000,
-        });
+        handleResponseStatus(res);
       }
       return res;
     },
 
     async deleteTask(id) {
-      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
 
       const res = await deleteTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
@@ -119,19 +104,21 @@ export const useTaskStore = defineStore("TaskStore", {
           detail: `The task has been deleted`,
           life: 3000,
         });
-      } else {
+      } else if (res.status === 404) {
         this.toast.add({
           severity: "error",
           summary: "Error",
           detail: `An error has occurred, the task does not exist.`,
           life: 3000,
         });
+      } else {
+        handleResponseStatus(res);
       }
     },
 
     async editTask(id, updatedTaskInput, statusDetails) {
-      await checkTokenExpiration();
       const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
 
       const res = await updatedTask(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
@@ -160,13 +147,15 @@ export const useTaskStore = defineStore("TaskStore", {
           detail: `the status ${statusDetails.name} will have too many tasks. Please make progress and update status of existing tasks .`,
           life: 3000,
         });
-      } else {
+      } else if (res.status === 404) {
         this.toast.add({
           severity: "error",
           summary: "Error",
           detail: `An error has occurred, the task does not exist.`,
           life: 3000,
         });
+      } else {
+        handleResponseStatus(res);
       }
       return res;
     },

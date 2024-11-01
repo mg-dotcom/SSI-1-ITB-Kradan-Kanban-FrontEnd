@@ -7,7 +7,10 @@ import {
 } from "../libs/FetchCollab.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
-import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
+import {
+  handleAuthenticationClearAndRedirect,
+  handleResponseStatus,
+} from "@/libs/libsUtil.js";
 import { checkTokenExpiration } from "./UserStore.js";
 import { useBoardStore } from "./BoardStore.js";
 
@@ -22,39 +25,28 @@ export const useCollabStore = defineStore("CollabStore", {
   },
   actions: {
     async loadCollab(boardId) {
-      await checkTokenExpiration();
-      try {
-        const data = await fetchCollab(
-          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`
-        );
-
-        if (data.status < 200 && data.status > 299) {
-          alert("Failed to fetch boards");
-        } else {
-          this.collaborators = data;
-        }
-      } catch (error) {
-        handleAuthenticationClearAndRedirect();
-      }
+      await checkTokenExpiration(boardId);
+      const res = await fetchCollab(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`
+      );
+      handleResponseStatus(res);
+      const data = await res.json();
+      return data;
     },
     async addCollab(boardId, newCollab) {
-      console.log(newCollab);
-
-      await checkTokenExpiration();
+      await checkTokenExpiration(boardId);
       const res = await addCollab(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
         newCollab
       );
-      if (res.status === 401) {
-        handleAuthenticationClearAndRedirect();
-      } else if (res.status === 201) {
+      if (res.status === 201) {
         const data = await res.json();
         this.collaborators.push(data);
       }
       return res;
     },
     async updateAccessRight(boardId, collabOid, accessRight) {
-      await checkTokenExpiration();
+      await checkTokenExpiration(boardId);
       const res = await updateAccessRight(
         `${
           import.meta.env.VITE_BASE_URL
@@ -71,7 +63,7 @@ export const useCollabStore = defineStore("CollabStore", {
       return res;
     },
     async removeCollab(boardId, collabOid) {
-      await checkTokenExpiration();
+      await checkTokenExpiration(boardId);
       const res = await deleteCollab(
         `${
           import.meta.env.VITE_BASE_URL
@@ -89,6 +81,7 @@ export const useCollabStore = defineStore("CollabStore", {
       return res;
     },
     async leaveCollab(boardId, collabOid) {
+      await checkTokenExpiration(boardId);
       const boardStore = useBoardStore();
       await checkTokenExpiration();
       const res = await deleteCollab(

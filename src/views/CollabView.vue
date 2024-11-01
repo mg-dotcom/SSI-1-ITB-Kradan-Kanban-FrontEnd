@@ -11,7 +11,10 @@ import { useBoardStore } from "@/stores/BoardStore";
 import { useCollabStore } from "@/stores/CollabStore";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "@/stores/UserStore";
-import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
+import {
+  handleAuthenticationClearAndRedirect,
+  handleResponseStatus,
+} from "@/libs/libsUtil";
 import buttonSubmit from "@/components/button/Button.vue";
 
 const boardStore = useBoardStore();
@@ -162,8 +165,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
   });
   if (res.status === 401) {
     handleAuthenticationClearAndRedirect();
-  }
-  else if (res.status === 403) {
+  } else if (res.status === 403) {
     toast.add({
       severity: "error",
       summary: "Error",
