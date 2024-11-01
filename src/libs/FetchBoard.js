@@ -10,9 +10,7 @@ const fetchAllBoards = async (url) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const fetchBoardById = async (url, id) => {
@@ -23,9 +21,7 @@ const fetchBoardById = async (url, id) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
-  const data = await res.json();
-  return data;
+  return res;
 };
 
 const addBoard = async (url, newBoard) => {
@@ -42,7 +38,6 @@ const addBoard = async (url, newBoard) => {
       color: newBoard.color,
     }),
   });
-  handleResponseStatus(res);
   return res;
 };
 const patchBoardVisibility = async (url, visibilityMode) => {
@@ -56,14 +51,6 @@ const patchBoardVisibility = async (url, visibilityMode) => {
       visibility: visibilityMode,
     }),
   });
-
-  if (res.status === 401 || res.status === 404) {
-    handleAuthenticationClearAndRedirect();
-  }
-
-  if (res.status === 403) {
-    alert("you do not have permission");
-  }
 
   return res;
 };

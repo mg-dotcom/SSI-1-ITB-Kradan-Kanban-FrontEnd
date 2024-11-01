@@ -5,7 +5,6 @@ import { useRouter, useRoute } from "vue-router";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
-import { useBoardStore } from "../../stores/BoardStore.js";
 
 const router = useRouter();
 const route = useRoute();

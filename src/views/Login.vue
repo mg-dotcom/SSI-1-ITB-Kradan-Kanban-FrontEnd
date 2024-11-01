@@ -39,8 +39,10 @@ const signIn = async () => {
       username: username.value,
       password: password.value,
     });
+    console.log("User: ", userStore.getUser);
 
     await boardStore.loadBoards();
+
     const user = userStore.getUser;
     const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
     const collabBoards = boardStore.getCollabBoard();

@@ -7,7 +7,10 @@ import {
 } from "../libs/FetchBoard.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
-import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
+import {
+  handleAuthenticationClearAndRedirect,
+  handleResponseStatus,
+} from "@/libs/libsUtil.js";
 import { checkTokenExpiration } from "./UserStore.js";
 
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
@@ -34,32 +37,29 @@ export const useBoardStore = defineStore("BoardStore", {
   },
   actions: {
     async loadBoards() {
-      await checkTokenExpiration();
-      const data = await fetchAllBoards(
+      // await checkTokenExpiration();
+      const res = await fetchAllBoards(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`
       );
+      handleResponseStatus(res);
 
-      if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch boards");
-      } else {
-        this.board = data;
-        console.log(this.board);
-      }
+      const data = await res.json();
+      this.board = data;
     },
+
     async loadBoardById(boardId) {
-      await checkTokenExpiration(boardId);
-      const data = await fetchBoardById(
+      // await checkTokenExpiration(boardId);
+      const res = await fetchBoardById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         boardId
       );
+      handleResponseStatus(res);
 
-      if (data.status < 200 && data.status > 299) {
-        alert("Failed to fetch board");
-      } else {
-        this.board = data;
-        return data;
-      }
+      const data = await res.json();
+      this.board = data;
+      return data;
     },
+
     getPersonalBoard() {
       if (Array.isArray(this.board.personalBoard)) {
         return this.board.personalBoard.sort(
@@ -69,6 +69,7 @@ export const useBoardStore = defineStore("BoardStore", {
         return [];
       }
     },
+
     getCollabBoard() {
       if (Array.isArray(this.board.collabsBoard)) {
         return this.board.collabsBoard.sort(
@@ -78,60 +79,54 @@ export const useBoardStore = defineStore("BoardStore", {
         return [];
       }
     },
+
     async addBoard(newBoard) {
-      await checkTokenExpiration();
+      // await checkTokenExpiration();
       const res = await addBoard(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         newBoard
       );
-      if (res.status < 200 || res.status > 299) {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "There is a problem. Please try again later",
-          life: 3000,
-        });
-      } else {
-        const data = await res.json();
-        this.board.personalBoard.push(data);
-      }
 
+      //handle in vue
+      const data = await res.json();
+      this.board.personalBoard.push(data);
       return res;
     },
+
     async changeBoardVisibility(id, newVisibility) {
-      await checkTokenExpiration();
-      try {
-        const res = await patchBoardVisibility(
-          `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`,
-          newVisibility
-        );
-        if (res.status >= 200 && res.status < 300) {
-          this.currentBoard.visibility = newVisibility;
-          this.toast.add({
-            severity: "success",
-            summary: "Success",
-            detail: "Board visibility changed successfully!",
-            life: 3000,
-          });
-        }
-      } catch (error) {
-        console.error("Error changing board visibility:", error);
-        alert("There is a problem. Please try again later.");
+      // await checkTokenExpiration();
+      const res = await patchBoardVisibility(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${id}`,
+        newVisibility
+      );
+      if (res.status === 200) {
+        this.currentBoard.visibility = newVisibility;
+        this.toast.add({
+          severity: "success",
+          summary: "Success",
+          detail: "Board visibility changed successfully!",
+          life: 3000,
+        });
       }
+      handleResponseStatus(res);
     },
+
     findPersonalBoardByOid(oid) {
       return this.board.personalBoard.filter((board) => board.userOid === oid);
     },
+
     setCurrentBoard(board) {
       this.currentBoard = board;
     },
+
     async isPublicBoard(boardId) {
-      await checkTokenExpiration();
+      // await checkTokenExpiration();
       const board = await this.loadBoardById(boardId);
       return board?.visibility === "PUBLIC";
     },
+
     async checkIsOwner(boardId) {
-      await checkTokenExpiration();
+      // await checkTokenExpiration();
       if (!this.board.personalBoard || this.board.personalBoard.length === 0) {
         await this.loadBoards();
       }
