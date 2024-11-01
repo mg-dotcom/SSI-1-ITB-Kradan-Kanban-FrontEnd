@@ -14,7 +14,6 @@ const fetchUser = async (url, userLogin) => {
     }),
   });
 
-  handleResponseStatus(res);
   const data = await res.json();
 
   return data;
@@ -29,7 +28,6 @@ const fetchToken = async (url) => {
     },
   });
 
-  handleResponseStatus(res);
   const data = await res.json();
   return data;
 };

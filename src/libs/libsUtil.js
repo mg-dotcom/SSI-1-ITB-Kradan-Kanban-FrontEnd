@@ -1,7 +1,6 @@
 import { ref } from "vue";
 import router from "@/router/page.js";
 import { useUserStore } from "@/stores/UserStore";
-import { useToast } from "primevue/usetoast";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -19,8 +18,6 @@ const sortTasks = (tasks, sortType) => {
 };
 
 export function handleResponseStatus(res) {
-  const toast = useToast();
-
   if (res.status === 401 || res.status === 404) {
     const userStore = useUserStore();
     userStore.$reset();
@@ -31,10 +28,11 @@ export function handleResponseStatus(res) {
     userStore.$reset();
     router.push({ name: "access-denied" });
   } else if (res.status >= 400) {
-    toast.add({
+    this.$toast.add({
       severity: "error",
       summary: "Error",
       detail: "An error occurred",
+      life: 3000,
     });
   }
 }

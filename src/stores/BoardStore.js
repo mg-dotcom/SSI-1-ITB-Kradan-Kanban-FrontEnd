@@ -112,6 +112,8 @@ export const useBoardStore = defineStore("BoardStore", {
     },
 
     findPersonalBoardByOid(oid) {
+      console.log(oid);
+
       return this.board.personalBoard.filter((board) => board.userOid === oid);
     },
 

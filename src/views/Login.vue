@@ -39,7 +39,6 @@ const signIn = async () => {
       username: username.value,
       password: password.value,
     });
-    console.log("User: ", userStore.getUser);
 
     await boardStore.loadBoards();
 
@@ -55,6 +54,8 @@ const signIn = async () => {
       router.push({ name: "board" });
     }
   } catch (error) {
+    console.log(error);
+
     isError.value = true;
   }
 };
