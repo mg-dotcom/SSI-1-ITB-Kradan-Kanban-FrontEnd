@@ -48,7 +48,14 @@ export const useBoardStore = defineStore("BoardStore", {
     },
 
     async loadBoardById(boardId) {
-      await checkTokenExpiration(boardId);
+      // Check the token expiration and get the result
+      const tokenStatus = await checkTokenExpiration(boardId);
+
+      // If the token is not valid and not refreshed, stop further processing
+      if (!tokenStatus.isValid) {
+        return; // Exit the function if token check indicates access denied
+      }
+
       const res = await fetchBoardById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         boardId
