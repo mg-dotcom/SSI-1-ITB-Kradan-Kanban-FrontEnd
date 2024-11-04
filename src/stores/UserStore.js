@@ -118,8 +118,6 @@ export const checkTokenExpiration = async (boardId) => {
   const decoded = jwtDecode(userStore.token);
 
   if (decoded.exp < Date.now() / 1000) {
-    console.log("Token expired");
-
     // Fetch refresh token and return new access token
     try {
       const data = await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
