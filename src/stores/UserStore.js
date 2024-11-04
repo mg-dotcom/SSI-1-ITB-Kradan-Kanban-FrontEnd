@@ -96,51 +96,38 @@ export const useUserToken = () => {
   return token;
 };
 
-let isCheckingToken = false;
-
 export const checkTokenExpiration = async (boardId) => {
-  if (isCheckingToken) return { refreshed: false, isValid: false };
-  isCheckingToken = true;
-
   const userStore = useUserStore();
-  const boardStore = useBoardStore(); // Get board store for public board check
-  const router = useRouter(); // Get router for navigation
+  const boardStore = useBoardStore();
+  const router = useRouter();
 
   const isPublicBoard = boardId
     ? await boardStore.isPublicBoard(boardId)
     : false;
 
-  // If there is no token and the board is not public, redirect to "access-denied"
   if (!userStore.token) {
-    if (!isPublicBoard) {
+    if (isPublicBoard) {
+      return;
+    } else {
       router.push({ name: "access-denied" });
+      isCheckingToken = false; // Reset the flag
+      return;
     }
-    isCheckingToken = false; // Reset the flag before returning
-    return { refreshed: false, isValid: false }; // No token present
   }
 
-  const decoded = jwtDecode(userStore.token); // Decode the token to check its expiration
+  const decoded = jwtDecode(userStore.token);
 
-  // Check if the token is expired
   if (decoded.exp < Date.now() / 1000) {
-    try {
-      // Attempt to refresh the token
-      const data = await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
-      const expires = new Date(Date.now() + 30 * 60 * 1000); // Set token expiration to 30 minutes from now
-      CookieUtil.set("access_token", data.access_token, expires); // Save new token in cookies
-      userStore.token = data.access_token; // Update the token in the user store
+    console.log("Token expired");
 
-      isCheckingToken = false; // Reset the flag before returning
-      return { refreshed: true, isValid: true }; // Token was refreshed successfully
-    } catch (error) {
-      console.error("Failed to refresh token:", error); // Log any errors during refresh
-      router.push({ name: "access-denied" }); // Redirect if refresh fails
-      isCheckingToken = false; // Reset the flag before returning
-      return { refreshed: false, isValid: false }; // Refresh failed
+    // Fetch refresh token and return new access token
+    try {
+      const data = await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
+      const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
+      CookieUtil.set("access_token", data.access_token, expires);
+      userStore.token = data.access_token;
+    } catch {
+      userStore.logout();
     }
   }
-
-  // Token is still valid
-  isCheckingToken = false; // Reset the flag before returning
-  return { refreshed: false, isValid: true }; // Token is valid
 };
