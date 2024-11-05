@@ -43,7 +43,7 @@ const boardId = route.params.id;
 const taskId = route.params.taskId;
 
 onMounted(async () => {
-  await checkTokenExpiration();
+  await checkTokenExpiration(boardId);
   const board = await boardStore.loadBoardById(boardId);
 
   limitMaximumTask.value = board.limitMaximumTask;

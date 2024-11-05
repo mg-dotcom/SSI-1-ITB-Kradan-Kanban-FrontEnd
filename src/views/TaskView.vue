@@ -14,6 +14,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { useSortStore } from "../stores/SortStore.js";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import Header from "../components/Header.vue";
+import { checkTokenExpiration } from "@/stores/UserStore";
 const router = useRouter();
 const route = useRoute();
 const selectedId = ref("");
@@ -33,7 +34,7 @@ const boardId = route.params.id;
 onMounted(async () => {
   initFlowbite();
   initDropdowns();
-
+  await checkTokenExpiration(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
   

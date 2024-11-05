@@ -1,143 +1,168 @@
-import { defineStore } from "pinia";
-import { fetchUser, fetchToken } from "../libs/FetchUser.js";
-import { useBoardStore } from "./BoardStore.js";
-import { useRoute, useRouter } from "vue-router";
-import { jwtDecode } from "jwt-decode";
-import { CookieUtil } from "../libs/CookieUtil.js";
-import { computed, watch } from "vue";
+import { defineStore } from 'pinia'
+import { fetchUser, fetchToken } from '../libs/FetchUser.js'
+import { useBoardStore } from './BoardStore.js'
+import { useRoute, useRouter } from 'vue-router'
+import { jwtDecode } from 'jwt-decode'
+import { CookieUtil } from '../libs/CookieUtil.js'
+import { computed, watch } from 'vue'
 
-const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT;
+const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT
 
-export const useUserStore = defineStore("UserStore", {
-  state: () => ({
-    user: {},
-    userStore: useUserStore(),
-    boardStore: useBoardStore(),
-    token: CookieUtil.get("access_token") || "",
-    refreshToken: CookieUtil.get("refresh_token") || "",
-    isLoggedIn: !!CookieUtil.get("access_token"),
-  }),
-  getters: {
-    getUser() {
-      return this.user;
-    },
-    getToken() {
-      return this.token;
-    },
-    getIsLoggedIn() {
-      return this.isLoggedIn;
-    },
-  },
-  actions: {
-    async login(user) {
-      try {
-        const data = await fetchUser(
-          `${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}`,
-          user
-        );
-        // initialize()
-        const decoded = jwtDecode(data.access_token);
-        this.token = data.access_token;
-        this.refreshToken = data.refresh_token;
-
-        if (decoded) {
-          this.user = decoded;
-          this.isLoggedIn = true;
-
-          // Set the access token in a cookie with a 30-sec expiration
-          const expires = new Date(Date.now() + 30 * 1000); // 30 sec from now
-          const refreshToken = new Date(Date.now() + 1 * 60 * 1000); // 1min from now
-          CookieUtil.set("access_token", this.token, expires);
-          CookieUtil.set("refresh_token", data.refresh_token, refreshToken);
-        } else {
-          alert("Failed to login");
+export const useUserStore = defineStore('UserStore', {
+    state: () => ({
+        user: {},
+        userStore: useUserStore(),
+        boardStore: useBoardStore(),
+        token: CookieUtil.get('access_token') || '',
+        refreshToken: CookieUtil.get('refresh_token') || '',
+        isLoggedIn: !!CookieUtil.get('access_token')
+    }),
+    getters: {
+        getUser() {
+            return this.user
+        },
+        getToken() {
+            return this.token
+        },
+        getIsLoggedIn() {
+            return this.isLoggedIn
         }
-      } catch (error) {
-        throw new Error(error.message);
-      }
     },
-    logout() {
-      this.user = {};
-      this.token = "";
-      this.refreshToken = "";
-      this.isLoggedIn = false;
+    actions: {
+        async login(user) {
+            try {
+                const data = await fetchUser(
+                    `${import.meta.env.VITE_BASE_URL}${USER_ENDPOINT}`,
+                    user
+                )
+                // initialize()
+                const decoded = jwtDecode(data.access_token)
+                this.token = data.access_token
+                this.refreshToken = data.refresh_token
 
-      // Remove the access token cookie when logging out
-      CookieUtil.unset("access_token");
-      CookieUtil.unset("refresh_token");
+                if (decoded) {
+                    this.user = decoded
+                    this.isLoggedIn = true
+
+                    // Set the access token in a cookie with a 30-min expiration
+                    const expires = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
+                    const refreshToken = new Date(
+                        Date.now() + 24 * 60 * 60 * 1000
+                    ) // 24hours from now
+                    CookieUtil.set('access_token', this.token, expires)
+                    CookieUtil.set(
+                        'refresh_token',
+                        data.refresh_token,
+                        refreshToken
+                    )
+                } else {
+                    alert('Failed to login')
+                }
+            } catch (error) {
+                throw new Error(error.message)
+            }
+        },
+        logout() {
+            this.user = {}
+            this.token = ''
+            this.refreshToken = ''
+            this.isLoggedIn = false
+
+            // Remove the access token cookie when logging out
+            CookieUtil.unset('access_token')
+            CookieUtil.unset('refresh_token')
+        },
+
+        async initialize() {
+            // Check if the token exists in the cookie during initialization
+            const token = CookieUtil.get('access_token')
+            if (token) {
+                this.token = token
+                const decoded = jwtDecode(token)
+
+                this.user = decoded
+                this.isLoggedIn = true
+            }
+        }
     },
-
-    async initialize() {
-      // Check if the token exists in the cookie during initialization
-      const token = CookieUtil.get("access_token");
-      if (token) {
-        this.token = token;
-        const decoded = jwtDecode(token);
-
-        this.user = decoded;
-        this.isLoggedIn = true;
-      }
-    },
-  },
-  checkPermission() {},
-});
+    checkPermission() {}
+})
 
 export const useUserToken = () => {
-  const userStore = useUserStore();
+    const userStore = useUserStore()
 
-  // Create a computed property for the token
-  const token = computed(() => CookieUtil.get("access_token") || null);
+    // Create a computed property for the token
+    const token = computed(() => CookieUtil.get('access_token') || null)
 
-  // Watch for changes to the cookie and update the store if necessary
-  watch(token, (newToken) => {
-    userStore.token = newToken;
-  });
+    // Watch for changes to the cookie and update the store if necessary
+    watch(token, (newToken) => {
+        userStore.token = newToken
+    })
 
-  return token;
-};
+    return token
+}
 
-let isCheckingToken = false; // Initialize at top of the file
+let isCheckingToken = false // Initialize at top of the file
 
 export const checkTokenExpiration = async (boardId) => {
-  if (isCheckingToken) return; // If already checking, exit early
-  isCheckingToken = true; // Set flag to prevent re-entry
+    console.log('11111111111111111')
 
-  const userStore = useUserStore();
-  const boardStore = useBoardStore();
-  const router = useRouter();
+    if (isCheckingToken) return // If already checking, exit early
+    isCheckingToken = true // Set flag to prevent re-entry
 
-  const isPublicBoard = boardId
-    ? await boardStore.isPublicBoard(boardId)
-    : false;
+    const userStore = useUserStore()
+    const boardStore = useBoardStore()
+    const router = useRouter()
 
-  if (!userStore.token) {
-    if (isPublicBoard) {
-      isCheckingToken = false; // Reset the flag
-      return;
+    const isPublicBoard = boardId
+        ? await boardStore.isPublicBoard(boardId)
+        : false
+
+    if (!userStore.token) {
+        if (isPublicBoard) {
+            isCheckingToken = false // Reset the flag
+            return
+        } else {
+            router.push({ name: 'access-denied' })
+            isCheckingToken = false // Reset the flag
+            return
+        }
+    }
+
+    const decoded = jwtDecode(CookieUtil.get('access_token'))
+    const decodedRft = jwtDecode(CookieUtil.get('refresh_token'))
+    console.log(decoded.exp)
+    console.log(Date.now() / 1000)
+
+    if (decoded.exp < Date.now() / 1000 && decodedRft.exp > Date.now() / 1000) {
+        // Token has expired; try to refresh it
+        console.log('Token Expired')
+
+        try {
+            const data = await fetchToken(
+                `${import.meta.env.VITE_BASE_URL}token`
+            )
+            // console.log(data)
+
+            const expires = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
+            CookieUtil.set('access_token', data.access_token, expires)
+            userStore.token = data.access_token
+            console.log(data.access_token)
+            console.log(userStore.token)
+
+            isCheckingToken = false // Reset flag after successful refresh
+            return data.access_token
+        } catch {
+            userStore.logout()
+            isCheckingToken = false // Reset flag on failure
+        }
+    } else if (decodedRft && decodedRft.exp < Date.now() / 1000) {
+        // userStore.$reset()
+        userStore.logout()
+
+        console.log('IM HERE BITCH!!!')
     } else {
-      router.push({ name: "access-denied" });
-      isCheckingToken = false; // Reset the flag
-      return;
+        isCheckingToken = false // Reset flag if token is still valid
+        return userStore.token // Token is still valid
     }
-  }
-
-  const decoded = jwtDecode(userStore.token);
-
-  if (decoded.exp < Date.now() / 1000) {
-    // Token has expired; try to refresh it
-    try {
-      const data = await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
-      const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
-      CookieUtil.set("access_token", data.access_token, expires);
-      userStore.token = data.access_token;
-      isCheckingToken = false; // Reset flag after successful refresh
-      return data.access_token;
-    } catch {
-      userStore.logout();
-      isCheckingToken = false; // Reset flag on failure
-    }
-  } else {
-    isCheckingToken = false; // Reset flag if token is still valid
-    return userStore.token; // Token is still valid
-  }
-};
+}

@@ -105,7 +105,7 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async loadStatusDetail(id, boardId) {
       await checkTokenExpiration(boardId);
-      // const boardId = this.boardStore.getCurrentBoard.id;
+
       const res = await fetchStatusById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/statuses`,
         id
