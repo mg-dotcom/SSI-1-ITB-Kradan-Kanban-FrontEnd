@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useRoute } from "vue-router";
+import { useUserToken } from "@/stores/UserStore";
 import { computed } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { useStatusStore } from "@/stores/StatusStore";
@@ -138,24 +139,26 @@ router.beforeEach(async (to, _, next) => {
   if (
     ["task-add", "task-edit", "status-add", "status-edit"].includes(to.name)
   ) {
+    // Check if user has a token
+    const userToken = useUserToken().value;
+    if (!userToken) {
+      return next({ name: "access-denied" }); 
+    }
+
+    // Check if the user is the board owner
     const boardOwner = await boardStore.checkIsOwner(boardId);
     if (boardOwner) {
-      return next();
+      return next(); 
     }
 
-    const hasAccessRight = computed(() => {
-      const collab = collabStore.findCollabBoardByOid(userStore.getUser?.oid);
-      return collab?.accessRight === "WRITE";
-    });
-
-    const hasToken = computed(()=>{
-      const userToken = userStore.getToken();
-      return !!userToken;
-    })
-
-    if (!hasAccessRight.value || !hasToken) {
-      return next({ name: "access-denied" });
+    // Check if user has write access rights
+    const collab = collabStore.findCollabBoardByOid(userStore.getUser?.oid);
+    const hasAccessRight = collab?.accessRight === "WRITE";
+    if (!hasAccessRight) {
+      return next({ name: "access-denied" }); 
     }
+
+    return next(); // Proceed if all conditions are met
   }
   next();
 });
