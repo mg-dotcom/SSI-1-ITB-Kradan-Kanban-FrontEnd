@@ -193,8 +193,8 @@ const confirmAddCollab = async (email, accessRightValue) => {
       detail: "Collaborator added successfully!",
       life: 3000,
     });
+    openAddCollabModal.value = false;
   }
-  openAddCollabModal.value = false;
 };
 </script>
 
