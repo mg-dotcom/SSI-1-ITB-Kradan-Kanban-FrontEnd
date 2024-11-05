@@ -44,9 +44,9 @@ export const useUserStore = defineStore("UserStore", {
           this.user = decoded;
           this.isLoggedIn = true;
 
-          // Set the access token in a cookie with a 30-minute expiration
-          const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
-          const refreshToken = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours from now
+          // Set the access token in a cookie with a 30-sec expiration
+          const expires = new Date(Date.now() + 30 * 1000); // 30 sec from now
+          const refreshToken = new Date(Date.now() + 1 * 60 * 1000); // 1min from now
           CookieUtil.set("access_token", this.token, expires);
           CookieUtil.set("refresh_token", data.refresh_token, refreshToken);
         } else {

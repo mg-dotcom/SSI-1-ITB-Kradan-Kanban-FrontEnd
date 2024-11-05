@@ -10,6 +10,7 @@ import { useUserStore } from "./UserStore.js";
 import {
   handleAuthenticationClearAndRedirect,
   handleResponseStatus,
+  checkTokenExpirationTest
 } from "@/libs/libsUtil.js";
 import { checkTokenExpiration } from "./UserStore.js";
 
@@ -48,14 +49,14 @@ export const useBoardStore = defineStore("BoardStore", {
     },
 
     async loadBoardById(boardId) {
-      await checkTokenExpiration(boardId);
+      // await checkTokenExpiration(boardId);
 
       const res = await fetchBoardById(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}`,
         boardId
       );
-
-      handleResponseStatus(res);
+      await checkTokenExpirationTest(boardId,res)
+      // handleResponseStatus(res);
 
       const data = await res.json();
       this.board = data;
