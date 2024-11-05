@@ -96,7 +96,12 @@ export const useUserToken = () => {
   return token;
 };
 
+let isCheckingToken = false; // Initialize at top of the file
+
 export const checkTokenExpiration = async (boardId) => {
+  if (isCheckingToken) return; // If already checking, exit early
+  isCheckingToken = true; // Set flag to prevent re-entry
+
   const userStore = useUserStore();
   const boardStore = useBoardStore();
   const router = useRouter();
@@ -107,6 +112,7 @@ export const checkTokenExpiration = async (boardId) => {
 
   if (!userStore.token) {
     if (isPublicBoard) {
+      isCheckingToken = false; // Reset the flag
       return;
     } else {
       router.push({ name: "access-denied" });
@@ -118,14 +124,20 @@ export const checkTokenExpiration = async (boardId) => {
   const decoded = jwtDecode(userStore.token);
 
   if (decoded.exp < Date.now() / 1000) {
-    // Fetch refresh token and return new access token
+    // Token has expired; try to refresh it
     try {
       const data = await fetchToken(`${import.meta.env.VITE_BASE_URL}token`);
       const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minutes from now
       CookieUtil.set("access_token", data.access_token, expires);
       userStore.token = data.access_token;
+      isCheckingToken = false; // Reset flag after successful refresh
+      return data.access_token;
     } catch {
       userStore.logout();
+      isCheckingToken = false; // Reset flag on failure
     }
+  } else {
+    isCheckingToken = false; // Reset flag if token is still valid
+    return userStore.token; // Token is still valid
   }
 };

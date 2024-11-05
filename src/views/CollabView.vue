@@ -195,7 +195,8 @@ const confirmAddCollab = async (email, accessRightValue) => {
     });
   }
   openAddCollabModal.value = false;
-};</script>
+};
+</script>
 
 <template>
   <RouterView />
@@ -276,6 +277,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
                   </th>
                 </tr>
               </thead>
+
               <tbody class="bg-white">
                 <tr v-if="collabStore.getCollaborators <= 0">
                   <td class="border text-center" colspan="5">

@@ -31,6 +31,7 @@ export const useCollabStore = defineStore("CollabStore", {
       );
       handleResponseStatus(res);
       const data = await res.json();
+      this.collaborators = data;
       return data;
     },
     async addCollab(boardId, newCollab) {
