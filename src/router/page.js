@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { useRoute } from 'vue-router'
 import { useUserToken } from '@/stores/UserStore'
-import { computed } from 'vue'
 import { useUserStore } from '@/stores/UserStore'
 import { useStatusStore } from '@/stores/StatusStore'
 import { useBoardStore } from '@/stores/BoardStore'
@@ -18,6 +16,7 @@ import AddBoard from '@/components/boardModal/AddBoard.vue'
 import AccessDenied from '@/views/AccessDenied.vue'
 import CollabView from '@/views/CollabView.vue'
 import { checkTokenExpiration } from '@/stores/UserStore'
+import Invitation from '@/views/Invitation.vue'
 
 const routes = [
     {
@@ -86,6 +85,11 @@ const routes = [
                 component: AddEditStatusModal
             }
         ]
+    },
+    {
+        path: '/board/:id/invitation',
+        name: 'board-invitation',
+        component: Invitation
     },
     {
         path: '/login',

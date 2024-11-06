@@ -1,12 +1,11 @@
 <script setup>
 import Header from "@/components/Header.vue";
 import { RouterView } from "vue-router";
-import NavigateTitle from "@/components/navigateTitle.vue";
 import { useRoute } from "vue-router";
 import submitButton from "@/components/button/Button.vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import { useBoardStore } from "@/stores/BoardStore";
-import { computed, onMounted, ref } from "vue";
+import { ref } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useUserStore } from "@/stores/UserStore";
 import router from "@/router/page";
@@ -184,6 +183,9 @@ const confirmLeaveCollab = async () => {
             <div
               class="itbkk-collab-item w-80 h-28 flex justify-between p-2 bg-white rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
               v-for="(collab, index) in boardStore.getCollabBoard()"
+              :class="{
+                'bg-slate-200': collab.status === 'PENDING',
+              }"
               :key="index"
               @click="
                 router.push({
@@ -233,11 +235,12 @@ const confirmLeaveCollab = async () => {
 
                     <button
                       class="itbkk-leave-board bg-red-500 hover:bg-red-600 rounded-md transition-colors px-2 active:scale-[93%] active:transition-transform text-white text-xs font-bold"
+                      :class="{'bg-[#2D7DF8]': collab.status === 'PENDING'}"
                       @click.stop="
                         handleLeaveCollab(collab.boardId, collab.oid)
                       "
                     >
-                      LEAVE
+                      {{ collab.status === 'PENDING' ? 'Pending...' : 'Leave' }}
                     </button>
                   </div>
                 </div>
