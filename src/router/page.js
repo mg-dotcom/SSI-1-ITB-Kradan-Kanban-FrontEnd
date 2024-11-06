@@ -127,8 +127,6 @@ router.beforeEach(async (to, _, next) => {
                 await boardStore.loadBoards()
             }
             if (boardId) {
-              console.log('first place');
-              
                 await checkTokenExpiration(boardId)
                 await boardStore.loadBoardById(boardId)
                 await collabStore.loadCollab(boardId)
@@ -138,7 +136,8 @@ router.beforeEach(async (to, _, next) => {
         } catch (error) {
             console.log('Cannot Access')
             console.error('Error loading board-related data:', error)
-            return next({ name: 'login' })
+            // return next({ name: 'login' })
+            return next({ name: 'access-denied' })
         }
     }
 
