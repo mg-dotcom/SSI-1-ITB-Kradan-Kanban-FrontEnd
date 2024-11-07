@@ -297,7 +297,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
                   <td
                     class="itbkk-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                   >
-                    {{ collab.name }}
+                    {{ collab.status === "PENDING" ? collab.name+"(Pending)" : collab.name }}
                   </td>
                   <td
                     class="itbkk-email text-sm border-b border-r border-gray-300 break-all"
