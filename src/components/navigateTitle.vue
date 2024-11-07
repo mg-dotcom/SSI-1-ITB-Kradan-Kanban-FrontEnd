@@ -32,11 +32,6 @@ watch(
         routeName: "board-collab",
         params: { id: newBoardId },
       },
-      {
-        label: "Invitation",
-        routeName: "board-invitation",
-        params: { id: newBoardId },
-      },
     ];
   },
   { immediate: true } // Trigger this watcher immediately when the component is mounted
