@@ -8,7 +8,6 @@ import {
 import { useToast } from 'primevue/usetoast'
 import { useUserStore } from './UserStore.js'
 import {
-    handleAuthenticationClearAndRedirect,
     handleResponseStatus,
 } from '@/libs/libsUtil.js'
 import { checkTokenExpiration } from './UserStore.js'

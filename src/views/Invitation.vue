@@ -1,9 +1,10 @@
 <script setup>
 import Header from '@/components/Header.vue'
-import { RouterView } from 'vue-router'
-import { useRoute } from 'vue-router'
+import { useRoute,useRouter } from 'vue-router'
 
+const router = useRouter();
 const route = useRoute()
+const boardId = route.params.id;
 </script>
 
 <template>
@@ -53,7 +54,8 @@ const route = useRoute()
                     </button>
                     <button
                         class="px-6 py-3 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 focus:outline-none"
-                    >
+                        @click="router.push({ name: 'board-detail',id: boardId })"
+                        >
                         Decline
                     </button>
                 </div>

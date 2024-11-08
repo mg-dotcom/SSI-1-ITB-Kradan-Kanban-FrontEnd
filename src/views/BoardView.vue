@@ -112,6 +112,7 @@ const confirmLeaveCollab = async () => {
             class="itbkk-personal-item w-80 h-28 flex justify-between p-2 bg-white rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
             v-for="(board, index) in boardStore.getPersonalBoard()"
             :key="index"
+            
             @click="
               router.push({ name: 'board-task', params: { id: board.id } }),
                 boardStore.setCurrentBoard(board)
@@ -187,12 +188,8 @@ const confirmLeaveCollab = async () => {
                 'bg-slate-200': collab.status === 'PENDING',
               }"
               :key="index"
-              @click="
-                router.push({
-                  name: 'board-task',
-                  params: { id: collab.boardId },
-                })
-              "
+              @click="collab.status === 'PENDING' ? router.push({ name: 'board-invitation' }) : router.push({ name: 'board-task', params: { id: collab.boardId } })"
+
             >
               <div class="flex gap-x-5">
                 <div

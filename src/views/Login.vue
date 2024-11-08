@@ -3,7 +3,7 @@ import GradientLoginBg from "@/components/gradientLoginBg.vue";
 import { ref, computed, watch } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { useBoardStore } from "@/stores/BoardStore";
-import { useRouter, RouterView } from "vue-router";
+import { useRouter } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 const router = useRouter();
 const userStore = useUserStore();

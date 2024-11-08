@@ -13,7 +13,6 @@ import { useToast } from "primevue/usetoast";
 import { useUserStore } from "@/stores/UserStore";
 import {
   handleAuthenticationClearAndRedirect,
-  handleResponseStatus,
 } from "@/libs/libsUtil";
 import buttonSubmit from "@/components/button/Button.vue";
 

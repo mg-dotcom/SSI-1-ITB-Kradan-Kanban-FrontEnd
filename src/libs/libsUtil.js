@@ -1,9 +1,6 @@
 import { ref } from 'vue'
 import router from '@/router/page.js'
 import { useUserStore } from '@/stores/UserStore'
-import { useRouter } from 'vue-router'
-import { jwtDecode } from 'jwt-decode'
-import { useBoardStore } from '@/stores/BoardStore.js'
 import { CookieUtil } from './CookieUtil'
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)

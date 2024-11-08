@@ -1,5 +1,4 @@
 import { useUserToken } from "../stores/UserStore.js";
-import { handleResponseStatus } from "./libsUtil.js";
 
 const fetchCollab = async (url) => {
   const res = await fetch(`${url}`, {

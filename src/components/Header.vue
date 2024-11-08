@@ -11,6 +11,8 @@ const userStore = useUserStore();
 
 const router = useRouter();
 
+const boardId= ref(route.params.id);
+
 userStore.initialize();
 
 const logout = () => {
@@ -52,8 +54,8 @@ onClickOutside(dropdownMenu, () => {
         v-if="route.name !== 'login' && route.name !== 'access-denied'"
       >
         <div class="group-user flex" v-if="isValidToken">
-          <div>
-              <img src="/public/notification_8625350.png" alt="" class="w-10 h-10 mr-4">
+          <div class="notification-icon" @click="router.push({ name: 'board-invitation' })" v-if="boardId">
+              <img src="/public/notification_8625350.png" alt="" class="w-10 h-10 mr-4 cursor-pointer">
             </div>
           <div class="relative w-max mx-auto">
             <button
