@@ -41,6 +41,15 @@ onMounted(async () => {
         }}
       </div>
     </template>
+    <template #attach>
+      <div class="itbkk-attachments">
+        {{
+          !selectedTask.attachments || selectedTask.attachments.length === 0
+            ? "-"
+            : selectedTask.attachments
+        }}
+      </div>
+    </template>
     <template #assignees>
       <div class="itbkk-assignees">
         {{ !selectedTask.assignees ? "Unassigned" : selectedTask.assignees }}
