@@ -41,7 +41,7 @@ const props = defineProps({
                             <slot name="desc"></slot>
                         </div>
 
-                        <p class="font-semibold text-black">Attachments</p>
+                        <p class="font-semibold text-black flex items-center">Attachments <slot name="addAttach"></slot></p>
                         <div
                             class="xl:w-[550px] lg:w-[290px] sm:w-[260px] h-full px-3 break-all overflow-auto mb-5"
                             :class="
@@ -81,10 +81,7 @@ const props = defineProps({
                     </div>
                 </div>
             </div>
-            <div
-                class="absolute right-6 xl:bottom-3 lg:bottom-1.5 bottom-1 flex items-center space-x-2"
-            >
-                <div class="text-right ml-2"><slot name="addAttachments"></slot></div>
+            <div class="absolute right-6 xl:bottom-3 lg:bottom-1.5 bottom-1">
                 <slot name="button-left">
                     <buttonSubmit></buttonSubmit>
                 </slot>

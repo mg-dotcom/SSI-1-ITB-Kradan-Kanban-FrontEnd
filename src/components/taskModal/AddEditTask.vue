@@ -246,6 +246,13 @@ const save = async () => {
             </div>
         </template>
 
+        <template #addAttach>
+            <div class="flex items-center ml-3 p-2 rounded-md hover:bg-gray-200 hover:shadow-md hover:scale-105 transition-all duration-200 ease-in-out cursor-pointer">
+                <img src="/public/attachments/attach-file.png" alt="" class="w-4">
+                <p>Attach</p>
+            </div>
+        </template>
+
         <template #addAttachments>
             <div class="flex">
                 <img
