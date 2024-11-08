@@ -177,21 +177,36 @@ const save = async () => {
         </template>
         <template #attach>
             <div class="mt-2 text-black grid grid-cols-2 gap-2">
-                <div class="bg-[#D9D9D9] flex justify-between p-3 rounded-md hover:bg-[#C0C0C0] hover:shadow-md hover:scale-105 transition-all duration-200 ease-in-out cursor-pointer">
+                <div
+                    class="bg-[#D9D9D9] flex justify-between p-3 rounded-md hover:bg-[#C0C0C0] hover:shadow-md hover:scale-105 transition-all duration-200 ease-in-out cursor-pointer"
+                >
                     <div class="flex items-center">
-                        <div class="w-6 mr-2"><img src="/public/attachments/pdf.png" alt=""></div>
-                        <p >File1.pdf</p>
+                        <div class="w-6 mr-2">
+                            <img src="/public/attachments/pdf.png" alt="" />
+                        </div>
+                        <p>File1.pdf</p>
                     </div>
-                    <div class="w-6 h-6 flex justify-center items-center rounded-full hover:bg-red-500 transition-all duration-150 ease-in-out hover:scale-110"><img src="/public/attachments/trash.png" alt=""></div>
+                    <div
+                        class="w-6 h-6 flex justify-center items-center rounded-full hover:bg-red-500 transition-all duration-150 ease-in-out hover:scale-110"
+                    >
+                        <img src="/public/attachments/trash.png" alt="" />
+                    </div>
                 </div>
-                <div class="bg-[#D9D9D9] flex justify-between p-3 rounded-md hover:bg-[#C0C0C0] hover:shadow-md hover:scale-105 transition-all duration-200 ease-in-out cursor-pointer">
+                <div
+                    class="bg-[#D9D9D9] flex justify-between p-3 rounded-md hover:bg-[#C0C0C0] hover:shadow-md hover:scale-105 transition-all duration-200 ease-in-out cursor-pointer"
+                >
                     <div class="flex items-center">
-                        <div class="w-6 mr-2"><img src="/public/attachments/word.png" alt=""></div>
-                        <p >File1.pdf</p>
+                        <div class="w-6 mr-2">
+                            <img src="/public/attachments/word.png" alt="" />
+                        </div>
+                        <p>File1.pdf</p>
                     </div>
-                    <div class="w-6 h-6 flex justify-center items-center rounded-full hover:bg-red-500 transition-all duration-150 ease-in-out hover:scale-110"><img src="/public/attachments/trash.png" alt=""></div>
+                    <div
+                        class="w-6 h-6 flex justify-center items-center rounded-full hover:bg-red-500 transition-all duration-150 ease-in-out hover:scale-110"
+                    >
+                        <img src="/public/attachments/trash.png" alt="" />
+                    </div>
                 </div>
-
             </div>
         </template>
         <template #assignees>
@@ -228,6 +243,17 @@ const save = async () => {
                 {{ selectedTask.createdOn }} <br />
                 <span class="itbkk-updated-on font-semibold">Updated On</span> :
                 {{ selectedTask.updatedOn }} <br />
+            </div>
+        </template>
+
+        <template #addAttachments>
+            <div class="flex">
+                <img
+                    src="/public/attachments/attach-file.png"
+                    alt=""
+                    class="w-6"
+                />
+                <div class="text-[#0546A9]">Attach</div>
             </div>
         </template>
 
