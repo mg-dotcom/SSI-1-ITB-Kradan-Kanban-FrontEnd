@@ -185,7 +185,7 @@ const save = async () => {
 
     <template #attach>
       <div
-        class="mt-2 text-black grid grid-cols-2 gap-3"
+        class="mt-2 text-black grid grid-cols-2 gap-3 relative"
         v-if="mode === 'edit'"
       >
         <div
@@ -196,7 +196,8 @@ const save = async () => {
         </div>
         <div
           v-for="file in taskStore.getTaskFilesById(taskId)"
-          class="bg-[#f3f3f3] grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-center items-center"
+          :title="file.fileName"
+          class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
         >
           <div class="flex items-center">
             <!-- Set a fixed size for the image -->
@@ -205,9 +206,10 @@ const save = async () => {
               alt=""
               class="w-8 object-contain"
             />
-            <p class="px-2 text-xs">{{ file.fileName }}</p>
           </div>
-
+          <p class="px-2 text-xs truncate text-left">
+            {{ file.fileName }}
+          </p>
           <div
             class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-red-300 transition-all duration-150 ease-in-out"
           >
@@ -275,7 +277,7 @@ const save = async () => {
     <template #addAttachments>
       <div class="flex">
         <img src="/public/attachments/attach-file.png" alt="" class="w-6" />
-        <div class="attach-text" style="color: aquamarine">Attach</div>
+        <div class="attach-text">Attach</div>
       </div>
     </template>
 

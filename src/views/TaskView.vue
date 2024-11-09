@@ -36,6 +36,7 @@ onMounted(async () => {
   initDropdowns();
   await checkTokenExpiration(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
+
   boardStore.setCurrentBoard(fetchedBoard);
 
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
@@ -422,13 +423,19 @@ const handleEditTask = () => {
                       >
                         {{ task.title }}
                       </p>
-                      <div class="flex ml-4 items-center">
+                      <div class="flex ml-3 items-center justify-center">
                         <img
-                          src="/public/attachments/attach-file (1).png"
+                          src="/public/attachments/attach-file.png"
                           alt=""
                           class="w-3 h-3"
                         />
-                        <p class="text-[12px] text-gray-500">5</p>
+                        <div class="attach-text">
+                          {{
+                            taskStore.getTaskFilesById(task.id).length === 0
+                              ? "-"
+                              : taskStore.getTaskFilesById(task.id).length
+                          }}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -562,23 +569,7 @@ const handleEditTask = () => {
 </template>
 
 <style scoped>
-.link-underline {
-  border-bottom-width: 0;
-  background-image: linear-gradient(transparent, transparent),
-    linear-gradient(#fff, #fff);
-  background-size: 0 3px;
-  background-position: 0 100%;
-  background-repeat: no-repeat;
-  transition: background-size 0.5s ease-in-out;
-}
-
-.link-underline-black {
-  background-image: linear-gradient(transparent, transparent),
-    linear-gradient(#f2c, #f2c);
-}
-
-.link-underline:hover {
-  background-size: 100% 3px;
-  background-position: 0 100%;
+.attach-text {
+  color: #0546a9;
 }
 </style>

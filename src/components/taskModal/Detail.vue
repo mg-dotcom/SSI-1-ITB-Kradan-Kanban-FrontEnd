@@ -15,6 +15,7 @@ const statusStore = useStatusStore();
 const taskId = route.params.taskId;
 const boardId = route.params.id;
 const selectedTask = ref({});
+const mode = route.name === "task-detail" ? "view" : "";
 
 onMounted(async () => {
   const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
@@ -26,7 +27,11 @@ onMounted(async () => {
 </script>
 
 <template>
-  <ModalDetail :selectedTask="selectedTask" class="itbkk-modal-task">
+  <ModalDetail
+    :mode="mode"
+    :selectedTask="selectedTask"
+    class="itbkk-modal-task"
+  >
     <template #title>
       <div :title="selectedTask.title" class="itbkk-title truncate">
         {{ selectedTask.title }}
@@ -42,12 +47,31 @@ onMounted(async () => {
       </div>
     </template>
     <template #attach>
-      <div class="itbkk-attachments">
-        {{
-          !selectedTask.attachments || selectedTask.attachments.length === 0
-            ? "-"
-            : selectedTask.attachments
-        }}
+      <div class="mt-2 text-black grid grid-cols-2 gap-3 relative">
+        <div
+          v-if="taskStore.getTaskFilesById(taskId).length === 0"
+          class="text-gray-400"
+        >
+          No attachments
+        </div>
+        <div
+          v-for="file in taskStore.getTaskFilesById(taskId)"
+          :title="file.fileName"
+          class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
+        >
+          <div class="flex items-center">
+            <!-- Set a fixed size for the image -->
+            <img
+              src="/public/attachments/pdf.png"
+              alt=""
+              class="w-8 object-contain"
+            />
+          </div>
+          <p class="px-2 text-xs truncate text-left">
+            {{ file.fileName }}
+          </p>
+        
+        </div>
       </div>
     </template>
     <template #assignees>

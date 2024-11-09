@@ -38,7 +38,7 @@ const props = defineProps({
             <div class="px-3"><slot name="desc"></slot></div>
 
             <p
-              v-if="props.mode === 'edit'"
+              v-if="props.mode === 'edit' || props.mode === 'view'"
               class="font-semibold text-black flex items-center my-3"
             >
               Attachments
