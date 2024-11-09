@@ -11,7 +11,7 @@ const userStore = useUserStore();
 
 const router = useRouter();
 
-const boardId= ref(route.params.id);
+const boardId = ref(route.params.id);
 
 userStore.initialize();
 
@@ -54,17 +54,25 @@ onClickOutside(dropdownMenu, () => {
         v-if="route.name !== 'login' && route.name !== 'access-denied'"
       >
         <div class="group-user flex" v-if="isValidToken">
-          <div class="notification-icon" @click="router.push({ name: 'board-invitation' })" v-if="boardId">
-              <img src="/public/notification_8625350.png" alt="" class="w-10 h-10 mr-4 cursor-pointer">
-            </div>
+          <div
+            class="notification-icon"
+            @click="router.push({ name: 'board-invitation' })"
+            v-if="boardId"
+          >
+            <img
+              src="/public/notification_8625350.png"
+              alt=""
+              class="w-10 h-10 mr-4 cursor-pointer"
+            />
+          </div>
           <div class="relative w-max mx-auto">
             <button
               @click="toggleDropdown"
               class="itbkk-fullname px-4 py-2 flex items-center rounded-full text-[#333] text-sm border bg-white bg-opacity-45 outline-none hover:bg-gray-100 duration-300"
             >
               <img
-                src="https://readymadeui.com/profile_6.webp"
-                class="w-7 h-7 mr-3 rounded-full shrink-0"
+                src="https://cdn-icons-png.flaticon.com/512/3003/3003035.png"
+                class="w-7 h-7 mr-3 rounded-full shrink-0 border"
                 alt="User Profile"
               />
               {{ userStore.getUser.name }}

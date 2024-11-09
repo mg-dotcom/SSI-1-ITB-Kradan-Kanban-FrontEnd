@@ -5,6 +5,8 @@ import StatusButton from "../button/StatusButton.vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { ref, onMounted } from "vue";
+
+
 import { useRoute, useRouter } from "vue-router";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 
@@ -14,7 +16,15 @@ const taskStore = useTaskStore();
 const statusStore = useStatusStore();
 const taskId = route.params.taskId;
 const boardId = route.params.id;
-const selectedTask = ref({});
+const selectedTask = ref({
+  title: "",
+  description: "",
+  assignees: "",
+  status: "",
+  createdOn: "",
+  updatedOn: "",
+  files: [],
+});
 const mode = route.name === "task-detail" ? "view" : "";
 
 onMounted(async () => {
@@ -23,6 +33,7 @@ onMounted(async () => {
   selectedTask.value.status = taskDetail.status.name;
   selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
   selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
+  selectedTask.value.files = taskDetail.files;
 });
 </script>
 
@@ -48,19 +59,15 @@ onMounted(async () => {
     </template>
     <template #attach>
       <div class="mt-2 text-black grid grid-cols-2 gap-3 relative">
-        <div
-          v-if="taskStore.getTaskFilesById(taskId).length === 0"
-          class="text-gray-400"
-        >
+        <div v-if="selectedTask.files.length === 0" class="text-gray-400">
           No attachments
         </div>
         <div
-          v-for="file in taskStore.getTaskFilesById(taskId)"
+          v-for="file in selectedTask.files"
           :title="file.fileName"
           class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
         >
           <div class="flex items-center">
-            <!-- Set a fixed size for the image -->
             <img
               src="/public/attachments/pdf.png"
               alt=""
@@ -70,7 +77,6 @@ onMounted(async () => {
           <p class="px-2 text-xs truncate text-left">
             {{ file.fileName }}
           </p>
-        
         </div>
       </div>
     </template>
@@ -107,12 +113,16 @@ onMounted(async () => {
     </template>
 
     <template #button-left>
-      <buttonSubmit buttonType="cancel" @click="router.go(-1)"
+      <buttonSubmit
+        buttonType="cancel"
+        @click="router.push({ name: 'board-task' })"
         >Cancel</buttonSubmit
       >
     </template>
     <template #button-right>
-      <buttonSubmit buttonType="ok" @click="router.go(-1)">Ok</buttonSubmit>
+      <buttonSubmit buttonType="ok" @click="router.push({ name: 'board-task' })"
+        >Ok</buttonSubmit
+      >
     </template>
   </ModalDetail>
 </template>

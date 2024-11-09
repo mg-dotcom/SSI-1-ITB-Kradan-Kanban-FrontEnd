@@ -51,21 +51,48 @@ const deleteTask = async (url, id) => {
   return res;
 };
 
-const updatedTask = async (url, updatedTask, id) => {
-  const res = await fetch(`${url}/${id}`, {
-    method: "PUT",
-    headers: {
-      "content-type": "application/json",
-      Authorization: `Bearer ${useUserToken().value}`,
-    },
-    body: JSON.stringify({
-      title: updatedTask.title,
-      description: updatedTask.description,
-      assignees: updatedTask.assignees,
-      status: updatedTask.statusId,
-    }),
-  });
-  return res;
+// const updatedTask = async (url, updatedTask, id) => {
+//   const res = await fetch(`${url}/${id}`, {
+//     method: "PUT",
+//     headers: {
+//       "content-type": "application/json",
+//       Authorization: `Bearer ${useUserToken().value}`,
+//     },
+//     body: JSON.stringify({
+//       title: updatedTask.title,
+//       description: updatedTask.description,
+//       assignees: updatedTask.assignees,
+//       status: updatedTask.statusId,
+//     }),
+//   });
+//   return res;
+// };
+
+const updatedTaskWithFiles = async (url, updatedTaskInput) => {
+  const formData = new FormData();
+
+  console.log("updatedTaskInput", updatedTaskInput);
+  console.log(updatedTaskInput.files);
+  console.log(updatedTaskInput.files);
+
+  // files.forEach((file, index) => {
+  //   formData.append(`files[${index}]`, file);
+  // });
+
+  // formData.append(
+  //   "taskData",
+  //   new Blob([JSON.stringify(taskData)], { type: "application/json" })
+  // );
+
+  // const res = await fetch(url, {
+  //   method: "PUT",
+  //   headers: {
+  //     Authorization: `Bearer ${useUserToken().value}`,
+  //   },
+  //   body: formData,
+  // });
+
+  //   return res; // Parse and return response JSON
 };
 
 //FIXME: This function is cant fixed yet
@@ -89,6 +116,6 @@ export {
   fetchTaskDetails,
   addTask,
   deleteTask,
-  updatedTask,
   fetchFilterTasks,
+  updatedTaskWithFiles,
 };

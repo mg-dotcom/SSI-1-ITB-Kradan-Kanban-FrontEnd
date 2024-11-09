@@ -29,6 +29,7 @@ const selectedTask = ref({
   statusId: 1,
   createdOn: "",
   updatedOn: "",
+  files: [],
 });
 
 const outputTask = ref({
@@ -37,6 +38,8 @@ const outputTask = ref({
   assignees: "",
   statusId: 1,
 });
+
+const newFiles = ref([]);
 
 const originalTaskData = ref({});
 const boardId = route.params.id;
@@ -51,11 +54,14 @@ onMounted(async () => {
 
   if (mode == "edit") {
     const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
+    selectedTask.value = {
+      ...taskDetail,
+      statusId: taskDetail.status?.id ?? null,
+      createdOn: formatDate(taskDetail.createdOn),
+      updatedOn: formatDate(taskDetail.updatedOn),
+      files: taskDetail.files || [],
+    };
 
-    selectedTask.value = taskDetail;
-    selectedTask.value.statusId = taskDetail.status.id;
-    selectedTask.value.createdOn = formatDate(taskDetail.createdOn);
-    selectedTask.value.updatedOn = formatDate(taskDetail.updatedOn);
     originalTaskData.value = { ...selectedTask.value };
   } else if (mode == "add") {
     selectedTask.value.statusId = statusStore.getStatuses[0].id;
@@ -99,22 +105,25 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
+
     const statusDetail = statusStore.getStatuses.find(
       (status) => status.id === selectedTask.value.statusId
     );
-    const statusCode = await taskStore.editTask(
+
+    const statusCode = await taskStore.editTaskWithFiles(
       taskId,
       outputTask.value,
+      newFiles.value,
       statusDetail
     );
 
-    if (statusCode.status === 200) {
-      router.push({ name: "board-task", params: { id: boardId } });
-      taskStore.loadTasks(boardId);
-      taskStore.filterStatuses.length = 0;
-    } else {
-      return;
-    }
+    // if (statusCode.status === 200) {
+    //   router.push({ name: "board-task", params: { id: boardId } });
+    //   taskStore.loadTasks(boardId);
+    //   taskStore.filterStatuses.length = 0;
+    // } else {
+    //   return;
+    // }
   } else {
     outputTask.value = {
       title: selectedTask.value.title,
@@ -134,6 +143,21 @@ const save = async () => {
     }
   }
 };
+
+const onFileChanged = (e) => {
+  const files = Array.from(e.target.files);
+
+  const createFileObject = (file) => ({
+    fileName: file.name,
+    fileData: file,
+  });
+
+  files.forEach((file) => {
+    const fileObject = createFileObject(file);
+    selectedTask.value.files.push(fileObject);
+    newFiles.value.push(fileObject);
+  });
+};
 </script>
 
 <template>
@@ -145,7 +169,6 @@ const save = async () => {
     <template #title>
       <div class="flex justify-between text-black">
         <div>{{ mode == "add" ? "Add Task" : "Edit Task" }}</div>
-        {{}}
         <div>
           <span
             :class="{
@@ -188,19 +211,15 @@ const save = async () => {
         class="mt-2 text-black grid grid-cols-2 gap-3 relative"
         v-if="mode === 'edit'"
       >
-        <div
-          v-if="taskStore.getTaskFilesById(taskId).length === 0"
-          class="text-gray-400"
-        >
+        <div v-if="selectedTask.files.length === 0" class="text-gray-400">
           No attachments
         </div>
         <div
-          v-for="file in taskStore.getTaskFilesById(taskId)"
+          v-for="file in selectedTask.files"
           :title="file.fileName"
           class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
         >
           <div class="flex items-center">
-            <!-- Set a fixed size for the image -->
             <img
               src="/public/attachments/pdf.png"
               alt=""
@@ -213,7 +232,6 @@ const save = async () => {
           <div
             class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-red-300 transition-all duration-150 ease-in-out"
           >
-            <!-- Set a fixed size for the trash icon -->
             <img
               src="/public/attachments/trash.png"
               alt=""
@@ -261,17 +279,25 @@ const save = async () => {
     </template>
 
     <template #addAttach>
-      <div
+      <label
         v-if="mode === 'edit'"
+        for="fileInput"
         class="flex items-center ml-3 px-2 rounded-2xl hover:bg-[#eeeeee] border transition-all duration-200 ease-in-out cursor-pointer"
       >
+        <input
+          id="fileInput"
+          type="file"
+          class="hidden"
+          multiple
+          @change="onFileChanged"
+        />
         <img
           src="/public/attachments/attach-file.png"
-          alt=""
+          alt="Attach File"
           class="w-4 hover:text-[#1c2153]"
         />
         <p>Attach</p>
-      </div>
+      </label>
     </template>
 
     <template #addAttachments>
@@ -285,7 +311,7 @@ const save = async () => {
       <buttonSubmit
         buttonType="cancel"
         class="itbkk-button-cancel"
-        @click="router.go(-1)"
+        @click="router.push({ name: 'board-task' })"
         >Cancel</buttonSubmit
       >
     </template>
