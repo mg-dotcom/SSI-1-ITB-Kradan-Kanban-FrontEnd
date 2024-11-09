@@ -138,7 +138,6 @@ router.beforeEach(async (to, _, next) => {
                 await statusStore.loadStatuses(boardId)
             }
         } catch (error) {
-            console.log('Cannot Access')
             console.error('Error loading board-related data:', error)
             // return next({ name: 'login' })
             return next({ name: 'access-denied' })

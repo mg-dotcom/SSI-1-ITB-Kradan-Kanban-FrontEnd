@@ -19,21 +19,16 @@ const sortTasks = (tasks, sortType) => {
 }
 
 export function handleResponseStatus(res) {
-    console.log(!CookieUtil.get('refresh_token'))
-
     if (
         (!CookieUtil.get('access_token') && res.status === 401) ||
         res.status === 404
     ) {
-        console.log('2222222')
-
         const userStore = useUserStore()
         // userStore.$reset()
         userStore.logout()
         alert('Session expired. Please login again.')
         router.push({ name: 'login' })
     } else if (res.status === 403) {
-        console.log('3333333')
         const userStore = useUserStore()
         userStore.logout()
         router.push({ name: 'access-denied' })

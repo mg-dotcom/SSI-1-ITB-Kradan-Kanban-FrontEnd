@@ -23,7 +23,6 @@ onMounted(async () => {
   boardTemplate.value.name = `${userStore.getUser.name}  personal board`;
   boardTemplate.value.emoji = "🙂";
   boardTemplate.value.color = "#DEDEDE";
-  console.log(boardStore.getBoards);
 });
 
 const boardTemplate = ref({

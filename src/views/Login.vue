@@ -54,7 +54,6 @@ const signIn = async () => {
       router.push({ name: "board" });
     }
   } catch (error) {
-    console.log(error);
 
     isError.value = true;
   }

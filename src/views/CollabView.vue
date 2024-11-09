@@ -113,7 +113,6 @@ const confirmChangeAccessRight = async () => {
 const handleRemoveCollab = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
-  console.log(collabOid);
 
   selectedCollabOid.value = collabOid;
 

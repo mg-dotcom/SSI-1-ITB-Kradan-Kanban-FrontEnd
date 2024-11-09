@@ -105,7 +105,6 @@ export const useUserToken = () => {
 let isCheckingToken = false // Initialize at top of the file
 
 export const checkTokenExpiration = async (boardId) => {
-    console.log('11111111111111111')
 
     if (isCheckingToken) return // If already checking, exit early
     isCheckingToken = true // Set flag to prevent re-entry
@@ -131,12 +130,9 @@ export const checkTokenExpiration = async (boardId) => {
 
     const decoded = jwtDecode(CookieUtil.get('access_token'))
     const decodedRft = jwtDecode(CookieUtil.get('refresh_token'))
-    console.log(decoded.exp)
-    console.log(Date.now() / 1000)
 
     if (decoded.exp < Date.now() / 1000 && decodedRft.exp > Date.now() / 1000) {
         // Token has expired; try to refresh it
-        console.log('Token Expired')
 
         try {
             const data = await fetchToken(
@@ -147,8 +143,6 @@ export const checkTokenExpiration = async (boardId) => {
             const expires = new Date(Date.now() + 30 * 60 * 1000) // 30 minutes from now
             CookieUtil.set('access_token', data.access_token, expires)
             userStore.token = data.access_token
-            console.log(data.access_token)
-            console.log(userStore.token)
 
             isCheckingToken = false // Reset flag after successful refresh
             return data.access_token
@@ -159,8 +153,6 @@ export const checkTokenExpiration = async (boardId) => {
     } else if (decodedRft && decodedRft.exp < Date.now() / 1000) {
         // userStore.$reset()
         userStore.logout()
-
-        console.log('IM HERE BITCH!!!')
     } else {
         isCheckingToken = false // Reset flag if token is still valid
         return userStore.token // Token is still valid
