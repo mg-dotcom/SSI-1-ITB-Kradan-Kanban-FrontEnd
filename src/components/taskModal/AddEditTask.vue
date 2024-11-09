@@ -42,7 +42,6 @@ const outputTask = ref({
 const newFiles = ref([]);
 
 const oldFilesLength = ref(0);
-
 const originalTaskData = ref({});
 const boardId = route.params.id;
 const taskId = route.params.taskId;
@@ -110,15 +109,10 @@ const save = async () => {
       statusId: selectedTask.value.statusId,
     };
 
-    const statusDetail = statusStore.getStatuses.find(
-      (status) => status.id === selectedTask.value.statusId
-    );
-
     const res = await taskStore.editTaskWithFiles(
       taskId,
       outputTask.value,
-      newFiles.value,
-      statusDetail
+      newFiles.value
     );
 
     if (res.status === 200) {
@@ -233,6 +227,7 @@ const onFileChanged = (e) => {
           </p>
           <div
             class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-red-300 transition-all duration-150 ease-in-out"
+           
           >
             <img
               src="/public/attachments/trash.png"

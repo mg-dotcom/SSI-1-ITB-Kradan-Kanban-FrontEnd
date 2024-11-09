@@ -5,6 +5,7 @@ import {
   deleteTask,
   fetchTaskDetails,
   updatedTaskWithFiles,
+  deleteTaskFile,
 } from "../libs/FetchTask.js";
 import { sortTasks } from "../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
@@ -27,6 +28,9 @@ export const useTaskStore = defineStore("TaskStore", {
   getters: {
     getTasks() {
       return this.tasks;
+    },
+    getTaskById: (state) => (id) => {
+      return state.tasks.find((task) => task.id === Number(id));
     },
     getTasksByStatus: (state) => (status) => {
       return state.tasks.filter((task) => task.status === status);
@@ -119,11 +123,7 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
 
-    async editTaskWithFiles(
-      id,
-      updatedTaskData,
-      updatedTaskFiles,
-    ) {
+    async editTaskWithFiles(id, updatedTaskData, updatedTaskFiles) {
       const boardId = this.boardStore.getCurrentBoard.id;
       await checkTokenExpiration(boardId);
 
@@ -137,12 +137,13 @@ export const useTaskStore = defineStore("TaskStore", {
 
       const data = await res.json();
       const message = data.message;
-      const fileErrors = data.fileErrors;
+      const fileErrors = data.fileErrors || [];
       const fileName = fileErrors.map((file) => file.fileName);
 
       const taskIndex = this.tasks.findIndex((task) => task.id === id);
       if (res.status >= 200 && res.status <= 299) {
         this.tasks[taskIndex] = data;
+
         this.toast.add({
           severity: "success",
           summary: "Success",
@@ -167,6 +168,42 @@ export const useTaskStore = defineStore("TaskStore", {
         handleResponseStatus(res);
       }
       return res;
+    },
+
+    async deleteTaskFile(file, taskId) {
+      const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
+
+      const res = await deleteTaskFile(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/tasks/${taskId}/files/${file.fileName}`
+      );
+
+      const taskIndex = this.tasks.findIndex(
+        (task) => task.id === Number(taskId)
+      );
+      if (res.status >= 200 && res.status <= 299) {
+        const fileIndex = this.tasks[taskIndex].files.findIndex(
+          (file) => file.id === file.id
+        );
+        this.tasks[taskIndex].files.splice(fileIndex, 1);
+        this.toast.add({
+          severity: "success",
+          summary: "Success",
+          detail: `The file has been deleted`,
+          life: 3000,
+        });
+      } else if (res.status === 404) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `An error has occurred, the file does not exist.`,
+          life: 3000,
+        });
+      } else {
+        handleResponseStatus(res);
+      }
     },
 
     async transferTasksStatus(currentStatus, newStatus) {

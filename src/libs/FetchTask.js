@@ -30,12 +30,7 @@ const addTask = async (url, newTask) => {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,
     },
-    body: JSON.stringify({
-      title: newTask.title,
-      description: newTask.description,
-      assignees: newTask.assignees,
-      status: newTask.statusId,
-    }),
+    body: JSON.stringify(newTask),
   });
   return res;
 };
@@ -50,23 +45,6 @@ const deleteTask = async (url, id) => {
   });
   return res;
 };
-
-// const updatedTask = async (url, updatedTask, id) => {
-//   const res = await fetch(`${url}/${id}`, {
-//     method: "PUT",
-//     headers: {
-//       "content-type": "application/json",
-//       Authorization: `Bearer ${useUserToken().value}`,
-//     },
-//     body: JSON.stringify({
-//       title: updatedTask.title,
-//       description: updatedTask.description,
-//       assignees: updatedTask.assignees,
-//       status: updatedTask.statusId,
-//     }),
-//   });
-//   return res;
-// };
 
 const updatedTaskWithFiles = async (url, updatedTaskData, updatedTaskFiles) => {
   const formData = new FormData();
@@ -85,6 +63,17 @@ const updatedTaskWithFiles = async (url, updatedTaskData, updatedTaskFiles) => {
     body: formData,
   });
 
+  return res;
+};
+
+const deleteTaskFile = async (url) => {
+  const res = await fetch(url, {
+    method: "DELETE",
+    headers: {
+      "content-type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+  });
   return res;
 };
 
@@ -111,4 +100,5 @@ export {
   deleteTask,
   fetchFilterTasks,
   updatedTaskWithFiles,
+  deleteTaskFile,
 };
