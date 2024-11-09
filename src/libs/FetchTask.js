@@ -68,12 +68,17 @@ const deleteTask = async (url, id) => {
 //   return res;
 // };
 
-const updatedTaskWithFiles = async (url, updatedTaskInput) => {
+const updatedTaskWithFiles = async (url, updatedTaskData, updatedTaskFiles) => {
   const formData = new FormData();
 
-  console.log("updatedTaskInput", updatedTaskInput);
-  console.log(updatedTaskInput.files);
-  console.log(updatedTaskInput.files);
+  formData.append("taskDto", JSON.stringify(updatedTaskData));
+
+  // Append files to FormData
+  updatedTaskFiles.forEach((file) => {
+    formData.append("files", file.fileData);
+  });
+
+  console.log("formData", formData);
 
   // files.forEach((file, index) => {
   //   formData.append(`files[${index}]`, file);

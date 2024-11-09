@@ -133,13 +133,12 @@ export const useTaskStore = defineStore("TaskStore", {
       //   updatedTaskInput,
       //   id
       // );
-      console.log(updatedTaskData);
-      console.log(updatedTaskFiles);
 
-      // const res = await updatedTaskWithFiles(
-      //   `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
-      //   updatedTaskInput
-      // );
+      const res = await updatedTaskWithFiles(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
+        updatedTaskData,
+        updatedTaskFiles
+      );
 
       // const taskIndex = this.tasks.findIndex((task) => task.id === id);
       // if (res.status >= 200 && res.status <= 299) {

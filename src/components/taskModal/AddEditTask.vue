@@ -41,6 +41,8 @@ const outputTask = ref({
 
 const newFiles = ref([]);
 
+const oldFilesLength = ref(0);
+
 const originalTaskData = ref({});
 const boardId = route.params.id;
 const taskId = route.params.taskId;
@@ -62,6 +64,8 @@ onMounted(async () => {
       files: taskDetail.files || [],
     };
 
+    oldFilesLength.value = selectedTask.value.files.length;
+
     originalTaskData.value = { ...selectedTask.value };
   } else if (mode == "add") {
     selectedTask.value.statusId = statusStore.getStatuses[0].id;
@@ -81,14 +85,14 @@ watch(
         newValue.title === originalTaskData.value.title &&
         newValue.description === originalTaskData.value.description &&
         newValue.assignees === originalTaskData.value.assignees &&
-        newValue.statusId === originalTaskData.value.statusId
+        newValue.statusId === originalTaskData.value.statusId &&
+        newValue.files.length === oldFilesLength.value
       );
     }
   },
   { deep: true }
 );
 
-// Computed properties
 const isButtonDisabled = computed(() => {
   return (
     !selectedTask.value.title ||
@@ -146,7 +150,6 @@ const save = async () => {
 
 const onFileChanged = (e) => {
   const files = Array.from(e.target.files);
-
   const createFileObject = (file) => ({
     fileName: file.name,
     fileData: file,
