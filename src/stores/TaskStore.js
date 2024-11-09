@@ -123,56 +123,50 @@ export const useTaskStore = defineStore("TaskStore", {
       id,
       updatedTaskData,
       updatedTaskFiles,
-      statusDetails
     ) {
       const boardId = this.boardStore.getCurrentBoard.id;
       await checkTokenExpiration(boardId);
 
-      // const res = await updatedTask(
-      //   `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
-      //   updatedTaskInput,
-      //   id
-      // );
-
       const res = await updatedTaskWithFiles(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`,
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/tasks/${id}`,
         updatedTaskData,
         updatedTaskFiles
       );
 
-      // const taskIndex = this.tasks.findIndex((task) => task.id === id);
-      // if (res.status >= 200 && res.status <= 299) {
-      //   const updateData = await res.json();
-      //   this.tasks[taskIndex] = {
-      //     ...updateData,
-      //     status: statusDetails.name,
-      //   };
+      const data = await res.json();
+      const message = data.message;
+      const fileErrors = data.fileErrors;
+      const fileName = fileErrors.map((file) => file.fileName);
 
-      //   this.toast.add({
-      //     severity: "success",
-      //     summary: "Success",
-      //     detail: `The task has been updated`,
-      //     life: 3000,
-      //   });
-      // } else if (res.status === 404) {
-      //   this.toast.add({
-      //     severity: "error",
-      //     summary: "Error",
-      //     detail: `An error has occurred, the task does not exist.`,
-      //     life: 3000,
-      //   });
-      // } else {
-      //   handleResponseStatus(res);
-      // }
+      const taskIndex = this.tasks.findIndex((task) => task.id === id);
+      if (res.status >= 200 && res.status <= 299) {
+        this.tasks[taskIndex] = data;
+        this.toast.add({
+          severity: "success",
+          summary: "Success",
+          detail: `The task has been updated`,
+          life: 3000,
+        });
+      } else if (res.status === 404) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `An error has occurred, the task does not exist.`,
+          life: 3000,
+        });
+      } else if (res.status === 400) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: `${message} ${fileName.join(", ")}`,
+          life: 3000,
+        });
+      } else {
+        handleResponseStatus(res);
+      }
       return res;
-
-      // if (res.status === 400) {
-      //   this.toast.add({
-      //     severity: "error",
-      //     summary: "Error",
-      //     detail: `the status ${statusDetails.name} will have too many tasks. Please make progress and update status of existing tasks .`,
-      //     life: 3000,
-      //   });
     },
 
     async transferTasksStatus(currentStatus, newStatus) {

@@ -73,31 +73,19 @@ const updatedTaskWithFiles = async (url, updatedTaskData, updatedTaskFiles) => {
 
   formData.append("taskDto", JSON.stringify(updatedTaskData));
 
-  // Append files to FormData
   updatedTaskFiles.forEach((file) => {
     formData.append("files", file.fileData);
   });
 
-  console.log("formData", formData);
+  const res = await fetch(url, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+    body: formData,
+  });
 
-  // files.forEach((file, index) => {
-  //   formData.append(`files[${index}]`, file);
-  // });
-
-  // formData.append(
-  //   "taskData",
-  //   new Blob([JSON.stringify(taskData)], { type: "application/json" })
-  // );
-
-  // const res = await fetch(url, {
-  //   method: "PUT",
-  //   headers: {
-  //     Authorization: `Bearer ${useUserToken().value}`,
-  //   },
-  //   body: formData,
-  // });
-
-  //   return res; // Parse and return response JSON
+  return res;
 };
 
 //FIXME: This function is cant fixed yet

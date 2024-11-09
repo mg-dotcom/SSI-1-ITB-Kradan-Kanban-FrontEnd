@@ -72,7 +72,7 @@ onClickOutside(dropdownMenu, () => {
             >
               <img
                 src="https://cdn-icons-png.flaticon.com/512/3003/3003035.png"
-                class="w-7 h-7 mr-3 rounded-full shrink-0 border"
+                class="w-8 mr-3 rounded-full shrink-0 border"
                 alt="User Profile"
               />
               {{ userStore.getUser.name }}

@@ -114,20 +114,19 @@ const save = async () => {
       (status) => status.id === selectedTask.value.statusId
     );
 
-    const statusCode = await taskStore.editTaskWithFiles(
+    const res = await taskStore.editTaskWithFiles(
       taskId,
       outputTask.value,
       newFiles.value,
       statusDetail
     );
 
-    // if (statusCode.status === 200) {
-    //   router.push({ name: "board-task", params: { id: boardId } });
-    //   taskStore.loadTasks(boardId);
-    //   taskStore.filterStatuses.length = 0;
-    // } else {
-    //   return;
-    // }
+    if (res.status === 200) {
+      router.push({ name: "board-task", params: { id: boardId } });
+      taskStore.filterStatuses.length = 0;
+    } else {
+      return;
+    }
   } else {
     outputTask.value = {
       title: selectedTask.value.title,
