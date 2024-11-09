@@ -205,7 +205,7 @@ const confirmLeaveCollab = async () => {
                     <h3
                       class="itbkk-board-name text-lg font-semibold leading-tight"
                     >
-                      {{ collab.boardName }}
+                      {{ collab.status === 'PENDING'?collab.boardName + " (Pending Invite)":collab.boardName }}
                     </h3>
                     <div class="flex items-center">
                       <p
@@ -237,7 +237,7 @@ const confirmLeaveCollab = async () => {
                         handleLeaveCollab(collab.boardId, collab.oid)
                       "
                     >
-                      {{ collab.status === 'PENDING' ? 'Pending...' : 'Leave' }}
+                      {{ collab.status === 'PENDING' ? 'Accept/Decline' : 'Leave' }}
                     </button>
                   </div>
                 </div>

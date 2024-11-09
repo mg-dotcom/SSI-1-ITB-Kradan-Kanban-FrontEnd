@@ -21,6 +21,7 @@ const route = useRoute();
 const boardId = route.params.id;
 const openAddCollabModal = ref(false);
 const openRemoveCollabModal = ref(false);
+const openCancelPendingCollabModal=ref(false)
 const changeAcessRightModal = ref(false);
 const selectedCollabOid = ref("");
 const newAccessRight = ref("");
@@ -119,6 +120,12 @@ const handleRemoveCollab = (collabOid) => {
 
   openRemoveCollabModal.value = true;
 };
+
+const handleCancelPendingCollab=()=>{
+  const collab = collabStore.getCollaborators.find((c) => c.oid === selectedCollabOid.value);
+  name.value = collab.name;
+  openCancelPendingCollabModal.value = true;
+}
 
 const confirmRemoveCollab = async () => {
   const res = await collabStore.removeCollab(boardId, selectedCollabOid.value);
@@ -337,9 +344,9 @@ const confirmAddCollab = async (email, accessRightValue) => {
                       }"
                       :disabled="!isOwner"
                       @click.prevent="
-                        isOwner ? handleRemoveCollab(collab.oid) : null
+                        collab.status==='Pending' ? handleCancelPendingCollab(collab.oid) : handleRemoveCollab(collab.oid)
                       "
-                      >Remove</SubmitButton
+                      >{{ collab.status === 'PENDING'?"Cancel":"Remove" }}</SubmitButton
                     >
                   </td>
                 </tr>
@@ -408,6 +415,33 @@ const confirmAddCollab = async (email, accessRightValue) => {
           class="itbkk-button-confirm"
           @click="confirmRemoveCollab"
           >Remove</SubmitButton
+        >
+      </template>
+    </ConfirmModal>
+
+    <ConfirmModal v-if="openCancelPendingCollabModal" class="itbkk-modal-alert">
+      <template #title>
+        <p>Cancel pending invitation</p>
+      </template>
+      <template #question>
+        <div class="itbkk-message">
+          Do you want to cancel invitation to "{{ name }}" ?
+        </div>
+      </template>
+      <template #button-left>
+        <SubmitButton
+          buttonType="cancel"
+          class="itbkk-button-cancel"
+          @click="openCancelPendingCollabModal = false"
+          >Cancel</SubmitButton
+        >
+      </template>
+      <template #button-right>
+        <SubmitButton
+          buttonType="delete"
+          class="itbkk-button-confirm"
+          @click="confirmRemoveCollab"
+          >Confirm</SubmitButton
         >
       </template>
     </ConfirmModal>
