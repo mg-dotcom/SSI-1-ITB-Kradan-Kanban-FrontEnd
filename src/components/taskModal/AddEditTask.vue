@@ -107,7 +107,7 @@ const save = async () => {
       description: selectedTask.value.description,
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
-    };    
+    };
     console.log(taskStore.taskFiles);
 
     const res = await taskStore.editTaskWithFiles(
@@ -144,32 +144,58 @@ const save = async () => {
 
 const removeFile = (file) => {
   console.log(file);
-  
+
   const index = selectedTask.value.files.findIndex(
     (f) => f.fileName === file.fileName
   );
   selectedTask.value.files.splice(index, 1);
   console.log(taskStore.taskFiles);
-  
+
   taskStore.deleteTaskFile(file.fileName);
   console.log(taskStore.taskFiles);
-  
 };
 
 const onFileChanged = (e) => {
   const files = Array.from(e.target.files);
   const createFileObject = (file) => ({
     fileName: file.name,
-    fileData: file,
+    fileData: file, 
+    contentType: file.type,
   });
 
   files.forEach((file) => {
     const fileObject = createFileObject(file);
     taskStore.addTaskFile(fileObject);
     selectedTask.value.files.push(fileObject);
-    newFiles.value.push(fileObject);
   });
+};
 
+const base64ToArrayBuffer = (base64) => {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
+const openFile = (file) => {
+  if (typeof file.fileData === "string") {
+    const byteArray = base64ToArrayBuffer(file.fileData);
+    const blob = new Blob([byteArray], { type: file.contentType });
+    const fileURL = URL.createObjectURL(blob);
+    window.open(fileURL, "_blank");
+  } else {
+    // If fileData is already a Blob or File object
+    const blob =
+      file.fileData instanceof Blob
+        ? file.fileData
+        : new Blob([file.fileData], { type: file.contentType });
+    const fileURL = URL.createObjectURL(blob);
+    window.open(fileURL, "_blank");
+  }
 };
 </script>
 
@@ -228,6 +254,7 @@ const onFileChanged = (e) => {
           v-for="file in selectedTask.files"
           :title="file.fileName"
           class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
+          @click="openFile(file)"
         >
           <div class="flex items-center">
             <img
@@ -241,13 +268,12 @@ const onFileChanged = (e) => {
           </p>
           <div
             class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-red-300 transition-all duration-150 ease-in-out"
-          
           >
             <img
               src="/public/attachments/trash.png"
               alt=""
               class="w-5 h-5 object-contain"
-              @click="removeFile(file)"
+              @click.stop="removeFile(file)"
             />
           </div>
         </div>
