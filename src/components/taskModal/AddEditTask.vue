@@ -207,9 +207,6 @@ const onFileChanged = (e) => {
         class="mt-2 text-black grid grid-cols-2 gap-3 relative"
         v-if="mode === 'edit'"
       >
-        <div v-if="selectedTask.files.length === 0" class="text-gray-400">
-          No attachments
-        </div>
         <div
           v-for="file in selectedTask.files"
           :title="file.fileName"
