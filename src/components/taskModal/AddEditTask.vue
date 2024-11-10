@@ -229,9 +229,22 @@ const onFileChanged = (e) => {
                 >
                     <div class="flex items-center">
                         <img
-                            :src="file.fileName.includes('.pdf') ? '/public/attachments/pdf.png' ? file.fileName.includes('.docx') : '/public/attachments/word.png' ? file.fileName.includes('.xls') : '/public/attachments/xls.png' ? file.fileName.includes('.xlsx') : '/public/attachments/xlsx.png' ? file.fileName.includes('.ppt') : '/public/attachments/ppt.png' ? file.fileName.includes('.pptx') : '/public/attachments/ppt.png' ? file.fileName.includes('.txt') : '/public/attachments/txt-file.png' ? file.fileName.includes('.zip') : '/public/attachments/zip.png' ? file.fileName.includes('.html') : '/public/attachments/html.png'? file.fileName.includes('.svg') : '/public/attachments/svg.png' ? file.fileName.includes('.gif') : '/public/attachments/gif.png' ? file.fileName.includes('.jpg') : '/public/attachments/jpg.png' ? file.fileName.includes('.jpeg') || file.fileName.includes('.png') || file.fileName.includes('.bmp') ? '/public/attachments/png.png' : '/public/attachments/documents.png'"
-                            alt="thumbnail"
-                            class="w-8 object-contain"
+                          :src="file.fileName.includes('.pdf') ? '/public/attachments/pdf.png' :
+                              file.fileName.includes('.docx') ? '/public/attachments/word.png' :
+                              file.fileName.includes('.xls') ? '/public/attachments/xls.png' :
+                              file.fileName.includes('.xlsx') ? '/public/attachments/xlsx.png' :
+                              file.fileName.includes('.ppt') ? '/public/attachments/ppt.png' :
+                              file.fileName.includes('.pptx') ? '/public/attachments/ppt.png' :
+                              file.fileName.includes('.txt') ? '/public/attachments/txt-file.png' :
+                              file.fileName.includes('.zip') ? '/public/attachments/zip.png' :
+                              file.fileName.includes('.html') ? '/public/attachments/html.png' :
+                              file.fileName.includes('.svg') ? '/public/attachments/svg.png' :
+                              file.fileName.includes('.gif') ? '/public/attachments/gif.png' :
+                              file.fileName.includes('.jpg') ? '/public/attachments/jpg.png' :
+                              file.fileName.includes('.jpeg') || file.fileName.includes('.png') || file.fileName.includes('.bmp') ? '/public/attachments/png.png' :
+                              '/public/attachments/documents.png'"
+                          alt="thumbnail"
+                          class="w-8 object-contain"
                         />
                     </div>
                     <p class="px-2 text-xs truncate text-left">
