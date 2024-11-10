@@ -5,8 +5,6 @@ import StatusButton from "../button/StatusButton.vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { ref, onMounted } from "vue";
-
-
 import { useRoute, useRouter } from "vue-router";
 import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
 

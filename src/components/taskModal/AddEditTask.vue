@@ -107,12 +107,13 @@ const save = async () => {
       description: selectedTask.value.description,
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
-    };
+    };    
+    console.log(taskStore.taskFiles);
 
     const res = await taskStore.editTaskWithFiles(
       taskId,
       outputTask.value,
-      newFiles.value
+      taskStore.taskFiles
     );
 
     if (res.status === 200) {
@@ -141,6 +142,20 @@ const save = async () => {
   }
 };
 
+const removeFile = (file) => {
+  console.log(file);
+  
+  const index = selectedTask.value.files.findIndex(
+    (f) => f.fileName === file.fileName
+  );
+  selectedTask.value.files.splice(index, 1);
+  console.log(taskStore.taskFiles);
+  
+  taskStore.deleteTaskFile(file.fileName);
+  console.log(taskStore.taskFiles);
+  
+};
+
 const onFileChanged = (e) => {
   const files = Array.from(e.target.files);
   const createFileObject = (file) => ({
@@ -150,9 +165,11 @@ const onFileChanged = (e) => {
 
   files.forEach((file) => {
     const fileObject = createFileObject(file);
+    taskStore.addTaskFile(fileObject);
     selectedTask.value.files.push(fileObject);
     newFiles.value.push(fileObject);
   });
+
 };
 </script>
 
@@ -224,12 +241,13 @@ const onFileChanged = (e) => {
           </p>
           <div
             class="w-8 h-8 flex justify-center items-center rounded-full hover:bg-red-300 transition-all duration-150 ease-in-out"
-           
+          
           >
             <img
               src="/public/attachments/trash.png"
               alt=""
               class="w-5 h-5 object-contain"
+              @click="removeFile(file)"
             />
           </div>
         </div>

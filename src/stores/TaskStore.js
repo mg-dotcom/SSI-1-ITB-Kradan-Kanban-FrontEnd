@@ -127,6 +127,8 @@ export const useTaskStore = defineStore("TaskStore", {
       const boardId = this.boardStore.getCurrentBoard.id;
       await checkTokenExpiration(boardId);
 
+      console.log('updatedTaskFiles', updatedTaskFiles);
+      
       const res = await updatedTaskWithFiles(
         `${
           import.meta.env.VITE_BASE_URL
@@ -231,6 +233,17 @@ export const useTaskStore = defineStore("TaskStore", {
         return sortTasks(this.tasks, sortType);
       }
     },
+
+    addTaskFile(file) {
+      this.taskFiles.push(file);
+    },  
+
+    deleteTaskFile(fileName) {
+      const index = this.taskFiles.findIndex(file => file.fileName === fileName);
+      if (index !== -1) {
+      this.taskFiles.splice(index, 1);
+      }
+    }
 
     //FIX: this function is not used
     // async loadFilterTasks(arrayStatusesName, sortType) {
