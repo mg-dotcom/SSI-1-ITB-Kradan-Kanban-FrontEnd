@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, reactive } from "vue";
 import Header from '@/components/Header.vue'
 import { useRoute,useRouter } from 'vue-router'
 import { useBoardStore } from "@/stores/BoardStore";
@@ -13,6 +13,12 @@ const collabStore = useCollabStore();
 const boardStore = useBoardStore();
 const userStore = useUserStore();
 const boardName = ref("");
+const currentCollaborator = reactive({
+  accessRight: null,
+  name: "",
+  status: "",
+});
+
 
 onMounted(async () => {
   const fetchedBoard = await boardStore.loadBoardById(boardId);
@@ -20,8 +26,22 @@ onMounted(async () => {
   boardStore.setCurrentBoard(fetchedBoard);
 
   boardName.value = fetchedBoard.name;
-  console.log("Loaded Collaborators:", collabStore.getCollaborators);
+  const userOid = userStore.getUser.oid; // Adjust according to actual user oid getter
+  const collaborator = collabStore.getCollaborators.find(collab => collab.oid === userOid);
+  //const ownerBoard = userStore.getUser.find(ownerBoard => userOid === fetchedBoard.owner.oid) ;
+
+  if (collaborator) {
+    currentCollaborator.accessRight = collaborator.accessRight;
+    currentCollaborator.name = collaborator.name;
+    currentCollaborator.status = collaborator.status;
+  } else {
+    console.log("Collaborator not found for current user.");
+  }
+  console.log(fetchedBoard.owner.oid);
+  
 });
+
+
 </script>
 
 <template>
@@ -56,7 +76,7 @@ onMounted(async () => {
                     </p>
                     <p>
                         with
-                        <span class="text-blue font-bold">{{ collabStore }}</span> access on
+                        <span class="text-blue font-bold">{{ currentCollaborator.accessRight }}</span> access on
                         the
                         <span class="font-bold">{{ boardName }}</span>
                     </p>
