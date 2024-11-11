@@ -1,10 +1,27 @@
 <script setup>
+import { ref, computed, onMounted } from "vue";
 import Header from '@/components/Header.vue'
 import { useRoute,useRouter } from 'vue-router'
+import { useBoardStore } from "@/stores/BoardStore";
+import { useCollabStore } from "@/stores/CollabStore";
+import { useUserStore } from "@/stores/UserStore";
 
 const router = useRouter();
 const route = useRoute()
 const boardId = route.params.id;
+const collabStore = useCollabStore();
+const boardStore = useBoardStore();
+const userStore = useUserStore();
+const boardName = ref("");
+
+onMounted(async () => {
+  const fetchedBoard = await boardStore.loadBoardById(boardId);
+  await collabStore.loadCollab(boardId);
+  boardStore.setCurrentBoard(fetchedBoard);
+
+  boardName.value = fetchedBoard.name;
+  console.log("Loaded Collaborators:", collabStore.getCollaborators);
+});
 </script>
 
 <template>
@@ -39,9 +56,9 @@ const boardId = route.params.id;
                     </p>
                     <p>
                         with
-                        <span class="text-blue font-bold">READ</span> access on
+                        <span class="text-blue font-bold">{{ collabStore }}</span> access on
                         the
-                        <span class="font-bold">ITBKK OLARN personal board</span>
+                        <span class="font-bold">{{ boardName }}</span>
                     </p>
                 </div>
 
