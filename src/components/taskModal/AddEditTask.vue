@@ -70,9 +70,14 @@ onMounted(async () => {
       updatedOn: formatDate(taskDetail.updatedOn),
       files: taskDetail.files.map((file) => ({
         fileName: file.fileName,
-        fileData: file.fileData instanceof File ? file.fileData : new File([new Blob([file.fileData])], file.fileName, { type: file.contentType }),
+        fileData:
+          file.fileData instanceof File
+            ? file.fileData
+            : new File([new Blob([file.fileData])], file.fileName, {
+                type: file.contentType,
+              }),
         contentType: file.contentType,
-      })),  
+      })),
     };
     oldFilesLength.value = selectedTask.value.files.length;
     originalTaskData.value = { ...selectedTask.value };
@@ -121,11 +126,9 @@ const cancel = () => {
 
 const save = async () => {
   if (mode === "edit" && taskId !== undefined) {
-
-    console.log('save');
+    console.log("save");
     console.log(selectedTask.value.files);
-    
-    
+
     outputTask.value = {
       title: selectedTask.value.title,
       description: selectedTask.value.description,
@@ -138,14 +141,17 @@ const save = async () => {
         (originalFile) => newFile.fileName === originalFile.fileName
       )
     );
-    
+
     const exceedFileSize = newFiles.value.some(
       (file) => file.fileData.size > MAX_FILE_SIZE
     );
 
     const exceedFileLength = selectedTask.value.files.length > MAX_FILES;
 
-    if(duplicateFileName&&(exceedFileSize||exceedFileLength)||exceedFileSize&&(duplicateFileName||exceedFileLength)){
+    if (
+      (duplicateFileName && (exceedFileSize || exceedFileLength)) ||
+      (exceedFileSize && (duplicateFileName || exceedFileLength))
+    ) {
       toast.add({
         severity: "error",
         summary: "Error",
@@ -154,10 +160,10 @@ const save = async () => {
           "         - Each file cannot be larger than 20 MB.\n" +
           "         - File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.\n" +
           "            The following files are not added: \n" +
-        `${ newFiles.value
+          `${newFiles.value
             .filter((newFile) =>
               originalTaskData.value.files.some(
-              (originalFile) => newFile.fileName === originalFile.fileName
+                (originalFile) => newFile.fileName === originalFile.fileName
               )
             )
             .map((file) => file.fileName)
@@ -179,7 +185,7 @@ const save = async () => {
       return;
     }
 
-    if(exceedFileSize) {
+    if (exceedFileSize) {
       toast.add({
         severity: "error",
         summary: "Error",
@@ -192,7 +198,7 @@ const save = async () => {
       return;
     }
 
-    if(exceedFileLength){
+    if (exceedFileLength) {
       toast.add({
         severity: "error",
         summary: "Error",
@@ -385,11 +391,17 @@ const onFileChanged = (e) => {
         v-if="mode === 'edit'"
         for="fileInput"
         class="flex items-center ml-3 px-2 rounded-2xl hover:bg-[#eeeeee] border transition-all duration-200 ease-in-out cursor-pointer"
+        :class="{
+          'opacity-50 text-slate-500 disabled hover:cursor-not-allowed':
+            selectedTask.files.length >= MAX_FILES,
+        }"
+        :disabled="selectedTask.files.length >= MAX_FILES"
       >
         <input
           id="fileInput"
           type="file"
           class="hidden"
+          :disabled="selectedTask.files.length >= MAX_FILES"
           multiple
           @change="onFileChanged"
         />
