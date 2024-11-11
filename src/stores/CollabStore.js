@@ -32,6 +32,8 @@ export const useCollabStore = defineStore("CollabStore", {
       handleResponseStatus(res);
       const data = await res.json();
       this.collaborators = data;
+      console.log();
+      
       return data;
     },
     async addCollab(boardId, newCollab) {
@@ -115,6 +117,18 @@ export const useCollabStore = defineStore("CollabStore", {
         console.error("getCollaborators did not return an array:", collabArr);
         return [];
       }
+    },
+    checkPendingStatus(boardId, collabNo){
+      const collaborator = this.collaborators.find(
+        (collab) => collab.boardId === boardId && collab.collabNo === collabNo
+      );
+      if (collaborator) {
+        return collaborator.status === "PENDING";
+      } else {
+        console.error("No collaborator found with the specified boardId and collabNo.");
+        return false;
+      }
+
     },
     findCollabBoardByOid(oid) {
       return this.collaborators.find((collab) => collab.oid === oid);
