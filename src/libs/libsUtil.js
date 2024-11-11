@@ -21,6 +21,59 @@ const sortTasks = (tasks, sortType) => {
   }
 };
 
+const getFileIcon = (fileName) => {
+  console.log(fileName);
+
+  const extensions = {
+    pdf: "/public/attachments/pdf.png",
+    docx: "/public/attachments/word.png",
+    xls: "/public/attachments/xls.png",
+    xlsx: "/public/attachments/xlsx.png",
+    ppt: "/public/attachments/ppt.png",
+    pptx: "/public/attachments/ppt.png",
+    txt: "/public/attachments/txt-file.png",
+    zip: "/public/attachments/zip.png",
+    html: "/public/attachments/html.png",
+    svg: "/public/attachments/svg.png",
+    gif: "/public/attachments/gif.png",
+    jpg: "/public/attachments/jpg.png",
+    jpeg: "/public/attachments/png.png",
+    png: "/public/attachments/png.png",
+    bmp: "/public/attachments/png.png",
+  };
+
+  const fileExtension = fileName.split(".").pop().toLowerCase();
+
+  return extensions[fileExtension] || "/public/attachments/documents.png";
+};
+
+const base64ToArrayBuffer = (base64) => {
+  const binaryString = atob(base64);
+  const len = binaryString.length;
+  const bytes = new Uint8Array(len);
+
+  for (let i = 0; i < len; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  return bytes.buffer;
+};
+
+const openFile = (file) => {
+  if (typeof file.fileData === "string") {
+    const byteArray = base64ToArrayBuffer(file.fileData);
+    const blob = new Blob([byteArray], { type: file.contentType });
+    const fileURL = URL.createObjectURL(blob);
+    window.open(fileURL, "_blank");
+  } else {
+    const blob =
+      file.fileData instanceof Blob
+        ? file.fileData
+        : new Blob([file.fileData], { type: file.contentType });
+    const fileURL = URL.createObjectURL(blob);
+    window.open(fileURL, "_blank");
+  }
+};
+
 export function handleResponseStatus(res) {
   if (
     (!CookieUtil.get("access_token") && res.status === 401) ||
@@ -51,4 +104,4 @@ export const handleAuthenticationClearAndRedirect = () => {
   router.push({ name: "login" });
 };
 
-export { formatDate, localTimeZone, sortTasks };
+export { formatDate, localTimeZone, sortTasks, getFileIcon, openFile };

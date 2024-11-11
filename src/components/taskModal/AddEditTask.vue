@@ -7,7 +7,12 @@ import { useStatusStore } from "../../stores/StatusStore.js";
 import { useSortStore } from "../../stores/SortStore.js";
 import { useBoardStore } from "../../stores/BoardStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
-import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
+import {
+  localTimeZone,
+  formatDate,
+  getFileIcon,
+  openFile,
+} from "../../libs/libsUtil.js";
 import { checkTokenExpiration } from "@/stores/UserStore";
 const emit = defineEmits(["addNewTask", "editNewTask"]);
 const statusStore = useStatusStore();
@@ -38,8 +43,6 @@ const outputTask = ref({
   assignees: "",
   statusId: 1,
 });
-
-const newFiles = ref([]);
 
 const oldFilesLength = ref(0);
 const originalTaskData = ref({});
@@ -108,7 +111,6 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
-    console.log(taskStore.taskFiles);
 
     const res = await taskStore.editTaskWithFiles(
       taskId,
@@ -168,59 +170,6 @@ const onFileChanged = (e) => {
     taskStore.addTaskFile(fileObject);
     selectedTask.value.files.push(fileObject);
   });
-};
-
-const base64ToArrayBuffer = (base64) => {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-};
-
-const openFile = (file) => {
-  if (typeof file.fileData === "string") {
-    const byteArray = base64ToArrayBuffer(file.fileData);
-    const blob = new Blob([byteArray], { type: file.contentType });
-    const fileURL = URL.createObjectURL(blob);
-    window.open(fileURL, "_blank");
-  } else {
-    // If fileData is already a Blob or File object
-    const blob =
-      file.fileData instanceof Blob
-        ? file.fileData
-        : new Blob([file.fileData], { type: file.contentType });
-    const fileURL = URL.createObjectURL(blob);
-    window.open(fileURL, "_blank");
-  }
-};
-const getFileIcon = (fileName) => {
-  const extensions = [
-    { ext: [".pdf"], icon: "/public/attachments/pdf.png" },
-    { ext: [".docx"], icon: "/public/attachments/word.png" },
-    { ext: [".xls"], icon: "/public/attachments/xls.png" },
-    { ext: [".xlsx"], icon: "/public/attachments/xlsx.png" },
-    { ext: [".ppt", ".pptx"], icon: "/public/attachments/ppt.png" },
-    { ext: [".txt"], icon: "/public/attachments/txt-file.png" },
-    { ext: [".zip"], icon: "/public/attachments/zip.png" },
-    { ext: [".html"], icon: "/public/attachments/html.png" },
-    { ext: [".svg"], icon: "/public/attachments/svg.png" },
-    { ext: [".gif"], icon: "/public/attachments/gif.png" },
-    {
-      ext: [".jpg", ".jpeg", ".png", ".bmp"],
-      icon: "/public/attachments/png.png",
-    },
-  ];
-
-  for (const { ext, icon } of extensions) {
-    if (ext.some((e) => fileName.includes(e))) {
-      return icon;
-    }
-  }
-  return "/public/attachments/documents.png";
 };
 </script>
 

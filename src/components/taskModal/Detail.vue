@@ -6,7 +6,12 @@ import { useStatusStore } from "../../stores/StatusStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import { localTimeZone, formatDate } from "../../libs/libsUtil.js";
+import {
+  localTimeZone,
+  formatDate,
+  getFileIcon,
+  openFile,
+} from "../../libs/libsUtil.js";
 
 const route = useRoute();
 const router = useRouter();
@@ -61,10 +66,11 @@ onMounted(async () => {
           v-for="file in selectedTask.files"
           :title="file.fileName"
           class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
+          @click="openFile(file)"
         >
           <div class="flex items-center">
             <img
-              src="/public/attachments/pdf.png"
+              :src="getFileIcon(file.fileName)"
               alt=""
               class="w-8 object-contain"
             />
