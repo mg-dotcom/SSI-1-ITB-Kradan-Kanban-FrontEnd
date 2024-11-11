@@ -1,20 +1,23 @@
 <script setup>
 import { ref, computed, onMounted, reactive } from "vue";
-import Header from '@/components/Header.vue'
-import { useRoute,useRouter } from 'vue-router'
+import Header from "@/components/Header.vue";
+import { useRoute, useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useCollabStore } from "@/stores/CollabStore";
 import { useUserStore } from "@/stores/UserStore";
 import { useToast } from "primevue/usetoast";
+import {
+  handleAuthenticationClearAndRedirect,
+  handleResponseStatus,
+} from "../libs/libsUtil.js";
 const router = useRouter();
-const route = useRoute()
+const route = useRoute();
 const boardId = route.params.id;
 const collabStore = useCollabStore();
 const boardStore = useBoardStore();
 const userStore = useUserStore();
 const boardName = ref("");
-const collabStatus= ref("");
-const selectedCollabOid = ref("");
+const collabStatus = ref("");
 const toast = useToast();
 
 const currentCollaborator = reactive({
@@ -30,11 +33,8 @@ const currentOwner = reactive({
 });
 
 const confirmInvitation = async () => {
-    collabStatus.value = "ACTIVE";
-  const res = await collabStore.verifyCollab(
-    boardId,
-    collabStatus.value
-  );
+  collabStatus.value = "ACTIVE";
+  const res = await collabStore.verifyCollab(boardId, collabStatus.value);
 
   if (res.status === 200) {
     toast.add({
@@ -53,22 +53,15 @@ const confirmInvitation = async () => {
       detail: "You do not have permissions to change collaborator status.",
       life: 3000,
     });
+    router.push({ name: "access-denied" });
   } else {
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "There is a problem. Please try again later.",
-      life: 3000,
-    });
+    handleResponseStatus(res.status);
   }
 };
 
 const declineInvitation = async () => {
-    collabStatus.value = "Decline";
-  const res = await collabStore.verifyCollab(
-    boardId,
-    collabStatus.value
-  );
+  collabStatus.value = "Decline";
+  const res = await collabStore.verifyCollab(boardId, collabStatus.value);
   if (res.status === 200) {
     toast.add({
       severity: "success",
@@ -86,13 +79,9 @@ const declineInvitation = async () => {
       detail: "You do not have permissions to change collaborator status.",
       life: 3000,
     });
+    router.push({ name: "access-denied" });
   } else {
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "There is a problem. Please try again later.",
-      life: 3000,
-    });
+    handleResponseStatus(res.status);
   }
 };
 
@@ -103,8 +92,10 @@ onMounted(async () => {
 
   boardName.value = fetchedBoard.name;
   const userOid = userStore.getUser.oid; // Adjust according to actual user oid getter
-  const collaborator = collabStore.getCollaborators.find(collab => collab.oid === userOid);
- // const ownerBoard = userStore.getUser.find(ownerBoard => ownerBoard.oid === fetchedBoard.owner.oid) ;
+  const collaborator = collabStore.getCollaborators.find(
+    (collab) => collab.oid === userOid
+  );
+  // const ownerBoard = userStore.getUser.find(ownerBoard => ownerBoard.oid === fetchedBoard.owner.oid) ;
 
   if (collaborator) {
     currentCollaborator.accessRight = collaborator.accessRight;
@@ -121,7 +112,6 @@ onMounted(async () => {
   }
 
   console.log(currentCollaborator);
-  
 });
 
 function extractShortName(fullName) {
@@ -135,76 +125,90 @@ function extractCollabFullName(fullName) {
   if (words.length < 1) return null; // Ensure there's a first word
   return words[0].substring(0, 3).toUpperCase();
 }
-
 </script>
 
 <template>
-    <div class="min-h-screen flex flex-col bg-bgLightBlue">
-        <!-- Header -->
-        <Header />
-        <!-- Main Content Wrapper -->
-        <div class="flex-grow flex items-center justify-center" v-if="currentCollaborator.status === 'PENDING'">
-            <div
-                class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 text-center space-y-6"
-            >
-                <!-- Invite Icons -->
-                <div class="flex items-center justify-center space-x-4">
-                    <div
-                        class="bg-[#CCDDEE] w-24 h-24 rounded-full flex justify-center items-center"
-                    >
-                        <span class="text-black font-bold text-2xl">{{extractShortName(currentOwner.name)}}</span>
-                    </div>
-                    <span class="text-black text-3xl font-bold">+</span>
-                    <div
-                        class="bg-[#D9D9D9] w-24 h-24 rounded-full flex justify-center items-center"
-                    >
-                        <span class="text-black font-bold text-2xl">{{extractCollabFullName(currentCollaborator.name)}}</span>
-                    </div>
-                </div>
-
-                <!-- Invitation Text -->
-                <div class="text-gray-800">
-                    <p class="font-semibold text-lg">
-                        <span class="font-bold">{{ currentOwner.username}}</span> has invited
-                        you to collaborate
-                    </p>
-                    <p>
-                        with
-                        <span class="text-blue font-bold">{{ currentCollaborator.accessRight }}</span> access on
-                        the
-                        <span class="font-bold">{{ boardName }}</span>
-                    </p>
-                </div>
-
-                <!-- Buttons -->
-                <div class="flex space-x-4 justify-center">
-                    <button
-                        class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none"
-                        @click="confirmInvitation(boardId,collabStatus.value)"
-                    >
-                        Accept Invitation
-                    </button>
-                    <button
-                        class="px-6 py-3 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 focus:outline-none"
-                        @click="declineInvitation(boardId,collabStatus.value)"
-                        >
-                        Decline
-                    </button>
-                </div>
-            </div>
+  <div class="min-h-screen flex flex-col bg-bgLightBlue">
+    <!-- Header -->
+    <Header />
+    <!-- Main Content Wrapper -->
+    <div
+      class="flex-grow flex items-center justify-center"
+      v-if="currentCollaborator.status === 'PENDING'"
+    >
+      <div
+        class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 text-center space-y-6"
+      >
+        <!-- Invite Icons -->
+        <div class="flex items-center justify-center space-x-4">
+          <div
+            class="bg-[#CCDDEE] w-24 h-24 rounded-full flex justify-center items-center"
+          >
+            <span class="text-black font-bold text-2xl">{{
+              extractShortName(currentOwner.name)
+            }}</span>
+          </div>
+          <span class="text-black text-3xl font-bold">+</span>
+          <div
+            class="bg-[#D9D9D9] w-24 h-24 rounded-full flex justify-center items-center"
+          >
+            <span class="text-black font-bold text-2xl">{{
+              extractCollabFullName(currentCollaborator.name)
+            }}</span>
+          </div>
         </div>
 
-        <!-- Empty Invitation Message -->
-        <div class="flex-grow flex items-center justify-center" v-if="!currentCollaborator.status === 'PENDING'">
-            <div class="text-center space-y-4 max-w-md p-4">
-                <img src="/public/image 9.png" alt="Not Found Image" class="mx-auto w-72 h-56" />
-                <div class="font-bold text-lg text-black mt-4">
-                    Sorry, we couldn't find the invitation to this board.
-                </div>
-            </div>
+        <!-- Invitation Text -->
+        <div class="text-gray-800">
+          <p class="font-semibold text-lg">
+            <span class="font-bold">{{ currentOwner.username }}</span> has
+            invited you to collaborate
+          </p>
+          <p>
+            with
+            <span class="text-blue font-bold">{{
+              currentCollaborator.accessRight
+            }}</span>
+            access on the
+            <span class="font-bold">{{ boardName }}</span>
+          </p>
         </div>
+
+        <!-- Buttons -->
+        <div class="flex space-x-4 justify-center">
+          <button
+            class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none"
+            @click="confirmInvitation(boardId, collabStatus.value)"
+          >
+            Accept Invitation
+          </button>
+          <button
+            class="px-6 py-3 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 focus:outline-none"
+            @click="declineInvitation(boardId, collabStatus.value)"
+          >
+            Decline
+          </button>
+        </div>
+      </div>
     </div>
+
+    <!-- Empty Invitation Message -->
+    <div
+      class="flex-grow flex items-center justify-center"
+      v-if="!currentCollaborator.status === 'PENDING'"
+    >
+      <div class="text-center space-y-4 max-w-md p-4">
+        <img
+          src="/public/image 9.png"
+          alt="Not Found Image"
+          class="mx-auto w-72 h-56"
+        />
+        <div class="font-bold text-lg text-black mt-4">
+          Sorry, we couldn't find the invitation to this board.
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

@@ -130,7 +130,6 @@ export const useCollabStore = defineStore("CollabStore", {
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs/invitations`,
         collabStatus
       );
-      console.log("HEYYYYYYYYYYYYYYYYYYYYY");
       
       if (res.status === 200) {
         // Find the collaborator by their oid
