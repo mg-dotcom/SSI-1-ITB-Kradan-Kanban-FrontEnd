@@ -105,7 +105,6 @@ export const useUserToken = () => {
 let isCheckingToken = false // Initialize at top of the file
 
 export const checkTokenExpiration = async (boardId) => {
-    console.log('11111111111111111')
 
     if (isCheckingToken) return // If already checking, exit early
     isCheckingToken = true // Set flag to prevent re-entry

@@ -5,7 +5,7 @@ import { useRoute,useRouter } from 'vue-router'
 import { useBoardStore } from "@/stores/BoardStore";
 import { useCollabStore } from "@/stores/CollabStore";
 import { useUserStore } from "@/stores/UserStore";
-
+import { useToast } from "primevue/usetoast";
 const router = useRouter();
 const route = useRoute()
 const boardId = route.params.id;
@@ -13,11 +13,54 @@ const collabStore = useCollabStore();
 const boardStore = useBoardStore();
 const userStore = useUserStore();
 const boardName = ref("");
+const collabStatus= ref("");
+const toast = useToast();
+
 const currentCollaborator = reactive({
   accessRight: null,
   name: "",
   status: "",
 });
+
+const currentOwner = reactive({
+  oid: null,
+  name: "",
+  username: "",
+});
+
+const confirmInvitation = async () => {
+    collabStatus.value = "ACTIVE";
+  const res = await collabStore.verifyCollab(
+    boardId,
+    collabStatus.value
+  );
+
+  if (res.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Accept Invitation successfully!",
+      life: 3000,
+    });
+    router.push({ name: "board-detail", params: { id: boardId } });
+  } else if (res.status === 401) {
+    handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You do not have permissions to change collaborator status.",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "There is a problem. Please try again later.",
+      life: 3000,
+    });
+  }
+};
 
 
 onMounted(async () => {
@@ -28,7 +71,7 @@ onMounted(async () => {
   boardName.value = fetchedBoard.name;
   const userOid = userStore.getUser.oid; // Adjust according to actual user oid getter
   const collaborator = collabStore.getCollaborators.find(collab => collab.oid === userOid);
-  //const ownerBoard = userStore.getUser.find(ownerBoard => userOid === fetchedBoard.owner.oid) ;
+ // const ownerBoard = userStore.getUser.find(ownerBoard => ownerBoard.oid === fetchedBoard.owner.oid) ;
 
   if (collaborator) {
     currentCollaborator.accessRight = collaborator.accessRight;
@@ -37,10 +80,28 @@ onMounted(async () => {
   } else {
     console.log("Collaborator not found for current user.");
   }
-  console.log(fetchedBoard.owner.oid);
+
+  if (fetchedBoard) {
+    currentOwner.oid = fetchedBoard.owner.oid;
+    currentOwner.name = fetchedBoard.owner.name;
+    currentOwner.username = fetchedBoard.owner.username;
+  }
+
+  console.log(currentCollaborator);
   
 });
 
+function extractShortName(fullName) {
+  const words = fullName.split(" ");
+  if (words.length < 2) return null; // Ensure there's a second word
+  return words[1].substring(0, 3).toUpperCase();
+}
+
+function extractCollabFullName(fullName) {
+  const words = fullName.split(" ");
+  if (words.length < 1) return null; // Ensure there's a first word
+  return words[0].substring(0, 3).toUpperCase();
+}
 
 </script>
 
@@ -49,7 +110,7 @@ onMounted(async () => {
         <!-- Header -->
         <Header />
         <!-- Main Content Wrapper -->
-        <div class="flex-grow flex items-center justify-center" v-if="true">
+        <div class="flex-grow flex items-center justify-center" v-if="currentCollaborator.status === 'PENDING'">
             <div
                 class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 text-center space-y-6"
             >
@@ -58,20 +119,20 @@ onMounted(async () => {
                     <div
                         class="bg-[#CCDDEE] w-24 h-24 rounded-full flex justify-center items-center"
                     >
-                        <span class="text-black font-bold text-2xl">SAN</span>
+                        <span class="text-black font-bold text-2xl">{{extractShortName(currentOwner.name)}}</span>
                     </div>
                     <span class="text-black text-3xl font-bold">+</span>
                     <div
                         class="bg-[#D9D9D9] w-24 h-24 rounded-full flex justify-center items-center"
                     >
-                        <span class="text-black font-bold text-2xl">OLA</span>
+                        <span class="text-black font-bold text-2xl">{{extractCollabFullName(currentCollaborator.name)}}</span>
                     </div>
                 </div>
 
                 <!-- Invitation Text -->
                 <div class="text-gray-800">
                     <p class="font-semibold text-lg">
-                        <span class="font-bold">“itbkk.sanit”</span> has invited
+                        <span class="font-bold">{{ currentOwner.username}}</span> has invited
                         you to collaborate
                     </p>
                     <p>
@@ -86,12 +147,13 @@ onMounted(async () => {
                 <div class="flex space-x-4 justify-center">
                     <button
                         class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none"
+                        @click="confirmInvitation(boardId,collabStatus.value)"
                     >
                         Accept Invitation
                     </button>
                     <button
                         class="px-6 py-3 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 focus:outline-none"
-                        @click="router.push({ name: 'board-detail',id: boardId })"
+                        @click="router.push({ name: 'board'})"
                         >
                         Decline
                     </button>
@@ -100,7 +162,7 @@ onMounted(async () => {
         </div>
 
         <!-- Empty Invitation Message -->
-        <div class="flex-grow flex items-center justify-center" v-if="false">
+        <div class="flex-grow flex items-center justify-center" v-if="!currentCollaborator.status === 'PENDING'">
             <div class="text-center space-y-4 max-w-md p-4">
                 <img src="/public/image 9.png" alt="Not Found Image" class="mx-auto w-72 h-56" />
                 <div class="font-bold text-lg text-black mt-4">

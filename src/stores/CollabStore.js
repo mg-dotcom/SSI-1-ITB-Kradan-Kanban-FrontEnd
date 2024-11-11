@@ -4,6 +4,7 @@ import {
   deleteCollab,
   updateAccessRight,
   addCollab,
+  verifyInvitation
 } from "../libs/FetchCollab.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -118,20 +119,29 @@ export const useCollabStore = defineStore("CollabStore", {
         return [];
       }
     },
-    checkPendingStatus(boardId, collabNo){
-      const collaborator = this.collaborators.find(
-        (collab) => collab.boardId === boardId && collab.collabNo === collabNo
-      );
-      if (collaborator) {
-        return collaborator.status === "PENDING";
-      } else {
-        console.error("No collaborator found with the specified boardId and collabNo.");
-        return false;
-      }
-
-    },
     findCollabBoardByOid(oid) {
       return this.collaborators.find((collab) => collab.oid === oid);
     },
+    async verifyCollab(boardId, collabStatus) {
+      await checkTokenExpiration(boardId);
+      const userStore = useUserStore();
+      const res = await verifyInvitation(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs/invitations`,
+        collabStatus
+      );
+      console.log("HEYYYYYYYYYYYYYYYYYYYYY");
+      
+      if (res.status === 200) {
+        // Find the collaborator by their oid
+        const index = this.collaborators.findIndex(
+          (collab) => collab.oid === userStore.oid
+        );
+        // Update their status if found
+        if (index !== -1) {
+          this.collaborators[index].status = collabStatus;
+        }
+      }
+      return res;
+    }    
   },
 });

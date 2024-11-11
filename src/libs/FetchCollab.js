@@ -53,4 +53,20 @@ const updateAccessRight = async (url, accessRight) => {
   return res;
 };
 
-export { fetchCollab, addCollab, deleteCollab, updateAccessRight };
+const verifyInvitation = async (url, collabStatus) => {
+  const res = await fetch(`${url}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+    body: JSON.stringify({
+      collabStatus: collabStatus,
+    }),
+  });
+  return res;
+};
+
+
+
+export { fetchCollab, addCollab, deleteCollab, updateAccessRight,verifyInvitation };
