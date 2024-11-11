@@ -122,7 +122,10 @@ router.beforeEach(async (to, _, next) => {
     const boardId = to.params.id
 
     if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
-        return next({ name: 'login' })
+        return next({
+            name: 'login',
+            query: { redirect: to.fullPath },
+        }); 
     }
 
     if (to.path.startsWith('/board')) {
