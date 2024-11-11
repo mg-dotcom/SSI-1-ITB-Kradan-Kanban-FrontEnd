@@ -165,11 +165,14 @@ const confirmRemoveCollab = async () => {
     });
   }
 };
+const invitationUrl = ref(`${window.location.href}/invitations`);
+console.log(invitationUrl.value);
 
 const confirmAddCollab = async (email, accessRightValue) => {
   const res = await collabStore.addCollab(boardId, {
     email: email,
     accessRight: accessRightValue,
+    url: invitationUrl.value
   });
   if (res.status === 401) {
     handleAuthenticationClearAndRedirect();

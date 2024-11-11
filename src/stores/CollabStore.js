@@ -33,12 +33,13 @@ export const useCollabStore = defineStore("CollabStore", {
       handleResponseStatus(res);
       const data = await res.json();
       this.collaborators = data;
-      console.log();
       
       return data;
     },
     async addCollab(boardId, newCollab) {
       await checkTokenExpiration(boardId);
+      console.log(newCollab);
+      
       const res = await addCollab(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
         newCollab

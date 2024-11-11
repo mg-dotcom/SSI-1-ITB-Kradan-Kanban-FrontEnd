@@ -10,8 +10,9 @@ const fetchCollab = async (url) => {
   });
   return res;
 };
-
 const addCollab = async (url, collaborator) => {
+  console.log(collaborator);
+  
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
@@ -22,6 +23,7 @@ const addCollab = async (url, collaborator) => {
     body: JSON.stringify({
       email: collaborator.email,
       accessRight: collaborator.accessRight,
+      url: collaborator.url
     }),
   });
   return res;
