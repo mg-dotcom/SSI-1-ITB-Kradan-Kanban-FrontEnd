@@ -1,11 +1,13 @@
 <script setup>
 import buttonSubmit from "../button/Button.vue";
 import { defineProps } from "vue";
-import { MAX_FILES, MAX_FILE_SIZE } from "@/libs/libsUtil";
+import { MAX_FILES, MAX_FILE_SIZE, byteToMB } from "@/libs/libsUtil";
 
 const props = defineProps({
   selectedTask: Object,
   mode: String,
+  newFiles: Array,
+  originalTaskData: Object,
 });
 </script>
 
@@ -47,9 +49,8 @@ const props = defineProps({
                 <slot name="addAttach"></slot>
               </span>
             </p>
-
             <div
-              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all overflow-y-auto"
+              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all overflow-y-auto border rounded-md bg-gray-50 shadow-sm"
             >
               <slot name="attach"></slot>
             </div>
@@ -57,14 +58,43 @@ const props = defineProps({
               v-if="
                 props.mode === 'edit' && props.selectedTask.files.length > 0
               "
-              class="text-xs mt-2 text-right"
-              :class="{
-                'text-red-500 ': selectedTask.files.length >= MAX_FILES,
-              }"
+              class="text-xs mt-2 text-right flex justify-between items-center"
             >
-              {{ selectedTask.files.length }} / {{ MAX_FILES }} files uploaded
+              <!-- File Count -->
+              <span class="text-gray-600">
+                {{ selectedTask.files.length }} / {{ MAX_FILES }} files uploaded
+              </span>
 
-              <!-- {{ selectedTask.files.map((file) => file.fileSize) }} -->
+              <!-- Validation Messages -->
+              <div class="flex flex-col items-end space-y-1">
+                <!-- File Size Exceeded -->
+                <span
+                  v-if="
+                    newFiles.some(
+                      (file) =>
+                        byteToMB(file.fileData.size) > byteToMB(MAX_FILE_SIZE)
+                    )
+                  "
+                  class="text-red-500 font-semibold"
+                >
+                  (File size exceeded)
+                </span>
+
+                <!-- Duplicate File -->
+                <span
+                  v-if="
+                    newFiles.some((newFile) =>
+                      originalTaskData.files.some(
+                        (originalFile) =>
+                          newFile.fileName === originalFile.fileName
+                      )
+                    )
+                  "
+                  class="text-red-500 font-semibold"
+                >
+                  (File already exists)
+                </span>
+              </div>
             </div>
           </div>
 

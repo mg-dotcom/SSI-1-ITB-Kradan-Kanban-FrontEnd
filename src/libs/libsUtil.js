@@ -56,6 +56,10 @@ const base64ToArrayBuffer = (base64) => {
   return bytes.buffer;
 };
 
+const byteToMB = (bytes) => {
+  return (bytes / (1024 * 1024)).toFixed(2);
+};
+
 const openFile = (file) => {
   if (typeof file.fileData === "string") {
     const byteArray = base64ToArrayBuffer(file.fileData);
@@ -110,4 +114,5 @@ export {
   openFile,
   MAX_FILES,
   MAX_FILE_SIZE,
+  byteToMB,
 };

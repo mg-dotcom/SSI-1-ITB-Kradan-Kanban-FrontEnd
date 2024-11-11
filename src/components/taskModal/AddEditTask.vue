@@ -101,7 +101,6 @@ watch(
         newValue.files.length === oldFilesLength.value
       );
     }
-
   },
 
   { deep: true }
@@ -161,7 +160,7 @@ const removeFile = (file) => {
     (f) => f.fileName === file.fileName
   );
   selectedTask.value.files.splice(index, 1);
-
+  newFiles.value = newFiles.value.filter((f) => f.fileName !== file.fileName);
   taskStore.deleteTaskFile(file.fileName);
 };
 
@@ -186,6 +185,8 @@ const onFileChanged = (e) => {
   <ModalDetail
     :selectedTask="selectedTask"
     :mode="mode"
+    :newFiles="newFiles"
+    :originalTaskData="originalTaskData"
     class="itbkk-modal-task"
   >
     <template #title>
