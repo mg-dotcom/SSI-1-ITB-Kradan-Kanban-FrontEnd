@@ -122,6 +122,35 @@ const save = async () => {
         (originalFile) => newFile.fileName === originalFile.fileName
       )
     );
+    
+    const exceedFileSize = newFiles.value.some(
+      (file) => file.fileData.size > MAX_FILE_SIZE
+    );
+
+    const exceedFileLength = selectedTask.value.files.length + newFiles.value.length > MAX_FILES;
+
+    if(duplicateFileName&&(exceedFileSize||exceedFileLength)||exceedFileSize&&(duplicateFileName||exceedFileLength)){
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail:
+          "         - Each task can have at most 10 files.\n" +
+          "         - Each file cannot be larger than 20 MB.\n" +
+          "         - File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.\n" +
+          "            The following files are not added: \n" +
+        `${ newFiles.value
+            .filter((newFile) =>
+              originalTaskData.value.files.some(
+              (originalFile) => newFile.fileName === originalFile.fileName
+              )
+            )
+            .map((file) => file.fileName)
+            .join(", ")}`,
+
+        life: 3000,
+      });
+      return;
+    }
 
     if (duplicateFileName) {
       toast.add({
@@ -129,6 +158,32 @@ const save = async () => {
         summary: "Error",
         detail:
           "File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.",
+        life: 3000,
+      });
+      return;
+    }
+
+    if(exceedFileSize) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: `Each file cannot be larger than 20 MB. The following files are not added : ${newFiles.value
+          .filter((file) => file.fileData.size > MAX_FILE_SIZE)
+          .map((file) => file.fileName)
+          .join(", ")}`,
+        life: 3000,
+      });
+      return;
+    }
+
+    if(exceedFileLength){
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: `Each task can have at most ${MAX_FILES} files. The following files are not added: ${newFiles.value
+          .slice(MAX_FILES - selectedTask.value.files.length)
+          .map((file) => file.fileName)
+          .join(", ")}`,
         life: 3000,
       });
       return;
