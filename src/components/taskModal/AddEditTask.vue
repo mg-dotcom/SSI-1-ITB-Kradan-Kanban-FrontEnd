@@ -68,9 +68,12 @@ onMounted(async () => {
       statusId: taskDetail.status?.id ?? null,
       createdOn: formatDate(taskDetail.createdOn),
       updatedOn: formatDate(taskDetail.updatedOn),
-      files: taskDetail.files||[],
+      files: taskDetail.files.map((file) => ({
+        fileName: file.fileName,
+        fileData: file.fileData instanceof File ? file.fileData : new File([new Blob([file.fileData])], file.fileName, { type: file.contentType }),
+        contentType: file.contentType,
+      })),  
     };
-
     oldFilesLength.value = selectedTask.value.files.length;
     originalTaskData.value = { ...selectedTask.value };
     originalTaskData.value.files = [...selectedTask.value.files];
@@ -240,7 +243,6 @@ const removeFile = (file) => {
   );
   selectedTask.value.files.splice(index, 1);
   newFiles.value = newFiles.value.filter((f) => f.fileName !== file.fileName);
-  // taskStore.deleteTaskFile(file.fileName);
 };
 
 const onFileChanged = (e) => {
@@ -252,7 +254,6 @@ const onFileChanged = (e) => {
   });
   files.forEach((file) => {
     const fileObject = createFileObject(file);
-    // taskStore.addTaskFile(fileObject);
     newFiles.value.push(fileObject);
     selectedTask.value.files.push(fileObject);
   });
