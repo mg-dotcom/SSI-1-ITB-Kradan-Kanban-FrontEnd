@@ -116,16 +116,15 @@ const confirmChangeAccessRight = async () => {
 const handleRemoveCollab = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
-  console.log(collabOid);
-
   selectedCollabOid.value = collabOid;
 
   openRemoveCollabModal.value = true;
 };
 
-const handleCancelPendingCollab=()=>{
-  const collab = collabStore.getCollaborators.find((c) => c.oid === selectedCollabOid.value);
+const handleCancelPendingCollab=(collabOid)=>{
+  const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
+  selectedCollabOid.value = collabOid;
   openCancelPendingCollabModal.value = true;
 }
 
@@ -139,6 +138,7 @@ const confirmRemoveCollab = async () => {
       detail: "Collaborator removed successfully!",
       life: 3000,
     });
+    openCancelPendingCollabModal.value = false;
     openRemoveCollabModal.value = false;
   } else if (res.status === 401) {
     handleAuthenticationClearAndRedirect();
