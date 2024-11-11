@@ -15,7 +15,8 @@ export const useUserStore = defineStore('UserStore', {
         boardStore: useBoardStore(),
         token: CookieUtil.get('access_token') || '',
         refreshToken: CookieUtil.get('refresh_token') || '',
-        isLoggedIn: !!CookieUtil.get('access_token')
+        isLoggedIn: !!CookieUtil.get('access_token'),
+        redirectAfterLogin: ""
     }),
     getters: {
         getUser() {
@@ -26,6 +27,9 @@ export const useUserStore = defineStore('UserStore', {
         },
         getIsLoggedIn() {
             return this.isLoggedIn
+        },
+        getRedirectAfterLogin() {
+            return this.redirectAfterLogin
         }
     },
     actions: {
@@ -83,6 +87,10 @@ export const useUserStore = defineStore('UserStore', {
                 this.user = decoded
                 this.isLoggedIn = true
             }
+        },
+
+        setRedirectAfterLogin(redirectName) {
+            this.redirectAfterLogin = redirectName;
         }
     },
     checkPermission() {}
