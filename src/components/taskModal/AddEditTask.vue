@@ -101,7 +101,12 @@ watch(
         newValue.description === originalTaskData.value.description &&
         newValue.assignees === originalTaskData.value.assignees &&
         newValue.statusId === originalTaskData.value.statusId &&
-        newValue.files.length === oldFilesLength.value
+        newValue.files.filter(
+          (file) =>
+            !originalTaskData.value.files.some(
+              (originalFile) => originalFile.fileName === file.fileName
+            )
+        ).length === 0 
       );
     }
   },
