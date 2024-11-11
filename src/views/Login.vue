@@ -46,7 +46,15 @@ const signIn = async () => {
     const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
     const collabBoards = boardStore.getCollabBoard();
 
+    
+    if (userStore.getRedirectAfterLogin) {
+      console.log(userStore.getRedirectAfterLogin);
+      router.push({ name : 'board-invitation', params: {id: userStore.getRedirectAfterLogin}})
+      return
+    }
+
     if (boardByUserOid.length === 1 && collabBoards.length === 0) {
+      
       const currentBoard = boardByUserOid[0];
       boardStore.setCurrentBoard(currentBoard);
       router.push({ name: "board-task", params: { id: currentBoard.id } });

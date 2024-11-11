@@ -11,8 +11,6 @@ const userStore = useUserStore();
 
 const router = useRouter();
 
-const boardId = ref(route.params.id);
-
 userStore.initialize();
 
 const logout = () => {

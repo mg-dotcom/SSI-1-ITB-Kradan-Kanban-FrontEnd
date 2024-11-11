@@ -21,6 +21,7 @@ const route = useRoute();
 const boardId = route.params.id;
 const openAddCollabModal = ref(false);
 const openRemoveCollabModal = ref(false);
+const openCancelPendingCollabModal=ref(false)
 const changeAcessRightModal = ref(false);
 const selectedCollabOid = ref("");
 const newAccessRight = ref("");
@@ -40,6 +41,7 @@ onMounted(async () => {
 
   boardName.value = fetchedBoard.name;
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
+  console.log("Loaded Collaborators:", collabStore.getCollaborators);
 });
 
 const isOwner = computed(() => {
@@ -51,6 +53,7 @@ const isOwner = computed(() => {
   }
   return false;
 });
+
 
 const handleAccessRightChange = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
@@ -113,11 +116,17 @@ const confirmChangeAccessRight = async () => {
 const handleRemoveCollab = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
-
   selectedCollabOid.value = collabOid;
 
   openRemoveCollabModal.value = true;
 };
+
+const handleCancelPendingCollab=(collabOid)=>{
+  const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
+  name.value = collab.name;
+  selectedCollabOid.value = collabOid;
+  openCancelPendingCollabModal.value = true;
+}
 
 const confirmRemoveCollab = async () => {
   const res = await collabStore.removeCollab(boardId, selectedCollabOid.value);
@@ -129,6 +138,7 @@ const confirmRemoveCollab = async () => {
       detail: "Collaborator removed successfully!",
       life: 3000,
     });
+    openCancelPendingCollabModal.value = false;
     openRemoveCollabModal.value = false;
   } else if (res.status === 401) {
     handleAuthenticationClearAndRedirect();
@@ -155,11 +165,14 @@ const confirmRemoveCollab = async () => {
     });
   }
 };
+const invitationUrl = ref(`${window.location.href}/invitations`);
+console.log(invitationUrl.value);
 
 const confirmAddCollab = async (email, accessRightValue) => {
   const res = await collabStore.addCollab(boardId, {
     email: email,
     accessRight: accessRightValue,
+    url: invitationUrl.value
   });
   if (res.status === 401) {
     handleAuthenticationClearAndRedirect();
@@ -286,19 +299,23 @@ const confirmAddCollab = async (email, accessRightValue) => {
                   class="itbkk-item py-4"
                   v-for="(collab, index) in collabStore.getCollaborators"
                   :key="index"
+                  
                 >
                   <td
                     class="text-center p-5 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                    :class="{ 'opacity-50': collab.status === 'PENDING' }"
                   >
                     {{ index + 1 }}
                   </td>
                   <td
                     class="itbkk-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                    :class="{ 'opacity-50': collab.status === 'PENDING' }"
                   >
                     {{ collab.status === "PENDING" ? collab.name+"(Pending)" : collab.name }}
                   </td>
                   <td
                     class="itbkk-email text-sm border-b border-r border-gray-300 break-all"
+                    :class="{ 'opacity-50': collab.status === 'PENDING' }"
                   >
                     {{ collab.email }}
                   </td>
@@ -336,9 +353,9 @@ const confirmAddCollab = async (email, accessRightValue) => {
                       }"
                       :disabled="!isOwner"
                       @click.prevent="
-                        isOwner ? handleRemoveCollab(collab.oid) : null
+                        collab.status==='PENDING' ? handleCancelPendingCollab(collab.oid) : handleRemoveCollab(collab.oid)
                       "
-                      >Remove</SubmitButton
+                      >{{ collab.status === 'PENDING'?"Cancel":"Remove" }}</SubmitButton
                     >
                   </td>
                 </tr>
@@ -407,6 +424,33 @@ const confirmAddCollab = async (email, accessRightValue) => {
           class="itbkk-button-confirm"
           @click="confirmRemoveCollab"
           >Remove</SubmitButton
+        >
+      </template>
+    </ConfirmModal>
+
+    <ConfirmModal v-if="openCancelPendingCollabModal" class="itbkk-modal-alert">
+      <template #title>
+        <p>Cancel pending invitation</p>
+      </template>
+      <template #question>
+        <div class="itbkk-message">
+          Do you want to cancel invitation to "{{ name }}" ?
+        </div>
+      </template>
+      <template #button-left>
+        <SubmitButton
+          buttonType="cancel"
+          class="itbkk-button-cancel"
+          @click="openCancelPendingCollabModal = false"
+          >Cancel</SubmitButton
+        >
+      </template>
+      <template #button-right>
+        <SubmitButton
+          buttonType="delete"
+          class="itbkk-button-confirm"
+          @click="confirmRemoveCollab"
+          >Confirm</SubmitButton
         >
       </template>
     </ConfirmModal>

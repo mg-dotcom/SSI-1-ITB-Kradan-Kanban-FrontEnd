@@ -44,7 +44,14 @@ const routes = [
     {
         path: '/board/:id/collab',
         name: 'board-collab',
-        component: CollabView
+        component: CollabView,
+        children: [
+            {
+                path: 'invitation',
+                name: 'board-invitation',
+                component: Invitation
+            },
+        ]
     },
     {
         path: '/board/:id/task',
@@ -87,11 +94,6 @@ const routes = [
         ]
     },
     {
-        path: '/board/:id/invitation',
-        name: 'board-invitation',
-        component: Invitation
-    },
-    {
         path: '/login',
         name: 'login',
         component: Login
@@ -112,7 +114,7 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach(async (to, _, next) => {
+router.beforeEach(async (to, from, next) => {
     const userStore = useUserStore()
     const boardStore = useBoardStore()
     const collabStore = useCollabStore()
@@ -121,8 +123,27 @@ router.beforeEach(async (to, _, next) => {
     const isAuthenticated = !!userStore.getIsLoggedIn
     const boardId = to.params.id
 
-    if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
+    // if (to.path.endsWith('/invitation') && !isAuthenticated) {
+    //     return next({
+    //         name: 'login',
+    //         query: { redirect: to. }
+    //     })
+    // }
+    if (!isAuthenticated && to.name === 'board-invitation'){
+        userStore.setRedirectAfterLogin(to.params.id)
+        console.log(userStore.getRedirectAfterLogin);
+        
         return next({ name: 'login' })
+    }
+
+    if (isAuthenticated && from.name === 'login' && to.name ==='board-invitation'){
+        userStore.setRedirectAfterLogin('')
+    }
+
+    if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
+        return next({
+            name: 'login',
+        }); 
     }
 
     if (to.path.startsWith('/board')) {

@@ -5,7 +5,7 @@ import { useRoute } from "vue-router";
 import submitButton from "@/components/button/Button.vue";
 import ConfirmModal from "@/components/confirmModal/ConfirmModal.vue";
 import { useBoardStore } from "@/stores/BoardStore";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { onClickOutside } from "@vueuse/core";
 import { useUserStore } from "@/stores/UserStore";
 import router from "@/router/page";
@@ -23,6 +23,10 @@ const isEmojiPickerVisible = ref(false);
 const selectedCollabOid = ref("");
 const emojiPicker = ref(null);
 const selectedBoardId = ref("");
+
+onMounted(async () => {
+  console.log(boardStore.getCollabBoard());
+});
 
 onClickOutside(emojiPicker, () => {
   isEmojiPickerVisible.value = false;
@@ -112,7 +116,6 @@ const confirmLeaveCollab = async () => {
             class="itbkk-personal-item w-80 h-28 flex justify-between p-2 bg-white rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
             v-for="(board, index) in boardStore.getPersonalBoard()"
             :key="index"
-            
             @click="
               router.push({ name: 'board-task', params: { id: board.id } }),
                 boardStore.setCurrentBoard(board)
@@ -188,8 +191,14 @@ const confirmLeaveCollab = async () => {
                 'bg-slate-200': collab.status === 'PENDING',
               }"
               :key="index"
-              @click="collab.status === 'PENDING' ? router.push({ name: 'board-invitation' }) : router.push({ name: 'board-task', params: { id: collab.boardId } })"
-
+              @click="
+                collab.status === 'PENDING'
+                  ? router.push({ name: 'board-invitation' })
+                  : router.push({
+                      name: 'board-task',
+                      params: { id: collab.boardId },
+                    })
+              "
             >
               <div class="flex gap-x-5">
                 <div
@@ -205,7 +214,11 @@ const confirmLeaveCollab = async () => {
                     <h3
                       class="itbkk-board-name text-lg font-semibold leading-tight"
                     >
-                      {{ collab.boardName }}
+                      {{
+                        collab.status === "PENDING"
+                          ? collab.boardName + " (Pending Invite)"
+                          : collab.boardName
+                      }}
                     </h3>
                     <div class="flex items-center">
                       <p
@@ -232,12 +245,16 @@ const confirmLeaveCollab = async () => {
 
                     <button
                       class="itbkk-leave-board bg-red-500 hover:bg-red-600 rounded-md transition-colors px-2 active:scale-[93%] active:transition-transform text-white text-xs font-bold"
-                      :class="{'bg-[#2D7DF8]': collab.status === 'PENDING'}"
+                      :class="{ 'bg-[#2D7DF8]': collab.status === 'PENDING' }"
                       @click.stop="
-                        handleLeaveCollab(collab.boardId, collab.oid)
+                        collab.status === 'PENDING'
+                          ? router.push({ name: 'board-invitation',params : {id:collab.boardId }})
+                          : handleLeaveCollab(collab.boardId, collab.oid)
                       "
                     >
-                      {{ collab.status === 'PENDING' ? 'Pending...' : 'Leave' }}
+                      {{
+                        collab.status === "PENDING" ? "Accept/Decline" : "Leave"
+                      }}
                     </button>
                   </div>
                 </div>

@@ -1,7 +1,7 @@
-import { ref } from "vue";
-import router from "@/router/page.js";
-import { useUserStore } from "@/stores/UserStore";
-import { CookieUtil } from "./CookieUtil";
+import { ref } from 'vue'
+import router from '@/router/page.js'
+import { useUserStore } from '@/stores/UserStore'
+import { CookieUtil } from './CookieUtil'
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
