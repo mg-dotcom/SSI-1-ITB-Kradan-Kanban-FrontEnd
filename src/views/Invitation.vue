@@ -14,6 +14,7 @@ const boardStore = useBoardStore();
 const userStore = useUserStore();
 const boardName = ref("");
 const collabStatus= ref("");
+const selectedCollabOid = ref("");
 const toast = useToast();
 
 const currentCollaborator = reactive({
@@ -62,6 +63,38 @@ const confirmInvitation = async () => {
   }
 };
 
+const declineInvitation = async () => {
+    collabStatus.value = "Decline";
+  const res = await collabStore.verifyCollab(
+    boardId,
+    collabStatus.value
+  );
+  if (res.status === 200) {
+    toast.add({
+      severity: "success",
+      summary: "Success",
+      detail: "Accept Invitation successfully!",
+      life: 3000,
+    });
+    router.push({ name: "board" });
+  } else if (res.status === 401) {
+    handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You do not have permissions to change collaborator status.",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "There is a problem. Please try again later.",
+      life: 3000,
+    });
+  }
+};
 
 onMounted(async () => {
   const fetchedBoard = await boardStore.loadBoardById(boardId);
@@ -153,7 +186,7 @@ function extractCollabFullName(fullName) {
                     </button>
                     <button
                         class="px-6 py-3 bg-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-400 focus:outline-none"
-                        @click="router.push({ name: 'board'})"
+                        @click="declineInvitation(boardId,collabStatus.value)"
                         >
                         Decline
                     </button>
