@@ -50,7 +50,7 @@ const props = defineProps({
               </span>
             </p>
             <div
-              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all overflow-y-auto border rounded-md bg-gray-50 shadow-sm"
+              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all overflow-y-auto"
             >
               <slot name="attach"></slot>
             </div>
@@ -59,50 +59,7 @@ const props = defineProps({
                 props.mode === 'edit' && props.selectedTask.files.length > 0
               "
               class="text-xs mt-2 text-right flex justify-between items-center"
-            >
-              <!-- File Count -->
-              <span
-                class="text-gray-600"
-                :class="
-                  selectedTask.files.length > MAX_FILES
-                    ? 'text-red-500 font-semibold'
-                    : ''
-                "
-              >
-                {{ selectedTask.files.length }} / {{ MAX_FILES }} files uploaded
-              </span>
-
-              <!-- Validation Messages -->
-              <div class="flex flex-col items-end space-y-1">
-                <!-- File Size Exceeded -->
-                <span
-                  v-if="
-                    newFiles.some(
-                      (file) =>
-                        byteToMB(file.fileData.size) > byteToMB(MAX_FILE_SIZE)
-                    )
-                  "
-                  class="text-red-500 font-semibold"
-                >
-                  (File size exceeded 20MB per file)
-                </span>
-
-                <!-- Duplicate File -->
-                <span
-                  v-if="
-                    newFiles.some((newFile) =>
-                      originalTaskData.files.some(
-                        (originalFile) =>
-                          newFile.fileName === originalFile.fileName
-                      )
-                    )
-                  "
-                  class="text-red-500 font-semibold"
-                >
-                  (File already exists)
-                </span>
-              </div>
-            </div>
+            ></div>
           </div>
 
           <!-- Right Side: Assignees & Status -->

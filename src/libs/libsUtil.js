@@ -25,8 +25,6 @@ const getFileIcon = (fileName) => {
   const extensions = {
     pdf: "/public/attachments/pdf.png",
     docx: "/public/attachments/word.png",
-    xls: "/public/attachments/xls.png",
-    xlsx: "/public/attachments/xlsx.png",
     ppt: "/public/attachments/ppt.png",
     pptx: "/public/attachments/ppt.png",
     txt: "/public/attachments/txt-file.png",
@@ -35,9 +33,10 @@ const getFileIcon = (fileName) => {
     svg: "/public/attachments/svg.png",
     gif: "/public/attachments/gif.png",
     jpg: "/public/attachments/jpg.png",
-    jpeg: "/public/attachments/png.png",
+    jpeg: "/public/attachments/jpg.png",
     png: "/public/attachments/png.png",
-    bmp: "/public/attachments/png.png",
+    zip: "/public/attachments/zip.png",
+    exe: "/public/attachments/exe-file.png",
   };
 
   const fileExtension = fileName.split(".").pop().toLowerCase();

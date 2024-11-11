@@ -16,6 +16,7 @@ import {
   MAX_FILE_SIZE,
 } from "../../libs/libsUtil.js";
 import { checkTokenExpiration } from "@/stores/UserStore";
+import { useToast } from "primevue/usetoast";
 const emit = defineEmits(["addNewTask", "editNewTask"]);
 const statusStore = useStatusStore();
 const taskStore = useTaskStore();
@@ -29,6 +30,7 @@ const mode = route.name === "task-add" ? "add" : "edit";
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
 const newFiles = ref([]);
+const toast = useToast();
 
 const selectedTask = ref({
   title: "",
@@ -83,15 +85,7 @@ watch(
     limitExceed.value =
       newValue.title.length > 100 ||
       newValue.description?.length > 500 ||
-      newValue.assignees?.length > 30 ||
-      newValue.files.length > MAX_FILES ||
-      newFiles.value.some((newFile) => newFile.fileData.size > MAX_FILE_SIZE) ||
-      newFiles.value.some((newFile) =>
-        originalTaskData.value.files.some(
-          (originalFile) => newFile.fileName === originalFile.fileName
-        )
-      );
-
+      newValue.assignees?.length > 30;
     if (mode === "edit") {
       isChanged.value = !(
         newValue.title === originalTaskData.value.title &&
@@ -122,6 +116,23 @@ const save = async () => {
       assignees: selectedTask.value.assignees,
       statusId: selectedTask.value.statusId,
     };
+
+    const duplicateFileName = newFiles.value.some((newFile) =>
+      originalTaskData.value.files.some(
+        (originalFile) => newFile.fileName === originalFile.fileName
+      )
+    );
+
+    if (duplicateFileName) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail:
+          "File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.",
+        life: 3000,
+      });
+      return;
+    }
 
     const res = await taskStore.editTaskWithFiles(
       taskId,
