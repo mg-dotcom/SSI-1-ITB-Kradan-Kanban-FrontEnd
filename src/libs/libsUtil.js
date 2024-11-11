@@ -22,8 +22,6 @@ const sortTasks = (tasks, sortType) => {
 };
 
 const getFileIcon = (fileName) => {
-  console.log(fileName);
-
   const extensions = {
     pdf: "/public/attachments/pdf.png",
     docx: "/public/attachments/word.png",
@@ -104,4 +102,12 @@ export const handleAuthenticationClearAndRedirect = () => {
   router.push({ name: "login" });
 };
 
-export { formatDate, localTimeZone, sortTasks, getFileIcon, openFile };
+export {
+  formatDate,
+  localTimeZone,
+  sortTasks,
+  getFileIcon,
+  openFile,
+  MAX_FILES,
+  MAX_FILE_SIZE,
+};

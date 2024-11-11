@@ -12,6 +12,8 @@ import {
   formatDate,
   getFileIcon,
   openFile,
+  MAX_FILES,
+  MAX_FILE_SIZE,
 } from "../../libs/libsUtil.js";
 import { checkTokenExpiration } from "@/stores/UserStore";
 const emit = defineEmits(["addNewTask", "editNewTask"]);
@@ -26,6 +28,7 @@ const isChanged = ref(false);
 const mode = route.name === "task-add" ? "add" : "edit";
 const limitMaximumTask = ref(false);
 const maximumTask = ref(10);
+const newFiles = ref([]);
 
 const selectedTask = ref({
   title: "",
@@ -67,8 +70,8 @@ onMounted(async () => {
     };
 
     oldFilesLength.value = selectedTask.value.files.length;
-
     originalTaskData.value = { ...selectedTask.value };
+    originalTaskData.value.files = [...selectedTask.value.files];
   } else if (mode == "add") {
     selectedTask.value.statusId = statusStore.getStatuses[0].id;
   }
@@ -80,7 +83,14 @@ watch(
     limitExceed.value =
       newValue.title.length > 100 ||
       newValue.description?.length > 500 ||
-      newValue.assignees?.length > 30;
+      newValue.assignees?.length > 30 ||
+      newValue.files.length > MAX_FILES ||
+      newFiles.value.some((newFile) => newFile.fileData.size > MAX_FILE_SIZE) ||
+      newFiles.value.some((newFile) =>
+        originalTaskData.value.files.some(
+          (originalFile) => newFile.fileName === originalFile.fileName
+        )
+      );
 
     if (mode === "edit") {
       isChanged.value = !(
@@ -91,7 +101,9 @@ watch(
         newValue.files.length === oldFilesLength.value
       );
     }
+
   },
+
   { deep: true }
 );
 
@@ -145,16 +157,12 @@ const save = async () => {
 };
 
 const removeFile = (file) => {
-  console.log(file);
-
   const index = selectedTask.value.files.findIndex(
     (f) => f.fileName === file.fileName
   );
   selectedTask.value.files.splice(index, 1);
-  console.log(taskStore.taskFiles);
 
   taskStore.deleteTaskFile(file.fileName);
-  console.log(taskStore.taskFiles);
 };
 
 const onFileChanged = (e) => {
@@ -168,6 +176,7 @@ const onFileChanged = (e) => {
   files.forEach((file) => {
     const fileObject = createFileObject(file);
     taskStore.addTaskFile(fileObject);
+    newFiles.value.push(fileObject);
     selectedTask.value.files.push(fileObject);
   });
 };
@@ -247,12 +256,13 @@ const onFileChanged = (e) => {
               src="/public/attachments/trash.png"
               alt=""
               class="w-5 h-5 object-contain"
-              @click="removeFile(file)"
+              @click.stop="removeFile(file)"
             />
           </div>
         </div>
       </div>
     </template>
+
     <template #assignees>
       <textarea
         class="itbkk-assignees block p-2.5 min-h-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 w-full mobile:h-28 md-vertical:h-3/4"

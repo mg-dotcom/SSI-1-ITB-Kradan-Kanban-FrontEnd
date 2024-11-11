@@ -1,6 +1,7 @@
 <script setup>
 import buttonSubmit from "../button/Button.vue";
 import { defineProps } from "vue";
+import { MAX_FILES, MAX_FILE_SIZE } from "@/libs/libsUtil";
 
 const props = defineProps({
   selectedTask: Object,
@@ -46,10 +47,24 @@ const props = defineProps({
                 <slot name="addAttach"></slot>
               </span>
             </p>
+
             <div
               class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all overflow-y-auto"
             >
               <slot name="attach"></slot>
+            </div>
+            <div
+              v-if="
+                props.mode === 'edit' && props.selectedTask.files.length > 0
+              "
+              class="text-xs mt-2 text-right"
+              :class="{
+                'text-red-500 ': selectedTask.files.length >= MAX_FILES,
+              }"
+            >
+              {{ selectedTask.files.length }} / {{ MAX_FILES }} files uploaded
+
+              <!-- {{ selectedTask.files.map((file) => file.fileSize) }} -->
             </div>
           </div>
 

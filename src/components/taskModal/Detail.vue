@@ -60,6 +60,7 @@ onMounted(async () => {
         }}
       </div>
     </template>
+    
     <template #attach>
       <div class="mt-2 text-black grid grid-cols-2 gap-3 relative">
         <div
