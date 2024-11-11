@@ -61,7 +61,14 @@ const props = defineProps({
               class="text-xs mt-2 text-right flex justify-between items-center"
             >
               <!-- File Count -->
-              <span class="text-gray-600">
+              <span
+                class="text-gray-600"
+                :class="
+                  selectedTask.files.length > MAX_FILES
+                    ? 'text-red-500 font-semibold'
+                    : ''
+                "
+              >
                 {{ selectedTask.files.length }} / {{ MAX_FILES }} files uploaded
               </span>
 
@@ -77,7 +84,7 @@ const props = defineProps({
                   "
                   class="text-red-500 font-semibold"
                 >
-                  (File size exceeded)
+                  (File size exceeded 20MB per file)
                 </span>
 
                 <!-- Duplicate File -->
