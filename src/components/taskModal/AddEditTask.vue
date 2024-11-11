@@ -68,10 +68,8 @@ onMounted(async () => {
       statusId: taskDetail.status?.id ?? null,
       createdOn: formatDate(taskDetail.createdOn),
       updatedOn: formatDate(taskDetail.updatedOn),
-      files: taskDetail.files || [],
+      files: taskDetail.files||[],
     };
-    console.log('on mounted');
-    console.log(taskStore.taskFiles);
 
     oldFilesLength.value = selectedTask.value.files.length;
     originalTaskData.value = { ...selectedTask.value };
@@ -80,6 +78,7 @@ onMounted(async () => {
     selectedTask.value.statusId = statusStore.getStatuses[0].id;
   }
 });
+
 const limitExceed = ref(false);
 watch(
   selectedTask,
@@ -112,7 +111,7 @@ const isButtonDisabled = computed(() => {
 
 const cancel = () => {
   newFiles.value.forEach((file) => {
-    taskStore.deleteTaskFile(file.fileName);
+    removeFile(file);
   });
   router.push({ name: "board-task", params: { id: boardId } });
 };
@@ -121,7 +120,7 @@ const save = async () => {
   if (mode === "edit" && taskId !== undefined) {
 
     console.log('save');
-    console.log(taskStore.taskFiles);
+    console.log(selectedTask.value.files);
     
     
     outputTask.value = {
@@ -141,7 +140,7 @@ const save = async () => {
       (file) => file.fileData.size > MAX_FILE_SIZE
     );
 
-    const exceedFileLength = selectedTask.value.files.length + newFiles.value.length > MAX_FILES;
+    const exceedFileLength = selectedTask.value.files.length > MAX_FILES;
 
     if(duplicateFileName&&(exceedFileSize||exceedFileLength)||exceedFileSize&&(duplicateFileName||exceedFileLength)){
       toast.add({
@@ -206,7 +205,7 @@ const save = async () => {
     const res = await taskStore.editTaskWithFiles(
       taskId,
       outputTask.value,
-      taskStore.taskFiles
+      selectedTask.value.files
     );
 
     if (res.status === 200) {
@@ -241,7 +240,7 @@ const removeFile = (file) => {
   );
   selectedTask.value.files.splice(index, 1);
   newFiles.value = newFiles.value.filter((f) => f.fileName !== file.fileName);
-  taskStore.deleteTaskFile(file.fileName);
+  // taskStore.deleteTaskFile(file.fileName);
 };
 
 const onFileChanged = (e) => {
@@ -251,10 +250,9 @@ const onFileChanged = (e) => {
     fileData: file,
     contentType: file.type,
   });
-
   files.forEach((file) => {
     const fileObject = createFileObject(file);
-    taskStore.addTaskFile(fileObject);
+    // taskStore.addTaskFile(fileObject);
     newFiles.value.push(fileObject);
     selectedTask.value.files.push(fileObject);
   });
