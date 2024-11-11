@@ -296,20 +296,23 @@ const confirmAddCollab = async (email, accessRightValue) => {
                   class="itbkk-item py-4"
                   v-for="(collab, index) in collabStore.getCollaborators"
                   :key="index"
-                  :class="{ 'opacity-50': collab.status === 'PENDING' }"
+                  
                 >
                   <td
                     class="text-center p-5 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                    :class="{ 'opacity-50': collab.status === 'PENDING' }"
                   >
                     {{ index + 1 }}
                   </td>
                   <td
                     class="itbkk-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+                    :class="{ 'opacity-50': collab.status === 'PENDING' }"
                   >
                     {{ collab.status === "PENDING" ? collab.name+"(Pending)" : collab.name }}
                   </td>
                   <td
                     class="itbkk-email text-sm border-b border-r border-gray-300 break-all"
+                    :class="{ 'opacity-50': collab.status === 'PENDING' }"
                   >
                     {{ collab.email }}
                   </td>
