@@ -70,6 +70,8 @@ onMounted(async () => {
       updatedOn: formatDate(taskDetail.updatedOn),
       files: taskDetail.files || [],
     };
+    console.log('on mounted');
+    console.log(taskStore.taskFiles);
 
     oldFilesLength.value = selectedTask.value.files.length;
     originalTaskData.value = { ...selectedTask.value };
@@ -108,8 +110,20 @@ const isButtonDisabled = computed(() => {
   );
 });
 
+const cancel = () => {
+  newFiles.value.forEach((file) => {
+    taskStore.deleteTaskFile(file.fileName);
+  });
+  router.push({ name: "board-task", params: { id: boardId } });
+};
+
 const save = async () => {
   if (mode === "edit" && taskId !== undefined) {
+
+    console.log('save');
+    console.log(taskStore.taskFiles);
+    
+    
     outputTask.value = {
       title: selectedTask.value.title,
       description: selectedTask.value.description,
@@ -400,7 +414,7 @@ const onFileChanged = (e) => {
       <buttonSubmit
         buttonType="cancel"
         class="itbkk-button-cancel"
-        @click="router.push({ name: 'board-task' })"
+        @click="cancel"
         >Cancel</buttonSubmit
       >
     </template>
