@@ -1,48 +1,48 @@
-import { ref } from 'vue'
-import router from '@/router/page.js'
-import { useUserStore } from '@/stores/UserStore'
-import { CookieUtil } from './CookieUtil'
+import { ref } from "vue";
+import router from "@/router/page.js";
+import { useUserStore, useUserToken } from "@/stores/UserStore";
+import { CookieUtil } from "./CookieUtil";
 
-const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone)
+const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
 const formatDate = (date) => {
-    const d = new Date(date)
-    return d.toLocaleString('en-GB', { timeZone: localTimeZone.value })
-}
+  const d = new Date(date);
+  return d.toLocaleString("en-GB", { timeZone: localTimeZone.value });
+};
 
-const MAX_FILES = 10
-const MAX_FILE_SIZE = 20 * 1024 * 1024
+const MAX_FILES = 10;
+const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
 const sortTasks = (tasks, sortType) => {
-    if (sortType === 'ascending') {
-        tasks.sort((a, b) => a.status.localeCompare(b.status))
-    } else if (sortType === 'descending') {
-        tasks.sort((a, b) => b.status.localeCompare(a.status))
-    }
-}
+  if (sortType === "ascending") {
+    tasks.sort((a, b) => a.status.localeCompare(b.status));
+  } else if (sortType === "descending") {
+    tasks.sort((a, b) => b.status.localeCompare(a.status));
+  }
+};
 
 const getFileIcon = (fileName) => {
-    const extensions = {
-        pdf: '/attachments/pdf.png',
-        docx: '/attachments/word.png',
-        ppt: '/attachments/ppt.png',
-        pptx: '/attachments/ppt.png',
-        txt: '/attachments/txt-file.png',
-        zip: '/attachments/zip.png',
-        html: '/attachments/html.png',
-        svg: '/attachments/svg.png',
-        gif: '/attachments/gif.png',
-        jpg: '/attachments/jpg.png',
-        jpeg: '/attachments/jpg.png',
-        png: '/attachments/png.png',
-        zip: '/attachments/zip.png',
-        exe: '/attachments/exe-file.png'
-    }
+  const extensions = {
+    pdf: "/attachments/pdf.png",
+    docx: "/attachments/word.png",
+    ppt: "/attachments/ppt.png",
+    pptx: "/attachments/ppt.png",
+    txt: "/attachments/txt-file.png",
+    zip: "/attachments/zip.png",
+    html: "/attachments/html.png",
+    svg: "/attachments/svg.png",
+    gif: "/attachments/gif.png",
+    jpg: "/attachments/jpg.png",
+    jpeg: "/attachments/jpg.png",
+    png: "/attachments/png.png",
+    zip: "/attachments/zip.png",
+    exe: "/attachments/exe-file.png",
+  };
 
-    const fileExtension = fileName.split('.').pop().toLowerCase()
+  const fileExtension = fileName.split(".").pop().toLowerCase();
 
-    return extensions[fileExtension] || '/attachments/documents.png'
-}
+  return extensions[fileExtension] || "/attachments/documents.png";
+};
 
 const byteToMB = (bytes) => (bytes / (1024 * 1024)).toFixed(2);
 
@@ -69,7 +69,7 @@ const openFile = (file) => {
         textWindow.document.close();
       };
     } else if (["jpg", "png", "pdf"].includes(extension)) {
-      const tabName = file.fileName  
+      const tabName = file.fileName;
       window.open(fileURL, tabName);
     } else if (["docx", "xlsx"].includes(extension)) {
       const link = document.createElement("a");
@@ -99,44 +99,47 @@ function base64ToArrayBuffer(base64) {
   return bytes.buffer;
 }
 
-
 export function handleResponseStatus(res) {
-    if (
-        (!CookieUtil.get('access_token') && res.status === 401) ||
-        res.status === 404
-    ) {
-        const userStore = useUserStore()
-        // userStore.$reset()
-        userStore.logout()
-        alert('Session expired. Please login again.')
-        router.push({ name: 'login' })
-    } else if (res.status === 403) {
-        const userStore = useUserStore()
-        userStore.logout()
-        router.push({ name: 'access-denied' })
-    } else if (!CookieUtil.get('refresh_token') && res.status >= 400) {
-        this.$toast.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: 'An error occurred',
-            life: 3000
-        })
+  if (
+    (!CookieUtil.get("access_token") && res.status === 401) ||
+    res.status === 404
+  ) {
+    const userStore = useUserStore();
+    // userStore.$reset()
+    userStore.logout();
+    alert("Session expired. Please login again.");
+    router.push({ name: "login" });
+  } else if (res.status === 403) {
+    const userStore = useUserStore();
+    if (useUserToken().value) {
+      return router.push({ name: "access-denied" });
+    } else {
+      userStore.logout();
+      router.push({ name: "access-denied" });
     }
+  } else if (!CookieUtil.get("refresh_token") && res.status >= 400) {
+    this.$toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "An error occurred",
+      life: 3000,
+    });
+  }
 }
 export const handleAuthenticationClearAndRedirect = () => {
-    const userStore = useUserStore()
-    userStore.$reset()
-    alert('Session expired. Please login again.')
-    router.push({ name: 'login' })
-}
+  const userStore = useUserStore();
+  userStore.$reset();
+  alert("Session expired. Please login again.");
+  router.push({ name: "login" });
+};
 
 export {
-    formatDate,
-    localTimeZone,
-    sortTasks,
-    getFileIcon,
-    openFile,
-    MAX_FILES,
-    MAX_FILE_SIZE,
-    byteToMB
-}
+  formatDate,
+  localTimeZone,
+  sortTasks,
+  getFileIcon,
+  openFile,
+  MAX_FILES,
+  MAX_FILE_SIZE,
+  byteToMB,
+};

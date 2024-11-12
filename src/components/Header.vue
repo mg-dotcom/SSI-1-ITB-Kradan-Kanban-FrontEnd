@@ -49,7 +49,7 @@ onClickOutside(dropdownMenu, () => {
       <h1 class="text-header text-white font-bold">IT-Bangmod Kradan Kanban</h1>
       <div
         class="flex items-center gap-2"
-        v-if="route.name !== 'login' && route.name !== 'access-denied'"
+        v-if="route.name !== 'login'"
       >
         <div class="group-user flex" v-if="isValidToken">
           <div class="relative w-max mx-auto">
