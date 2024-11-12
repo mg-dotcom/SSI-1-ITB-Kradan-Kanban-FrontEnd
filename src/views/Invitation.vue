@@ -43,7 +43,7 @@ const confirmInvitation = async () => {
             detail: 'Accept Invitation successfully!',
             life: 3000
         })
-        route.push({ name: 'board-detail', params: { id: boardId } })
+        router.push({ name: 'board-detail', params: { id: boardId } })
     } else if (res.status === 401) {
         handleAuthenticationClearAndRedirect()
     } else if (res.status === 403) {
@@ -69,7 +69,7 @@ const declineInvitation = async () => {
             detail: 'Accept Invitation successfully!',
             life: 3000
         })
-        route.push({ name: 'board' })
+        router.push({ name: 'board' })
     } else if (res.status === 401) {
         handleAuthenticationClearAndRedirect()
     } else if (res.status === 403) {
