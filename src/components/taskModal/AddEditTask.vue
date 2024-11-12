@@ -82,7 +82,6 @@ onMounted(async () => {
         oldFilesLength.value = selectedTask.value.files.length
         originalTaskData.value = { ...selectedTask.value }
         originalTaskData.value.files = [...selectedTask.value.files]
-        console.log(originalTaskData.value.files);
         
     } else if (mode == 'add') {
         selectedTask.value.statusId = statusStore.getStatuses[0].id
@@ -106,7 +105,7 @@ watch(
                 newValue.files.filter(
                     (file) =>
                         !originalTaskData.value.files.some(
-                          (originalFile) =>
+                            (originalFile) =>
                             originalFile.fileName === file.fileName
                         )
                 ).length === 0 &&
@@ -188,7 +187,8 @@ const removeFile = (file) => {
         (f) => f.fileName === file.fileName
     )
     selectedTask.value.files.splice(index, 1)
-    console.log(selectedTask.value.files);
+
+
     
     newFiles.value = newFiles.value.filter((f) => f.fileName !== file.fileName)
 }
@@ -200,9 +200,11 @@ const onFileChanged = (e) => {
         fileData: file,
         contentType: file.type
     })
+    console.log(files);
+    
 
     if(files.length>1){
-      files.forEach((file) => {
+        files.forEach((file) => {
         const fileObject = createFileObject(file)
         newFiles.value.push(fileObject)
 
@@ -244,8 +246,10 @@ const onFileChanged = (e) => {
             })
             newFiles.value = [];
             return
-    }})
-        
+    }
+    selectedTask.value.files.push(fileObject)
+})
+
     }else{
       files.forEach((file) => {
         const fileObject = createFileObject(file)
@@ -329,10 +333,11 @@ const onFileChanged = (e) => {
             newFiles.value = [];
             return
         }
+        selectedTask.value.files.push(fileObject)
     })
     }
-    selectedTask.value.files.push(fileObject)
 }
+
 </script>
 
 <template>
