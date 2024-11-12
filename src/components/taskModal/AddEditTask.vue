@@ -82,6 +82,8 @@ onMounted(async () => {
         oldFilesLength.value = selectedTask.value.files.length
         originalTaskData.value = { ...selectedTask.value }
         originalTaskData.value.files = [...selectedTask.value.files]
+        console.log(originalTaskData.value.files);
+        
     } else if (mode == 'add') {
         selectedTask.value.statusId = statusStore.getStatuses[0].id
     }
@@ -104,11 +106,14 @@ watch(
                 newValue.files.filter(
                     (file) =>
                         !originalTaskData.value.files.some(
-                            (originalFile) =>
-                                originalFile.fileName === file.fileName
+                          (originalFile) =>
+                            originalFile.fileName === file.fileName
                         )
-                ).length === 0
-            )
+                ).length === 0 &&
+                newValue.files.length === originalTaskData.value.files.length
+            ) 
+            console.log(isChanged.value);
+            
         }
     },
 
@@ -124,6 +129,10 @@ const isButtonDisabled = computed(() => {
 })
 
 const cancel = () => {
+  selectedTask.value.files.forEach((file)=>{
+    removeFile(file)
+  })
+
     newFiles.value.forEach((file) => {
         removeFile(file)
     })
@@ -140,81 +149,6 @@ const save = async () => {
             description: selectedTask.value.description,
             assignees: selectedTask.value.assignees,
             statusId: selectedTask.value.statusId
-        }
-
-        const duplicateFileName = newFiles.value.some((newFile) =>
-            originalTaskData.value.files.some(
-                (originalFile) => newFile.fileName === originalFile.fileName
-            )
-        )
-
-        const exceedFileSize = newFiles.value.some(
-            (file) => file.fileData.size > MAX_FILE_SIZE
-        )
-
-        const exceedFileLength = selectedTask.value.files.length > MAX_FILES
-
-        if (
-            (duplicateFileName && (exceedFileSize || exceedFileLength)) ||
-            (exceedFileSize && (duplicateFileName || exceedFileLength))
-        ) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail:
-                    '         - Each task can have at most 10 files.\n' +
-                    '         - Each file cannot be larger than 20 MB.\n' +
-                    '         - File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.\n' +
-                    '            The following files are not added: \n' +
-                    `${newFiles.value
-                        .filter((newFile) =>
-                            originalTaskData.value.files.some(
-                                (originalFile) =>
-                                    newFile.fileName === originalFile.fileName
-                            )
-                        )
-                        .map((file) => file.fileName)
-                        .join(', ')}`,
-
-                life: 3000
-            })
-            return
-        }
-
-        if (duplicateFileName) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.',
-                life: 3000
-            })
-            return
-        }
-
-        if (exceedFileSize) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: `Each file cannot be larger than 20 MB. The following files are not added : ${newFiles.value
-                    .filter((file) => file.fileData.size > MAX_FILE_SIZE)
-                    .map((file) => file.fileName)
-                    .join(', ')}`,
-                life: 3000
-            })
-            return
-        }
-
-        if (exceedFileLength) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: `Each task can have at most ${MAX_FILES} files. The following files are not added: ${newFiles.value
-                    .slice(MAX_FILES - selectedTask.value.files.length)
-                    .map((file) => file.fileName)
-                    .join(', ')}`,
-                life: 3000
-            })
-            return
         }
 
         const res = await taskStore.editTaskWithFiles(
@@ -254,6 +188,8 @@ const removeFile = (file) => {
         (f) => f.fileName === file.fileName
     )
     selectedTask.value.files.splice(index, 1)
+    console.log(selectedTask.value.files);
+    
     newFiles.value = newFiles.value.filter((f) => f.fileName !== file.fileName)
 }
 
@@ -264,11 +200,138 @@ const onFileChanged = (e) => {
         fileData: file,
         contentType: file.type
     })
-    files.forEach((file) => {
+
+    if(files.length>1){
+      files.forEach((file) => {
         const fileObject = createFileObject(file)
         newFiles.value.push(fileObject)
-        selectedTask.value.files.push(fileObject)
+
+        const duplicateFileName = newFiles.value.some((newFile) =>
+            originalTaskData.value.files.some(
+                (originalFile) => newFile.fileName === originalFile.fileName
+            )
+        )
+
+        const exceedFileSize = newFiles.value.some(
+            (file) => file.fileData.size > MAX_FILE_SIZE
+        )
+
+        const exceedFileLength = selectedTask.value.files.length > MAX_FILES
+
+        if (
+            (duplicateFileName && (exceedFileSize || exceedFileLength)) ||
+            (exceedFileSize && (duplicateFileName || exceedFileLength))
+        ) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail:
+                    '         - Each task can have at most 10 files.\n' +
+                    '         - Each file cannot be larger than 20 MB.\n' +
+                    '         - File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.\n' +
+                    '            The following files are not added: \n' +
+                    `${newFiles.value
+                        .filter((newFile) =>
+                            originalTaskData.value.files.some(
+                                (originalFile) =>
+                                    newFile.fileName === originalFile.fileName
+                            )
+                        )
+                        .map((file) => file.fileName)
+                        .join(', ')}`,
+
+                life: 3000
+            })
+            newFiles.value = [];
+            return
+    }})
+        
+    }else{
+      files.forEach((file) => {
+        const fileObject = createFileObject(file)
+        newFiles.value.push(fileObject)
+
+        const duplicateFileName = newFiles.value.some((newFile) =>
+            originalTaskData.value.files.some(
+                (originalFile) => newFile.fileName === originalFile.fileName
+            )
+        )
+
+        const exceedFileSize = newFiles.value.some(
+            (file) => file.fileData.size > MAX_FILE_SIZE
+        )
+
+        const exceedFileLength = selectedTask.value.files.length > MAX_FILES
+
+        if (
+            (duplicateFileName && (exceedFileSize || exceedFileLength)) ||
+            (exceedFileSize && (duplicateFileName || exceedFileLength))
+        ) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail:
+                    '         - Each task can have at most 10 files.\n' +
+                    '         - Each file cannot be larger than 20 MB.\n' +
+                    '         - File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.\n' +
+                    '            The following files are not added: \n' +
+                    `${newFiles.value
+                        .filter((newFile) =>
+                            originalTaskData.value.files.some(
+                                (originalFile) =>
+                                    newFile.fileName === originalFile.fileName
+                            )
+                        )
+                        .map((file) => file.fileName)
+                        .join(', ')}`,
+
+                life: 3000
+            })
+            newFiles.value = [];
+            return
+        }
+
+        if (duplicateFileName) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.',
+                life: 3000
+            })
+            newFiles.value = [];
+            return
+        }
+
+        if (exceedFileSize) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: `Each file cannot be larger than 20 MB. The following files are not added : ${newFiles.value
+                    .filter((file) => file.fileData.size > MAX_FILE_SIZE)
+                    .map((file) => file.fileName)
+                    .join(', ')}`,
+                life: 3000
+            })
+            newFiles.value = [];
+            return
+        }
+
+        if (exceedFileLength) {
+            toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: `Each task can have at most ${MAX_FILES} files. The following files are not added: ${newFiles.value
+                    .slice(MAX_FILES - selectedTask.value.files.length)
+                    .map((file) => file.fileName)
+                    .join(', ')}`,
+                life: 3000
+            })
+            newFiles.value = [];
+            return
+        }
     })
+    }
+    selectedTask.value.files.push(fileObject)
 }
 </script>
 
