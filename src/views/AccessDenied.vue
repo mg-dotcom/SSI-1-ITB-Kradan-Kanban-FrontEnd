@@ -1,7 +1,7 @@
 <script setup>
 import { useRouter } from "vue-router";
 
-import { useUserStore, useUserToken } from "@/stores/UserStore";
+import { useUserToken } from "@/stores/UserStore";
 
 import Header from "@/components/Header.vue";
 
