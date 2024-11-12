@@ -43,10 +43,13 @@ const routes = [
   },
   {
     path: "/board/:id/collab",
-    name: "board-collab",
-    component: CollabView,
     children: [
       {
+        path: "",
+        name: "board-collab",
+        component: CollabView,
+      }
+      ,{
         path: "invitations",
         name: "board-invitation",
         component: Invitation,
@@ -146,13 +149,13 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.path.startsWith("/board")) {
     try {
+      if (to.name === "board-invitation") {  
+        return next() 
+      }
       if (to.name === "board") {
         await boardStore.loadBoards();
       }
-      if (to.name === "board-invitation") {
-        return next();
-      }
-      if (boardId && to.name != "board-invitation") {
+      if (boardId && to.name !== "board-invitation") {
         await checkTokenExpiration(boardId);
         await boardStore.loadBoardById(boardId);
         await collabStore.loadCollab(boardId);

@@ -4,7 +4,8 @@ import {
   deleteCollab,
   updateAccessRight,
   addCollab,
-  verifyInvitation
+  verifyInvitation,
+  getInvitation
 } from "../libs/FetchCollab.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -142,6 +143,26 @@ export const useCollabStore = defineStore("CollabStore", {
         }
       }
       return res;
-    }    
+    },
+    async getInvitaionStatus(boardId) {
+      await checkTokenExpiration(boardId);
+      const userStore = useUserStore();
+      const res = await getInvitation(
+        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs/invitations`
+      );
+      console.log(res);
+      
+      if (res.status === 200) {
+        // Find the collaborator by their oid
+        const index = this.collaborators.findIndex(
+          (collab) => collab.oid === userStore.oid
+        );
+        // Update their status if found
+        if (index !== -1) {
+          this.collaborators[index].status = collabStatus;
+        }
+      }
+      return res;
+    } 
   },
 });

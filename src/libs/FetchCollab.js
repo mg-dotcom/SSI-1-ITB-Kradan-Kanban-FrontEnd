@@ -69,6 +69,15 @@ const verifyInvitation = async (url, collabStatus) => {
   return res;
 };
 
+const getInvitation = async (url) => {
+  const res = await fetch(`${url}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+  });
+  return res;
+}
 
-
-export { fetchCollab, addCollab, deleteCollab, updateAccessRight,verifyInvitation };
+export { fetchCollab, addCollab, deleteCollab, updateAccessRight,verifyInvitation,getInvitation };

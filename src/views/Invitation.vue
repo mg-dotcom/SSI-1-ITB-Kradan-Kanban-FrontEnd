@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, reactive } from "vue";
+import { ref, onMounted, reactive } from "vue";
 import Header from "@/components/Header.vue";
 import { useRoute, useRouter } from "vue-router";
 import { useBoardStore } from "@/stores/BoardStore";
@@ -19,6 +19,7 @@ const userStore = useUserStore();
 const boardName = ref("");
 const collabStatus = ref("");
 const toast = useToast();
+const dontHasInvitation = ref(false);
 
 const currentCollaborator = reactive({
   accessRight: null,
@@ -31,6 +32,11 @@ const currentOwner = reactive({
   name: "",
   username: "",
 });
+
+const invitationRes = reactive({
+  accessRight: "",
+
+})
 
 const confirmInvitation = async () => {
   collabStatus.value = "ACTIVE";
@@ -86,6 +92,12 @@ const declineInvitation = async () => {
 };
 
 onMounted(async () => {
+  const invitationRes = await collabStore.getInvitaionStatus(boardId);
+  const data = await invitationRes.json()
+  if (!invitationRes.ok || data.invitationStatus === "ACTIVE") {
+    dontHasInvitation.value = true;
+    return;
+  }
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   await collabStore.loadCollab(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
@@ -134,7 +146,7 @@ function extractCollabFullName(fullName) {
     <!-- Main Content Wrapper -->
     <div
       class="flex-grow flex items-center justify-center"
-      v-if="currentCollaborator.status === 'PENDING'"
+      v-if="!dontHasInvitation"
     >
       <div
         class="w-full max-w-lg bg-white shadow-lg rounded-lg p-6 text-center space-y-6"
@@ -195,7 +207,7 @@ function extractCollabFullName(fullName) {
     <!-- Empty Invitation Message -->
     <div
       class="flex-grow flex items-center justify-center"
-      v-if="!currentCollaborator.status === 'PENDING'"
+      v-if="dontHasInvitation "
     >
       <div class="text-center space-y-4 max-w-md p-4">
         <img

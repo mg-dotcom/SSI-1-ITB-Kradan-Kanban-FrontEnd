@@ -100,6 +100,9 @@ function base64ToArrayBuffer(base64) {
 }
 
 export function handleResponseStatus(res) {
+  if (router.currentRoute.value.name === 'board-invitation') {
+    return
+  }
   if (
     (!CookieUtil.get("access_token") && res.status === 401) ||
     res.status === 404
