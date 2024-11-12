@@ -47,10 +47,10 @@ const routes = [
         component: CollabView,
         children: [
             {
-                path: 'invitation',
+                path: 'invitations',
                 name: 'board-invitation',
                 component: Invitation
-            },
+            }
         ]
     },
     {
@@ -123,33 +123,34 @@ router.beforeEach(async (to, from, next) => {
     const isAuthenticated = !!userStore.getIsLoggedIn
     const boardId = to.params.id
 
-    // if (to.path.endsWith('/invitation') && !isAuthenticated) {
-    //     return next({
-    //         name: 'login',
-    //         query: { redirect: to. }
-    //     })
-    // }
-    if (!isAuthenticated && to.name === 'board-invitation'){
+    if (!isAuthenticated && to.name === 'board-invitation') {
         userStore.setRedirectAfterLogin(to.params.id)
-        console.log(userStore.getRedirectAfterLogin);
-        
+        console.log(userStore.getRedirectAfterLogin)
+
         return next({ name: 'login' })
     }
 
-    if (isAuthenticated && from.name === 'login' && to.name ==='board-invitation'){
+    if (
+        isAuthenticated &&
+        from.name === 'login' &&
+        to.name === 'board-invitation'
+    ) {
         userStore.setRedirectAfterLogin('')
     }
 
     if (to.meta.requireAuth && !isAuthenticated && !isPublicBoard) {
         return next({
-            name: 'login',
-        }); 
+            name: 'login'
+        })
     }
 
     if (to.path.startsWith('/board')) {
         try {
             if (to.name === 'board') {
                 await boardStore.loadBoards()
+            }
+            if (to.name === 'board-invitation') {
+                return next()
             }
             if (boardId) {
                 await checkTokenExpiration(boardId)
