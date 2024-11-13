@@ -5,7 +5,8 @@ import { CookieUtil } from "./CookieUtil";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
-const ICON_PATH=import.meta.env.VITE_APP_MODE === "production" ? "/ssi1/attchments" : "/attachments";
+const ICON_PATH=import.meta.env.VITE_APP_MODE === "production" ? "/ssi1/attachments" : "/attachments";
+
 
 const formatDate = (date) => {
   const d = new Date(date);
