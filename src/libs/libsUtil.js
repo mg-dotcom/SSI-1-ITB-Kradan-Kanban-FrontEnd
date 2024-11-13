@@ -5,6 +5,8 @@ import { CookieUtil } from "./CookieUtil";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
+const ICON_PATH=import.meta.env.VITE_APP_MODE === "production" ? "/ssi1/attchments" : "/attachments";
+
 const formatDate = (date) => {
   const d = new Date(date);
   return d.toLocaleString("en-GB", { timeZone: localTimeZone.value });
@@ -23,25 +25,25 @@ const sortTasks = (tasks, sortType) => {
 
 const getFileIcon = (fileName) => {
   const extensions = {
-    pdf: "/attachments/pdf.png",
-    docx: "/attachments/word.png",
-    ppt: "/attachments/ppt.png",
-    pptx: "/attachments/ppt.png",
-    txt: "/attachments/txt-file.png",
-    zip: "/attachments/zip.png",
-    html: "/attachments/html.png",
-    svg: "/attachments/svg.png",
-    gif: "/attachments/gif.png",
-    jpg: "/attachments/jpg.png",
-    jpeg: "/attachments/jpg.png",
-    png: "/attachments/png.png",
-    zip: "/attachments/zip.png",
-    exe: "/attachments/exe-file.png",
+    pdf: `${ICON_PATH}/pdf.png`,
+    docx: `${ICON_PATH}/word.png`,
+    ppt: `${ICON_PATH}/ppt.png`,
+    pptx: `${ICON_PATH}/ppt.png`,
+    txt: `${ICON_PATH}/txt-file.png`,
+    zip: `${ICON_PATH}/zip.png`,
+    html: `${ICON_PATH}/html.png`,
+    svg: `${ICON_PATH}/svg.png`,
+    gif: `${ICON_PATH}/gif.png`,
+    jpg: `${ICON_PATH}/jpg.png`,
+    jpeg: `${ICON_PATH}/jpg.png`,
+    png: `${ICON_PATH}/png.png`,
+    zip: `${ICON_PATH}/zip.png`,
+    exe: `${ICON_PATH}/exe-file.png`,
   };
 
   const fileExtension = fileName.split(".").pop().toLowerCase();
 
-  return extensions[fileExtension] || "/attachments/documents.png";
+  return extensions[fileExtension] || `${ICON_PATH}/documents.png`;
 };
 
 const byteToMB = (bytes) => (bytes / (1024 * 1024)).toFixed(2);

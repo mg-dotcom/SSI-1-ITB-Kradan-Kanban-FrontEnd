@@ -188,8 +188,6 @@ const removeFile = (file) => {
     )
     selectedTask.value.files.splice(index, 1)
 
-
-    
     newFiles.value = newFiles.value.filter((f) => f.fileName !== file.fileName)
 }
 
