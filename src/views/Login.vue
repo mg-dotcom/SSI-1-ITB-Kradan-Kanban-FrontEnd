@@ -46,15 +46,16 @@ const signIn = async () => {
     const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
     const collabBoards = boardStore.getCollabBoard();
 
-    
     if (userStore.getRedirectAfterLogin) {
       console.log(userStore.getRedirectAfterLogin);
-      router.push({ name : 'board-invitation', params: {id: userStore.getRedirectAfterLogin}})
-      return
+      router.push({
+        name: "board-invitation",
+        params: { id: userStore.getRedirectAfterLogin },
+      });
+      return;
     }
 
     if (boardByUserOid.length === 1 && collabBoards.length === 0) {
-      
       const currentBoard = boardByUserOid[0];
       boardStore.setCurrentBoard(currentBoard);
       router.push({ name: "board-task", params: { id: currentBoard.id } });
@@ -62,7 +63,6 @@ const signIn = async () => {
       router.push({ name: "board" });
     }
   } catch (error) {
-
     isError.value = true;
   }
 };
@@ -164,13 +164,29 @@ const signIn = async () => {
           <div>
             <button
               :disabled="!isFormValid"
-              class="itbkk-button-signin btn w-full bg-blue hover:bg-oceanblue text-white font-bold py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
+              class="itbkk-button-signin btn w-full bg-blue hover:bg-oceanblue text-white font-bold px-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-300"
               :class="{
                 'disabled opacity-50 cursor-not-allowed': !isFormValid,
               }"
               @click="signIn"
             >
               Sign In
+            </button>
+          </div>
+
+          <div class="py-4">
+            <div class="flex items-center justify-center">
+              <div class="border-t border-gray-300 w-full"></div>
+              <span class="text-gray-500 mx-3 font-semibold">OR</span>
+              <div class="border-t border-gray-300 w-full"></div>
+            </div>
+          </div>
+          <div>
+            <button
+              class="itbkk-button-signin-microsoft-team btn w-full bg-white hover:bg-gray-100 text-gray-700 font-bold px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-300"
+            >
+              <img src="/Microsoft_logo.png" alt="" class="w-5" />
+              <span>Sign in with Microsoft</span>
             </button>
           </div>
         </div>
