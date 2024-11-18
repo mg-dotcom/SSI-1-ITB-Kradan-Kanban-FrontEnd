@@ -5,6 +5,7 @@ import {
   deleteTask,
   fetchTaskDetails,
   updatedTaskWithFiles,
+  fetchFilePreview,
   deleteTaskFile,
 } from "../libs/FetchTask.js";
 import { sortTasks } from "../libs/libsUtil.js";
@@ -127,8 +128,8 @@ export const useTaskStore = defineStore("TaskStore", {
       const boardId = this.boardStore.getCurrentBoard.id;
       await checkTokenExpiration(boardId);
 
-      console.log('updatedTaskFiles', updatedTaskFiles);
-      
+      console.log("updatedTaskFiles", updatedTaskFiles);
+
       const res = await updatedTaskWithFiles(
         `${
           import.meta.env.VITE_BASE_URL
@@ -170,6 +171,23 @@ export const useTaskStore = defineStore("TaskStore", {
         handleResponseStatus(res);
       }
       return res;
+    },
+
+    async fetchFilePreview(fileName, taskId) {
+      const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
+
+      const res = await fetchFilePreview(
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/tasks/${taskId}/files/${fileName}`
+      );
+
+      if (res.status === 200) {
+        return res;
+      } else {
+        handleResponseStatus(res);
+      }
     },
 
     async deleteTaskFile(file, taskId) {
@@ -236,14 +254,16 @@ export const useTaskStore = defineStore("TaskStore", {
 
     addTaskFile(file) {
       this.taskFiles.push(file);
-    },  
+    },
 
     deleteTaskFile(fileName) {
-      const index = this.taskFiles.findIndex(file => file.fileName === fileName);
+      const index = this.taskFiles.findIndex(
+        (file) => file.fileName === fileName
+      );
       if (index !== -1) {
-      this.taskFiles.splice(index, 1);
+        this.taskFiles.splice(index, 1);
       }
-    }
+    },
 
     //FIX: this function is not used
     // async loadFilterTasks(arrayStatusesName, sortType) {

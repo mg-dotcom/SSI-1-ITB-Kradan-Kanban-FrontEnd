@@ -66,6 +66,16 @@ const updatedTaskWithFiles = async (url, updatedTaskData, updatedTaskFiles) => {
   return res;
 };
 
+const fetchFilePreview = async (url) => {
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${useUserToken().value}`,
+    },
+  });
+  return res;
+};
+
 const deleteTaskFile = async (url) => {
   const res = await fetch(url, {
     method: "DELETE",
@@ -101,4 +111,5 @@ export {
   fetchFilterTasks,
   updatedTaskWithFiles,
   deleteTaskFile,
+  fetchFilePreview,
 };

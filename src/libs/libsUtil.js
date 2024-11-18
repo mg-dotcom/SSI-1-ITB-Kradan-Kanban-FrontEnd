@@ -2,6 +2,7 @@ import { ref } from "vue";
 import router from "@/router/page.js";
 import { useUserStore, useUserToken } from "@/stores/UserStore";
 import { CookieUtil } from "./CookieUtil";
+import { useTaskStore } from "@/stores/TaskStore";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -51,58 +52,51 @@ const getFileIcon = (fileName) => {
 
 const byteToMB = (bytes) => (bytes / (1024 * 1024)).toFixed(2);
 
-const openFile = (file) => {
-  try {
-    let blob;
-    if (typeof file.fileData === "string") {
-      const byteArray = base64ToArrayBuffer(file.fileData);
-      blob = new Blob([byteArray], { type: file.contentType });
-    } else if (file.fileData instanceof Blob) {
-      blob = file.fileData;
-    } else {
-      blob = new Blob([file.fileData], { type: file.contentType });
-    }
+const openFile = async (file, taskId, fileInList) => {
+  const taskStore = useTaskStore();
+  const extension = file.fileName.split(".").pop().toLowerCase();
+  const fileInListItem = fileInList.find(
+    (item) => item.fileName === file.fileName
+  );
+  const handleFileOpening = (blob, fileName) => {
     const fileURL = URL.createObjectURL(blob);
-    const extension = file.fileName.split(".").pop().toLowerCase();
-    if (extension === "txt" || extension === "rtf") {
+
+    if (["pdf", "jpg", "png"].includes(extension)) {
+      window.open(fileURL, "_blank");
+    } else if (["txt", "rtf"].includes(extension)) {
       const reader = new FileReader();
-      reader.readAsText(blob, "UTF-8");
-      reader.onload = function (event) {
+      reader.onload = (event) => {
         const textContent = event.target.result;
-        const textWindow = window.open("", "_blank");
+        const textWindow = window.open(fileURL, "_blank");
         textWindow.document.write("<pre>" + textContent + "</pre>");
         textWindow.document.close();
       };
-    } else if (["jpg", "png", "pdf"].includes(extension)) {
-      const tabName = file.fileName;
-      window.open(fileURL, tabName);
-    } else if (["docx", "xlsx"].includes(extension)) {
+      reader.readAsText(blob, "UTF-8");
+    } else {
       const link = document.createElement("a");
       link.href = fileURL;
-      link.download = file.fileName;
-      document.body.appendChild(link);
+      link.download = fileName;
       link.click();
-      document.body.removeChild(link);
-    } else {
-      const downloadLink = document.createElement("a");
-      downloadLink.href = fileURL;
-      downloadLink.download = file.fileName;
-      downloadLink.click();
     }
-  } catch (error) {
-    console.error("Error opening file:", error);
+  };
+  if (fileInListItem) {
+    handleFileOpening(fileInListItem.fileData, fileInListItem.fileName);
+  } else {
+    try {
+      const res = await taskStore.fetchFilePreview(file.fileName, taskId);
+
+      if (res.status === 200) {
+        const blob = await res.blob();
+        handleFileOpening(blob, file.fileName);
+      } else {
+        console.error("File not found on the server");
+      }
+    } catch (error) {
+      console.error("Error fetching file:", error);
+    }
   }
 };
 
-function base64ToArrayBuffer(base64) {
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-}
 
 export function handleResponseStatus(res) {
   if (router.currentRoute.value.name === "board-invitation") {
