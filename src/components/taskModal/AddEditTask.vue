@@ -198,23 +198,25 @@ const onFileChanged = (e) => {
         contentType: file.type
     })
 
-
+        const countFail=ref(0)
         files.forEach((file) => {
         const fileObject = createFileObject(file)
+        newFiles.value.push(fileObject)
         
         const duplicateFileName = selectedTask.value.files.some(
                 (file) => fileObject.fileName === file.fileName)
-                console.log('duplicateFileName',duplicateFileName);
             
         const exceedFileSize = fileObject.fileData.size > MAX_FILE_SIZE
 
-        const exceedFileLength = newFiles.value.length+selectedTask.value.files.length > MAX_FILES
+        const exceedFileLength = selectedTask.value.files.length >= MAX_FILES
 
+        if(duplicateFileName===true||exceedFileLength===true||exceedFileSize===true){
+            countFail.value++
+        }
         if (
-            (duplicateFileName && (exceedFileSize || exceedFileLength)) ||
-            (exceedFileSize && (duplicateFileName || exceedFileLength)) ||
-            (exceedFileLength && (duplicateFileName || exceedFileSize))
+            countFail.value > 1
         ) {
+            
             toast.add({
                 severity: 'error',
                 summary: 'Error',
@@ -277,7 +279,7 @@ const onFileChanged = (e) => {
             newFiles.value = [];
             return
         }
-        newFiles.value.push(fileObject)
+
     selectedTask.value.files.push(fileObject)
 })
 
