@@ -5,8 +5,10 @@ import { CookieUtil } from "./CookieUtil";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
-const ICON_PATH=import.meta.env.VITE_APP_MODE === "production" ? "/ssi1/attachments" : "/attachments";
-
+const ICON_PATH =
+  import.meta.env.VITE_APP_MODE === "production"
+    ? "/ssi1/attachments"
+    : "/attachments";
 
 const formatDate = (date) => {
   const d = new Date(date);
@@ -103,8 +105,8 @@ function base64ToArrayBuffer(base64) {
 }
 
 export function handleResponseStatus(res) {
-  if (router.currentRoute.value.name === 'board-invitation') {
-    return
+  if (router.currentRoute.value.name === "board-invitation") {
+    return;
   }
   if (
     (!CookieUtil.get("access_token") && res.status === 401) ||
