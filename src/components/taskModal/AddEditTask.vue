@@ -201,21 +201,12 @@ const onFileChanged = (e) => {
 
         files.forEach((file) => {
         const fileObject = createFileObject(file)
-        newFiles.value.push(fileObject)
-
-        console.log('selectedTask',selectedTask.value.files);
-        console.log('newFiles',newFiles.value);
         
-        const duplicateFileName = newFiles.value.some((newFile) =>
-            selectedTask.value.files.some(
-                (originalFile) => newFile.fileName === originalFile.fileName
-            )
-        )
-            console.log('duplicateFileName',duplicateFileName);
+        const duplicateFileName = selectedTask.value.files.some(
+                (file) => fileObject.fileName === file.fileName)
+                console.log('duplicateFileName',duplicateFileName);
             
-        const exceedFileSize = newFiles.value.some(
-            (file) => file.fileData.size > MAX_FILE_SIZE
-        )
+        const exceedFileSize = fileObject.fileData.size > MAX_FILE_SIZE
 
         const exceedFileLength = newFiles.value.length+selectedTask.value.files.length > MAX_FILES
 
@@ -286,6 +277,7 @@ const onFileChanged = (e) => {
             newFiles.value = [];
             return
         }
+        newFiles.value.push(fileObject)
     selectedTask.value.files.push(fileObject)
 })
 
