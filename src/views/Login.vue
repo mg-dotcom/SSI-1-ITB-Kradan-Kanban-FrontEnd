@@ -1,16 +1,21 @@
 <script setup>
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useRouter } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { signInAzure, handleRedirectCallback } from "../libs/auth.js";
 const router = useRouter();
 const userStore = useUserStore();
 const boardStore = useBoardStore();
 const isError = ref(false);
 const username = ref("");
 const password = ref("");
+
+onMounted(() => {
+  handleRedirectCallback();
+});
 
 const isUsernameValid = computed(
   () => username.value.length > 0 && username.value.length <= 50
@@ -65,6 +70,10 @@ const signIn = async () => {
   } catch (error) {
     isError.value = true;
   }
+};
+
+const signInWithMicrosoft = async () => {
+  await signInAzure();
 };
 </script>
 
@@ -184,6 +193,7 @@ const signIn = async () => {
           <div>
             <button
               class="itbkk-button-signin-microsoft-team btn w-full bg-white hover:bg-gray-100 text-gray-700 font-bold px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-300"
+              @click="signInWithMicrosoft"
             >
               <img src="/Microsoft_logo.png" alt="" class="w-5" />
               <span>Sign in with Microsoft</span>
