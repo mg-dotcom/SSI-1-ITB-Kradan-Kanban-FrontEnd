@@ -302,10 +302,16 @@ const onFileChanged = (e) => {
 
     let newFilesToAdd = [];
     let errorMessages = [];
+    let oversizedFiles = []; // Array to track files that exceed size
+    let excessFiles = []; // Array to track files that exceed max file limit
 
     files.forEach((file) => {
         const fileObject = createFileObject(file);
         const duplicateFileName = selectedTask.value.files.some(
+            (existingFile) => fileObject.fileName === existingFile.fileName
+        );
+        // Check for duplicate file name
+        const duplicateFileIndex = selectedTask.value.files.findIndex(
             (existingFile) => fileObject.fileName === existingFile.fileName
         );
 
@@ -314,22 +320,44 @@ const onFileChanged = (e) => {
         const exceedFileLength =
             selectedTask.value.files.length + newFilesToAdd.length >= MAX_FILES;
 
+        if (duplicateFileIndex !== -1) {
+        // Remove the existing file with the same name
+        selectedTask.value.files.splice(duplicateFileIndex, 1);
+        console.log(
+            `File "${fileObject.fileName}" replaced with new data.`
+        );
+        }
+
         if (duplicateFileName) {
             errorMessages.push(
-                `File "${fileObject.fileName}" has the same name as an existing attachment.`
+                `File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.`
             );
         } else if (exceedFileSize) {
-            errorMessages.push(
-                `File "${fileObject.fileName}" exceeds the maximum size of ${MAX_FILE_SIZE / 1024 / 1024} MB.`
-            );
+            oversizedFiles.push(fileObject.fileName); // Track oversized files
         } else if (exceedFileLength) {
-            errorMessages.push(
-                `Cannot add "${fileObject.fileName}". Each task can only have ${MAX_FILES} files.`
-            );
+            excessFiles.push(fileObject.fileName); // Track excess files
         } else {
             newFilesToAdd.push(fileObject);
         }
     });
+
+    // Add error message for oversized files
+    if (oversizedFiles.length > 0) {
+        errorMessages.push(
+            `Each file cannot be larger than ${
+                MAX_FILE_SIZE / 1024 / 1024
+            } MB. The following files are not added: ${oversizedFiles.join(", ")}`
+        );
+    }
+
+    // Add error message for exceeding max file count
+    if (excessFiles.length > 0) {
+        errorMessages.push(
+            `Each task can have at most ${MAX_FILES} files. The following files are not added: ${excessFiles.join(
+                ", "
+            )}`
+        );
+    }
 
     // Add valid files to the selected task
     if (newFilesToAdd.length > 0) {
@@ -347,6 +375,7 @@ const onFileChanged = (e) => {
         });
     }
 };
+
 
 
 
