@@ -74,8 +74,8 @@ onMounted(async () => {
                     file.fileData instanceof File
                         ? file.fileData
                         : new File([new Blob([file.fileData])], file.fileName, {
-                              type: file.contentType
-                          }),
+                                type: file.contentType
+                            }),
                 contentType: file.contentType
             }))
         }
@@ -86,6 +86,9 @@ onMounted(async () => {
     } else if (mode == 'add') {
         selectedTask.value.statusId = statusStore.getStatuses[0].id
     }
+
+    console.log(selectedTask.value.files);
+    
 })
 
 const limitExceed = ref(false)
@@ -190,100 +193,163 @@ const removeFile = (file) => {
     newFiles.value = newFiles.value.filter((f) => f.fileName !== file.fileName)
 }
 
+// const onFileChanged = (e) => {
+//     const files = Array.from(e.target.files)
+//     const createFileObject = (file) => ({
+//         fileName: file.name,
+//         fileData: file,
+//         contentType: file.type
+//     })
+
+//         const countFail=ref(0)
+//         files.forEach((file) => {
+//         const fileObject = createFileObject(file)
+//         newFiles.value.push(fileObject)
+//         console.log('file object',fileObject.fileName);
+        
+//         console.log('new file',newFiles.value);
+        
+        
+//         const duplicateFileName = selectedTask.value.files.some(
+//                 (file) => fileObject.fileName === file.fileName)
+            
+//         const exceedFileSize = fileObject.fileData.size > MAX_FILE_SIZE
+
+//         const exceedFileLength = selectedTask.value.files.length >= MAX_FILES
+
+//         if(duplicateFileName===true||exceedFileLength===true||exceedFileSize===true){
+//             countFail.value++
+//         }
+//         if (
+//             countFail.value > 1
+//         ) {
+            
+//             toast.add({
+//                 severity: 'error',
+//                 summary: 'Error',
+//                 detail:
+//                     '         - Each task can have at most 10 files.\n' +
+//                     '         - Each file cannot be larger than 20 MB.\n' +
+//                     '         - File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.\n' +
+//                     '            The following files are not added: \n' +
+//                     `${newFiles.value
+//                         .filter((newFile) =>
+//                             originalTaskData.value.files.some(
+//                                 (originalFile) =>
+//                                     newFile.fileName === originalFile.fileName
+//                             )
+//                         )
+//                         .map((file) => file.fileName)
+//                         .join(', ')}`,
+
+//                 life: 3000
+//             })
+//             newFiles.value = [];
+//             return
+//     }
+//     if (duplicateFileName) {
+//             toast.add({
+//                 severity: 'error',
+//                 summary: 'Error',
+//                 detail: 'File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.',
+//                 life: 3000
+//             })
+//             newFiles.value = [];
+//             return
+//         }
+
+//         if (exceedFileSize) {
+
+//             toast.add({
+//                 severity: 'error',
+//                 summary: 'Error',
+//                 detail: `Each file cannot be larger than 20 MB. The following files are not added : ${newFiles.value
+//                     .filter((file) => file.fileData.size > MAX_FILE_SIZE)
+//                     .map((file) => file.fileName)
+//                     .join(', ')}`,
+//                 life: 3000
+//             })
+//             newFiles.value = [];
+//             return
+//         }
+
+//         if (exceedFileLength) {
+//             toast.add({
+//                 severity: 'error',
+//                 summary: 'Error',
+//                 detail: `Each task can have at most ${MAX_FILES} files. The following files are not added: ${newFiles.value
+//                     .slice(MAX_FILES - selectedTask.value.files.length+1)
+//                     .map((file) => file.fileName)
+//                     .join(', ')}`,
+//                 life: 3000
+//             })
+//             newFiles.value = [];
+//             return
+//         }
+
+//     selectedTask.value.files.push(fileObject)
+// })
+
+// }
+
 const onFileChanged = (e) => {
-    const files = Array.from(e.target.files)
+    const files = Array.from(e.target.files);
     const createFileObject = (file) => ({
         fileName: file.name,
         fileData: file,
-        contentType: file.type
-    })
+        contentType: file.type,
+    });
 
-        const countFail=ref(0)
-        files.forEach((file) => {
-        const fileObject = createFileObject(file)
-        newFiles.value.push(fileObject)
-        
+    let newFilesToAdd = [];
+    let errorMessages = [];
+
+    files.forEach((file) => {
+        const fileObject = createFileObject(file);
         const duplicateFileName = selectedTask.value.files.some(
-                (file) => fileObject.fileName === file.fileName)
-            
-        const exceedFileSize = fileObject.fileData.size > MAX_FILE_SIZE
+            (existingFile) => fileObject.fileName === existingFile.fileName
+        );
 
-        const exceedFileLength = selectedTask.value.files.length >= MAX_FILES
+        const exceedFileSize = fileObject.fileData.size > MAX_FILE_SIZE;
 
-        if(duplicateFileName===true||exceedFileLength===true||exceedFileSize===true){
-            countFail.value++
+        const exceedFileLength =
+            selectedTask.value.files.length + newFilesToAdd.length >= MAX_FILES;
+
+        if (duplicateFileName) {
+            errorMessages.push(
+                `File "${fileObject.fileName}" has the same name as an existing attachment.`
+            );
+        } else if (exceedFileSize) {
+            errorMessages.push(
+                `File "${fileObject.fileName}" exceeds the maximum size of ${MAX_FILE_SIZE / 1024 / 1024} MB.`
+            );
+        } else if (exceedFileLength) {
+            errorMessages.push(
+                `Cannot add "${fileObject.fileName}". Each task can only have ${MAX_FILES} files.`
+            );
+        } else {
+            newFilesToAdd.push(fileObject);
         }
-        if (
-            countFail.value > 1
-        ) {
-            
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail:
-                    '         - Each task can have at most 10 files.\n' +
-                    '         - Each file cannot be larger than 20 MB.\n' +
-                    '         - File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.\n' +
-                    '            The following files are not added: \n' +
-                    `${newFiles.value
-                        .filter((newFile) =>
-                            originalTaskData.value.files.some(
-                                (originalFile) =>
-                                    newFile.fileName === originalFile.fileName
-                            )
-                        )
-                        .map((file) => file.fileName)
-                        .join(', ')}`,
+    });
 
-                life: 3000
-            })
-            newFiles.value = [];
-            return
+    // Add valid files to the selected task
+    if (newFilesToAdd.length > 0) {
+        selectedTask.value.files.push(...newFilesToAdd);
+        console.log("Files successfully added:", newFilesToAdd);
     }
-    if (duplicateFileName) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'File with the same filename cannot be added or updated to the attachments. Please delete the attachment and add again to update the file.',
-                life: 3000
-            })
-            newFiles.value = [];
-            return
-        }
 
-        if (exceedFileSize) {
+    // Show error messages
+    if (errorMessages.length > 0) {
+        toast.add({
+            severity: "error",
+            summary: "Error",
+            detail: errorMessages.join("\n"),
+            life: 3000,
+        });
+    }
+};
 
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: `Each file cannot be larger than 20 MB. The following files are not added : ${newFiles.value
-                    .filter((file) => file.fileData.size > MAX_FILE_SIZE)
-                    .map((file) => file.fileName)
-                    .join(', ')}`,
-                life: 3000
-            })
-            newFiles.value = [];
-            return
-        }
 
-        if (exceedFileLength) {
-            toast.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: `Each task can have at most ${MAX_FILES} files. The following files are not added: ${newFiles.value
-                    .slice(MAX_FILES - selectedTask.value.files.length+1)
-                    .map((file) => file.fileName)
-                    .join(', ')}`,
-                life: 3000
-            })
-            newFiles.value = [];
-            return
-        }
 
-    selectedTask.value.files.push(fileObject)
-})
-
-}
 
 </script>
 
