@@ -258,12 +258,12 @@ const onFileChanged = (e) => {
 
   // Show error messages
   if (errorMessages.length > 0) {
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: errorMessages.join("\n"),
-      life: 3000,
-    });
+      toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: errorMessages.map((msg) => `- ${msg}`).join("\n"),
+          life: 3000,
+      });
   }
 };
 </script>
