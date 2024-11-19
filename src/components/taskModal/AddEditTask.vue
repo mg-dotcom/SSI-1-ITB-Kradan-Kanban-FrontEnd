@@ -253,6 +253,7 @@ const onFileChanged = (e) => {
   // Add valid files to the selected task
   if (newFilesToAdd.length > 0) {
     selectedTask.value.files.push(...newFilesToAdd);
+    newFiles.value.push(...newFilesToAdd);
     console.log("Files successfully added:", newFilesToAdd);
   }
 

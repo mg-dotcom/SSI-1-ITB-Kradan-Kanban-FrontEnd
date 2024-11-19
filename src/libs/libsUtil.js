@@ -3,6 +3,7 @@ import router from "@/router/page.js";
 import { useUserStore, useUserToken } from "@/stores/UserStore";
 import { CookieUtil } from "./CookieUtil";
 import { useTaskStore } from "@/stores/TaskStore";
+import { useRoute } from "vue-router";
 
 const localTimeZone = ref(Intl.DateTimeFormat().resolvedOptions().timeZone);
 
@@ -52,51 +53,61 @@ const getFileIcon = (fileName) => {
 
 const byteToMB = (bytes) => (bytes / (1024 * 1024)).toFixed(2);
 
+const handleFile = (blob, extension, fileName) => {
+  const fileURL = URL.createObjectURL(blob);
+
+  if (["pdf", "jpg", "png"].includes(extension)) {
+    window.open(fileURL, "_blank");
+  } else if (["txt", "rtf"].includes(extension)) {
+    const reader = new FileReader();
+    reader.readAsText(blob, "UTF-8");
+    reader.onload = function (event) {
+      const textContent = event.target.result;
+      const textWindow = window.open("", "_blank");
+      textWindow.document.write("<pre>" + textContent + "</pre>");
+      textWindow.document.close();
+    };
+  } else {
+    const link = document.createElement("a");
+    link.href = fileURL;
+    link.download = fileName;
+    link.click();
+  }
+};
+
 const openFile = async (file, taskId, fileInList) => {
   const taskStore = useTaskStore();
   const extension = file.fileName.split(".").pop().toLowerCase();
-  const fileInListItem = fileInList.find(
-    (item) => item.fileName === file.fileName
-  );
-  const handleFileOpening = (blob, fileName) => {
-    const fileURL = URL.createObjectURL(blob);
 
-    if (["pdf", "jpg", "png"].includes(extension)) {
-      window.open(fileURL, "_blank");
-    } else if (["txt", "rtf"].includes(extension)) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const textContent = event.target.result;
-        const textWindow = window.open(fileURL, "_blank");
-        textWindow.document.write("<pre>" + textContent + "</pre>");
-        textWindow.document.close();
-      };
-      reader.readAsText(blob, "UTF-8");
-    } else {
-      const link = document.createElement("a");
-      link.href = fileURL;
-      link.download = fileName;
-      link.click();
-    }
-  };
-  if (fileInListItem) {
-    handleFileOpening(fileInListItem.fileData, fileInListItem.fileName);
-  } else {
+  let fileInListItem = null;
+  if (fileInList !== null) {
+    fileInListItem = fileInList.find((item) => item.fileName === file.fileName);
+  }
+
+  if (fileInListItem && fileInListItem.fileData) {
+    // Handle file from local file list
+    handleFile(fileInListItem.fileData, extension, file.fileName);
+  } else if (fileInList === null || !fileInListItem) {
+    // If file is not in the local list, fetch it from the server
     try {
       const res = await taskStore.fetchFilePreview(file.fileName, taskId);
 
       if (res.status === 200) {
         const blob = await res.blob();
-        handleFileOpening(blob, file.fileName);
+        handleFile(blob, extension, file.fileName);
       } else {
-        console.error("File not found on the server");
+        console.error(
+          "Failed to fetch the file from the server. Status:",
+          res.status
+        );
       }
     } catch (error) {
-      console.error("Error fetching file:", error);
+      console.error("An error occurred while fetching the file:", error);
     }
+  } else {
+    console.error("Invalid file or file data.");
   }
 };
-
 
 export function handleResponseStatus(res) {
   if (router.currentRoute.value.name === "board-invitation") {
