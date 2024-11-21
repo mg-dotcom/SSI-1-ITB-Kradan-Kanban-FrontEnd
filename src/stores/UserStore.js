@@ -5,21 +5,8 @@ import { useRoute, useRouter } from "vue-router";
 import { jwtDecode } from "jwt-decode";
 import { CookieUtil } from "../libs/CookieUtil.js";
 import { computed, watch } from "vue";
-import * as msal from "@azure/msal-browser";
 
 const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT;
-const AZURE_CLIENT_ID = import.meta.env.VITE_AZURE_CLIENT_ID;
-const AZURE_TENANT_ID = import.meta.env.VITE_AZURE_TENANT_ID;
-
-const msalConfig = {
-  auth: {
-    clientId: AZURE_CLIENT_ID,
-    authority: `https://login.microsoftonline.com/${AZURE_TENANT_ID}`,
-    redirectUri: "http://localhost:5173",
-  },
-};
-
-const msalInstance = new msal.PublicClientApplication(msalConfig);
 
 export const useUserStore = defineStore("UserStore", {
   state: () => ({
@@ -74,16 +61,9 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
 
-    async loginWithMicrosoft() {
-      try {
-        // Trigger Microsoft login redirect
-        await msalInstance.loginRedirect({
-          scopes: ["user.read"], // Required Microsoft Graph scopes
-        });
-      } catch (error) {
-        console.error("Error during login:", error);
-      }
-    },
+    async loginWithMicrosoft() {},
+
+    
     logout() {
       this.user = {};
       this.token = "";
