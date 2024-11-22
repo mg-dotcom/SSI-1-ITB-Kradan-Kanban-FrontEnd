@@ -24,9 +24,6 @@ const selectedCollabOid = ref("");
 const emojiPicker = ref(null);
 const selectedBoardId = ref("");
 
-onMounted(async () => {
-  console.log(boardStore.getCollabBoard());
-});
 
 onClickOutside(emojiPicker, () => {
   isEmojiPickerVisible.value = false;

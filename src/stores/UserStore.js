@@ -1,17 +1,26 @@
 import { defineStore } from "pinia";
-import { fetchUser, fetchToken } from "../libs/FetchUser.js";
+import {
+  fetchUser,
+  fetchToken,
+  fetchLoginWithMicrosoft,
+} from "../libs/FetchUser.js";
 import { useBoardStore } from "./BoardStore.js";
 import { useRoute, useRouter } from "vue-router";
 import { jwtDecode } from "jwt-decode";
+import MsConfig from "../libs/msalConfig.js";
 import { CookieUtil } from "../libs/CookieUtil.js";
 import { computed, watch } from "vue";
+import { useToast } from "primevue/usetoast";
+import * as msal from "@azure/msal-browser";
 
 const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT;
-
+const USER_AZURE_ENDPOINT = import.meta.env.VITE_USER_AZURE_ENDPOINT;
+const msalInstance = new msal.PublicClientApplication(MsConfig);
 export const useUserStore = defineStore("UserStore", {
   state: () => ({
     user: {},
     userStore: useUserStore(),
+    toast: useToast(),
     boardStore: useBoardStore(),
     token: CookieUtil.get("access_token") || "",
     refreshToken: CookieUtil.get("refresh_token") || "",
@@ -61,9 +70,39 @@ export const useUserStore = defineStore("UserStore", {
       }
     },
 
-    async loginWithMicrosoft() {},
+    async initializeMsal() {
+      try {
+        await msalInstance.initialize();
+        console.log("MSAL initialized successfully.");
+      } catch (error) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to initialize MSAL",
+        });
+      }
+    },
 
-    
+    async loginWithMicrosoft() {
+      try {
+        const loginResponse = await msalInstance.loginPopup({
+          scopes: ["User.ReadBasic.All"],
+        });
+        console.log(loginResponse);
+
+        const res = await fetchLoginWithMicrosoft(
+          `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
+          loginResponse.accessToken
+        );
+      } catch (error) {
+        this.toast.add({
+          severity: "error",
+          summary: "Error",
+          detail: "Failed to login with Microsoft",
+        });
+      }
+    },
+
     logout() {
       this.user = {};
       this.token = "";

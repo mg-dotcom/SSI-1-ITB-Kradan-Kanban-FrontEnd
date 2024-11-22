@@ -5,7 +5,6 @@ import { useUserStore } from "@/stores/UserStore";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useRouter } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { signInAzure, handleRedirectCallback } from "../libs/auth.js";
 const router = useRouter();
 const userStore = useUserStore();
 const boardStore = useBoardStore();
@@ -13,8 +12,8 @@ const isError = ref(false);
 const username = ref("");
 const password = ref("");
 
-onMounted(() => {
-  handleRedirectCallback();
+onMounted(async () => {
+  await userStore.initializeMsal();
 });
 
 const isUsernameValid = computed(
@@ -73,7 +72,7 @@ const signIn = async () => {
 };
 
 const signInWithMicrosoft = async () => {
-  await signInAzure();
+  await userStore.loginWithMicrosoft();
 };
 </script>
 
