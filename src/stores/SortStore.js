@@ -1,17 +1,17 @@
-import { defineStore } from 'pinia'
+import { defineStore } from "pinia";
 
-export const useSortStore = defineStore('SortStore', {
+export const useSortStore = defineStore("SortStore", {
   state: () => ({
-    sortType: 'default'
+    sortType: "default",
   }),
   getters: {
     getSortType() {
-      return this.sortType
-    }
+      return this.sortType;
+    },
   },
   actions: {
     setSortType(type) {
-        this.sortType = type
-    }
-  }
-})
+      this.sortType = type;
+    },
+  },
+});

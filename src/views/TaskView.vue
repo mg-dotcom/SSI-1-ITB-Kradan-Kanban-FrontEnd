@@ -99,7 +99,8 @@ const openDelete = (id, index) => {
 const cycleSortType = () => {
   const currentIndex = sortTypes.indexOf(sortType.value);
   sortType.value = sortTypes[(currentIndex + 1) % sortTypes.length];
-  taskStore.loadSortTasks(sortType.value);
+  taskStore.loadSortTasks(sortType.value, taskStore.filterStatuses);
+
   sortStore.setSortType(sortType.value);
 };
 

@@ -97,8 +97,8 @@ const fetchFilterTasks = async (url, arr) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
   const data = await res.json();
+
   return data;
 };
 
