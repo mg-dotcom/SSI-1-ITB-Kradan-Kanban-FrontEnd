@@ -147,7 +147,7 @@ const clearFilter = () => {
 const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask);
   openLimit.value = false;
-  router.push({ name: "task" });
+  router.push({ name: "board-task" });
 };
 
 import { onClickOutside } from "@vueuse/core";
