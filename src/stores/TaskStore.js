@@ -7,6 +7,7 @@ import {
   updatedTaskWithFiles,
   fetchFilePreview,
   deleteTaskFile,
+  fetchFilterTasks,
 } from "../libs/FetchTask.js";
 import { sortTasks } from "../libs/libsUtil.js";
 import { useToast } from "primevue/usetoast";
@@ -265,18 +266,19 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
 
-    //FIX: this function is not used
-    // async loadFilterTasks(arrayStatusesName, sortType) {
-    //   if (arrayStatusesName.length === 0) {
-    //     await this.loadTasks();
-    //   } else {
-    //     const data = await fetchFilterTasks(
-    //       `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
-    //       arrayStatusesName
-    //     );
-    //     this.tasks = data;
-    //   }
-    //   sortTasks(this.tasks, sortType);
-    // },
+    async loadFilterTasks(arrayStatusesName, sortType) {
+      console.log("arrayStatusesName", arrayStatusesName);
+
+      if (arrayStatusesName.length === 0) {
+        await this.loadTasks();
+      } else {
+        const data = await fetchFilterTasks(
+          `${import.meta.env.VITE_BASE_URL}${TASK_ENDPOINT}`,
+          arrayStatusesName
+        );
+        this.tasks = data;
+      }
+      sortTasks(this.tasks, sortType);
+    },
   },
 });
