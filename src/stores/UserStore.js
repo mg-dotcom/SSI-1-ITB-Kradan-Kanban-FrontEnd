@@ -103,11 +103,11 @@ export const useUserStore = defineStore("UserStore", {
           `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
           loginResponse.accessToken
         );
-        if (res.status === 401 || res.status === 403) {
-          this.clearAllCookies();
-          window.location.href = "/login";
-          return;
-        }
+        // if (res.status === 401 || res.status === 403) {
+        //   // this.clearAllCookies();
+        //   // window.location.href = "/login";
+        //   return;
+        // }
         this.setAuthMethod("microsoft");
 
         const loginMSData = await res.json();
