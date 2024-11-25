@@ -37,42 +37,50 @@ const toggleShow = () => {
   showPassword.value = !showPassword.value;
 };
 
+const handleBoardRedirection = async () => {
+  await boardStore.loadBoards();
+
+  const user = userStore.getUser;
+  const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
+  const collabBoards = boardStore.getCollabBoard();
+
+  if (userStore.getRedirectAfterLogin) {
+    console.log(userStore.getRedirectAfterLogin);
+    router.push({
+      name: "board-invitation",
+      params: { id: userStore.getRedirectAfterLogin },
+    });
+    return;
+  }
+
+  if (boardByUserOid.length === 1 && collabBoards.length === 0) {
+    const currentBoard = boardByUserOid[0];
+    boardStore.setCurrentBoard(currentBoard);
+    router.push({ name: "board-task", params: { id: currentBoard.id } });
+  } else {
+    router.push({ name: "board" });
+  }
+};
+
 const signIn = async () => {
   try {
     await userStore.login({
       username: username.value,
       password: password.value,
     });
-
-    await boardStore.loadBoards();
-
-    const user = userStore.getUser;
-    const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
-    const collabBoards = boardStore.getCollabBoard();
-
-    if (userStore.getRedirectAfterLogin) {
-      console.log(userStore.getRedirectAfterLogin);
-      router.push({
-        name: "board-invitation",
-        params: { id: userStore.getRedirectAfterLogin },
-      });
-      return;
-    }
-
-    if (boardByUserOid.length === 1 && collabBoards.length === 0) {
-      const currentBoard = boardByUserOid[0];
-      boardStore.setCurrentBoard(currentBoard);
-      router.push({ name: "board-task", params: { id: currentBoard.id } });
-    } else {
-      router.push({ name: "board" });
-    }
+    await handleBoardRedirection();
   } catch (error) {
     isError.value = true;
   }
 };
 
 const signInWithMicrosoft = async () => {
-  await userStore.loginWithMicrosoft();
+  try {
+    await userStore.loginWithMicrosoft();
+    await handleBoardRedirection();
+  } catch (error) {
+    isError.value = true;
+  }
 };
 </script>
 

@@ -19,12 +19,33 @@ const formatDate = (date) => {
 const MAX_FILES = 10;
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
-const sortTasks = (tasks, sortType) => {
+const sortTasks = (tasks, sortType, filteredStatuses = []) => {
+  console.log(tasks);
+
+  // Filter tasks based on provided statuses
+  const filteredTasks = filteredStatuses.length
+    ? tasks.filter((task) => filteredStatuses.includes(task.status?.name || ""))
+    : tasks;
+
+  // Sort the filtered tasks
   if (sortType === "ascending") {
-    tasks.sort((a, b) => a.status.localeCompare(b.status));
+    filteredTasks.sort((a, b) => {
+      const statusA = a.status?.name || "";
+      const statusB = b.status?.name || "";
+      return statusA.localeCompare(statusB);
+    });
   } else if (sortType === "descending") {
-    tasks.sort((a, b) => b.status.localeCompare(a.status));
+    filteredTasks.sort((a, b) => {
+      const statusA = a.status?.name || "";
+      const statusB = b.status?.name || "";
+      return statusB.localeCompare(statusA);
+    });
+  } else {
+    // Default sort by ID
+    filteredTasks.sort((a, b) => a.id - b.id);
   }
+
+  return filteredTasks; // Return the sorted filtered tasks
 };
 
 const getFileIcon = (fileName) => {
@@ -96,7 +117,6 @@ const openFile = async (file, taskId, fileInList) => {
     }
   }
 };
-
 
 export function handleResponseStatus(res) {
   if (router.currentRoute.value.name === "board-invitation") {

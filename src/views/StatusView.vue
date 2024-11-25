@@ -99,7 +99,7 @@ const transferStatus = async (currentStatusId, newStatusId) => {
   );
 
   openTransfer.value = false;
-  router.push({ name: "status" });
+  router.push({ name: "board-status" });
 };
 
 const openLimitStatus = () => {
@@ -109,7 +109,7 @@ const openLimitStatus = () => {
 const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
   await statusStore.editStatusSetting(id, limitMaximumTask, maximumTask);
   openLimit.value = false;
-  router.push({ name: "status" });
+  router.push({ name: "board-status" });
 };
 </script>
 

@@ -31,8 +31,6 @@ const fetchToken = async (url) => {
 };
 
 const fetchLoginWithMicrosoft = async (url, accessTokenMicrosoft) => {
-  console.log(accessTokenMicrosoft);
-
   const res = await fetch(url, {
     method: "GET",
     headers: {

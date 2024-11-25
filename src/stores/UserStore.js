@@ -88,18 +88,35 @@ export const useUserStore = defineStore("UserStore", {
         const loginResponse = await msalInstance.loginPopup({
           scopes: ["User.ReadBasic.All"],
         });
-        console.log(loginResponse);
 
         const res = await fetchLoginWithMicrosoft(
           `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
           loginResponse.accessToken
         );
+
+        const loginMSData = await res.json();
+
+        this.token = loginMSData.access_token;
+        this.refreshToken = loginMSData.refresh_token;
+
+        const decoded = jwtDecode(loginMSData.access_token);
+        if (decoded) {
+          this.user = decoded;
+          this.isLoggedIn = true;
+
+          const expires = new Date(Date.now() + 30 * 60 * 1000); // 30 minuts from now
+          const refreshToken = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24hours from now
+          CookieUtil.set("access_token", this.token, expires);
+          CookieUtil.set(
+            "refresh_token",
+            loginMSData.refresh_token,
+            refreshToken
+          );
+        } else {
+          alert("Failed to login with Microsoft");
+        }
       } catch (error) {
-        this.toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: "Failed to login with Microsoft",
-        });
+        throw new Error(error.message);
       }
     },
 

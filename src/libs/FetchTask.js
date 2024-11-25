@@ -87,7 +87,6 @@ const deleteTaskFile = async (url) => {
   return res;
 };
 
-//FIXME: This function is cant fixed yet
 const fetchFilterTasks = async (url, arr) => {
   const param = new URLSearchParams();
   param.append("filterStatuses", arr);
@@ -98,8 +97,8 @@ const fetchFilterTasks = async (url, arr) => {
       Authorization: `Bearer ${useUserToken().value}`,
     },
   });
-  handleResponseStatus(res);
   const data = await res.json();
+
   return data;
 };
 
