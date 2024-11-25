@@ -26,6 +26,7 @@ export const useUserStore = defineStore("UserStore", {
     refreshToken: CookieUtil.get("refresh_token") || "",
     isLoggedIn: !!CookieUtil.get("access_token"),
     redirectAfterLogin: "",
+    authMethod: CookieUtil.get("authMethod"),
   }),
   getters: {
     getUser() {
@@ -42,6 +43,10 @@ export const useUserStore = defineStore("UserStore", {
     },
   },
   actions: {
+    setAuthMethod(method) {
+      this.authMethod = method;
+      CookieUtil.set("authMethod", method); // Set it in the cookie as well
+    },
     async login(user) {
       try {
         const data = await fetchUser(
@@ -49,6 +54,10 @@ export const useUserStore = defineStore("UserStore", {
           user
         );
         // initialize()
+
+        this.setAuthMethod("local");
+
+        // 30 minutes from now
         const decoded = jwtDecode(data.access_token);
         this.token = data.access_token;
         this.refreshToken = data.refresh_token;
@@ -93,6 +102,7 @@ export const useUserStore = defineStore("UserStore", {
           `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
           loginResponse.accessToken
         );
+        this.setAuthMethod("microsoft");
 
         const loginMSData = await res.json();
 
@@ -125,14 +135,29 @@ export const useUserStore = defineStore("UserStore", {
       this.token = "";
       this.refreshToken = "";
       this.isLoggedIn = false;
+      this.authMethod = "";
 
       // Remove the access token cookie when logging out
       CookieUtil.unset("access_token");
       CookieUtil.unset("refresh_token");
+      CookieUtil.unset("authMethod");
+    },
+
+    async logoutWithMicrosoft() {
+      this.user = {};
+      this.token = "";
+      this.refreshToken = "";
+      this.isLoggedIn = false;
+      CookieUtil.unset("authMethod");
+      // Redirect to Microsoft logout endpoint
+      const postLogoutRedirectUri = encodeURIComponent("http://localhost:5173"); // Your app's redirect URL
+      const logoutUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${postLogoutRedirectUri}`;
+      window.location.href = logoutUrl;
     },
 
     async initialize() {
       // Check if the token exists in the cookie during initialization
+
       const token = CookieUtil.get("access_token");
       if (token) {
         this.token = token;
