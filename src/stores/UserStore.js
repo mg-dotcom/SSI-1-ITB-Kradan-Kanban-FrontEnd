@@ -12,6 +12,7 @@ import { CookieUtil } from "../libs/CookieUtil.js";
 import { computed, watch } from "vue";
 import { useToast } from "primevue/usetoast";
 import * as msal from "@azure/msal-browser";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil.js";
 
 const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT;
 const USER_AZURE_ENDPOINT = import.meta.env.VITE_USER_AZURE_ENDPOINT;
@@ -102,6 +103,11 @@ export const useUserStore = defineStore("UserStore", {
           `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
           loginResponse.accessToken
         );
+        if (res.status === 401 || res.status === 403) {
+          this.clearAllCookies();
+          window.location.href = "/login";
+          return;
+        }
         this.setAuthMethod("microsoft");
 
         const loginMSData = await res.json();
@@ -129,6 +135,14 @@ export const useUserStore = defineStore("UserStore", {
         throw new Error(error.message);
       }
     },
+    clearAllCookies() {
+      const cookies = document.cookie.split(";");
+
+      cookies.forEach((cookie) => {
+        const cookieName = cookie.split("=")[0].trim();
+        document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      });
+    },
 
     logout() {
       this.user = {};
@@ -149,6 +163,8 @@ export const useUserStore = defineStore("UserStore", {
       this.refreshToken = "";
       this.isLoggedIn = false;
       CookieUtil.unset("authMethod");
+      CookieUtil.unset("access_token");
+      CookieUtil.unset("refresh_token");
       // Redirect to Microsoft logout endpoint
       const postLogoutRedirectUri = encodeURIComponent("http://localhost:5173"); // Your app's redirect URL
       const logoutUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${postLogoutRedirectUri}`;

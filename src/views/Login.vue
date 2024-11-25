@@ -5,6 +5,7 @@ import { useUserStore } from "@/stores/UserStore";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useRouter } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { CookieUtil } from "@/libs/CookieUtil";
 const router = useRouter();
 const userStore = useUserStore();
 const boardStore = useBoardStore();
@@ -29,6 +30,7 @@ const isFormValid = computed(
 watch([username, password], () => {
   if (isError.value) {
     isError.value = false;
+    CookieUtil.unset("authMethod");
   }
 });
 
