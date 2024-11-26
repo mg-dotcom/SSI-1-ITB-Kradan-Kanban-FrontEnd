@@ -24,10 +24,6 @@ const selectedCollabOid = ref("");
 const emojiPicker = ref(null);
 const selectedBoardId = ref("");
 
-onMounted(async () => {
-  console.log(boardStore.getCollabBoard());
-});
-
 onClickOutside(emojiPicker, () => {
   isEmojiPickerVisible.value = false;
 });
@@ -71,6 +67,10 @@ const confirmLeaveCollab = async () => {
 
   leaveCollabModal.value = false;
 };
+
+onMounted(() => {
+  console.log(userStore.authMethod);
+});
 </script>
 
 <template>
@@ -248,7 +248,10 @@ const confirmLeaveCollab = async () => {
                       :class="{ 'bg-[#2D7DF8]': collab.status === 'PENDING' }"
                       @click.stop="
                         collab.status === 'PENDING'
-                          ? router.push({ name: 'board-invitation',params : {id:collab.boardId }})
+                          ? router.push({
+                              name: 'board-invitation',
+                              params: { id: collab.boardId },
+                            })
                           : handleLeaveCollab(collab.boardId, collab.oid)
                       "
                     >

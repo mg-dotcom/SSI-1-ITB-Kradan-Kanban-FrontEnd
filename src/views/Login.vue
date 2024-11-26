@@ -1,16 +1,21 @@
 <script setup>
 import GradientLoginBg from "@/components/gradientLoginBg.vue";
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useUserStore } from "@/stores/UserStore";
 import { useBoardStore } from "@/stores/BoardStore";
 import { useRouter } from "vue-router";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { CookieUtil } from "@/libs/CookieUtil";
 const router = useRouter();
 const userStore = useUserStore();
 const boardStore = useBoardStore();
 const isError = ref(false);
 const username = ref("");
 const password = ref("");
+
+onMounted(async () => {
+  await userStore.initializeMsal();
+});
 
 const isUsernameValid = computed(
   () => username.value.length > 0 && username.value.length <= 50
@@ -25,6 +30,7 @@ const isFormValid = computed(
 watch([username, password], () => {
   if (isError.value) {
     isError.value = false;
+    CookieUtil.unset("authMethod");
   }
 });
 
@@ -33,35 +39,47 @@ const toggleShow = () => {
   showPassword.value = !showPassword.value;
 };
 
+const handleBoardRedirection = async () => {
+  await boardStore.loadBoards();
+
+  const user = userStore.getUser;
+  const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
+  const collabBoards = boardStore.getCollabBoard();
+
+  if (userStore.getRedirectAfterLogin) {
+    console.log(userStore.getRedirectAfterLogin);
+    router.push({
+      name: "board-invitation",
+      params: { id: userStore.getRedirectAfterLogin },
+    });
+    return;
+  }
+
+  if (boardByUserOid.length === 1 && collabBoards.length === 0) {
+    const currentBoard = boardByUserOid[0];
+    boardStore.setCurrentBoard(currentBoard);
+    router.push({ name: "board-task", params: { id: currentBoard.id } });
+  } else {
+    router.push({ name: "board" });
+  }
+};
+
 const signIn = async () => {
   try {
     await userStore.login({
       username: username.value,
       password: password.value,
     });
+    await handleBoardRedirection();
+  } catch (error) {
+    isError.value = true;
+  }
+};
 
-    await boardStore.loadBoards();
-
-    const user = userStore.getUser;
-    const boardByUserOid = boardStore.findPersonalBoardByOid(user.oid);
-    const collabBoards = boardStore.getCollabBoard();
-
-    if (userStore.getRedirectAfterLogin) {
-      console.log(userStore.getRedirectAfterLogin);
-      router.push({
-        name: "board-invitation",
-        params: { id: userStore.getRedirectAfterLogin },
-      });
-      return;
-    }
-
-    if (boardByUserOid.length === 1 && collabBoards.length === 0) {
-      const currentBoard = boardByUserOid[0];
-      boardStore.setCurrentBoard(currentBoard);
-      router.push({ name: "board-task", params: { id: currentBoard.id } });
-    } else {
-      router.push({ name: "board" });
-    }
+const signInWithMicrosoft = async () => {
+  try {
+    await userStore.loginWithMicrosoft();
+    await handleBoardRedirection();
   } catch (error) {
     isError.value = true;
   }
@@ -184,6 +202,7 @@ const signIn = async () => {
           <div>
             <button
               class="itbkk-button-signin-microsoft-team btn w-full bg-white hover:bg-gray-100 text-gray-700 font-bold px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-300"
+              @click="signInWithMicrosoft"
             >
               <img src="/Microsoft_logo.png" alt="" class="w-5" />
               <span>Sign in with Microsoft</span>

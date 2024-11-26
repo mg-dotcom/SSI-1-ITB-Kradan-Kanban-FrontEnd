@@ -68,8 +68,10 @@ const updateStatus = async (url, id, updatedStatus) => {
 };
 
 const updateStatusSetting = async (url, updatedLimit) => {
-  const res = await fetch(`${url}/1/maximum-task`, {
-    method: "PATCH",
+  console.log("updatedLimit", updatedLimit);
+
+  const res = await fetch(`${url}`, {
+    method: "PUT",
     headers: {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,

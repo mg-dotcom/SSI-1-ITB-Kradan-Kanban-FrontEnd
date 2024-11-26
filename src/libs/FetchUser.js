@@ -30,4 +30,16 @@ const fetchToken = async (url) => {
   return data;
 };
 
-export { fetchUser, fetchToken };
+const fetchLoginWithMicrosoft = async (url, accessTokenMicrosoft) => {
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessTokenMicrosoft}`,
+    },
+  });
+
+  return res;
+};
+
+export { fetchUser, fetchToken, fetchLoginWithMicrosoft };

@@ -45,11 +45,13 @@ export const useStatusStore = defineStore("StatusStore", {
       this.statuses = data;
     },
 
-    // FIXME: This function is not working as expected
     async editStatusSetting(updatedLimit, maximumTask) {
-      await checkTokenExpiration();
+      const boardId = this.boardStore.getCurrentBoard.id;
+      await checkTokenExpiration(boardId);
       const res = await updateStatusSetting(
-        `${import.meta.env.VITE_BASE_URL}${STATUS_ENDPOINT}`,
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/maximum-task`,
         updatedLimit
       );
       if (res.status >= 200 && res.status <= 299) {
@@ -151,6 +153,8 @@ export const useStatusStore = defineStore("StatusStore", {
 
     async editStatus(id, updatedStatus) {
       const boardId = this.boardStore.getCurrentBoard.id;
+      console.log(boardId);
+
       await checkTokenExpiration(boardId);
 
       const res = await updateStatus(
