@@ -18,6 +18,7 @@ const USER_ENDPOINT = import.meta.env.VITE_USER_ENDPOINT
 const USER_AZURE_ENDPOINT = import.meta.env.VITE_USER_AZURE_ENDPOINT
 const REDIRECT_URI = import.meta.env.VITE_AZURE_REDIRECT_URI
 const msalInstance = new msal.PublicClientApplication(MsConfig)
+
 export const useUserStore = defineStore('UserStore', {
     state: () => ({
         user: {},
@@ -28,7 +29,8 @@ export const useUserStore = defineStore('UserStore', {
         refreshToken: CookieUtil.get('refresh_token') || '',
         isLoggedIn: !!CookieUtil.get('access_token'),
         redirectAfterLogin: '',
-        authMethod: CookieUtil.get('authMethod')
+        authMethod: CookieUtil.get('authMethod'),
+        microsoftAccessToken:""
     }),
     getters: {
         getUser() {
@@ -105,15 +107,19 @@ export const useUserStore = defineStore('UserStore', {
                 const loginResponse = await msalInstance.loginPopup({
                     scopes: ['User.ReadBasic.All']
                 })
-
+                
+                this.microsoftAccessToken = loginResponse.accessToken
+                console.log("loginRes : ",this.microsoftAccessToken);
                 const res = await fetchLoginWithMicrosoft(
                     `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
                     loginResponse.accessToken
                 )
+
                 this.setAuthMethod('microsoft')
-
+                
                 const loginMSData = await res.json()
-
+                
+                
                 this.token = loginMSData.access_token
                 this.refreshToken = loginMSData.refresh_token
 
