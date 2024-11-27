@@ -2,7 +2,8 @@ import { defineStore } from 'pinia'
 import {
     fetchUser,
     fetchToken,
-    fetchLoginWithMicrosoft
+    fetchLoginWithMicrosoft,
+    fetchMicrosoftGraphUser
 } from '../libs/FetchUser.js'
 import { useBoardStore } from './BoardStore.js'
 import { useRoute, useRouter } from 'vue-router'
@@ -88,6 +89,36 @@ export const useUserStore = defineStore('UserStore', {
                 throw new Error(error.message)
             }
         },
+
+        async fetchGraphUserByEmail(userEmail) {
+            try {
+              // Check if Microsoft access token is already available
+              if (!this.microsoftAccessToken) {
+                // Acquire a new token if not present
+                const loginResponse = await msalInstance.acquireTokenSilent({
+                  scopes: ['User.ReadBasic.All'], // Ensure correct scope
+                });
+                this.microsoftAccessToken = loginResponse.accessToken;
+              }
+        
+              // Fetch the user using the access token
+              const userData = await fetchMicrosoftGraphUser(
+                this.microsoftAccessToken,
+                userEmail
+              );
+        
+              console.log('Fetched Microsoft Graph user data:', userData);
+              return userData;
+            } catch (error) {
+              console.error('Error fetching Microsoft Graph user:', error.message);
+              this.toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Failed to fetch user from Microsoft Graph.',
+              });
+              throw error; // Re-throw to handle in the calling function if needed
+            }
+          },
 
         async initializeMsal() {
             try {

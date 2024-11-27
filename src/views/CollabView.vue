@@ -169,44 +169,71 @@ const invitationUrl = ref(`${window.location.href}/invitations`);
 console.log(invitationUrl.value);
 
 const confirmAddCollab = async (email, accessRightValue) => {
-  const res = await collabStore.addCollab(boardId, {
-    email: email,
-    accessRight: accessRightValue,
-    url: invitationUrl.value
-  });
-  if (res.status === 401) {
-    handleAuthenticationClearAndRedirect();
-  } else if (res.status === 403) {
+  try {
+    // Step 1: Fetch user from Microsoft Graph
+    const msGraphUser = await fetchGraphUserByEmail(email);
+    console.log(msGraphUser);
+    
+    if (!msGraphUser) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: "User not found in Microsoft Entra (Azure AD).",
+        life: 3000,
+      });
+      return;
+    }
+
+    // Step 2: Attempt to add the collaborator
+    const res = await collabStore.addCollab(boardId, {
+      email: email,
+      accessRight: accessRightValue,
+      url: invitationUrl.value,
+    });
+
+    if (res.status === 401) {
+      handleAuthenticationClearAndRedirect();
+    } else if (res.status === 403) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: "You do not have permission to add board collaborators.",
+        life: 3000,
+      });
+    } else if (res.status === 404) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: "The user does not exist.",
+        life: 3000,
+      });
+    } else if (res.status === 409) {
+      toast.add({
+        severity: "error",
+        summary: "Error",
+        detail: "The user is already a collaborator of this board.",
+        life: 3000,
+      });
+    } else {
+      toast.add({
+        severity: "success",
+        summary: "Success",
+        detail: "Collaborator added successfully!",
+        life: 3000,
+      });
+      openAddCollabModal.value = false;
+    }
+  } catch (error) {
+    console.error("Error adding collaborator:", error);
     toast.add({
       severity: "error",
       summary: "Error",
-      detail: "You do not have permission to add board collaborator.",
+      detail: "An unexpected error occurred. Please try again later.",
       life: 3000,
     });
-  } else if (res.status === 404) {
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "The user does not exist.",
-      life: 3000,
-    });
-  } else if (res.status === 409) {
-    toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "The user is already a collaborator of this board.",
-      life: 3000,
-    });
-  } else {
-    toast.add({
-      severity: "success",
-      summary: "Success",
-      detail: "Collaborator added successfully!",
-      life: 3000,
-    });
-    openAddCollabModal.value = false;
   }
 };
+
 </script>
 
 <template>

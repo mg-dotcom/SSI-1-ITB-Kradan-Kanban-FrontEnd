@@ -42,17 +42,18 @@ const fetchLoginWithMicrosoft = async (url, accessTokenMicrosoft) => {
   return res;
 };
 
-const fetchMicrosoftGraphUser = async (accessToken, userEmail) => {
+const fetchMicrosoftGraphUser = async (userEmail) => {
   const graphUrl = `https://graph.microsoft.com/v1.0/users/${userEmail}`;
 
   const res = await fetch(graphUrl, {
     method: 'GET',
     headers: {
-      Authorization: `Bearer ${accessToken}`,
+      Authorization: `Bearer ${userStore.microsoftAccessToken}`,
       'Content-Type': 'application/json',
     },
   });
-
+  console.log(res);
+  
   if (!res.ok) {
     throw new Error(`Failed to fetch user: ${res.statusText}`);
   }
@@ -62,4 +63,4 @@ const fetchMicrosoftGraphUser = async (accessToken, userEmail) => {
 };
 
 
-export { fetchUser, fetchToken, fetchLoginWithMicrosoft };
+export { fetchUser, fetchToken, fetchLoginWithMicrosoft,fetchMicrosoftGraphUser };
