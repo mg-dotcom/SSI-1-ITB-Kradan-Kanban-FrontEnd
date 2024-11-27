@@ -76,23 +76,21 @@ const byteToMB = (bytes) => (bytes / (1024 * 1024)).toFixed(2);
 const openFile = async (file, taskId, fileInList) => {
   const taskStore = useTaskStore();
   const extension = file.fileName.split(".").pop().toLowerCase();
-  const fileInListItem = fileInList.find(
-    (item) => item.fileName === file.fileName
-  );
-  const handleFileOpening = (blob, fileName) => {
-    const fileURL = URL.createObjectURL(blob);
+  console.log(file, taskId, fileInList);
 
+  const openBlobFile = (blob, fileName) => {
+    const fileURL = URL.createObjectURL(blob);
     if (["pdf", "jpg", "png"].includes(extension)) {
       window.open(fileURL, "_blank");
     } else if (["txt", "rtf"].includes(extension)) {
       const reader = new FileReader();
+      reader.readAsText(blob, "UTF-8");
       reader.onload = (event) => {
         const textContent = event.target.result;
         const textWindow = window.open(fileURL, "_blank");
         textWindow.document.write("<pre>" + textContent + "</pre>");
         textWindow.document.close();
       };
-      reader.readAsText(blob, "UTF-8");
     } else {
       const link = document.createElement("a");
       link.href = fileURL;
@@ -100,20 +98,25 @@ const openFile = async (file, taskId, fileInList) => {
       link.click();
     }
   };
-  if (fileInListItem) {
-    handleFileOpening(fileInListItem.fileData, fileInListItem.fileName);
+
+  if (fileInList?.length > 0) {
+    const fileInListItem = fileInList.find((item) => item.fileName === file.fileName);
+    if (fileInListItem) {
+      openBlobFile(fileInListItem.fileData, fileInListItem.fileName);
+    } else {
+      console.error("File not found in the list");
+    }
   } else {
     try {
       const res = await taskStore.fetchFilePreview(file.fileName, taskId);
-
       if (res.status === 200) {
         const blob = await res.blob();
-        handleFileOpening(blob, file.fileName);
+        openBlobFile(blob, file.fileName);
       } else {
         console.error("File not found on the server");
       }
     } catch (error) {
-      console.error("Error fetching file:", error);
+      console.error("Error fetching file preview:", error);
     }
   }
 };

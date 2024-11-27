@@ -60,14 +60,14 @@ onMounted(async () => {
         }}
       </div>
     </template>
-    
+
     <template #attach>
       <div class="mt-2 text-black grid grid-cols-2 gap-3 relative">
         <div
           v-for="file in selectedTask.files"
           :title="file.fileName"
           class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
-          @click="openFile(file)"
+          @click="openFile(file, taskId)"
         >
           <div class="flex items-center">
             <img
