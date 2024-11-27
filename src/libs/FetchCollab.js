@@ -1,4 +1,4 @@
-import { useUserToken } from "../stores/UserStore.js";
+import { useUserToken,useUserStore } from "../stores/UserStore.js";
 
 const fetchCollab = async (url) => {
   const res = await fetch(`${url}`, {
@@ -18,6 +18,7 @@ const addCollab = async (url, collaborator) => {
     headers: {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,
+      AccessTokenMS: `${useUserStore().accessTokenMS}`
     },
 
     body: JSON.stringify({

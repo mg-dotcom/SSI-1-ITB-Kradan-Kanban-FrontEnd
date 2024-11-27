@@ -1,4 +1,5 @@
-import { useUserStore } from "@/stores/UserStore";
+import { useUserStore,useUserToken } from "@/stores/UserStore";
+
 
 const fetchUser = async (url, userLogin) => {
   const res = await fetch(`${url}`, {
@@ -36,6 +37,7 @@ const fetchLoginWithMicrosoft = async (url, accessTokenMicrosoft) => {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${accessTokenMicrosoft}`,
+      
     },
   });
 
@@ -46,14 +48,14 @@ const fetchMicrosoftGraphUser = async (userEmail) => {
   const graphUrl = `https://graph.microsoft.com/v1.0/users/${userEmail}`;
 
   const res = await fetch(graphUrl, {
-    method: 'GET',
+    method: "GET",
     headers: {
       Authorization: `Bearer ${userStore.microsoftAccessToken}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
   });
   console.log(res);
-  
+
   if (!res.ok) {
     throw new Error(`Failed to fetch user: ${res.statusText}`);
   }
@@ -62,5 +64,9 @@ const fetchMicrosoftGraphUser = async (userEmail) => {
   return data;
 };
 
-
-export { fetchUser, fetchToken, fetchLoginWithMicrosoft,fetchMicrosoftGraphUser };
+export {
+  fetchUser,
+  fetchToken,
+  fetchLoginWithMicrosoft,
+  fetchMicrosoftGraphUser,
+};

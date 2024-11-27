@@ -11,9 +11,7 @@ import { useBoardStore } from "@/stores/BoardStore";
 import { useCollabStore } from "@/stores/CollabStore";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "@/stores/UserStore";
-import {
-  handleAuthenticationClearAndRedirect,
-} from "@/libs/libsUtil";
+import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
 import buttonSubmit from "@/components/button/Button.vue";
 
 const boardStore = useBoardStore();
@@ -21,7 +19,7 @@ const route = useRoute();
 const boardId = route.params.id;
 const openAddCollabModal = ref(false);
 const openRemoveCollabModal = ref(false);
-const openCancelPendingCollabModal=ref(false)
+const openCancelPendingCollabModal = ref(false);
 const changeAcessRightModal = ref(false);
 const selectedCollabOid = ref("");
 const newAccessRight = ref("");
@@ -53,7 +51,6 @@ const isOwner = computed(() => {
   }
   return false;
 });
-
 
 const handleAccessRightChange = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
@@ -121,12 +118,12 @@ const handleRemoveCollab = (collabOid) => {
   openRemoveCollabModal.value = true;
 };
 
-const handleCancelPendingCollab=(collabOid)=>{
+const handleCancelPendingCollab = (collabOid) => {
   const collab = collabStore.getCollaborators.find((c) => c.oid === collabOid);
   name.value = collab.name;
   selectedCollabOid.value = collabOid;
   openCancelPendingCollabModal.value = true;
-}
+};
 
 const confirmRemoveCollab = async () => {
   const res = await collabStore.removeCollab(boardId, selectedCollabOid.value);
@@ -169,71 +166,54 @@ const invitationUrl = ref(`${window.location.href}/invitations`);
 console.log(invitationUrl.value);
 
 const confirmAddCollab = async (email, accessRightValue) => {
-  try {
-    // Step 1: Fetch user from Microsoft Graph
-    const msGraphUser = await fetchGraphUserByEmail(email);
-    console.log(msGraphUser);
-    
-    if (!msGraphUser) {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "User not found in Microsoft Entra (Azure AD).",
-        life: 3000,
-      });
-      return;
-    }
+  console.log("FROM confirmAddCollab : ", userStore.accessTokenMS);
 
-    // Step 2: Attempt to add the collaborator
-    const res = await collabStore.addCollab(boardId, {
-      email: email,
-      accessRight: accessRightValue,
-      url: invitationUrl.value,
-    });
-
-    if (res.status === 401) {
-      handleAuthenticationClearAndRedirect();
-    } else if (res.status === 403) {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "You do not have permission to add board collaborators.",
-        life: 3000,
-      });
-    } else if (res.status === 404) {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "The user does not exist.",
-        life: 3000,
-      });
-    } else if (res.status === 409) {
-      toast.add({
-        severity: "error",
-        summary: "Error",
-        detail: "The user is already a collaborator of this board.",
-        life: 3000,
-      });
-    } else {
-      toast.add({
-        severity: "success",
-        summary: "Success",
-        detail: "Collaborator added successfully!",
-        life: 3000,
-      });
-      openAddCollabModal.value = false;
-    }
-  } catch (error) {
-    console.error("Error adding collaborator:", error);
+  const res = await collabStore.addCollab(boardId, {
+    email: email,
+    accessRight: accessRightValue,
+    url: invitationUrl.value,
+  });
+  if (res.status >= 200 && res.status <= 299) {
     toast.add({
-      severity: "error",
-      summary: "Error",
-      detail: "An unexpected error occurred. Please try again later.",
+      severity: "success",
+      summary: "Success",
+      detail: "Collaborator added successfully!",
       life: 3000,
     });
   }
+  if (res.status === 401) {
+    handleAuthenticationClearAndRedirect();
+  } else if (res.status === 403) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "You do not have permission to add board collaborator.",
+      life: 3000,
+    });
+  } else if (res.status === 404) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "The user does not exist.",
+      life: 3000,
+    });
+  } else if (res.status === 409) {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "The user is already a collaborator of this board.",
+      life: 3000,
+    });
+  } else {
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: "An error has occurred",
+      life: 3000,
+    });
+    openAddCollabModal.value = false;
+  }
 };
-
 </script>
 
 <template>
@@ -326,7 +306,6 @@ const confirmAddCollab = async (email, accessRightValue) => {
                   class="itbkk-item py-4"
                   v-for="(collab, index) in collabStore.getCollaborators"
                   :key="index"
-                  
                 >
                   <td
                     class="text-center p-5 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
@@ -338,7 +317,11 @@ const confirmAddCollab = async (email, accessRightValue) => {
                     class="itbkk-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
                     :class="{ 'opacity-50': collab.status === 'PENDING' }"
                   >
-                    {{ collab.status === "PENDING" ? collab.name+"(Pending)" : collab.name }}
+                    {{
+                      collab.status === "PENDING"
+                        ? collab.name + "(Pending)"
+                        : collab.name
+                    }}
                   </td>
                   <td
                     class="itbkk-email text-sm border-b border-r border-gray-300 break-all"
@@ -380,9 +363,13 @@ const confirmAddCollab = async (email, accessRightValue) => {
                       }"
                       :disabled="!isOwner"
                       @click.prevent="
-                        collab.status==='PENDING' ? handleCancelPendingCollab(collab.oid) : handleRemoveCollab(collab.oid)
+                        collab.status === 'PENDING'
+                          ? handleCancelPendingCollab(collab.oid)
+                          : handleRemoveCollab(collab.oid)
                       "
-                      >{{ collab.status === 'PENDING'?"Cancel":"Remove" }}</SubmitButton
+                      >{{
+                        collab.status === "PENDING" ? "Cancel" : "Remove"
+                      }}</SubmitButton
                     >
                   </td>
                 </tr>
