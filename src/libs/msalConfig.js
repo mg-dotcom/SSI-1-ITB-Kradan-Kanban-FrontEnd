@@ -7,7 +7,7 @@ const MsConfig = {
     redirectUri: import.meta.env.VITE_AZURE_REDIRECT_URI,
   },
   cache: {
-    cacheLocation: "localStorage",
+    cacheLocation: "cookieStorage",
   },
 };
 

@@ -13,7 +13,14 @@ const router = useRouter();
 
 userStore.initialize();
 
-const logout = () => {
+const logout = async () => {
+  if (userStore.authMethod === "microsoft") {
+    // Properly call the logout function
+    await userStore.logoutWithMicrosoft(); // <-- Make sure you call the function
+    return;
+  }
+
+  // Proceed with the default logout
   userStore.logout();
   router.push({ name: "login" });
 };
@@ -47,10 +54,7 @@ onClickOutside(dropdownMenu, () => {
     />
     <div class="h-[90px] flex p-10 justify-between items-center">
       <h1 class="text-header text-white font-bold">IT-Bangmod Kradan Kanban</h1>
-      <div
-        class="flex items-center gap-2"
-        v-if="route.name !== 'login'"
-      >
+      <div class="flex items-center gap-2" v-if="route.name !== 'login'">
         <div class="group-user flex" v-if="isValidToken">
           <div class="relative w-max mx-auto">
             <button
