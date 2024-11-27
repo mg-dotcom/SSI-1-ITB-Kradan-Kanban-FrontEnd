@@ -200,6 +200,7 @@ const onFileChanged = (e) => {
 
   files.forEach((file) => {
     const fileObject = createFileObject(file);
+    newFiles.value.push(fileObject);
     const duplicateFileName = selectedTask.value.files.some(
       (existingFile) => fileObject.fileName === existingFile.fileName
     );
@@ -259,12 +260,12 @@ const onFileChanged = (e) => {
 
   // Show error messages
   if (errorMessages.length > 0) {
-      toast.add({
-          severity: "error",
-          summary: "Error",
-          detail: errorMessages.map((msg) => `- ${msg}`).join("\n"),
-          life: 3000,
-      });
+    toast.add({
+      severity: "error",
+      summary: "Error",
+      detail: errorMessages.map((msg) => `- ${msg}`).join("\n"),
+      life: 3000,
+    });
   }
 };
 </script>
