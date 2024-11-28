@@ -167,7 +167,6 @@ console.log(invitationUrl.value);
 
 const confirmAddCollab = async (email, accessRightValue) => {
   console.log("FROM confirmAddCollab : ", userStore.accessTokenMS);
-
   const res = await collabStore.addCollab(boardId, {
     email: email,
     accessRight: accessRightValue,
@@ -180,6 +179,8 @@ const confirmAddCollab = async (email, accessRightValue) => {
       detail: "Collaborator added successfully!",
       life: 3000,
     });
+    openAddCollabModal.value = false;
+    return;
   }
   if (res.status === 401) {
     handleAuthenticationClearAndRedirect();

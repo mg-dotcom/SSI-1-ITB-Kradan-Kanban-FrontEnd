@@ -31,7 +31,7 @@ export const useUserStore = defineStore("UserStore", {
     isLoggedIn: !!CookieUtil.get("access_token"),
     redirectAfterLogin: "",
     authMethod: CookieUtil.get("authMethod"),
-    accessTokenMS: CookieUtil.get("accessTokenMS"),
+    accessTokenMS: CookieUtil.get("accessTokenMS") || "",
   }),
   getters: {
     getUser() {
@@ -138,13 +138,15 @@ export const useUserStore = defineStore("UserStore", {
         });
 
         this.setAccessTokenMS(loginResponse.accessToken);
+        console.log("This.accessToken : ",this.accessTokenMS);
+        
         const res = await fetchLoginWithMicrosoft(
           `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
           loginResponse.accessToken
         );
 
         this.setAuthMethod("microsoft");
-
+        
         const loginMSData = await res.json();
 
         this.token = loginMSData.access_token;
@@ -190,7 +192,7 @@ export const useUserStore = defineStore("UserStore", {
       CookieUtil.unset("access_token");
       CookieUtil.unset("refresh_token");
       CookieUtil.unset("authMethod");
-      CookieUtil.unset("accessTokenMS");
+    //  CookieUtil.unset("accessTokenMS");
     },
 
     async logoutWithMicrosoft() {

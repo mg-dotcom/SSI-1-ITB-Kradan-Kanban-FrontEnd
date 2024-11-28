@@ -27,6 +27,9 @@ const addCollab = async (url, collaborator) => {
       url: collaborator.url
     }),
   });
+
+  console.log(`In fetch collab : `,useUserStore().accessTokenMS);
+  
   return res;
 };
 
