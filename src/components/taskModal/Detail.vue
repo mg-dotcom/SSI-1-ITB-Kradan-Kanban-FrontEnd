@@ -67,7 +67,7 @@ onMounted(async () => {
           v-for="file in selectedTask.files"
           :title="file.fileName"
           class="bg-[#f3f3f3] tooltip grid grid-cols-[auto,1fr,auto] p-2 rounded-md hover:bg-[#e2e2e2] transition-all duration-200 ease-in-out cursor-pointer justify-start items-center"
-          @click="openFile(file, taskId, null)"
+          @click="openFile(file, taskId)"
         >
           <div class="flex items-center">
             <img

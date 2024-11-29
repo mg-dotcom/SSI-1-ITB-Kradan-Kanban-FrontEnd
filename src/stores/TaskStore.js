@@ -162,7 +162,7 @@ export const useTaskStore = defineStore("TaskStore", {
       if (res.status === 200) {
         return res;
       } else {
-        handleResponseStatus(res);
+        // handleResponseStatus(res);
       }
     },
     async deleteTaskFile(file, taskId) {

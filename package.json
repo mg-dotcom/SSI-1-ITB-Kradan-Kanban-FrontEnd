@@ -15,6 +15,7 @@
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
   },
   "dependencies": {
+    "@azure/msal-browser": "^3.27.0",
     "@coreui/coreui": "^5.0.1",
     "@coreui/vue": "^5.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
