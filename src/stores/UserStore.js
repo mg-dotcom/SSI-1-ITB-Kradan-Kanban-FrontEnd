@@ -31,7 +31,7 @@ export const useUserStore = defineStore("UserStore", {
     isLoggedIn: !!CookieUtil.get("access_token"),
     redirectAfterLogin: "",
     authMethod: CookieUtil.get("authMethod"),
-    accessTokenMS: CookieUtil.get("accessTokenMS") || "",
+    accessTokenMS: localStorage.getItem("accessTokenMS") || "",
   }),
   getters: {
     getUser() {
@@ -50,7 +50,7 @@ export const useUserStore = defineStore("UserStore", {
   actions: {
     setAccessTokenMS(accessTokenMS) {
       this.accessTokenMS = accessTokenMS;
-      CookieUtil.set("accessTokenMS", accessTokenMS); // Set it in the cookie as well
+      localStorage.setItem("accessTokenMS", accessTokenMS);
     },
     setAuthMethod(method) {
       this.authMethod = method;
@@ -138,15 +138,14 @@ export const useUserStore = defineStore("UserStore", {
         });
 
         this.setAccessTokenMS(loginResponse.accessToken);
-        console.log("This.accessToken : ",this.accessTokenMS);
-        
+
         const res = await fetchLoginWithMicrosoft(
           `${import.meta.env.VITE_BASE_URL}${USER_AZURE_ENDPOINT}`,
           loginResponse.accessToken
         );
 
         this.setAuthMethod("microsoft");
-        
+
         const loginMSData = await res.json();
 
         this.token = loginMSData.access_token;
@@ -192,7 +191,7 @@ export const useUserStore = defineStore("UserStore", {
       CookieUtil.unset("access_token");
       CookieUtil.unset("refresh_token");
       CookieUtil.unset("authMethod");
-    //  CookieUtil.unset("accessTokenMS");
+      localStorage.removeItem("accessTokenMS");
     },
 
     async logoutWithMicrosoft() {
@@ -204,7 +203,7 @@ export const useUserStore = defineStore("UserStore", {
       CookieUtil.unset("authMethod");
       CookieUtil.unset("access_token");
       CookieUtil.unset("refresh_token");
-      CookieUtil.unset("accessTokenMS");
+      localStorage.removeItem("accessTokenMS");
       // Redirect to Microsoft logout endpoint
       const postLogoutRedirectUri = encodeURIComponent(REDIRECT_URI); // Your app's redirect URL
       const logoutUrl = `https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=${postLogoutRedirectUri}`;
