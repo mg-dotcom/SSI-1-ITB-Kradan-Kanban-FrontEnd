@@ -212,7 +212,7 @@ onMounted(() => {
                 <div class="flex flex-col justify-between">
                   <div>
                     <h3
-                      class="itbkk-board-name text-lg font-semibold leading-tight"
+                      class="itbkk-board-name text-lg font-semibold leading-tight text-black line-clamp-1"
                     >
                       {{
                         collab.boardName
