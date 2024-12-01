@@ -26,6 +26,7 @@
     </defs>
     <path fill="url(#gradient-bottom)" d="M0 0 H100 V100 H0 Z" />
   </svg>
+  <slot></slot>
 </template>
 
 <style scoped></style>

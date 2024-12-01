@@ -87,39 +87,47 @@ const signInWithMicrosoft = async () => {
 </script>
 
 <template>
-  <div class="flex h-screen font-nunito items-center overflow-hidden">
-    <GradientLoginBg class="h-screen" />
+  <div class="flex flex-col lg:flex-row h-screen font-nunito items-center p-7">
+    <!-- Left Section -->
+    <GradientLoginBg class="h-screen lg:h-full lg:w-1/2" />
     <div
-      class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-sky-300 p-8 w-[50vw] box-border ml-7 h-[93%] rounded-lg"
+      class="flex flex-col animated-background bg-gradient-to-r from-blue via-blue-500 to-sky-300 p-8 md-vertical:w-[50vw] w-full box-border h-[93%] md-vertical:h-full rounded-lg hide-on-mobile"
     >
       <div>
-        <h2 class="text-4xl text-start font-bold text-white">
+        <h2 class="text-2xl lg:text-4xl text-start font-bold text-white">
           School of Information <br />
           Technology.
         </h2>
       </div>
       <div class="flex justify-center flex-1">
-        <img class="w-7/12" src="../assets/logInImg.svg" alt="" />
+        <img
+          class="w-8/12 lg:w-[55%]"
+          src="../assets/logInImg.svg"
+          alt="Login Image"
+        />
       </div>
       <div>
-        <h2 class="text-2xl text-end font-bold text-white opacity-20">SSI-1</h2>
+        <h2
+          class="text-sm lg:text-2xl text-end font-bold text-white opacity-20"
+        >
+          SSI-1
+        </h2>
       </div>
     </div>
 
-    <div
-      class="w-full lg:w-1/2 flex items-center justify-center font-nunito h-screen"
-    >
-      <div class="max-w-md w-full p-6 scale-105">
-        <h1 class="text-3xl font-bold mb-6 text-black text-center">
+    <!-- Right Section -->
+    <div class="w-full lg:w-1/2 flex items-center justify-center h-screen">
+      <div class="max-w-md w-full p-6 scale-100 lg:scale-105">
+        <h1 class="text-2xl lg:text-3xl font-bold mb-6 text-black text-center">
           Welcome to ITB-KK
         </h1>
 
         <div class="space-y-4">
+          <!-- Username Input -->
           <div>
             <label class="block text-sm font-medium text-gray-700"
               >Username</label
             >
-
             <input
               type="text"
               id="username"
@@ -129,6 +137,7 @@ const signInWithMicrosoft = async () => {
             />
           </div>
 
+          <!-- Password Input -->
           <div>
             <label class="block text-sm font-medium text-gray-700"
               >Password</label
@@ -157,6 +166,7 @@ const signInWithMicrosoft = async () => {
             </div>
           </div>
 
+          <!-- Error Message -->
           <div
             class="flex gap-2 py-3 px-4 bg-rose-200 rounded popup"
             v-if="isError"
@@ -175,10 +185,12 @@ const signInWithMicrosoft = async () => {
                 d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span class="itbkk-message text-[#e65075] font-medium"
-              >Username or Password is incorrect</span
-            >
+            <span class="itbkk-message text-[#e65075] font-medium">
+              Username or Password is incorrect
+            </span>
           </div>
+
+          <!-- Sign In Button -->
           <div>
             <button
               :disabled="!isFormValid"
@@ -192,6 +204,7 @@ const signInWithMicrosoft = async () => {
             </button>
           </div>
 
+          <!-- Divider -->
           <div class="py-4">
             <div class="flex items-center justify-center">
               <div class="border-t border-gray-300 w-full"></div>
@@ -199,12 +212,14 @@ const signInWithMicrosoft = async () => {
               <div class="border-t border-gray-300 w-full"></div>
             </div>
           </div>
+
+          <!-- Microsoft Sign In -->
           <div>
             <button
-              class="itbkk-button-signin-microsoft-team btn w-full bg-white hover:bg-gray-100 text-gray-700 font-bold px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-300"
+              class="itbkk-button-signin-microsoft-team btn w-full bg-white hover:bg-gray-100 text-gray-700 font-bold px-4 rounded focus:outline-none focus:ring-2 focus:ring-gray-300 flex items-center justify-center gap-2"
               @click="signInWithMicrosoft"
             >
-              <img src="/Microsoft_logo.png" alt="" class="w-5" />
+              <img src="/Microsoft_logo.png" alt="Microsoft Logo" class="w-5" />
               <span>Sign in with Microsoft</span>
             </button>
           </div>
@@ -214,4 +229,10 @@ const signInWithMicrosoft = async () => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+@media (max-width: 1023px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
+</style>
