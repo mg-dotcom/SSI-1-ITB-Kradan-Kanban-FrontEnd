@@ -88,12 +88,12 @@ onMounted(() => {
           Personal Boards
         </div>
 
-        <div class="grid grid-cols-4 gap-32 p-7 pb-20 personal-board">
+        <div class="flex flex-wrap gap-x-8 gap-y-4 p-7 pb-10 personal-board">
           <div
             class="itbkk-button-create w-80 h-28 border-dashed border-[4px] border-[#e0dfdf] rounded-lg hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 group hover:bg-[#ffffff] flex items-center justify-center hover:shadow-md"
             @click="router.push({ name: 'board-add' })"
           >
-            <div class="flex justify-center items-center h-28">
+            <div class="flex justify-center items-center h-28 ">
               <div class="text-center">
                 <div class="flex justify-center items-center mb-2">
                   <img
@@ -113,7 +113,7 @@ onMounted(() => {
 
           <!-- v-for="(board, index) in boards" -->
           <div
-            class="itbkk-personal-item w-80 h-28 flex justify-between p-2 bg-white rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
+            class="itbkk-personal-item w-80 h-28 flex justify-between p-2 rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
             v-for="(board, index) in boardStore.getPersonalBoard()"
             :key="index"
             @click="
@@ -130,10 +130,10 @@ onMounted(() => {
                   {{ board.emoji }}
                 </div>
               </div>
-              <div class="flex flex-col justify-between">
+              <div class="flex flex-col justify-between text-black">
                 <div>
                   <h3
-                    class="itbkk-board-name text-lg font-semibold leading-tight"
+                    class="itbkk-board-name line-clamp-1 text-lg font-semibold leading-tight "
                   >
                     {{ board.name }}
                   </h3>
@@ -158,7 +158,7 @@ onMounted(() => {
                   </div>
                 </div>
 
-                <p class="itbkk-owner-name text-sm text-gray-500">
+                <p class="itbkk-owner-name text-sm text-gray-700">
                   {{ userStore.getUser.name }}
                 </p>
               </div>
@@ -169,7 +169,7 @@ onMounted(() => {
           <div class="itbkk-collab-board text-2xl font-bold text-blue">
             Collab Boards
           </div>
-          <div class="grid grid-cols-4 gap-32 p-7 pb-20">
+          <div class="flex flex-wrap gap-32 p-7 pb-20">
             <div
               v-if="boardStore.getCollabBoard().length <= 0"
               class="empty-collab-board bg-white w-80 h-28 flex items-center justify-center rounded-md border border-solid border-gray-300"
