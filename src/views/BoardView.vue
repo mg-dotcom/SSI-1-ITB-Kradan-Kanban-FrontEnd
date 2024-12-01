@@ -215,10 +215,12 @@ onMounted(() => {
                       class="itbkk-board-name text-lg font-semibold leading-tight"
                     >
                       {{
-                        collab.status === "PENDING"
-                          ? collab.boardName + " (Pending Invite)"
-                          : collab.boardName
+                        collab.boardName
                       }}
+                      <span
+                        v-if="collab.status === 'PENDING'"
+                        class="text-sm font-normal"
+                      >(Pending Invite)</span>
                     </h3>
                     <div class="flex items-center">
                       <p
