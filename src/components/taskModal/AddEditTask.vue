@@ -320,7 +320,7 @@ const onFileChanged = (e) => {
 
     <template #attach>
       <div
-        class="mt-2 text-black grid grid-cols-2 gap-3 relative"
+        class="mt-2 text-black grid grid-cols-2 gap-3 relative pb-5"
         v-if="mode === 'edit'"
       >
         <div
