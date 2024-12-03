@@ -43,7 +43,7 @@ const isOwner = computed(() => {
           <input
             type="text"
             placeholder="Type here"
-            class="input input-bordered w-full max-w-xs bg-white border-b-2 font-bold text-black"
+            class="input input-bordered w-80 max-w-xs bg-white border-b-2 font-bold text-black"
             v-model.trim="email"
             maxlength="50"
           />

@@ -35,8 +35,7 @@ const currentOwner = reactive({
 
 const invitationRes = reactive({
   accessRight: "",
-
-})
+});
 
 const confirmInvitation = async () => {
   collabStatus.value = "ACTIVE";
@@ -93,7 +92,7 @@ const declineInvitation = async () => {
 
 onMounted(async () => {
   const invitationRes = await collabStore.getInvitaionStatus(boardId);
-  const data = await invitationRes.json()
+  const data = await invitationRes.json();
   if (!invitationRes.ok || data.invitationStatus === "ACTIVE") {
     dontHasInvitation.value = true;
     return;
@@ -143,9 +142,10 @@ function extractCollabFullName(fullName) {
   <div class="min-h-screen flex flex-col bg-bgLightBlue">
     <!-- Header -->
     <Header />
+
     <!-- Main Content Wrapper -->
     <div
-      class="flex-grow flex items-center justify-center"
+      class="flex-grow flex items-center justify-center px-4 sm:px-8 lg:px-12"
       v-if="!dontHasInvitation"
     >
       <div
@@ -154,40 +154,41 @@ function extractCollabFullName(fullName) {
         <!-- Invite Icons -->
         <div class="flex items-center justify-center space-x-4">
           <div
-            class="bg-[#CCDDEE] w-24 h-24 rounded-full flex justify-center items-center"
+            class="bg-[#CCDDEE] w-20 h-20 sm:w-24 sm:h-24 rounded-full flex justify-center items-center"
           >
-            <span class="text-black font-bold text-2xl">{{
+            <span class="text-black font-bold text-xl sm:text-2xl">{{
               extractShortName(currentOwner.name)
             }}</span>
           </div>
-          <span class="text-black text-3xl font-bold">+</span>
+          <span class="text-black text-2xl sm:text-3xl font-bold">+</span>
           <div
-            class="bg-[#D9D9D9] w-24 h-24 rounded-full flex justify-center items-center"
+            class="bg-[#D9D9D9] w-20 h-20 sm:w-24 sm:h-24 rounded-full flex justify-center items-center"
           >
-            <span class="text-black font-bold text-2xl">{{
+            <span class="text-black font-bold text-xl sm:text-2xl">{{
               extractCollabFullName(currentCollaborator.name)
             }}</span>
           </div>
         </div>
 
         <!-- Invitation Text -->
+        
         <div class="text-gray-800">
-          <p class="font-semibold text-lg">
+          <p class="text-base sm:text-lg whitespace-pre-wrap">
             <span class="font-bold">{{ currentOwner.username }}</span>
-            has invited you to collaborate
-          </p>
-          <p>
-            with
+            has invited you to collaborate with
             <span class="text-blue font-bold">{{
               currentCollaborator.accessRight
             }}</span>
             access on the
             <span class="font-bold">{{ boardName }}</span>
+            personal board
           </p>
         </div>
 
         <!-- Buttons -->
-        <div class="flex space-x-4 justify-center">
+        <div
+          class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 justify-center"
+        >
           <button
             class="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:outline-none"
             @click="confirmInvitation(boardId, collabStatus.value)"
@@ -206,16 +207,16 @@ function extractCollabFullName(fullName) {
 
     <!-- Empty Invitation Message -->
     <div
-      class="flex-grow flex items-center justify-center"
-      v-if="dontHasInvitation "
+      class="flex-grow flex items-center justify-center px-4 sm:px-8 lg:px-12"
+      v-if="dontHasInvitation"
     >
       <div class="text-center space-y-4 max-w-md p-4">
         <img
           src="/image 9.png"
           alt="Not Found Image"
-          class="mx-auto w-72 h-56"
+          class="mx-auto w-64 sm:w-72 lg:w-80 h-48 sm:h-56 lg:h-64"
         />
-        <div class="font-bold text-lg text-black mt-4">
+        <div class="font-bold text-sm sm:text-lg text-black mt-4">
           Sorry, we couldn't find the invitation to this board.
         </div>
       </div>
