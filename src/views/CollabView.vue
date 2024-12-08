@@ -234,7 +234,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
       </div>
 
       <div
-        class="flex justify-between mobile:px-0 py-6 md-vertical:flex-row mobile:flex-col gap-3"
+        class="flex justify-between mobile:px-0 py-4 md-vertical:flex-row mobile:flex-col mx-5"
       >
         <NavigateTitle :boardId="boardId" />
 
@@ -263,10 +263,8 @@ const confirmAddCollab = async (email, accessRightValue) => {
         <div
           class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4 mobile:px-0 w-full"
         >
-          <div
-            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
-          >
-            <table class="w-full h-full md-vertical:table-fixed mobile:table">
+          <div class="table-tooltip relative">
+            <table class="table">
               <thead class="bg-lightgray">
                 <tr>
                   <th
@@ -299,7 +297,7 @@ const confirmAddCollab = async (email, accessRightValue) => {
 
               <tbody class="bg-white">
                 <tr v-if="collabStore.getCollaborators <= 0">
-                  <td class="border text-center" colspan="5">
+                  <td class="border text-center text-gray-800" colspan="5">
                     No collaborator found
                   </td>
                 </tr>

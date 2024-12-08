@@ -119,22 +119,18 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
     <Header />
 
     <div
-      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
+      class="table-auto xl:px-24 lg:px-10 sm:px-10 px-6 py-6 z-10 md-vertical:px-9 mobile:px-5"
     >
       <div
         class="flex justify-between mobile:px-0 py-6 md-vertical:flex-row mobile:flex-col gap-3"
       >
-        <!-- <NavigateTitle :currentPage="currentPage">
-          <template #navigate-home>Home</template>
-          <template #navigate-next>Task Status</template>
-        </NavigateTitle> -->
         <NavigateTitle :boardId="boardId" />
 
         <div class="flex">
           <div class="my-3 mr-2">
             <label
               class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              :class="{ 'tooltip tooltip-bottom font-bold': !isOwner }"
               data-tip="You need to be board owner to perform this action."
             >
               <input
@@ -145,7 +141,7 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
                 :disabled="!isOwner"
               />
               <span
-                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
+                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm font-medium"
                 >{{ boardVisibility ? "Public" : "Private" }}</span
               >
             </label>
@@ -206,146 +202,139 @@ const saveLimitStatus = async (id, limitMaximumTask, maximumTask) => {
           </buttonSubmit>
         </div>
       </div>
-      <div class="-my-2 mb-8 sm:-mx">
-        <div
-          class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4 mobile:px-0 w-full"
-        >
-          <div
-            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg"
-          >
-            <table class="w-full h-full md-vertical:table-fixed mobile:table">
-              <thead class="bg-lightgray">
-                <tr class="">
-                  <th
-                    class="w-[5%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  ></th>
-                  <th
-                    class="w-1/6 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  >
-                    Name
-                  </th>
-                  <th
-                    class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  >
-                    Description
-                  </th>
-                  <th
-                    class="w-1/6 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  >
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white">
-                <tr v-if="statusStore.getStatuses.length <= 0">
-                  <td class="border text-center" colspan="4">No Status</td>
-                </tr>
-                <tr
-                  class="itbkk-item py-4"
-                  v-if="statusStore.getStatuses.length > 0"
-                  v-for="(status, index) in statusStore.getStatuses"
-                  :key="index"
+      <div class="table-tooltip relative">
+        <table class="table">
+          <thead class="bg-lightgray">
+            <tr>
+              <th
+                class="w-[5%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-xs font-medium text-gray-800 uppercase tracking-wider"
+              ></th>
+              <th
+                class="w-1/6 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+              >
+                Name
+              </th>
+              <th
+                class="w-1/2 px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+              >
+                Description
+              </th>
+              <th
+                class="w-1/6 px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+              >
+                Action
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white">
+            <tr v-if="statusStore.getStatuses.length <= 0">
+              <td class="border text-center" colspan="4">No Status</td>
+            </tr>
+            <tr
+              class="itbkk-item py-4"
+              v-if="statusStore.getStatuses.length > 0"
+              v-for="(status, index) in statusStore.getStatuses"
+              :key="index"
+            >
+              <td
+                class="text-center p-5 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+              >
+                {{ index + 1 }}
+              </td>
+              <td
+                class="itbkk-status-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+              >
+                <StatusButton
+                  class=""
+                  :statusColor="status.statusColor"
+                  :statusName="status.name"
+                  >{{ status.name }}</StatusButton
                 >
-                  <td
-                    class="text-center p-5 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
+              </td>
+              <td
+                class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all text-gray-800"
+                :class="!status.description ? 'text-gray-400 italic' : ''"
+              >
+                {{
+                  !status.description
+                    ? "No description is provided"
+                    : status.description
+                }}
+              </td>
+              <td
+                class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2 font-bold text-center"
+              >
+                <div
+                  :class="{
+                    'tooltip tooltip-bottom disabled':
+                      !isOwner && !hasAccessRight,
+                  }"
+                  data-tip="You need to be board owner or has write access to perform this action."
+                >
+                  <buttonSubmit
+                    class="itbkk-button-edit"
+                    @click.prevent="
+                      isOwner || hasAccessRight
+                        ? router.push({
+                            name: 'status-edit',
+                            params: { statusId: status.id },
+                          })
+                        : null
+                    "
+                    :button-type="
+                      status.name === 'No Status' ||
+                      status.name === 'Done' ||
+                      (!isOwner && !hasAccessRight)
+                        ? 'disabled'
+                        : 'edit'
+                    "
+                    :disabled="
+                      status.name === 'No Status' ||
+                      status.name === 'Done' ||
+                      (!isOwner && !hasAccessRight)
+                    "
+                    >Edit
+                  </buttonSubmit>
+                </div>
+                <div
+                  :class="{
+                    'tooltip tooltip-bottom disabled':
+                      !isOwner && !hasAccessRight,
+                  }"
+                  data-tip="You need to be board owner or has write access to perform this action."
+                >
+                  <buttonSubmit
+                    class="itbkk-button-delete"
+                    :class="{
+                      'pointer-events-none disabled': isPublic,
+                    }"
+                    :button-type="
+                      status.name === 'No Status' ||
+                      status.name === 'Done' ||
+                      (!isOwner && !hasAccessRight)
+                        ? 'disabled'
+                        : 'delete'
+                    "
+                    :disabled="
+                      status.name === 'No Status' ||
+                      status.name === 'Done' ||
+                      (!isOwner && !hasAccessRight)
+                    "
+                    @click.prevent="
+                      isOwner || hasAccessRight
+                        ? openDeleteOrTransferModal(status.id)
+                        : null
+                    "
                   >
-                    {{ index + 1 }}
-                  </td>
-                  <td
-                    class="itbkk-status-name md-vertical:px-3 mobile:p-0 text-sm text-gray-600 border-b border-r border-gray-300 break-all"
-                  >
-                    <StatusButton
-                      class=""
-                      :statusColor="status.statusColor"
-                      :statusName="status.name"
-                      >{{ status.name }}</StatusButton
-                    >
-                  </td>
-                  <td
-                    class="itbkk-status-description text-sm border-b border-r border-gray-300 break-all"
-                    :class="!status.description ? 'text-gray-400 italic' : ''"
-                  >
-                    {{
-                      !status.description
-                        ? "No description is provided"
-                        : status.description
-                    }}
-                  </td>
-                  <td
-                    class="itbkk-status text-sm text-gray-600 border-b border-gray-300 break-all md-vertical:px-6 mobile:p-2"
-                  >
-                    <div
-                      :class="{
-                        'tooltip tooltip-bottom disabled':
-                          !isOwner && !hasAccessRight,
-                      }"
-                      data-tip="You need to be board owner or has write access to perform this action."
-                    >
-                      <buttonSubmit
-                        class="itbkk-button-edit"
-                        @click.prevent="
-                          isOwner || hasAccessRight
-                            ? router.push({
-                                name: 'status-edit',
-                                params: { statusId: status.id },
-                              })
-                            : null
-                        "
-                        :button-type="
-                          status.name === 'No Status' ||
-                          status.name === 'Done' ||
-                          (!isOwner && !hasAccessRight)
-                            ? 'disabled'
-                            : 'edit'
-                        "
-                        :disabled="
-                          status.name === 'No Status' ||
-                          status.name === 'Done' ||
-                          (!isOwner && !hasAccessRight)
-                        "
-                        >Edit
-                      </buttonSubmit>
-                    </div>
-                    <div
-                      :class="{
-                        'tooltip tooltip-bottom disabled':
-                          !isOwner && !hasAccessRight,
-                      }"
-                      data-tip="You need to be board owner or has write access to perform this action."
-                    >
-                      <buttonSubmit
-                        class="itbkk-button-delete"
-                        :class="{
-                          'pointer-events-none disabled': isPublic,
-                        }"
-                        :button-type="
-                          status.name === 'No Status' ||
-                          status.name === 'Done' ||
-                          (!isOwner && !hasAccessRight)
-                            ? 'disabled'
-                            : 'delete'
-                        "
-                        :disabled="
-                          status.name === 'No Status' ||
-                          status.name === 'Done' ||
-                          (!isOwner && !hasAccessRight)
-                        "
-                        @click.prevent="
-                          isOwner || hasAccessRight
-                            ? openDeleteOrTransferModal(status.id)
-                            : null
-                        "
-                      >
-                        Delete
-                      </buttonSubmit>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+                    Delete
+                  </buttonSubmit>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
+
       <VisibilityConfirmModal
         v-if="popup.boardVisibilityPopup"
         :visibility-type="boardVisibility ? 'Private' : 'Public'"

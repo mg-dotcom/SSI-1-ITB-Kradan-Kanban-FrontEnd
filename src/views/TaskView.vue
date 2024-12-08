@@ -172,7 +172,7 @@ const handleEditTask = () => {
   <div class="h-screen w-full bg-bgLightBlue">
     <Header />
     <div
-      class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5 overflow-hidden"
+      class="table-auto xl:px-24 lg:px-10 py-6 sm:px-10 px-6 z-10 md-vertical:px-9 mobile:px-5"
     >
       <div
         class="font-bold flex items-center justify-center text-black text-center xl:text-2xl lg:text-3xl md:text-2xl sm:text-lg md-vertical:px-3 mobile:px-0 py-5"
@@ -247,7 +247,7 @@ const handleEditTask = () => {
           <div class="my-3 mr-2">
             <label
               class="inline-flex items-center cursor-pointer"
-              :class="{ 'tooltip tooltip-bottom': !isOwner }"
+              :class="{ 'tooltip tooltip-bottom font-bold': !isOwner }"
               data-tip="You need to be board owner to perform this action."
             >
               <input
@@ -258,10 +258,9 @@ const handleEditTask = () => {
                 :disabled="!isOwner"
               />
               <span
-                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm"
+                class="ms-3 text-gray-900 dark:text-gray-300 md-vertical:text-base text-sm font-medium"
+                >{{ boardVisibility ? "Public" : "Private" }}</span
               >
-                {{ boardVisibility ? "Public" : "Private" }}
-              </span>
             </label>
           </div>
 
@@ -322,232 +321,221 @@ const handleEditTask = () => {
         </div>
       </div>
 
-      <div class="-my-2 mb-8 sm:-mx z-0">
-        <div
-          class="py-2 align-middle inline-block sm:px-6 lg:px-8 md-vertical:px-4 mobile:px-0 w-full"
-        >
-          <div
-            class="shadow overflow-y-auto border-b border-gray-200 sm:rounded-lg z-10"
-          >
-            <table
-              class="w-full h-full md-vertical:table-fixed mobile:table z-10"
-            >
-              <thead class="bg-lightgray">
-                <tr class="">
-                  <th
-                    class="xl:w-[5%] lg:w-[7%] md-vertical:w-[8%] bg-lightgray border-b border-r border-gray-300 w-[7%]"
+      <div class="table-tooltip relative">
+        <table class="table">
+          <thead class="bg-lightgray">
+            <tr>
+              <th
+                class="xl:w-[5%] lg:w-[7%] md-vertical:w-[8%] bg-lightgray border-b border-r border-gray-300 w-[7%]"
+              >
+                <div class="relative group">
+                  <img
+                    src="../assets/addTaskIcon.svg"
+                    alt="add-task-icon"
+                    @click="
+                      isOwner || hasAccessRight
+                        ? router.push({ name: 'task-add' })
+                        : null
+                    "
+                    class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
+                    :class="{
+                      'cursor-not-allowed pointer-events-none':
+                        !isOwner && !hasAccessRight,
+                    }"
+                  />
+                  <!-- Tooltip -->
+                  <div
+                    v-if="!isOwner && !hasAccessRight"
+                    class="bg-[#2B3440] text-white p-2 rounded-md text-sm opacity-0 group-hover:opacity-100 z-30 transition-opacity duration-300 absolute left-[230px] top-full mt-2 transform -translate-x-1/2 font-bold"
                   >
+                    You need to be the board owner or have write access to
+                    perform this action
                     <div
-                      :disabled="!isOwner && !hasAccessRight"
-                      :class="{
-                        'tooltip tooltip-bottom disabled cursor-not-allowed active:scale-[93%]':
-                          !isOwner && !hasAccessRight,
-                      }"
-                      data-tip="You need to be board owner or has write access to perform this action"
+                      class="absolute top-[-5px] left-1/2 transform -translate-x-1/2 border-t-4 border-transparent border-b-4 border-[#2B3440]"
+                    ></div>
+                  </div>
+                </div>
+              </th>
+              <th
+                class="xl:w-1/2 lg:w-[45%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+              >
+                Title
+              </th>
+              <th
+                class="xl:w-2/6 lg:w-[22%] md-vertical:w-[28%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+              >
+                Assignees
+              </th>
+              <th
+                class="xl:w-[18%] lg:w-[22%] md-vertical:w-[26%] px-6 py-3 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
+              >
+                <div class="flex">
+                  <p>Status</p>
+                  <div @click="cycleSortType" class="cursor-pointer ml-5">
+                    <img
+                      src="../assets/alphabeticalSorting.svg"
+                      alt="sort"
+                      class="itbkk-status-sort w-5 mobile:w-4"
+                      v-if="sortType === 'default'"
+                    />
+                    <img
+                      src="../assets/alphabeticalSorting-green.svg"
+                      alt="sort-ascending"
+                      class="itbkk-status-sort w-5 mobile:w-4"
+                      v-if="sortType === 'ascending'"
+                    />
+                    <img
+                      src="../assets/alphabeticalReverse.svg"
+                      alt="sort-descending"
+                      class="itbkk-status-sort w-5 mobile:w-4"
+                      v-if="sortType === 'descending'"
+                    />
+                  </div>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="bg-white">
+            <!-- No Task Row -->
+            <tr v-if="taskStore.getTasks.length === 0">
+              <td class="border text-center py-4" colspan="4">No Task</td>
+            </tr>
+            <!-- Task Rows -->
+            <tr
+              v-for="(task, index) in taskStore.getTasks"
+              :key="task.id"
+              class="itbkk-item"
+            >
+              <td
+                class="text-center py-4 text-sm text-gray-600 border-b border-r border-gray-300"
+              >
+                {{ index + 1 }}
+              </td>
+              <td
+                class="itbkk-title px-6 py-4 text-gray-600 border-b border-r border-gray-300"
+                @click="openDetail(task.id)"
+              >
+                <div class="flex items-center">
+                  <p
+                    class="hover:underline cursor-pointer hover:text-blue text-[16px]"
+                  >
+                    {{ task.title }}
+                  </p>
+                  <div class="flex ml-3 items-center">
+                    <img
+                      src="/attachments/attach-file.png"
+                      alt="attachments"
+                      class="w-3 h-3"
+                    />
+                    <span class="ml-1">
+                      {{ taskStore.getTaskFilesById(task.id).length || "-" }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td
+                class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300"
+                :class="!task.assignees ? 'italic text-gray-400' : ''"
+              >
+                {{ task.assignees || "Unassigned" }}
+              </td>
+              <td
+                class="px-6 py-4 md-vertical:px-6 mobile:px-1 text-sm text-gray-600 border-b border-gray-300 break-all"
+              >
+                <div class="flex justify-between items-center text-center">
+                  <StatusButton
+                    :statusName="task.status.name"
+                    :statusColor="statusStore.getStatusColor(task.status.name)"
+                  >
+                    {{ task.status.name }}
+                  </StatusButton>
+                  <div>
+                    <div
+                      class="itbkk-button-action inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                      type="button"
+                      ref="optionEditDelete"
+                      @click="showOptionEditDelete(task.id)"
                     >
-                      <img
-                        src="../assets/addTaskIcon.svg"
-                        alt="add-task-icon"
-                        @click="
-                          isOwner || hasAccessRight
-                            ? router.push({
-                                name: 'task-add',
-                              })
-                            : null
-                        "
-                        class="itbkk-button-add scale-90 xl:scale-90 lg:scale-[80%] md-vertical:scale-[85%] mobile:scale-[195%] hover:shadow-lg hover:scale-100 cursor-pointer rounded-full hover:bg-[#20ae27] transition-all duration-300 ease-in-out active:scale-[85%] active:transition-transform"
-                        :class="{
-                          'disabled cursor-not-allowed pointer-events-none':
-                            !isOwner && !hasAccessRight,
-                        }"
-                      />
-                    </div>
-                  </th>
-                  <th
-                    class="xl:w-1/2 lg:w-[45%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  >
-                    Title
-                  </th>
-                  <th
-                    class="xl:w-2/6 lg:w-[22%] md-vertical:w-[28%] px-6 py-3 bg-lightgray border-b border-r border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  >
-                    Assignees
-                  </th>
-                  <th
-                    class="xl:w-[18%] lg:w-[22%] md-vertical:w-[26%] md-vertical:px-6 py-3 px-2 bg-lightgray border-b border-gray-300 text-left text-xs font-medium text-gray-800 uppercase tracking-wider"
-                  >
-                    <div class="flex">
-                      <p class="content-center">Status</p>
-                      <div @click="cycleSortType" class="cursor-pointer ml-5">
-                        <img
-                          src="../assets/alphabeticalSorting.svg"
-                          alt=""
-                          class="itbkk-status-sort w-5 mobile:w-4 content-center"
-                          v-if="sortType === 'default'"
-                        />
-                        <img
-                          src="../assets/alphabeticalSorting-green.svg"
-                          alt=""
-                          class="itbkk-status-sort w-5 mobile:w-4 content-center"
-                          v-if="sortType === 'ascending'"
-                        />
-                        <img
-                          src="../assets/alphabeticalReverse.svg"
-                          alt=""
-                          class="itbkk-status-sort w-5 mobile:w-4 content-center"
-                          v-if="sortType === 'descending'"
-                        />
-                      </div>
-                    </div>
-                  </th>
-                </tr>
-              </thead>
-              <tbody class="bg-white">
-                <tr v-if="taskStore.getTasks.length <= 0">
-                  <td class="border text-center" colspan="4">No Task</td>
-                </tr>
-                <tr
-                  class="itbkk-item"
-                  v-for="(task, index) in taskStore.getTasks"
-                  :key="index"
-                >
-                  <td
-                    class="text-center py-4 text-sm md-vertical:text-sm text-gray-600 border-b border-r border-gray-300 break-all"
-                  >
-                    {{ index + 1 }}
-                  </td>
-                  <td
-                    class="itbkk-title px-6 py-4 text-gray-600 border-b border-r border-gray-300 break-all transition duration-300 ease-in-out"
-                    @click="openDetail(task.id)"
-                  >
-                    <div class="flex">
-                      <p
-                        class="hover:underline cursor-pointer hover:text-blue text-[16px]"
+                      <svg
+                        class="w-5 h-5"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor"
+                        viewBox="0 0 4 15"
                       >
-                        {{ task.title }}
-                      </p>
-                      <div class="flex ml-3 items-center justify-center">
-                        <img
-                          src="/attachments/attach-file.png"
-                          alt=""
-                          class="w-3 h-3"
+                        <path
+                          d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"
                         />
-                        <div class="attach-text">
-                          {{
-                            taskStore.getTaskFilesById(task.id).length === 0
-                              ? "-"
-                              : taskStore.getTaskFilesById(task.id).length
-                          }}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td
-                    class="itbkk-assignees px-6 py-4 text-sm border-b border-r border-gray-300 break-all"
-                    :class="!task.assignees ? 'italic text-gray-400' : ''"
-                  >
-                    {{ task.assignees || "Unassigned" }}
-                  </td>
-                  <td
-                    class="px-6 py-4 md-vertical:px-6 mobile:px-1 text-sm text-gray-600 border-b border-gray-300 break-all"
-                  >
-                    <div class="flex justify-between items-center text-center">
-                      <StatusButton
-                        :statusName="task.status.name"
-                        :statusColor="
-                          statusStore.getStatusColor(task.status.name)
-                        "
-                      >
-                        {{ task.status.name }}
-                      </StatusButton>
-                      <div>
-                        <div
-                          class="itbkk-button-action inline-flex items-center p-2 text-sm font-medium text-center text-gray-900 bg-white rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none dark:text-white focus:ring-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                          type="button"
-                          ref="optionEditDelete"
-                          @click="showOptionEditDelete(task.id)"
-                        >
-                          <svg
-                            class="w-5 h-5"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 4 15"
-                          >
-                            <path
-                              d="M3.5 1.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 6.041a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Zm0 5.959a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z"
-                            />
-                          </svg>
+                      </svg>
 
+                      <div
+                        class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[20px]"
+                        v-show="
+                          popup.optionEditDelete && selectedId === task.id
+                        "
+                      >
+                        <div
+                          class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
+                          :disabled="!isOwner && !hasAccessRight"
+                        >
                           <div
-                            class="bg-white divide-y divide-gray-100 rounded-lg shadow w-32 dark:bg-gray-700 dark:divide-gray-600 absolute right-[20px]"
-                            v-show="
-                              popup.optionEditDelete && selectedId === task.id
+                            @click.prevent="
+                              isOwner || hasAccessRight
+                                ? handleEditTask()
+                                : null
                             "
+                            :class="{
+                              'tooltip tooltip-bottom disabled cursor-not-allowed font-bold':
+                                !isOwner && !hasAccessRight,
+                            }"
+                            data-tip="You need to be board owner or have write access to perform this action"
                           >
-                            <div
-                              class="py-2 text-sm text-gray-700 dark:text-gray-200 z-50"
+                            <p
+                              class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                              :class="{
+                                'opacity-50 disabled cursor-not-allowed':
+                                  !isOwner && !hasAccessRight,
+                              }"
                               :disabled="!isOwner && !hasAccessRight"
                             >
-                              <div
-                                @click.prevent="
-                                  isOwner || hasAccessRight
-                                    ? handleEditTask()
-                                    : null
-                                "
-                                :class="{
-                                  'tooltip tooltip-bottom disabled cursor-not-allowed':
-                                    !isOwner && !hasAccessRight,
-                                }"
-                                data-tip="You need to be board owner or has write access to perform this action"
-                              >
-                                <p
-                                  class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                  :class="{
-                                    'opacity-50 disabled cursor-not-allowed':
-                                      !isOwner && !hasAccessRight,
-                                  }"
-                                  :disabled="!isOwner && !hasAccessRight"
-                                >
-                                  Edit
-                                </p>
-                              </div>
-                              <div
-                                @click.prevent="
-                                  isOwner || hasAccessRight
-                                    ? openDelete(task.id, index)
-                                    : null
-                                "
-                                :class="{
-                                  'tooltip tooltip-bottom disabled cursor-not-allowed':
-                                    !isOwner && !hasAccessRight,
-                                }"
-                                data-tip="You need to be board owner or has write access to perform this action"
-                              >
-                                <p
-                                  class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
-                                  :class="{
-                                    'opacity-50 disabled cursor-not-allowed':
-                                      !isOwner && !hasAccessRight,
-                                  }"
-                                  :disabled="!isOwner && !hasAccessRight"
-                                >
-                                  Delete
-                                </p>
-                              </div>
-                            </div>
+                              Edit
+                            </p>
+                          </div>
+                          <div
+                            @click.prevent="
+                              isOwner || hasAccessRight
+                                ? openDelete(task.id, index)
+                                : null
+                            "
+                            :class="{
+                              'tooltip tooltip-bottom disabled cursor-not-allowed font-bold':
+                                !isOwner && !hasAccessRight,
+                            }"
+                            data-tip="You need to be board owner or have write access to perform this action"
+                          >
+                            <p
+                              class="itbkk-button-edit block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white text-red-500"
+                              :class="{
+                                'opacity-50 disabled cursor-not-allowed':
+                                  !isOwner && !hasAccessRight,
+                              }"
+                              :disabled="!isOwner && !hasAccessRight"
+                            >
+                              Delete
+                            </p>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
+
     <VisibilityConfirmModal
       class="itbkk-modal-alert"
       v-if="popup.boardVisibilityPopup"
@@ -571,8 +559,4 @@ const handleEditTask = () => {
   </div>
 </template>
 
-<style scoped>
-.attach-text {
-  color: #0546a9;
-}
-</style>
+<style scoped></style>
