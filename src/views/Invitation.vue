@@ -92,12 +92,14 @@ const declineInvitation = async () => {
 
 onMounted(async () => {
   await collabStore.loadCollab(boardId);
+  // Fetch invitation status
   const invitationRes = await collabStore.getInvitaionStatus(boardId);
-  const data = await invitationRes.json();
-  if (!invitationRes.ok || data.invitationStatus === "ACTIVE") {
+
+  if (!invitationRes.ok) {
     dontHasInvitation.value = true;
     return;
   }
+
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
 
