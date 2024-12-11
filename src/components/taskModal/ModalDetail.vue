@@ -36,7 +36,7 @@ const props = defineProps({
           class="w-full h-full flex flex-col md-vertical:flex-row md-vertical:justify-between mobile:flex-col"
         >
           <!-- Left Side: Description & Attachments -->
-          <div class="flex flex-col">
+          <div class="flex flex-col ">
             <p class="font-semibold mb-3 text-black">Description</p>
             <div class="px-3"><slot name="desc"></slot></div>
 
@@ -45,12 +45,12 @@ const props = defineProps({
               class="font-semibold text-black flex items-center my-3"
             >
               Attachments
-              <span class="text-[#0546a9]">
+              <span class="text-[#0546a9] bg-green-300">
                 <slot name="addAttach"></slot>
               </span>
             </p>
             <div
-              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all"
+              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all mobile:h-fit mobile:mb-5"
             >
               <slot name="attach"></slot>
             </div>
@@ -63,7 +63,7 @@ const props = defineProps({
           </div>
 
           <!-- Right Side: Assignees & Status -->
-          <div class="flex flex-col">
+          <div class="flex flex-col ">
             <p class="font-semibold mb-3 text-black">Assignees</p>
             <div
               class="xl:w-[230px] lg:w-[220px] md-vertical:w-[218px] sm:w-[200px] md-vertical:h-1/3 px-3 lg:mb-2 mb-2 break-all"
