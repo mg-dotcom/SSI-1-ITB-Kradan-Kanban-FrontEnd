@@ -48,8 +48,8 @@ const routes = [
         path: "",
         name: "board-collab",
         component: CollabView,
-      }
-      ,{
+      },
+      {
         path: "invitations",
         name: "board-invitation",
         component: Invitation,
@@ -149,22 +149,11 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.path.startsWith("/board")) {
     try {
-      if (to.name === "board-invitation") {  
-        return next() 
-      }
-      if (to.name === "board") {
-        await boardStore.loadBoards();
-      }
-      if (boardId && to.name !== "board-invitation") {
-        await checkTokenExpiration(boardId);
-        await boardStore.loadBoardById(boardId);
-        await collabStore.loadCollab(boardId);
-        await taskStore.loadTasks(boardId);
-        await statusStore.loadStatuses(boardId);
+      if (to.name === "board-invitation") {
+        return next();
       }
     } catch (error) {
       console.error("Error loading board-related data:", error);
-      // return next({ name: 'login' })
       return next({ name: "access-denied" });
     }
   }

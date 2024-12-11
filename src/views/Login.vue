@@ -47,7 +47,6 @@ const handleBoardRedirection = async () => {
   const collabBoards = boardStore.getCollabBoard();
 
   if (userStore.getRedirectAfterLogin) {
-    console.log(userStore.getRedirectAfterLogin);
     router.push({
       name: "board-invitation",
       params: { id: userStore.getRedirectAfterLogin },

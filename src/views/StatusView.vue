@@ -14,6 +14,7 @@ import DeleteStatus from "../components/confirmModal/DeleteStatus.vue";
 import Transfer from "../components/confirmModal/Transfer.vue";
 import NavigateTitle from "../components/navigateTitle.vue";
 import Header from "../components/Header.vue";
+import { checkTokenExpiration } from "@/stores/UserStore";
 
 const route = useRoute();
 const router = useRouter();
@@ -26,6 +27,9 @@ const userStore = useUserStore();
 const boardId = route.params.id;
 
 onMounted(async () => {
+  await checkTokenExpiration(boardId);
+  await taskStore.loadTasks(boardId);
+  await statusStore.loadStatuses(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;

@@ -12,7 +12,6 @@ import { useTaskStore } from "./TaskStore.js";
 import { useBoardStore } from "./BoardStore.js";
 import { checkTokenExpiration } from "./UserStore.js";
 import { handleResponseStatus } from "@/libs/libsUtil.js";
-const STATUS_ENDPOINT = import.meta.env.VITE_STATUS_ENDPOINT;
 const BOARD_ENDPOINT = import.meta.env.VITE_BOARD_ENDPOINT;
 
 export const useStatusStore = defineStore("StatusStore", {

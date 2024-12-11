@@ -19,6 +19,7 @@ const isChanged = ref(false);
 const statusId = route.params.statusId;
 
 onMounted(async () => {
+  await statusStore.loadStatuses(boardId);
   if (statusId === 1) {
     toast.add({
       severity: "error",

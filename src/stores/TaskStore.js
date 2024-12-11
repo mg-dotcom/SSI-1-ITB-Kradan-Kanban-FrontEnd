@@ -27,6 +27,7 @@ export const useTaskStore = defineStore("TaskStore", {
     tasks: [],
     sortType: "",
     filterStatuses: [],
+    tasksLoaded: false,
   }),
   getters: {
     getTasks: (state) => state.tasks,
@@ -40,11 +41,15 @@ export const useTaskStore = defineStore("TaskStore", {
   actions: {
     async loadTasks(boardId) {
       await checkTokenExpiration(boardId);
+
       const res = await fetchAllTasks(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/tasks`
       );
+
       handleResponseStatus(res);
-      this.tasks = await res.json();
+      const data = await res.json();
+      this.tasks = data; // Set tasks
+      this.tasksLoaded = true; // Set tasks as loaded
     },
     async loadTaskDetails(id, boardId) {
       await checkTokenExpiration(boardId);
@@ -110,7 +115,9 @@ export const useTaskStore = defineStore("TaskStore", {
       }
     },
     async editTaskWithFiles(id, updatedTaskData, updatedTaskFiles) {
+      console.log(updatedTaskData);
       const boardId = this.boardStore.getCurrentBoard.id;
+
       await checkTokenExpiration(boardId);
       const res = await updatedTaskWithFiles(
         `${
@@ -119,13 +126,24 @@ export const useTaskStore = defineStore("TaskStore", {
         updatedTaskData,
         updatedTaskFiles
       );
+
       const data = await res.json();
+      console.log(data);
       const message = data.message;
       const fileErrors = data.fileErrors || [];
       const fileName = fileErrors.map((file) => file.fileName);
       if (res.status >= 200 && res.status <= 299) {
-        const taskIndex = this.tasks.findIndex((task) => task.id === id);
-        this.tasks[taskIndex] = data;
+        const taskIndex = this.tasks.findIndex(
+          (task) => task.id === Number(id)
+        );
+
+        if (taskIndex !== -1) {
+          this.tasks.splice(taskIndex, 1, {
+            ...this.tasks[taskIndex], // Preserve existing properties
+            ...data, // Overwrite with new properties
+          });
+        }
+
         this.toast.add({
           severity: "success",
           summary: "Success",
@@ -177,6 +195,7 @@ export const useTaskStore = defineStore("TaskStore", {
         const taskIndex = this.tasks.findIndex(
           (task) => task.id === Number(taskId)
         );
+
         this.tasks[taskIndex].files = this.tasks[taskIndex].files.filter(
           (f) => f.id !== file.id
         );
@@ -222,7 +241,6 @@ export const useTaskStore = defineStore("TaskStore", {
           sortType,
           arrayStatusesName
         );
-
 
         this.tasks = filteredAndSortedTasks;
       } else {

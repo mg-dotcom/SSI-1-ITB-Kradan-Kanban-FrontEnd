@@ -68,7 +68,6 @@ const updateStatus = async (url, id, updatedStatus) => {
 };
 
 const updateStatusSetting = async (url, updatedLimit) => {
-  console.log("updatedLimit", updatedLimit);
 
   const res = await fetch(`${url}`, {
     method: "PUT",
