@@ -123,7 +123,7 @@ onMounted(() => {
           >
             <div class="flex gap-x-5">
               <div
-                class="w-32 h-full rounded-md flex items-center justify-center"
+                class="w-32 flex-shrink-0 h-full rounded-md flex items-center justify-center"
                 :style="{ backgroundColor: board.color }"
               >
                 <div class="text-2xl text-white">
