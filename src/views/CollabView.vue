@@ -39,7 +39,6 @@ onMounted(async () => {
 
   boardName.value = fetchedBoard.name;
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;
-  console.log("Loaded Collaborators:", collabStore.getCollaborators);
 });
 
 const isOwner = computed(() => {

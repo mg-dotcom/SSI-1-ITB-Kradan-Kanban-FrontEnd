@@ -91,14 +91,16 @@ const declineInvitation = async () => {
 };
 
 onMounted(async () => {
+  await collabStore.loadCollab(boardId);
+  // Fetch invitation status
   const invitationRes = await collabStore.getInvitaionStatus(boardId);
-  const data = await invitationRes.json();
-  if (!invitationRes.ok || data.invitationStatus === "ACTIVE") {
+
+  if (!invitationRes.ok) {
     dontHasInvitation.value = true;
     return;
   }
+
   const fetchedBoard = await boardStore.loadBoardById(boardId);
-  await collabStore.loadCollab(boardId);
   boardStore.setCurrentBoard(fetchedBoard);
 
   boardName.value = fetchedBoard.name;
@@ -171,7 +173,7 @@ function extractCollabFullName(fullName) {
         </div>
 
         <!-- Invitation Text -->
-        
+
         <div class="text-gray-800">
           <p class="text-base sm:text-lg whitespace-pre-wrap">
             <span class="font-bold">{{ currentOwner.username }}</span>

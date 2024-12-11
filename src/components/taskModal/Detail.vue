@@ -3,6 +3,7 @@ import ModalDetail from "./ModalDetail.vue";
 import buttonSubmit from "../button/Button.vue";
 import StatusButton from "../button/StatusButton.vue";
 import { useStatusStore } from "../../stores/StatusStore.js";
+import { useBoardStore } from "../../stores/BoardStore.js";
 import { useTaskStore } from "../../stores/TaskStore.js";
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -12,10 +13,12 @@ import {
   getFileIcon,
   openFile,
 } from "../../libs/libsUtil.js";
+import { checkTokenExpiration } from "@/stores/UserStore";
 
 const route = useRoute();
 const router = useRouter();
 const taskStore = useTaskStore();
+const boardStore = useBoardStore();
 const statusStore = useStatusStore();
 const taskId = route.params.taskId;
 const boardId = route.params.id;
@@ -31,6 +34,10 @@ const selectedTask = ref({
 const mode = route.name === "task-detail" ? "view" : "";
 
 onMounted(async () => {
+  await checkTokenExpiration(boardId);
+  await boardStore.loadBoards(boardId);
+  await taskStore.loadTasks(boardId);
+  await statusStore.loadStatuses(boardId);
   const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
   selectedTask.value = taskDetail;
   selectedTask.value.status = taskDetail.status.name;

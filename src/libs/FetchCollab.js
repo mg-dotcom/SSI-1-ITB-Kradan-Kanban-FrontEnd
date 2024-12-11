@@ -1,4 +1,4 @@
-import { useUserToken,useUserStore } from "../stores/UserStore.js";
+import { useUserToken, useUserStore } from "../stores/UserStore.js";
 
 const fetchCollab = async (url) => {
   const res = await fetch(`${url}`, {
@@ -11,25 +11,21 @@ const fetchCollab = async (url) => {
   return res;
 };
 const addCollab = async (url, collaborator) => {
-  console.log(collaborator);
-  
   const res = await fetch(`${url}`, {
     method: "POST",
     headers: {
       "content-type": "application/json",
       Authorization: `Bearer ${useUserToken().value}`,
-      AccessTokenMS: `${useUserStore().accessTokenMS}`
+      AccessTokenMS: `${useUserStore().accessTokenMS}`,
     },
 
     body: JSON.stringify({
       email: collaborator.email,
       accessRight: collaborator.accessRight,
-      url: collaborator.url
+      url: collaborator.url,
     }),
   });
 
-  console.log(`In fetch collab : `,useUserStore().accessTokenMS);
-  
   return res;
 };
 
@@ -82,6 +78,13 @@ const getInvitation = async (url) => {
     },
   });
   return res;
-}
+};
 
-export { fetchCollab, addCollab, deleteCollab, updateAccessRight,verifyInvitation,getInvitation };
+export {
+  fetchCollab,
+  addCollab,
+  deleteCollab,
+  updateAccessRight,
+  verifyInvitation,
+  getInvitation,
+};

@@ -35,8 +35,9 @@ onMounted(async () => {
   initFlowbite();
   initDropdowns();
   await checkTokenExpiration(boardId);
+  await taskStore.loadTasks(boardId);
+  await statusStore.loadStatuses(boardId);
   const fetchedBoard = await boardStore.loadBoardById(boardId);
-
   boardStore.setCurrentBoard(fetchedBoard);
 
   boardVisibility.value = fetchedBoard.visibility === "PRIVATE" ? false : true;

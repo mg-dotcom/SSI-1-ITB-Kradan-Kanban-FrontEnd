@@ -5,7 +5,7 @@ import {
   updateAccessRight,
   addCollab,
   verifyInvitation,
-  getInvitation
+  getInvitation,
 } from "../libs/FetchCollab.js";
 import { useToast } from "primevue/usetoast";
 import { useUserStore } from "./UserStore.js";
@@ -34,13 +34,13 @@ export const useCollabStore = defineStore("CollabStore", {
       handleResponseStatus(res);
       const data = await res.json();
       this.collaborators = data;
-      
+
       return data;
     },
     async addCollab(boardId, newCollab) {
       await checkTokenExpiration(boardId);
       console.log(newCollab);
-      
+
       const res = await addCollab(
         `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs`,
         newCollab
@@ -128,10 +128,12 @@ export const useCollabStore = defineStore("CollabStore", {
       await checkTokenExpiration(boardId);
       const userStore = useUserStore();
       const res = await verifyInvitation(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs/invitations`,
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/collabs/invitations`,
         collabStatus
       );
-      
+
       if (res.status === 200) {
         // Find the collaborator by their oid
         const index = this.collaborators.findIndex(
@@ -148,10 +150,11 @@ export const useCollabStore = defineStore("CollabStore", {
       await checkTokenExpiration(boardId);
       const userStore = useUserStore();
       const res = await getInvitation(
-        `${import.meta.env.VITE_BASE_URL}${BOARD_ENDPOINT}/${boardId}/collabs/invitations`
+        `${
+          import.meta.env.VITE_BASE_URL
+        }${BOARD_ENDPOINT}/${boardId}/collabs/invitations`
       );
-      console.log(res);
-      
+
       if (res.status === 200) {
         // Find the collaborator by their oid
         const index = this.collaborators.findIndex(
@@ -163,6 +166,6 @@ export const useCollabStore = defineStore("CollabStore", {
         }
       }
       return res;
-    } 
+    },
   },
 });

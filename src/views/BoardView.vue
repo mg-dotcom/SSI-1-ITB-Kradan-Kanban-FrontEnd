@@ -13,7 +13,6 @@ import { handleAuthenticationClearAndRedirect } from "@/libs/libsUtil";
 import { useToast } from "primevue/usetoast";
 import { useCollabStore } from "@/stores/CollabStore";
 
-const route = useRoute();
 const boardStore = useBoardStore();
 const collabStore = useCollabStore();
 const userStore = useUserStore();
@@ -23,6 +22,10 @@ const isEmojiPickerVisible = ref(false);
 const selectedCollabOid = ref("");
 const emojiPicker = ref(null);
 const selectedBoardId = ref("");
+
+onMounted(async () => {
+  await boardStore.loadBoards();
+});
 
 onClickOutside(emojiPicker, () => {
   isEmojiPickerVisible.value = false;
@@ -68,9 +71,7 @@ const confirmLeaveCollab = async () => {
   leaveCollabModal.value = false;
 };
 
-onMounted(() => {
-  console.log(userStore.authMethod);
-});
+
 </script>
 
 <template>
@@ -93,7 +94,7 @@ onMounted(() => {
             class="itbkk-button-create w-80 h-28 border-dashed border-[4px] border-[#e0dfdf] rounded-lg hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 group hover:bg-[#ffffff] flex items-center justify-center hover:shadow-md"
             @click="router.push({ name: 'board-add' })"
           >
-            <div class="flex justify-center items-center h-28 ">
+            <div class="flex justify-center items-center h-28">
               <div class="text-center">
                 <div class="flex justify-center items-center mb-2">
                   <img
@@ -113,7 +114,7 @@ onMounted(() => {
 
           <!-- v-for="(board, index) in boards" -->
           <div
-            class="itbkk-personal-item w-80 h-28 flex justify-between p-2 rounded-md border border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
+            class="itbkk-personal-item w-80 h-28 flex justify-between p-2 rounded-md border bg-white border-solid border-gray-300 hover:scale-105 transition-transform duration-300 ease-in-out cursor-pointer hover:border-gray-400 hover:shadow-md"
             v-for="(board, index) in boardStore.getPersonalBoard()"
             :key="index"
             @click="
@@ -133,7 +134,7 @@ onMounted(() => {
               <div class="flex flex-col justify-between text-black">
                 <div>
                   <h3
-                    class="itbkk-board-name line-clamp-1 text-lg font-semibold leading-tight "
+                    class="itbkk-board-name line-clamp-1 text-lg font-semibold leading-tight"
                   >
                     {{ board.name }}
                   </h3>
@@ -214,13 +215,12 @@ onMounted(() => {
                     <h3
                       class="itbkk-board-name text-lg font-semibold leading-tight text-black line-clamp-1"
                     >
-                      {{
-                        collab.boardName
-                      }}
+                      {{ collab.boardName }}
                       <span
                         v-if="collab.status === 'PENDING'"
                         class="text-sm font-normal"
-                      >(Pending Invite)</span>
+                        >(Pending Invite)</span
+                      >
                     </h3>
                     <div class="flex items-center">
                       <p

@@ -55,7 +55,10 @@ const boardId = route.params.id;
 const taskId = route.params.taskId;
 
 onMounted(async () => {
+  console.log(taskStore.getTasks);
   await checkTokenExpiration(boardId);
+  await taskStore.loadTasks(boardId);
+  await statusStore.loadStatuses(boardId);
   const board = await boardStore.loadBoardById(boardId);
 
   limitMaximumTask.value = board.limitMaximumTask;
@@ -63,6 +66,7 @@ onMounted(async () => {
 
   if (mode == "edit") {
     const taskDetail = await taskStore.loadTaskDetails(taskId, boardId);
+
     selectedTask.value = {
       ...taskDetail,
       statusId: taskDetail.status?.id ?? null,
@@ -135,9 +139,6 @@ const cancel = () => {
 
 const save = async () => {
   if (mode === "edit" && taskId !== undefined) {
-    console.log("save");
-    console.log(selectedTask.value.files);
-
     outputTask.value = {
       title: selectedTask.value.title,
       description: selectedTask.value.description,
@@ -152,6 +153,8 @@ const save = async () => {
     );
 
     if (res.status === 200) {
+      await taskStore.loadTasks(boardId);
+      await statusStore.loadStatuses(boardId);
       router.push({ name: "board-task", params: { id: boardId } });
       taskStore.filterStatuses.length = 0;
     } else {
@@ -217,7 +220,6 @@ const onFileChanged = (e) => {
     if (duplicateFileIndex !== -1) {
       // Remove the existing file with the same name
       selectedTask.value.files.splice(duplicateFileIndex, 1);
-      console.log(`File "${fileObject.fileName}" replaced with new data.`);
     }
 
     if (duplicateFileName) {
@@ -255,7 +257,6 @@ const onFileChanged = (e) => {
   if (newFilesToAdd.length > 0) {
     selectedTask.value.files.push(...newFilesToAdd);
     newFiles.value.push(...newFilesToAdd);
-    console.log("Files successfully added:", newFilesToAdd);
   }
 
   // Show error messages
@@ -281,18 +282,7 @@ const onFileChanged = (e) => {
     <template #title>
       <div class="flex justify-between text-black">
         <div>{{ mode == "add" ? "Add Task" : "Edit Task" }}</div>
-        <div>
-          <span
-            :class="{
-              'bg-red-200 text-red-800 dark:text-red-400 border border-red-400':
-                limitMaximumTask === false,
-              'bg-green-200 text-green-800 dark:text-green-400 border border-green-400':
-                limitMaximumTask === true,
-            }"
-            class="text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700"
-            >Limit {{ limitMaximumTask ? "On" : "Off" }}</span
-          >
-        </div>
+   
       </div>
     </template>
     <div class="xl:mb-4 lg:mb-2 mb-2">
