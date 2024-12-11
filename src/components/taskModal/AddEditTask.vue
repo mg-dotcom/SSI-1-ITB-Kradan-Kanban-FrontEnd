@@ -282,18 +282,7 @@ const onFileChanged = (e) => {
     <template #title>
       <div class="flex justify-between text-black">
         <div>{{ mode == "add" ? "Add Task" : "Edit Task" }}</div>
-        <div>
-          <span
-            :class="{
-              'bg-red-200 text-red-800 dark:text-red-400 border border-red-400':
-                limitMaximumTask === false,
-              'bg-green-200 text-green-800 dark:text-green-400 border border-green-400':
-                limitMaximumTask === true,
-            }"
-            class="text-sm font-medium me-2 px-2.5 py-0.5 rounded dark:bg-gray-700"
-            >Limit {{ limitMaximumTask ? "On" : "Off" }}</span
-          >
-        </div>
+   
       </div>
     </template>
     <div class="xl:mb-4 lg:mb-2 mb-2">
