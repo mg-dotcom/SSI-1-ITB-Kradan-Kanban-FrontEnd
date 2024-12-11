@@ -45,7 +45,7 @@ const props = defineProps({
               class="font-semibold text-black flex items-center my-3"
             >
               Attachments
-              <span class="text-[#0546a9] bg-green-300">
+              <span class="text-[#0546a9] ">
                 <slot name="addAttach"></slot>
               </span>
             </p>
