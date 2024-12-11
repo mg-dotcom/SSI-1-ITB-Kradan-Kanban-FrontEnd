@@ -27,7 +27,7 @@ const props = defineProps({
 
       <!-- Main Content Section -->
       <div
-        class="bg-white w-full h-full border-b border-t border-[#CACACA] xl:py-6 px-4 lg:py-4 py-2 md-vertical:text-sm mobile:overflow-auto md-vertical:overflow-hidden overflow-hidden"
+        class="bg-white w-full h-full border-b border-t border-[#CACACA] xl:overflow-y-auto xl:py-6 px-4 lg:overflow-y-auto lg:py-4 py-2 md-vertical:text-sm mobile:overflow-y-auto md-vertical:overflow-y-auto overflow-y-auto"
       >
         <slot></slot>
 
@@ -50,7 +50,7 @@ const props = defineProps({
               </span>
             </p>
             <div
-              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all overflow-y-auto"
+              class="h-[100px] xl:w-[520px] lg:w-[290px] sm:w-[260px] px-3 break-all"
             >
               <slot name="attach"></slot>
             </div>
